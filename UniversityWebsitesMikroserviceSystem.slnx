@@ -1,0 +1,18 @@
+<Solution>
+  <Folder Name="/src/" />
+  <Folder Name="/src/services/" />
+  <Folder Name="/src/services/Personel/" />
+  <Folder Name="/src/services/Personel/api/">
+    <Project Path="Mikroservice.Personel.Api/Mikroservice.Personel.Api.csproj" />
+  </Folder>
+  <Folder Name="/src/services/Personel/core/">
+    <Project Path="Microservice.Personel.Application/Microservice.Personel.Application.csproj" />
+    <Project Path="Microservice.Personel.Domain/Microservice.Personel.Domain.csproj" />
+  </Folder>
+  <Folder Name="/src/services/Personel/infrastructure/">
+    <Project Path="Mikroservice.Personel.Persistence/Mikroservice.Personel.Persistence.csproj" />
+  </Folder>
+  <Folder Name="/src/shared/">
+    <Project Path="Microservice.Shared/Microservice.Shared.csproj" />
+  </Folder>
+</Solution>
