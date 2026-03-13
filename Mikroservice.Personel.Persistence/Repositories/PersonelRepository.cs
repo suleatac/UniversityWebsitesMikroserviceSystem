@@ -12,6 +12,13 @@ namespace Mikroservice.Personel.Persistence.Repositories
 
             return personels;
         }
+        public async Task<Microservice.Personel.Domain.Entities.Personel> GetPersonelByUsername(string username)
+        {
+            // await eklendi
+           var personel = await appDbContext.Personels.Where(s=>s.username==username).FirstOrDefaultAsync();
+
+           return personel;
+        }
 
     }
 }
