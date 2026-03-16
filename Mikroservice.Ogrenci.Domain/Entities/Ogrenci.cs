@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Microservice.Personel.Domain.Entities
+namespace Microservice.Ogrenci.Domain.Entities
 {
     public class Ogrenci
     {
+        public int id { get; set; }
         public int ogrenciprogramid { get; set; }
         public string? tcnumarasi { get; set; }
         public string? uyruk { get; set; }
@@ -18,7 +19,7 @@ namespace Microservice.Personel.Domain.Entities
         public string? babaadi { get; set; }
         public string? anaadi { get; set; }
         public string? dogumyeri { get; set; }
-        public Nullable<System.DateTimeOffset> dogumtarihi { get; set; }
+        public DateTime dogumtarihi { get; set; }
         public string? kangrubu { get; set; }
         public string? sehitgaziyakini { get; set; }
         public string? resimkodu { get; set; }
@@ -36,12 +37,12 @@ namespace Microservice.Personel.Domain.Entities
         public string? ogretimtipi { get; set; }
         public string? programturu { get; set; }
         public Nullable<decimal> transcriptnotortalamasi { get; set; }
-        public Nullable<System.DateTimeOffset> kayittarihi { get; set; }
+        public DateTime kayittarihi { get; set; }
         public Nullable<int> bolumid { get; set; }
         public Nullable<int> yoksisogrenciid { get; set; }
         public Nullable<int> yoksisid { get; set; }
         public string? username { get; set; }
-        public Nullable<System.DateTimeOffset> songuncellemetarihi { get; set; }
+        public DateTime songuncellemetarihi { get; set; }
         public string? kisiseleposta { get; set; }
         public string? kisiseltelefon { get; set; }
         public string? personbase64image { get; set; }

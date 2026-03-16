@@ -1,6 +1,17 @@
 <Solution>
   <Folder Name="/src/" />
   <Folder Name="/src/services/" />
+  <Folder Name="/src/services/Ogrenci/" />
+  <Folder Name="/src/services/Ogrenci/api/">
+    <Project Path="Mikroservice.Ogrenci.Api/Mikroservice.Ogrenci.Api.csproj" Id="f5542437-6dda-4d02-a9ee-06162158e975" />
+  </Folder>
+  <Folder Name="/src/services/Ogrenci/core/">
+    <Project Path="Mikroservice.Ogrenci.Application/Mikroservice.Ogrenci.Application.csproj" Id="86fce0b4-0a24-4464-8819-c0d8895b8a47" />
+    <Project Path="Mikroservice.Ogrenci.Domain/Mikroservice.Ogrenci.Domain.csproj" Id="a7b4b8c5-b21f-4c8e-b6af-75bbc5c8805b" />
+  </Folder>
+  <Folder Name="/src/services/Ogrenci/infrastructure/">
+    <Project Path="Mikroservice.Ogrenci.Persistence/Mikroservice.Ogrenci.Persistence.csproj" Id="04bd9b8c-de69-4d0a-9992-167d4c4ac04c" />
+  </Folder>
   <Folder Name="/src/services/Personel/" />
   <Folder Name="/src/services/Personel/api/">
     <Project Path="Mikroservice.Personel.Api/Mikroservice.Personel.Api.csproj" />
