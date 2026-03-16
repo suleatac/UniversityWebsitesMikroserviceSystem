@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Mikroservice.Personel.Persistence;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Mikroservice.Personel.Persistence.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260316080143_fifth")]
+    partial class fifth
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -77,7 +80,7 @@ namespace Mikroservice.Personel.Persistence.Migrations
                     b.Property<string>("eposta")
                         .HasColumnType("text");
 
-                    b.Property<DateTime?>("gorevebaslamatarihi")
+                    b.Property<DateTime>("gorevebaslamatarihi")
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("gorevunvan")
@@ -136,7 +139,7 @@ namespace Mikroservice.Personel.Persistence.Migrations
                     b.Property<string>("kisiseltelefon")
                         .HasColumnType("text");
 
-                    b.Property<DateTime?>("kurumdanayrilistarihi")
+                    b.Property<DateTime>("kurumdanayrilistarihi")
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("kurumsicilno")
@@ -164,7 +167,7 @@ namespace Mikroservice.Personel.Persistence.Migrations
                     b.Property<string>("sehitgaziyakini")
                         .HasColumnType("text");
 
-                    b.Property<DateTime?>("songuncellemetarihi")
+                    b.Property<DateTime>("songuncellemetarihi")
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("soyadi")

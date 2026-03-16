@@ -1,15 +1,10 @@
 using Hangfire;
 using Hangfire.PostgreSql;
 using Microservice.Personel.Application;
-using Microservice.Personel.Application.Contracts.IRepositories;
 using Microservice.Shared.Extentions;
 using Mikroservice.Personel.Api;
 using Mikroservice.Personel.Api.Endpoints.Personels.PersonelEndPointExt;
-using Mikroservice.Personel.Api.RecurringJob;
-using Mikroservice.Personel.Persistence;
 using Mikroservice.Personel.Persistence.Extentions;
-using Mikroservice.Personel.Persistence.Repositories;
-using Mikroservice.Personel.Persistence.UnitOfWork;
 
 var builder = WebApplication.CreateBuilder(args);
 

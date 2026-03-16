@@ -19,10 +19,20 @@ namespace Mikroservice.Personel.Persistence.Configurations
             builder.Property(o => o.babaadi).IsRequired();
             builder.Property(o => o.anaadi).IsRequired();
             builder.Property(o => o.dogumyeri).IsRequired();
-            builder.Property(o => o.dogumtarihi).IsRequired();
+            builder.Property(o => o.dogumtarihi).IsRequired().HasColumnType("timestamp without time zone");
             builder.Property(o => o.kadrotipi).IsRequired();
             builder.Property(o => o.kadrounvan).IsRequired();
             builder.Property(o => o.personencryptedid).IsRequired();
+
+
+            builder.Property(p => p.songuncellemetarihi)
+       .HasColumnType("timestamp without time zone");
+
+            builder.Property(p => p.kurumdanayrilistarihi)
+                .HasColumnType("timestamp without time zone");
+
+            builder.Property(p => p.gorevebaslamatarihi)
+                .HasColumnType("timestamp without time zone");
         }
     }
 }

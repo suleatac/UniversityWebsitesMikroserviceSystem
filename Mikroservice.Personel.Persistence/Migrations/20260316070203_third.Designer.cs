@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Mikroservice.Personel.Persistence;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Mikroservice.Personel.Persistence.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260316070203_third")]
+    partial class third
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -61,8 +64,8 @@ namespace Mikroservice.Personel.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<DateTime>("dogumtarihi")
-                        .HasColumnType("timestamp without time zone");
+                    b.Property<DateTimeOffset>("dogumtarihi")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("dogumyeri")
                         .IsRequired()
@@ -77,8 +80,8 @@ namespace Mikroservice.Personel.Persistence.Migrations
                     b.Property<string>("eposta")
                         .HasColumnType("text");
 
-                    b.Property<DateTime?>("gorevebaslamatarihi")
-                        .HasColumnType("timestamp without time zone");
+                    b.Property<DateTimeOffset?>("gorevebaslamatarihi")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("gorevunvan")
                         .HasColumnType("text");
@@ -136,8 +139,8 @@ namespace Mikroservice.Personel.Persistence.Migrations
                     b.Property<string>("kisiseltelefon")
                         .HasColumnType("text");
 
-                    b.Property<DateTime?>("kurumdanayrilistarihi")
-                        .HasColumnType("timestamp without time zone");
+                    b.Property<DateTimeOffset?>("kurumdanayrilistarihi")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("kurumsicilno")
                         .HasColumnType("text");
@@ -164,8 +167,8 @@ namespace Mikroservice.Personel.Persistence.Migrations
                     b.Property<string>("sehitgaziyakini")
                         .HasColumnType("text");
 
-                    b.Property<DateTime?>("songuncellemetarihi")
-                        .HasColumnType("timestamp without time zone");
+                    b.Property<DateTimeOffset?>("songuncellemetarihi")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("soyadi")
                         .IsRequired()

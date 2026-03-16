@@ -8,7 +8,7 @@ namespace Microservice.Shared.Extentions
         {
         
             services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining(assembly));
-            services.AddAutoMapper(assembly);
+            services.AddAutoMapper(cfg => { }, assembly );
             return services;
         }
     }

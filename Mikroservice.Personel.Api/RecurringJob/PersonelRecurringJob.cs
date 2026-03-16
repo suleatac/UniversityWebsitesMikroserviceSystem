@@ -2,6 +2,7 @@
 using Hangfire;
 using Microservice.Personel.Application.Contracts.IRepositories;
 using Microservice.Personel.Domain.Entities;
+using Mikroservice.Personel.Api;
 using Newtonsoft.Json;
 using System.Globalization;
 using System.Net;
@@ -30,7 +31,7 @@ public class PersonelRecurringJob
         RecurringJob.AddOrUpdate<PersonelRecurringJob>(
             "PersonelGuncellemeJob",
             x => x.PersonelleriSonGuncellemeTarihiyleGuncelle(),
-            Cron.Daily(09, 17),
+            Cron.Daily(04, 00),
             new RecurringJobOptions {
                 TimeZone = TimeZoneInfo.Local
             });
@@ -80,6 +81,7 @@ public class PersonelRecurringJob
 
             foreach (var personel in personeller)
             {
+                //DateTimeOffsetHelper.ConvertToUtc(personel);
                 var guncellenecekPersonel =
                     await _personelRepository.GetPersonelByUsername(personel.username!);
 
@@ -93,9 +95,10 @@ public class PersonelRecurringJob
                     _personelRepository.Update(guncellenecekPersonel);
                 }
 
-                await _unitOfWork.CommitChangesAsync();
+          
 
             }
+            await _unitOfWork.CommitChangesAsync();
         }
         else
         {

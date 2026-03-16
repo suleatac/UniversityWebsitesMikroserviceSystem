@@ -15,5 +15,11 @@ namespace Mikroservice.Personel.Persistence
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(PersistenceAssembly).Assembly);
             base.OnModelCreating(modelBuilder);
         }
+
+
+
+
+
+
     }
 }
