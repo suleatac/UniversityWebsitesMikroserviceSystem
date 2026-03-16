@@ -13,15 +13,16 @@ public class PersonelRecurringJob
     private readonly IPersonelRepository _personelRepository;
     private readonly IMapper _mapper;
     private readonly HttpClient _httpClient;
-
+    private readonly IUnitOfWork _unitOfWork;
     public PersonelRecurringJob(
-        IPersonelRepository personelRepository,
+        IPersonelRepository personelRepository,IUnitOfWork unitOfWork,
         IMapper mapper,
         HttpClient httpClient)
     {
         _personelRepository = personelRepository;
         _mapper = mapper;
         _httpClient = httpClient;
+        _unitOfWork = unitOfWork;
     }
 
     public static void VeriTabaniGuncellemeJob()
@@ -29,7 +30,7 @@ public class PersonelRecurringJob
         RecurringJob.AddOrUpdate<PersonelRecurringJob>(
             "PersonelGuncellemeJob",
             x => x.PersonelleriSonGuncellemeTarihiyleGuncelle(),
-            Cron.Daily(11, 49),
+            Cron.Daily(09, 17),
             new RecurringJobOptions {
                 TimeZone = TimeZoneInfo.Local
             });
@@ -91,6 +92,9 @@ public class PersonelRecurringJob
                     _mapper.Map(personel, guncellenecekPersonel);
                     _personelRepository.Update(guncellenecekPersonel);
                 }
+
+                await _unitOfWork.CommitChangesAsync();
+
             }
         }
         else
