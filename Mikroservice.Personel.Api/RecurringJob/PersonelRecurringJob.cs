@@ -81,7 +81,7 @@ public class PersonelRecurringJob
 
             foreach (var personel in personeller)
             {
-                //DateTimeOffsetHelper.ConvertToUtc(personel);
+             
                 var guncellenecekPersonel =
                     await _personelRepository.GetPersonelByUsername(personel.username!);
 
