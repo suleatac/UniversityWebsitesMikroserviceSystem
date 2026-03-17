@@ -26,4 +26,7 @@
   <Folder Name="/src/shared/">
     <Project Path="Microservice.Shared/Microservice.Shared.csproj" />
   </Folder>
+  <Project Path="docker-compose.dcproj">
+    <Build />
+  </Project>
 </Solution>

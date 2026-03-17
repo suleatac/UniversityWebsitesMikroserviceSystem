@@ -2,8 +2,10 @@ using Hangfire;
 using Hangfire.PostgreSql;
 using Microservice.Ogrenci.Application;
 using Microservice.Shared.Extentions;
+using Microsoft.EntityFrameworkCore;
 using Mikroservice.Ogrenci.Api;
 using Mikroservice.Ogrenci.Api.Endpoints.OgrenciEndPoints.OgrenciEndPoints;
+using Mikroservice.Ogrenci.Persistence;
 using Mikroservice.Ogrenci.Persistence.Extentions;
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,6 +28,11 @@ builder.Services.AddHangfire(config =>
 
 
 builder.Services.AddHangfireServer();
+//Versiyonlama eklendi
+builder.Services.AddVersioningExt();
+
+
+
 
 builder.Services.AddHttpClient();
 builder.Services.AddScoped<OgrenciRecurringJob>();
@@ -35,7 +42,18 @@ builder.Services.AddScoped<OgrenciRecurringJob>();
 builder.Services.AddOpenApi();
 
 var app = builder.Build();
-app.AddOgrenciGroupEndpointExt();
+
+//çalıştığında otomatik migration yapması için
+//using (var scope = app.Services.CreateScope())
+//{
+//    var serviceProvider = scope.ServiceProvider;
+//    var dbContext = serviceProvider.GetRequiredService<AppDbContext>();
+//    await dbContext.Database.MigrateAsync();
+//}
+
+
+//endpoint grupları eklendi
+app.AddOgrenciGroupEndpointExt(app.AddVersionSetExt());
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {

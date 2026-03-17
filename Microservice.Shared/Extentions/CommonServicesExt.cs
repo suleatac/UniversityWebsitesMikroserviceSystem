@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using FluentValidation;
+using FluentValidation.AspNetCore;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Microservice.Shared.Extentions
 {
@@ -9,6 +11,8 @@ namespace Microservice.Shared.Extentions
         
             services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining(assembly));
             services.AddAutoMapper(cfg => { }, assembly );
+            services.AddFluentValidationAutoValidation();
+            services.AddValidatorsFromAssemblyContaining(assembly);  
             return services;
         }
     }

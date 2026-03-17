@@ -1,0 +1,81 @@
+services:
+  postgres.db.ogrenci:
+    restart: always
+    image: postgres:16.2
+    container_name: postgres.db.ogrenci.container
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB_Ogrenci}
+      POSTGRES_USER: ${POSTGRES_USER_Ogrenci}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD_Ogrenci}
+    ports:
+      - "5433:5432"
+    volumes:
+      -  postgres.db.ogrenci.volume:/var/lib/postgresql/data
+  postgres.db.personel:
+    restart: always
+    image: postgres:16.2
+    container_name: postgres.db.personel.container
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB_Personel}
+      POSTGRES_USER: ${POSTGRES_USER_Personel}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD_Personel}
+    ports:
+      - "5434:5432"
+    volumes:
+      -  postgres.db.personel.volume:/var/lib/postgresql/data
+  #Postgres & Keycloak
+  keycloak:
+    restart: always
+    container_name: keycloak.container
+    image: quay.io/keycloak/keycloak:25.0
+    command: start-dev
+    environment:
+      KC_HOSTNAME_PORT: 8080
+      KC_HOSTNAME_STRICT_BACKCHANNEL: false
+      KC_HTTP_ENABLED: true
+      KC_HOSTNAME_STRICT_HTTPS: false
+      KC_HOSTNAME_STRICT_HTTP: false
+      KC_HEALTH_ENABLED: true
+      KC_DB: postgres
+      KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN}
+      KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
+      KC_DB_URL: jdbc:postgresql://postgres.db.keycloak/${POSTGRES_DB_Keycloak}
+      KC_DB_USERNAME: ${POSTGRES_USER_Keycloak}
+      KC_DB_PASSWORD: ${POSTGRES_PASSWORD_Keycloak}
+    ports:
+      - "8081:8080"
+    volumes:
+      - keycloak-data:/opt/keycloak/data  
+    depends_on:
+      - postgres.db.keycloak
+  postgres.db.keycloak:
+    restart: always
+    image: postgres:16.2
+    container_name: postgres.db.keycloak.container
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB_Keycloak}
+      POSTGRES_USER: ${POSTGRES_USER_Keycloak}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD_Keycloak}
+    ports:
+      - "5435:5432"
+    volumes:
+      -  postgres.db.keycloak.volume:/var/lib/postgresql/data
+  postgres.db.ui:
+    restart: always
+    image: dpage/pgadmin4
+    container_name: postgres.db.ui.container
+    ports:
+      - "8888:80"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
+    volumes:
+      - postgres.db.ui.data:/var/lib/pgadmin
+
+volumes:
+  postgres.db.keycloak.volume:
+  postgres.db.ui.data:
+  keycloak-data:
+  postgres.db.ogrenci.volume:  
+  postgres.db.personel.volume:  
+

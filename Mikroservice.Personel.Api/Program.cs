@@ -2,8 +2,10 @@ using Hangfire;
 using Hangfire.PostgreSql;
 using Microservice.Personel.Application;
 using Microservice.Shared.Extentions;
+using Microsoft.EntityFrameworkCore;
 using Mikroservice.Personel.Api;
 using Mikroservice.Personel.Api.Endpoints.Personels.PersonelEndPointExt;
+using Mikroservice.Personel.Persistence;
 using Mikroservice.Personel.Persistence.Extentions;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -30,11 +32,30 @@ builder.Services.AddHangfire(config =>
 
 builder.Services.AddHangfireServer();
 
+
+
+//Versiyonlama eklendi
+builder.Services.AddVersioningExt();
+
+
+
 builder.Services.AddHttpClient();
 builder.Services.AddScoped<PersonelRecurringJob>();
 
 var app = builder.Build();
-app.AddPersonelGroupEndpointExt();
+
+//çalıştığında otomatik migration yapması için
+using (var scope = app.Services.CreateScope())
+{
+    var serviceProvider = scope.ServiceProvider;
+    var dbContext = serviceProvider.GetRequiredService<AppDbContext>();
+    await dbContext.Database.MigrateAsync();
+}
+
+
+
+app.AddPersonelGroupEndpointExt(app.AddVersionSetExt());
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
