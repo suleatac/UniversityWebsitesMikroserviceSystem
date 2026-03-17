@@ -5,6 +5,7 @@ using Microservice.Shared.Extentions;
 using Microsoft.EntityFrameworkCore;
 using Mikroservice.Ogrenci.Api;
 using Mikroservice.Ogrenci.Api.Endpoints.OgrenciEndPoints.OgrenciEndPoints;
+using Mikroservice.Ogrenci.Api.RecurringJob;
 using Mikroservice.Ogrenci.Persistence;
 using Mikroservice.Ogrenci.Persistence.Extentions;
 var builder = WebApplication.CreateBuilder(args);
@@ -57,7 +58,9 @@ app.AddOgrenciGroupEndpointExt(app.AddVersionSetExt());
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.UseHangfireDashboard("/hangfire");
+    app.UseHangfireDashboard("/hangfire", new DashboardOptions {
+        Authorization = new[] { new AllowAll() }
+    });
     OgrenciRecurringJob.VeriTabaniGuncellemeJob();
     app.UseSwagger();
     app.UseSwaggerUI();

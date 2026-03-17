@@ -72,10 +72,24 @@ services:
     volumes:
       - postgres.db.ui.data:/var/lib/pgadmin
 
+  mikroservice.ogrenci.api:
+    image: ${DOCKER_REGISTRY-}mikroserviceogrenciapi
+    build:
+      context: .
+      dockerfile: Mikroservice.Ogrenci.Api/Dockerfile
+
+  mikroservice.personel.api:
+    image: ${DOCKER_REGISTRY-}mikroservicepersonelapi
+    build:
+      context: .
+      dockerfile: Mikroservice.Personel.Api/Dockerfile
+
 volumes:
   postgres.db.keycloak.volume:
   postgres.db.ui.data:
   keycloak-data:
   postgres.db.ogrenci.volume:  
   postgres.db.personel.volume:  
+
+
 

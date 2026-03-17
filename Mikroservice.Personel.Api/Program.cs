@@ -1,10 +1,12 @@
 using Hangfire;
 using Hangfire.PostgreSql;
+using Hangfire.Dashboard;
 using Microservice.Personel.Application;
 using Microservice.Shared.Extentions;
 using Microsoft.EntityFrameworkCore;
 using Mikroservice.Personel.Api;
 using Mikroservice.Personel.Api.Endpoints.Personels.PersonelEndPointExt;
+using Mikroservice.Personel.Api.RecurringJob;
 using Mikroservice.Personel.Persistence;
 using Mikroservice.Personel.Persistence.Extentions;
 
@@ -45,12 +47,12 @@ builder.Services.AddScoped<PersonelRecurringJob>();
 var app = builder.Build();
 
 //çalıştığında otomatik migration yapması için
-using (var scope = app.Services.CreateScope())
-{
-    var serviceProvider = scope.ServiceProvider;
-    var dbContext = serviceProvider.GetRequiredService<AppDbContext>();
-    await dbContext.Database.MigrateAsync();
-}
+//using (var scope = app.Services.CreateScope())
+//{
+//    var serviceProvider = scope.ServiceProvider;
+//    var dbContext = serviceProvider.GetRequiredService<AppDbContext>();
+//    await dbContext.Database.MigrateAsync();
+//}
 
 
 
@@ -59,7 +61,10 @@ app.AddPersonelGroupEndpointExt(app.AddVersionSetExt());
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.UseHangfireDashboard("/hangfire");
+    app.UseHangfireDashboard("/hangfire", new DashboardOptions {
+        Authorization = new[] { new AllowAll() }
+    });
+
     PersonelRecurringJob.VeriTabaniGuncellemeJob();
     app.UseSwagger();
     app.UseSwaggerUI();
