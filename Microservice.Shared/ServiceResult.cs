@@ -51,7 +51,7 @@ namespace Microservice.Shared
             {
                 return new ServiceResult() {
 
-                    Fail = new Microsoft.AspNetCore.Mvc.ProblemDetails() {
+                    Fail = new ProblemDetails() {
 
                         Title = "Not Found"
 
@@ -60,7 +60,7 @@ namespace Microservice.Shared
                 };
             }
 
-            var problemDetails = System.Text.Json.JsonSerializer.Deserialize<Microsoft.AspNetCore.Mvc.ProblemDetails>(exception.Content, new System.Text.Json.JsonSerializerOptions {
+            var problemDetails = System.Text.Json.JsonSerializer.Deserialize<ProblemDetails>(exception.Content, new System.Text.Json.JsonSerializerOptions {
                 PropertyNameCaseInsensitive = true
             });
 
@@ -92,7 +92,7 @@ namespace Microservice.Shared
 
             return new ServiceResult {
                 StatusCode = status,
-                Fail = new Microsoft.AspNetCore.Mvc.ProblemDetails() {
+                Fail = new ProblemDetails() {
                     Title = title,
                     Detail = description,
                     Status = (int)status
@@ -105,7 +105,7 @@ namespace Microservice.Shared
 
             return new ServiceResult {
                 StatusCode = status,
-                Fail = new Microsoft.AspNetCore.Mvc.ProblemDetails() {
+                Fail = new ProblemDetails() {
                     Title = title,
                     Status = (int)status
                 }
@@ -117,7 +117,7 @@ namespace Microservice.Shared
 
             return new ServiceResult {
                 StatusCode = HttpStatusCode.BadRequest,
-                Fail = new Microsoft.AspNetCore.Mvc.ProblemDetails() {
+                Fail = new ProblemDetails() {
                     Title = "Validation errors occured",
                     Detail = "Please check the errors property for more details",
                     Status = HttpStatusCode.BadRequest.GetHashCode(),
@@ -230,7 +230,7 @@ namespace Microservice.Shared
 
             return new ServiceResult<T> {
                 StatusCode = HttpStatusCode.BadRequest,
-                Fail = new Microsoft.AspNetCore.Mvc.ProblemDetails() {
+                Fail = new ProblemDetails() {
                     Title = "Validation errors occured",
                     Detail = "Please check the errors property for more details",
                     Status = HttpStatusCode.BadRequest.GetHashCode(),

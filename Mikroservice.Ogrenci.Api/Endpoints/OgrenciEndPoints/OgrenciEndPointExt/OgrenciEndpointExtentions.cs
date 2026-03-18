@@ -9,6 +9,7 @@ namespace Mikroservice.Ogrenci.Api.Endpoints.OgrenciEndPoints.OgrenciEndPoints
             var group = app.MapGroup("/api/v{version:apiVersion}/ogrencis").WithTags("Ogrencis");
             group.GetOgrencisGroupItemEndpoint();
             group.WithApiVersionSet(apiVersionSet);
+            group.RequireAuthorization("Password");
         }
     }
 }

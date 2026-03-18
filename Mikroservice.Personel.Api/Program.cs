@@ -11,10 +11,12 @@ using Mikroservice.Personel.Persistence;
 using Mikroservice.Personel.Persistence.Extentions;
 
 var builder = WebApplication.CreateBuilder(args);
-
+//Authentication ve Authorization servisleri eklendi
+builder.Services.AddAuthenticationAndAuthorizationExt(builder.Configuration);
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
 
 
 // Add services to the container.
@@ -54,9 +56,11 @@ var app = builder.Build();
 //    await dbContext.Database.MigrateAsync();
 //}
 
-
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.AddPersonelGroupEndpointExt(app.AddVersionSetExt());
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -64,7 +68,6 @@ if (app.Environment.IsDevelopment())
     app.UseHangfireDashboard("/hangfire", new DashboardOptions {
         Authorization = new[] { new AllowAll() }
     });
-
     PersonelRecurringJob.VeriTabaniGuncellemeJob();
     app.UseSwagger();
     app.UseSwaggerUI();

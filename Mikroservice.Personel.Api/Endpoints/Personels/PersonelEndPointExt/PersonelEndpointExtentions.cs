@@ -9,6 +9,7 @@ namespace Mikroservice.Personel.Api.Endpoints.Personels.PersonelEndPointExt
             var group = app.MapGroup("/api/v{version:apiVersion}/personels").WithTags("Personels");
             group.GetPersonelsGroupItemEndpoint();
             group.WithApiVersionSet(apiVersionSet);
+            group.RequireAuthorization("Password");
         }
     }
 }

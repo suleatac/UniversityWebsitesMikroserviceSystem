@@ -14,6 +14,10 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+//Authentication ve Authorization servisleri eklendi
+builder.Services.AddAuthenticationAndAuthorizationExt(builder.Configuration);
+
+
 
 builder.Services.AddCommonServiceExt(typeof(OgrenciApplicationAssembly));
 builder.Services.AddPersistenceExtentions(builder.Configuration);
@@ -53,8 +57,15 @@ var app = builder.Build();
 //}
 
 
+
+app.UseAuthentication();
+app.UseAuthorization();
 //endpoint grupları eklendi
 app.AddOgrenciGroupEndpointExt(app.AddVersionSetExt());
+
+
+
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
