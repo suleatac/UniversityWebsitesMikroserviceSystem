@@ -60,15 +60,15 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.AddPersonelGroupEndpointExt(app.AddVersionSetExt());
-
+app.UseHangfireDashboard("/hangfire", new DashboardOptions {
+    Authorization = new[] { new AllowAll() }
+});
+PersonelRecurringJob.VeriTabaniGuncellemeJob();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.UseHangfireDashboard("/hangfire", new DashboardOptions {
-        Authorization = new[] { new AllowAll() }
-    });
-    PersonelRecurringJob.VeriTabaniGuncellemeJob();
+
     app.UseSwagger();
     app.UseSwaggerUI();
     app.MapOpenApi();

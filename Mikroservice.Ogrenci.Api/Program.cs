@@ -63,16 +63,16 @@ app.UseAuthorization();
 //endpoint grupları eklendi
 app.AddOgrenciGroupEndpointExt(app.AddVersionSetExt());
 
-
+app.UseHangfireDashboard("/hangfire", new DashboardOptions {
+    Authorization = new[] { new AllowAll() }
+});
+OgrenciRecurringJob.VeriTabaniGuncellemeJob();
 
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.UseHangfireDashboard("/hangfire", new DashboardOptions {
-        Authorization = new[] { new AllowAll() }
-    });
-    OgrenciRecurringJob.VeriTabaniGuncellemeJob();
+
     app.UseSwagger();
     app.UseSwaggerUI();
     app.MapOpenApi();
