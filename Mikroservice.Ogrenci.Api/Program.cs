@@ -2,11 +2,10 @@ using Hangfire;
 using Hangfire.PostgreSql;
 using Microservice.Ogrenci.Application;
 using Microservice.Shared.Extentions;
-using Microsoft.EntityFrameworkCore;
+using Microservice.Shared.OpenTelemetry;
 using Mikroservice.Ogrenci.Api;
 using Mikroservice.Ogrenci.Api.Endpoints.OgrenciEndPoints.OgrenciEndPoints;
 using Mikroservice.Ogrenci.Api.RecurringJob;
-using Mikroservice.Ogrenci.Persistence;
 using Mikroservice.Ogrenci.Persistence.Extentions;
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,11 +16,14 @@ builder.Services.AddSwaggerGen();
 //Authentication ve Authorization servisleri eklendi
 builder.Services.AddAuthenticationAndAuthorizationExt(builder.Configuration);
 
+//Trace işlemi için eklenen extentionlar
+builder.Services.AddOpenTelemetryExt(builder.Configuration);
+
 
 
 builder.Services.AddCommonServiceExt(typeof(OgrenciApplicationAssembly));
 builder.Services.AddPersistenceExtentions(builder.Configuration);
-
+builder.Services.AddRedisCacheExt(builder.Configuration);
 //Hangfire ayarları
 builder.Services.AddHangfire(config =>
     config.UsePostgreSqlStorage(c => {
@@ -68,7 +70,7 @@ app.UseHangfireDashboard("/hangfire", new DashboardOptions {
 });
 OgrenciRecurringJob.VeriTabaniGuncellemeJob();
 
-
+app.UseMiddleware<RequestAndResponseActivityMiddleware>();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {

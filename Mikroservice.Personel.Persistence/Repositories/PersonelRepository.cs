@@ -5,13 +5,7 @@ namespace Mikroservice.Personel.Persistence.Repositories
 {
     public class PersonelRepository(AppDbContext appDbContext) : GenericRepository<Microservice.Personel.Domain.Entities.Personel>(appDbContext), IPersonelRepository
     {
-        public async Task<List<Microservice.Personel.Domain.Entities.Personel>> GetPersonels()
-        {
-            // await eklendi
-            List<Microservice.Personel.Domain.Entities.Personel> personels = await appDbContext.Personels.ToListAsync();
-
-            return personels;
-        }
+  
         public async Task<Microservice.Personel.Domain.Entities.Personel> GetPersonelByUsername(string username)
         {
             // await eklendi

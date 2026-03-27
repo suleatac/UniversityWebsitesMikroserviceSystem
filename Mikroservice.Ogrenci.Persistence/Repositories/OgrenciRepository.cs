@@ -5,13 +5,7 @@ namespace Mikroservice.Ogrenci.Persistence.Repositories
 {
     public class OgrenciRepository(AppDbContext appDbContext) : GenericRepository<Microservice.Ogrenci.Domain.Entities.Ogrenci>(appDbContext), IOgrenciRepository
     {
-        public async Task<List<Microservice.Ogrenci.Domain.Entities.Ogrenci>> GetOgrencis()
-        {
-            // await eklendi
-            List<Microservice.Ogrenci.Domain.Entities.Ogrenci> personels = await appDbContext.Ogrencis.ToListAsync();
-
-            return personels;
-        }
+    
         public async Task<Microservice.Ogrenci.Domain.Entities.Ogrenci> GetOgrenciByOgrenciProgramId(int ogrenciprogramid)
         {
             // await eklendi

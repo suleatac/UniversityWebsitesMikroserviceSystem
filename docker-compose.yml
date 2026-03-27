@@ -1,4 +1,81 @@
 services:
+  redis.db.api:
+    restart: always
+    image: redis:7.0-alpine
+    container_name: redis.db.container
+    command: ["redis-server", "--requirepass", "${REDIS_PASSWORD}"]
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis.db.api.volume:/data
+  redis.db.api.ui:
+    image: rediscommander/redis-commander:latest
+    container_name: redis.db.api.ui.container
+    restart: always
+    depends_on:
+      - redis.db.api
+    ports:
+      - "27033:8081"
+    environment:
+      REDIS_HOST: redis.db.api
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+      HTTP_USER: ${REDIS_UI_USERNAME}
+      HTTP_PASSWORD: ${REDIS_UI_PASSWORD}
+
+  rabbitmq:
+    restart: always
+    image: rabbitmq:3.13.7-management
+    container_name: rabbitmq.container
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+  elasticsearch.db.Jaeger:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.13.4
+    environment:
+      - discovery.type=single-node
+      - ELASTIC_USERNAME=${ELASTICSEARCH_JAEGER_USERNAME}
+      - ELASTIC_PASSWORD=${ELASTICSEARCH_JAEGER_PASSWORD}
+      - xpack.security.enabled=true
+      - xpack.security.http.ssl.enabled=false
+      - ES_JAVA_OPTS=-Xms1g -Xmx1g
+    ports:
+      - "9200:9200"
+    volumes:
+      - esdata:/usr/share/elasticsearch/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9200"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    #Jaeger
+  jaeger:
+    restart: always
+    container_name: jaeger.container
+    image: jaegertracing/jaeger:2.16.0
+    environment:
+      - SPAN_STORAGE_TYPE=elasticsearch
+      - ES_SERVER_URLS=http://elasticsearch.db.Jaeger:9200
+      - ES_USERNAME=${ELASTICSEARCH_JAEGER_USERNAME}
+      - ES_PASSWORD=${ELASTICSEARCH_JAEGER_PASSWORD}
+      - ES_INDEX_PREFIX=jaeger
+      - LOG_LEVEL=info
+      - COLLECTOR_OTLP_ENABLED=true
+    ports:
+      - "16686:16686" #UI
+      - "4317:4317" #Jaeger gRPC
+      - "4318:4318" #Jaeger HTTP
+      - "5778:5778" #Jaeger agent HTTP
+      - "9411:9411" #Jaeger collector HTTP
+    depends_on:
+      - elasticsearch.db.Jaeger
+    volumes:
+      - jaeger.data.volume:/opt/jaeger/data  
   postgres.db.ogrenci:
     restart: always
     image: postgres:16.2
@@ -85,11 +162,15 @@ services:
       dockerfile: Mikroservice.Personel.Api/Dockerfile
 
 volumes:
+  jaeger.data.volume:
   postgres.db.keycloak.volume:
   postgres.db.ui.data:
   keycloak-data:
   postgres.db.ogrenci.volume:  
-  postgres.db.personel.volume:  
+  postgres.db.personel.volume:
+  esdata:
+  redis.db.api.volume:    
+  rabbitmq_data:
 
 
 

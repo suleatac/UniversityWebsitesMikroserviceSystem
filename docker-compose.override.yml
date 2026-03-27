@@ -7,11 +7,15 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_HTTP_PORTS=8080
+      - IdentityOption:Adress=http://localhost:8080/realms/UniversityRealm
+      - IdentityOption:Issuer="http://localhost:8080/realms/UniversityRealm
+      - "ConnectionStrings:Redis=redis.db.api:6379,password=Password12"
       - ConnectionStrings:PostgreSqlServer=Host=postgres.db.ogrenci;Port=5432;Database=ogrenci_db;Username=ogrenci_db_user;Password=ogrenci_db_user_password
       - ConnectionStrings:HangfirePostgreSqlServer=Host=postgres.db.ogrenci;Port=5432;Database=ogrenci_db;Username=ogrenci_db_user;Password=ogrenci_db_user_password
     ports:
       - "8080:8080"
     depends_on:
+      - redis.db.api
       - postgres.db.ogrenci
     restart: always
 
@@ -19,10 +23,14 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_HTTP_PORTS=8080
+      - IdentityOption:Adress=http://localhost:8080/realms/UniversityRealm
+      - IdentityOption:Issuer="http://localhost:8080/realms/UniversityRealm
+      - "ConnectionStrings:Redis=redis.db.api:6379,password=Password12"
       - ConnectionStrings:PostgreSqlServer=Host=postgres.db.personel;Port=5432;Database=personel_db;Username=personel_db_user;Password=personel_db_user_password
       - ConnectionStrings:HangfirePostgreSqlServer=Host=postgres.db.personel;Port=5432;Database=personel_db;Username=personel_db_user;Password=personel_db_user_password
     ports:
       - "8082:8080"
     depends_on:
+      - redis.db.api
       - postgres.db.personel
     restart: always

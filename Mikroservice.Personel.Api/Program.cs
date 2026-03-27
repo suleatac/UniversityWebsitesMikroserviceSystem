@@ -1,8 +1,9 @@
 using Hangfire;
-using Hangfire.PostgreSql;
 using Hangfire.Dashboard;
+using Hangfire.PostgreSql;
 using Microservice.Personel.Application;
 using Microservice.Shared.Extentions;
+using Microservice.Shared.OpenTelemetry;
 using Microsoft.EntityFrameworkCore;
 using Mikroservice.Personel.Api;
 using Mikroservice.Personel.Api.Endpoints.Personels.PersonelEndPointExt;
@@ -24,18 +25,20 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddOpenApi();
 builder.Services.AddCommonServiceExt(typeof(PersonelApplicationAssembly));
 builder.Services.AddPersistenceExtentions(builder.Configuration);
-
+builder.Services.AddRedisCacheExt(builder.Configuration);
 //Hangfire ayarları
-builder.Services.AddHangfire(config =>
-    config.UsePostgreSqlStorage(c => {
-        var connectionToString = builder.Configuration.GetSection(HangFireConnectionToString.Key).Get<HangFireConnectionToString>();
+//builder.Services.AddHangfire(config =>
+//    config.UsePostgreSqlStorage(c => {
+//        var connectionToString = builder.Configuration.GetSection(HangFireConnectionToString.Key).Get<HangFireConnectionToString>();
 
-        c.UseNpgsqlConnection(connectionToString!.HangfirePostgreSqlServer);
+//        c.UseNpgsqlConnection(connectionToString!.HangfirePostgreSqlServer);
        
-    }));
+//    }));
 
-builder.Services.AddHangfireServer();
+//builder.Services.AddHangfireServer();
 
+//Trace işlemi için eklenen extentionlar
+builder.Services.AddOpenTelemetryExt(builder.Configuration);
 
 
 //Versiyonlama eklendi
@@ -60,11 +63,11 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.AddPersonelGroupEndpointExt(app.AddVersionSetExt());
-app.UseHangfireDashboard("/hangfire", new DashboardOptions {
-    Authorization = new[] { new AllowAll() }
-});
-PersonelRecurringJob.VeriTabaniGuncellemeJob();
-
+//app.UseHangfireDashboard("/hangfire", new DashboardOptions {
+//    Authorization = new[] { new AllowAll() }
+//});
+//PersonelRecurringJob.VeriTabaniGuncellemeJob();
+app.UseMiddleware<RequestAndResponseActivityMiddleware>();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
