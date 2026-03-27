@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Microservice.Shared.RedisCacheItems
+namespace Microservice.Shared.Options
 {
-    public class RedisConnectionTostringOptions
+    public class RedisConnectionTostringOption
     {
         public const string Key = "ConnectionStrings";
         public string Redis { get; set; } = default!;

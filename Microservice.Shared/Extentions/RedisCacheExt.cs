@@ -1,4 +1,5 @@
-﻿using Microservice.Shared.RedisCacheItems;
+﻿using Microservice.Shared.Options;
+using Microservice.Shared.Services.RedisServiceItems;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using StackExchange.Redis;
@@ -12,7 +13,7 @@ namespace Microservice.Shared.Extentions
 
             // Redis Bağlantı ayarları. Bu ayar trace için yapıldı. IDistributedCache kullanmıyorsun burda direk redis kullanıyorsun.
             services.AddSingleton<IConnectionMultiplexer>(sp => {
-                var connectiontostring = configuration.GetSection(RedisConnectionTostringOptions.Key).Get<RedisConnectionTostringOptions>();
+                var connectiontostring = configuration.GetSection(RedisConnectionTostringOption.Key).Get<RedisConnectionTostringOption>();
                 var config = ConfigurationOptions.Parse(connectiontostring!.Redis);
                 config.AbortOnConnectFail = false;
 

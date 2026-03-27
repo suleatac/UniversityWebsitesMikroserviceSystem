@@ -6,7 +6,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Microservice.Shared.Services
+namespace Microservice.Shared.Services.IdentityServiceItems
 {
     public class IdentityService(IHttpContextAccessor httpContextAccessor) : IIdentityService
     {

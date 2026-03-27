@@ -1,10 +1,10 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using MassTransit.Logging;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Mikroservice.Shared.OpenTelemetry;
 using Npgsql;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
-using StackExchange.Redis;
 using System.Diagnostics;
 
 
@@ -16,11 +16,13 @@ namespace Microservice.Shared.Extentions
         {
        
 
-            //Opentelemetry trace ve metric için eklendi.
+            //Opentelemetry trace için eklendi.
             var OpenTelemetryConstants = configuration.GetSection("OpenTelemetry").Get<OpenTelemetryConstants>();
+            
             services.AddOpenTelemetry().WithTracing(tracingBuilder => {
                 tracingBuilder
                 .AddSource(OpenTelemetryConstants!.ActivitySourceName)
+                .AddSource(DiagnosticHeaders.DefaultListenerName) //Masstransit
                 .ConfigureResource(resource => {
                     resource.AddService(OpenTelemetryConstants.ServiceName, serviceVersion: OpenTelemetryConstants.ServiceVersion);
                 })
@@ -33,8 +35,8 @@ namespace Microservice.Shared.Extentions
                             return false;
 
                         // Hangfire dashboard isteklerini hariç tut
-                        if (pathValue.StartsWith("/hangfire", StringComparison.OrdinalIgnoreCase))
-                            return false;
+                        //if (pathValue.StartsWith("/hangfire", StringComparison.OrdinalIgnoreCase))
+                        //    return false;
 
                         // Sadece 'api' içeren istekleri dahil et
                         return pathValue.Contains("api", StringComparison.OrdinalIgnoreCase);
@@ -45,7 +47,7 @@ namespace Microservice.Shared.Extentions
 
 
                 })
-                .AddNpgsql()
+                .AddNpgsql()//PostgreSql
                 .AddHttpClientInstrumentation(httpOptions => {
 
                     httpOptions.EnrichWithHttpRequestMessage = async (activity, request) => {
@@ -72,9 +74,8 @@ namespace Microservice.Shared.Extentions
                 })
                 .AddRedisInstrumentation(options =>
                 {
-           
                     options.SetVerboseDatabaseStatements = true;
-                })
+                })//Redis
                 .SetSampler(new AlwaysOnSampler())
                 .AddConsoleExporter()
                 .AddOtlpExporter();//jaeger

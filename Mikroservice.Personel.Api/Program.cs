@@ -27,15 +27,15 @@ builder.Services.AddCommonServiceExt(typeof(PersonelApplicationAssembly));
 builder.Services.AddPersistenceExtentions(builder.Configuration);
 builder.Services.AddRedisCacheExt(builder.Configuration);
 //Hangfire ayarları
-//builder.Services.AddHangfire(config =>
-//    config.UsePostgreSqlStorage(c => {
-//        var connectionToString = builder.Configuration.GetSection(HangFireConnectionToString.Key).Get<HangFireConnectionToString>();
+builder.Services.AddHangfire(config =>
+    config.UsePostgreSqlStorage(c => {
+        var connectionToString = builder.Configuration.GetSection(HangFireConnectionToString.Key).Get<HangFireConnectionToString>();
 
-//        c.UseNpgsqlConnection(connectionToString!.HangfirePostgreSqlServer);
-       
-//    }));
+        c.UseNpgsqlConnection(connectionToString!.HangfirePostgreSqlServer);
 
-//builder.Services.AddHangfireServer();
+    }));
+
+builder.Services.AddHangfireServer();
 
 //Trace işlemi için eklenen extentionlar
 builder.Services.AddOpenTelemetryExt(builder.Configuration);
@@ -52,21 +52,21 @@ builder.Services.AddScoped<PersonelRecurringJob>();
 var app = builder.Build();
 
 //çalıştığında otomatik migration yapması için
-//using (var scope = app.Services.CreateScope())
-//{
-//    var serviceProvider = scope.ServiceProvider;
-//    var dbContext = serviceProvider.GetRequiredService<AppDbContext>();
-//    await dbContext.Database.MigrateAsync();
-//}
+using (var scope = app.Services.CreateScope())
+{
+    var serviceProvider = scope.ServiceProvider;
+    var dbContext = serviceProvider.GetRequiredService<AppDbContext>();
+    await dbContext.Database.MigrateAsync();
+}
 
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.AddPersonelGroupEndpointExt(app.AddVersionSetExt());
-//app.UseHangfireDashboard("/hangfire", new DashboardOptions {
-//    Authorization = new[] { new AllowAll() }
-//});
-//PersonelRecurringJob.VeriTabaniGuncellemeJob();
+app.UseHangfireDashboard("/hangfire", new DashboardOptions {
+    Authorization = new[] { new AllowAll() }
+});
+PersonelRecurringJob.VeriTabaniGuncellemeJob();
 app.UseMiddleware<RequestAndResponseActivityMiddleware>();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

@@ -1,4 +1,4 @@
-﻿using Microservice.Shared.RedisCacheItems;
+﻿using Microservice.Shared.Services.RedisServiceItems;
 using StackExchange.Redis;
 using System.Text.Json;
 

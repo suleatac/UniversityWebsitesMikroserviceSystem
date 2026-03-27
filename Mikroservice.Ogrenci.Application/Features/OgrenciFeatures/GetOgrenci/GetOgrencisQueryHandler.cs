@@ -2,7 +2,7 @@
 using MediatR;
 using Microservice.Ogrenci.Application.Contracts.IRepositories;
 using Microservice.Shared;
-using Microservice.Shared.RedisCacheItems;
+using Microservice.Shared.Services.RedisServiceItems;
 
 namespace Microservice.Ogrenci.Application.Features.OgrenciFeatures.GetOgrenci
 {

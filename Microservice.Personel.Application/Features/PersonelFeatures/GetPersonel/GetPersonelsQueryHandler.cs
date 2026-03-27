@@ -2,7 +2,7 @@
 using MediatR;
 using Microservice.Personel.Application.Contracts.IRepositories;
 using Microservice.Shared;
-using Microservice.Shared.RedisCacheItems;
+using Microservice.Shared.Services.RedisServiceItems;
 using StackExchange.Redis;
 
 namespace Microservice.Personel.Application.Features.PersonelFeatures.GetPersonel
