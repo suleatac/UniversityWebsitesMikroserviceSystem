@@ -1,0 +1,14 @@
+scrape_configs:
+  - job_name: prometheus
+    static_configs:
+      - targets: ['localhost:9090']
+
+  - job_name: mikroservice.ogrenci.api
+    scrape_interval: 2s
+    static_configs:
+      - targets: ['mikroservice.ogrenci.api:8080']
+
+  - job_name: mikroservice.personel.api
+    scrape_interval: 2s
+    static_configs:
+      - targets: ['mikroservice.personel.api:8080']

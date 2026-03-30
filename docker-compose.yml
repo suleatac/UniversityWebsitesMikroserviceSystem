@@ -1,5 +1,20 @@
 services:
-  
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus.container
+    restart: always
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_data:/prometheus
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.path=/prometheus"
+      - "--web.enable-lifecycle"
+    depends_on:
+      - mikroservice.ogrenci.api
+      - mikroservice.personel.api
   elasticsearch.db.log:
     image: docker.elastic.co/elasticsearch/elasticsearch:8.13.4
     container_name: elasticsearch.db.log
@@ -9,7 +24,7 @@ services:
      - xpack.security.http.ssl.enabled=false
      - ES_JAVA_OPTS=-Xms1g -Xmx1g
      # ÖNEMLİ: Bu satırları EKLEYİN
-     - ELASTICSEARCH_USERNAME=${ELASTICSEARCH_LOG_USERNAME}
+     - ELASTIC_USERNAME=${ELASTICSEARCH_LOG_USERNAME}
      - ELASTIC_PASSWORD=${ELASTICSEARCH_LOG_PASSWORD}
 
     ports:
@@ -214,6 +229,7 @@ volumes:
   rabbitmq_data:
   esdatalog:
   kibanadata:
+  prometheus_data:
 
 
 

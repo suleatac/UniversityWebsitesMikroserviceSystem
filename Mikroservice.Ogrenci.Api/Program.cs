@@ -1,14 +1,17 @@
 using Hangfire;
 using Hangfire.PostgreSql;
+using Logging.Shared;
 using Microservice.Ogrenci.Application;
 using Microservice.Shared.Extentions;
 using Microservice.Shared.OpenTelemetry;
+using Microservice.Shared.SeriLog;
 using Microsoft.EntityFrameworkCore;
 using Mikroservice.Ogrenci.Api;
 using Mikroservice.Ogrenci.Api.Endpoints.OgrenciEndPoints.OgrenciEndPoints;
 using Mikroservice.Ogrenci.Api.RecurringJob;
 using Mikroservice.Ogrenci.Persistence;
 using Mikroservice.Ogrenci.Persistence.Extentions;
+using Serilog;
 var builder = WebApplication.CreateBuilder(args);
 
 
@@ -19,9 +22,10 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddAuthenticationAndAuthorizationExt(builder.Configuration);
 
 //Trace işlemi için eklenen extentionlar
-builder.Services.AddOpenTelemetryExt(builder.Configuration);
+builder.Services.AddOpenTelemetryTraceExt(builder.Configuration);
 
-
+//Log işlemi için eklenen kısım
+builder.Host.UseSerilog(Microservice.Shared.SeriLog.Logging.ConfigureLogging);
 
 builder.Services.AddCommonServiceExt(typeof(OgrenciApplicationAssembly));
 builder.Services.AddPersistenceExtentions(builder.Configuration);
@@ -71,8 +75,9 @@ app.UseHangfireDashboard("/hangfire", new DashboardOptions {
     Authorization = new[] { new AllowAll() }
 });
 OgrenciRecurringJob.VeriTabaniGuncellemeJob();
-
+app.UseMiddleware<OpenTelemetryTraceIdMiddleware>();
 app.UseMiddleware<RequestAndResponseActivityMiddleware>();
+app.UseExceptionMiddleware();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -81,7 +86,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
     app.MapOpenApi();
 }
-
+//Metric işlemi için eklenen middleware
+app.UseOpenTelemetryPrometheusScrapingEndpoint("/metrics");
 app.Run();
 
 

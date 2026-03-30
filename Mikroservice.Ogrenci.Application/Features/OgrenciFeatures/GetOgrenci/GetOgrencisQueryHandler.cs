@@ -2,6 +2,7 @@
 using MediatR;
 using Microservice.Ogrenci.Application.Contracts.IRepositories;
 using Microservice.Shared;
+using Microservice.Shared.OpenTelemetry;
 using Microservice.Shared.Services.RedisServiceItems;
 
 namespace Microservice.Ogrenci.Application.Features.OgrenciFeatures.GetOgrenci
@@ -10,6 +11,10 @@ namespace Microservice.Ogrenci.Application.Features.OgrenciFeatures.GetOgrenci
     {
         public async Task<ServiceResult<List<Domain.Entities.Ogrenci>>> Handle(GetOgrencisQuery request, CancellationToken cancellationToken)
         {
+            OpenTelemetryMetric.OgrenciGetOgrencisQueryExecuted.Add(1,
+          new KeyValuePair<string, object?>("event", "add")); // Örnek Metric
+
+
             // Önce cache'e bak
             var cacheKey = "list:ogrencis";
             var cached = await redisCacheService.GetListAsync<Domain.Entities.Ogrenci>(cacheKey, cancellationToken);
