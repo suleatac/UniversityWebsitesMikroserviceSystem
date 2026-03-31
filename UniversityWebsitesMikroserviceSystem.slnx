@@ -1,6 +1,9 @@
 <Solution>
   <Folder Name="/src/" />
   <Folder Name="/src/services/" />
+  <Folder Name="/src/services/Gateway/">
+    <Project Path="Mikroservice.Gateway/Mikroservice.Gateway.csproj" Id="1c36c12d-665f-46c2-ad8a-64523b39ad75" />
+  </Folder>
   <Folder Name="/src/services/Ogrenci/" />
   <Folder Name="/src/services/Ogrenci/api/">
     <Project Path="Mikroservice.Ogrenci.Api/Mikroservice.Ogrenci.Api.csproj" Id="f5542437-6dda-4d02-a9ee-06162158e975" />

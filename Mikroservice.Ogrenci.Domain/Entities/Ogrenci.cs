@@ -1,9 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿
+using Microsoft.EntityFrameworkCore;
 
 namespace Microservice.Ogrenci.Domain.Entities
 {
+    [Index(nameof(ogrenciprogramid), IsUnique = true)]
+    [Index(nameof(adi), nameof(soyadi))]
+    [Index(nameof(eposta))]
+    [Index(nameof(username))]
+    [Index(nameof(songuncellemetarihi))]
     public class Ogrenci
     {
         public int id { get; set; }

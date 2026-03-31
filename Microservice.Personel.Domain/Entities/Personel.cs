@@ -1,9 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Microsoft.EntityFrameworkCore;
 
 namespace Microservice.Personel.Domain.Entities
 {
+   
+    [Index(nameof(adi), nameof(soyadi))]
+    [Index(nameof(eposta))]
+    [Index(nameof(username))]
+    [Index(nameof(songuncellemetarihi))]
     public class Personel
     {
         public int id { get; set; }
