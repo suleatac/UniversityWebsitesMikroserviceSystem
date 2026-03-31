@@ -34,3 +34,13 @@ services:
       - redis.db.api
       - postgres.db.personel
     restart: always
+
+  mikroservice.gateway:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080
+      - IdentityOption:Adress=http://localhost:8080/realms/UniversityRealm
+      - IdentityOption:Issuer="http://localhost:8080/realms/UniversityRealm
+    ports:
+      - "8083:8080"
+    restart: always

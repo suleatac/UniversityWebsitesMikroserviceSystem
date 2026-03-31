@@ -5,7 +5,8 @@
       "commandVersion": "1.0",
       "serviceActions": {
         "mikroservice.ogrenci.api": "StartDebugging",
-        "mikroservice.personel.api": "StartDebugging"
+        "mikroservice.personel.api": "StartDebugging",
+        "mikroservice.gateway": "StartDebugging"
       }
     }
   }

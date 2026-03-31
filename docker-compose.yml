@@ -217,6 +217,12 @@ services:
       context: .
       dockerfile: Mikroservice.Personel.Api/Dockerfile
 
+  mikroservice.gateway:
+    image: ${DOCKER_REGISTRY-}mikroservicegateway
+    build:
+      context: .
+      dockerfile: Mikroservice.Gateway/Dockerfile
+
 volumes:
   jaeger.data.volume:
   postgres.db.keycloak.volume:
@@ -230,6 +236,7 @@ volumes:
   esdatalog:
   kibanadata:
   prometheus_data:
+
 
 
 
