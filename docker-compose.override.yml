@@ -1,7 +1,4 @@
 
-
-
-
 services:
   mikroservice.ogrenci.api:
     environment:

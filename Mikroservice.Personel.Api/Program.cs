@@ -47,15 +47,32 @@ builder.Services.AddCors(opts => {
         .AllowAnyMethod();
     });
 });
-//rate limit işlemi için eklenen kısım
+
+// Rate limit işlemi için TAMAMEN yapılandırma
 builder.Services.AddOptions();
 builder.Services.AddMemoryCache();
+
+// Rate limiting servisleri
+builder.Services.AddInMemoryRateLimiting();
+
+// Rate limit konfigürasyonları
 builder.Services.Configure<IpRateLimitOptions>(builder.Configuration.GetSection("IpRateLimiting"));
 builder.Services.Configure<IpRateLimitPolicies>(builder.Configuration.GetSection("IpRateLimitPolicies"));
+
+// **EKSİK OLAN SERVİSLERİ EKLEYİN**
 builder.Services.AddSingleton<IIpPolicyStore, MemoryCacheIpPolicyStore>();
 builder.Services.AddSingleton<IRateLimitCounterStore, MemoryCacheRateLimitCounterStore>();
+
+// **CRITICAL: ProcessingStrategy'yi EKLEYİN**
+builder.Services.AddSingleton<IProcessingStrategy, AsyncKeyLockProcessingStrategy>();
+
+// Rate limit configuration manager
 builder.Services.AddSingleton<IRateLimitConfiguration, RateLimitConfiguration>();
+
+// HttpContextAccessor
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+
+
 
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
@@ -98,8 +115,7 @@ using (var scope = app.Services.CreateScope())
     await dbContext.Database.MigrateAsync();
 }
 
-//Ip Rate Limiting middleware'i eklendi
-app.UseIpRateLimiting();
+
 
 //CORS middleware'i eklendi
 //app.UseCors();
@@ -109,7 +125,8 @@ app.UseCors("AllowSivasOnly");
 //Authentication ve Authorization middleware'leri eklendi
 app.UseAuthentication();
 app.UseAuthorization();
-
+//Ip Rate Limiting middleware'i eklendi
+app.UseIpRateLimiting();
 app.AddPersonelGroupEndpointExt(app.AddVersionSetExt());
 app.UseHangfireDashboard("/hangfire", new DashboardOptions {
     Authorization = new[] { new AllowAll() }

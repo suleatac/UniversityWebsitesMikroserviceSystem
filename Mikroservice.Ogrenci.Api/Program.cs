@@ -43,25 +43,33 @@ builder.Services.AddCors(opts => {
     });
 });
 
-//rate limit işlemi için eklenen kısım
+
+// Rate limit işlemi için TAMAMEN yapılandırma
 builder.Services.AddOptions();
 builder.Services.AddMemoryCache();
+
+// Rate limiting servisleri
+builder.Services.AddInMemoryRateLimiting();
+
+// Rate limit konfigürasyonları
 builder.Services.Configure<IpRateLimitOptions>(builder.Configuration.GetSection("IpRateLimiting"));
 builder.Services.Configure<IpRateLimitPolicies>(builder.Configuration.GetSection("IpRateLimitPolicies"));
+
+// **EKSİK OLAN SERVİSLERİ EKLEYİN**
 builder.Services.AddSingleton<IIpPolicyStore, MemoryCacheIpPolicyStore>();
 builder.Services.AddSingleton<IRateLimitCounterStore, MemoryCacheRateLimitCounterStore>();
+
+// **CRITICAL: ProcessingStrategy'yi EKLEYİN**
+builder.Services.AddSingleton<IProcessingStrategy, AsyncKeyLockProcessingStrategy>();
+
+// Rate limit configuration manager
 builder.Services.AddSingleton<IRateLimitConfiguration, RateLimitConfiguration>();
+
+// HttpContextAccessor
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
-//CORS politikası eklendi
-builder.Services.AddCors(opts => {
 
-    opts.AddDefaultPolicy(policy => {
-        policy.AllowAnyOrigin()
-              .AllowAnyHeader()
-              .AllowAnyMethod();
-    });
-});
+
 
 //Authentication ve Authorization servisleri eklendi
 builder.Services.AddAuthenticationAndAuthorizationExt(builder.Configuration);
