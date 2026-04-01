@@ -2,7 +2,9 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Mikroservice.Ogrenci.Infrastructure.Persistence.UnitOfWorks;
 using Mikroservice.Ogrenci.Persistence.Repositories;
+using Mikroservice.Ogrenci.Persistence.Settings;
 
 namespace Mikroservice.Ogrenci.Persistence.Extentions
 {
@@ -19,8 +21,8 @@ namespace Mikroservice.Ogrenci.Persistence.Extentions
 
             });
             services.AddScoped<IOgrenciRepository, OgrenciRepository>();
-            services.AddScoped<IUnitOfWork, UnitOfWork.UnitOfWork>();
-
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
+            services.Configure<ExternalOgrenciApiSettings>(configuration.GetSection("ExternalOgrenciApiSettings"));
             return services;
 
         }

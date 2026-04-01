@@ -1,13 +1,11 @@
-﻿using Microservice.Personel.Application.Contracts.IRepositories;
+﻿using Microservice.Ogrenci.Application.Contracts.IRepositories;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Storage;
-using System;
-using System.Collections.Generic;
+using Mikroservice.Ogrenci.Application.Contracts;
+using Mikroservice.Ogrenci.Persistence;
 using System.Data;
-using System.Text;
 
-namespace Mikroservice.Personel.Persistence.UnitOfWork
+namespace Mikroservice.Ogrenci.Infrastructure.Persistence.UnitOfWorks
 {
     public class UnitOfWork : IUnitOfWork
     {
@@ -87,6 +85,6 @@ namespace Mikroservice.Personel.Persistence.UnitOfWork
             _dbContext.Dispose();
         }
 
-
+    
     }
 }

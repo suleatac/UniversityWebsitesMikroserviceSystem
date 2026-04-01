@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Microservice.Ogrenci.Domain.Entities
 {
-    [Index(nameof(ogrenciprogramid), IsUnique = true)]
+    [Index(nameof(ogrenciprogramid))]
     [Index(nameof(adi), nameof(soyadi))]
     [Index(nameof(eposta))]
     [Index(nameof(username))]

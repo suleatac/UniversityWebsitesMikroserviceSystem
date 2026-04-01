@@ -2,6 +2,7 @@
 {
     public interface IPersonelRepository: IGenericRepository<Domain.Entities.Personel>
     {
-        Task<Domain.Entities.Personel> GetPersonelByUsername(string username);
+        Task<Domain.Entities.Personel?> GetPersonelByUsername(string username, CancellationToken cancellationToken = default);
+        Task<bool> AnyAsync(CancellationToken cancellationToken = default);
     }
 }

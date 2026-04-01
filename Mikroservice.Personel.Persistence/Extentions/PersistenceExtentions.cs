@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Mikroservice.Personel.Persistence.Repositories;
+using Mikroservice.Personel.Persistence.Settings;
 
 namespace Mikroservice.Personel.Persistence.Extentions
 {
@@ -20,7 +21,7 @@ namespace Mikroservice.Personel.Persistence.Extentions
             });
             services.AddScoped<IPersonelRepository, PersonelRepository>();
             services.AddScoped<IUnitOfWork, UnitOfWork.UnitOfWork>();
-
+            services.Configure<ExternalPersonelApiSettings>(configuration.GetSection("ExternalPersonelApiSettings"));
             return services;
 
         }

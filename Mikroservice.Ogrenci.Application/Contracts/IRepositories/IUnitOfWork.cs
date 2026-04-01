@@ -1,9 +1,15 @@
-﻿namespace Microservice.Ogrenci.Application.Contracts.IRepositories
+﻿using System.Data;
+
+namespace Microservice.Ogrenci.Application.Contracts.IRepositories
 {
     public interface IUnitOfWork
     {
-        Task<int> CommitChangesAsync(CancellationToken cancellationToken = default);
-        Task BeginTransactionAsync(CancellationToken cancellationToken = default);
-        Task CommitTransactionAsync(CancellationToken cancellationToken = default);
+        IDbTransaction? Transaction { get; }
+        Task<IDbTransaction> BeginTransactionAsync(IsolationLevel isolationLevel = IsolationLevel.ReadCommitted,
+            CancellationToken cancellationToken = default);
+        Task CommitAsync(CancellationToken cancellationToken = default);
+        Task RollbackAsync(CancellationToken cancellationToken = default);
+        Task SaveChangesAsync(CancellationToken cancellationToken = default);
+        Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default);
     }
 }

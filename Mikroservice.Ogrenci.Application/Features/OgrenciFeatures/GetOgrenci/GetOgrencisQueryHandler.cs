@@ -4,6 +4,7 @@ using Microservice.Ogrenci.Application.Contracts.IRepositories;
 using Microservice.Shared;
 using Microservice.Shared.OpenTelemetry;
 using Microservice.Shared.Services.RedisServiceItems;
+using Serilog;
 
 namespace Microservice.Ogrenci.Application.Features.OgrenciFeatures.GetOgrenci
 {
@@ -11,6 +12,11 @@ namespace Microservice.Ogrenci.Application.Features.OgrenciFeatures.GetOgrenci
     {
         public async Task<ServiceResult<List<Domain.Entities.Ogrenci>>> Handle(GetOgrencisQuery request, CancellationToken cancellationToken)
         {
+            //Log.Debug("DEBUG TEST");
+            //Log.Information("INFO TEST");
+            //Log.Warning("WARNING TEST");
+
+
             OpenTelemetryMetric.OgrenciGetOgrencisQueryExecuted.Add(1,
           new KeyValuePair<string, object?>("event", "add")); // Örnek Metric
 

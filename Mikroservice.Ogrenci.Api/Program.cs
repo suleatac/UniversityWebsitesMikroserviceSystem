@@ -9,10 +9,13 @@ using Microservice.Shared.SeriLog;
 using Microsoft.EntityFrameworkCore;
 using Mikroservice.Ogrenci.Api;
 using Mikroservice.Ogrenci.Api.Endpoints.OgrenciEndPoints.OgrenciEndPoints;
-using Mikroservice.Ogrenci.Api.RecurringJob;
-using Mikroservice.Ogrenci.Api.SeedDataJob;
+using Mikroservice.Ogrenci.Api.Jobs;
+using Mikroservice.Ogrenci.Api.SeedData;
+using Mikroservice.Ogrenci.Application.Contracts.Services;
+using Mikroservice.Ogrenci.Application.Services;
 using Mikroservice.Ogrenci.Persistence;
 using Mikroservice.Ogrenci.Persistence.Extentions;
+using Mikroservice.Ogrenci.Persistence.Services;
 using Serilog;
 var builder = WebApplication.CreateBuilder(args);
 
@@ -81,8 +84,9 @@ builder.Services.AddOpenTelemetryTraceExt(builder.Configuration);
 //Log işlemi için eklenen kısım
 builder.Host.UseSerilog(Microservice.Shared.SeriLog.Logging.ConfigureLogging);
 
-builder.Services.AddCommonServiceExt(typeof(OgrenciApplicationAssembly));
 builder.Services.AddPersistenceExtentions(builder.Configuration);
+builder.Services.AddCommonServiceExt(typeof(OgrenciApplicationAssembly));
+
 builder.Services.AddRedisCacheExt(builder.Configuration);
 //Hangfire ayarları
 builder.Services.AddHangfire(config =>
@@ -95,14 +99,23 @@ builder.Services.AddHangfire(config =>
 
 
 builder.Services.AddHangfireServer();
+// HttpClient
+//builder.Services.AddHttpClient();
+builder.Services.AddHttpClient<IOgrenciExternalApiService, OgrenciExternalApiService>();
+builder.Services.AddScoped<IOgrenciSyncService, OgrenciSyncService>();
+builder.Services.AddScoped<IOgrenciSeedService, OgrenciSeedService>();
+
+
 //Versiyonlama eklendi
 builder.Services.AddVersioningExt();
 
 
 
 
-builder.Services.AddHttpClient();
-builder.Services.AddScoped<OgrenciRecurringJob>();
+
+
+
+//builder.Services.AddScoped<OgrenciRecurringJob>();
 
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
@@ -118,15 +131,8 @@ using (var scope = app.Services.CreateScope())
     await dbContext.Database.MigrateAsync();
 }
 
-try
-{
-    await app.AddSeedDataExt();
-    Console.WriteLine("Seed data ekleme işlemi tamamlandı.");
-}
-catch (Exception ex)
-{
-    Console.WriteLine(ex.Message);
-}
+
+
 //Ip Rate Limiting middleware'i eklendi
 app.UseIpRateLimiting();
 //CORS middleware'i eklendi
@@ -142,17 +148,26 @@ app.AddOgrenciGroupEndpointExt(app.AddVersionSetExt());
 app.UseHangfireDashboard("/hangfire", new DashboardOptions {
     Authorization = new[] { new AllowAll() }
 });
-OgrenciRecurringJob.VeriTabaniGuncellemeJob();
+
+// Hangfire Job Startup
+app.Lifetime.ApplicationStarted.Register(() => {
+    OgrenciHangfireJob.ScheduleDailySync();
+});
 app.UseMiddleware<OpenTelemetryTraceIdMiddleware>();
 app.UseMiddleware<RequestAndResponseActivityMiddleware>();
 app.UseExceptionMiddleware();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-
+    await app.InitializeSeedDataAsync();
     app.UseSwagger();
     app.UseSwaggerUI();
     app.MapOpenApi();
+}
+// Production'da da çalışsın ama sadece boş DB'de
+else if (!app.Environment.IsProduction())
+{
+    await app.InitializeSeedDataAsync();
 }
 //Metric işlemi için eklenen middleware
 app.UseOpenTelemetryPrometheusScrapingEndpoint("/metrics");

@@ -1,20 +1,22 @@
 using AspNetCoreRateLimit;
 using Hangfire;
-using Hangfire.Dashboard;
 using Hangfire.PostgreSql;
 using Logging.Shared;
 using Microservice.Personel.Application;
+using Microservice.Personel.Application.Contracts.Services;
 using Microservice.Shared.Extentions;
 using Microservice.Shared.OpenTelemetry;
 using Microservice.Shared.SeriLog;
 using Microsoft.EntityFrameworkCore;
 using Mikroservice.Personel.Api;
 using Mikroservice.Personel.Api.Endpoints.Personels.PersonelEndPointExt;
-using Mikroservice.Personel.Api.RecurringJob;
-using Mikroservice.Personel.Api.SeedDataJob;
+using Mikroservice.Personel.Api.Jobs;
+using Mikroservice.Personel.Api.SeedData;
+using Mikroservice.Personel.Application.Contracts.Services;
+using Mikroservice.Personel.Application.Services;
 using Mikroservice.Personel.Persistence;
 using Mikroservice.Personel.Persistence.Extentions;
-
+using Mikroservice.Personel.Persistence.Services;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -101,10 +103,15 @@ builder.Host.UseSerilog(Microservice.Shared.SeriLog.Logging.ConfigureLogging);
 //Versiyonlama eklendi
 builder.Services.AddVersioningExt();
 
+// HttpClient
+//builder.Services.AddHttpClient();
 
 
-builder.Services.AddHttpClient();
-builder.Services.AddScoped<PersonelRecurringJob>();
+// HttpClient
+//builder.Services.AddHttpClient();
+builder.Services.AddHttpClient<IPersonelExternalApiService, PersonelExternalApiService>();
+builder.Services.AddScoped<IPersonelSyncService, PersonelSyncService>();
+builder.Services.AddScoped<IPersonelSeedService, PersonelSeedService>();
 
 var app = builder.Build();
 
@@ -114,15 +121,6 @@ using (var scope = app.Services.CreateScope())
     var serviceProvider = scope.ServiceProvider;
     var dbContext = serviceProvider.GetRequiredService<AppDbContext>();
     await dbContext.Database.MigrateAsync();
-}
-try
-{
-    await app.AddSeedDataExt();
-    Console.WriteLine("Seed data ekleme işlemi tamamlandı.");
-}
-catch (Exception ex)
-{
-    Console.WriteLine(ex.Message);
 }
 
 
@@ -140,17 +138,25 @@ app.AddPersonelGroupEndpointExt(app.AddVersionSetExt());
 app.UseHangfireDashboard("/hangfire", new DashboardOptions {
     Authorization = new[] { new AllowAll() }
 });
-PersonelRecurringJob.VeriTabaniGuncellemeJob();
+// Hangfire Job Startup
+app.Lifetime.ApplicationStarted.Register(() => {
+    PersonelHangfireJob.ScheduleDailySync();
+});
 app.UseMiddleware<OpenTelemetryTraceIdMiddleware>();
 app.UseMiddleware<RequestAndResponseActivityMiddleware>();
 app.UseExceptionMiddleware();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-
+    await app.InitializeSeedDataAsync();
     app.UseSwagger();
     app.UseSwaggerUI();
     app.MapOpenApi();
+}
+// Production'da da çalışsın ama sadece boş DB'de
+else if (!app.Environment.IsProduction())
+{
+    await app.InitializeSeedDataAsync();
 }
 //Metric işlemi için eklenen middleware
 app.UseOpenTelemetryPrometheusScrapingEndpoint("/metrics");

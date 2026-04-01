@@ -6,12 +6,14 @@ namespace Mikroservice.Personel.Persistence.Repositories
     public class PersonelRepository(AppDbContext appDbContext) : GenericRepository<Microservice.Personel.Domain.Entities.Personel>(appDbContext), IPersonelRepository
     {
   
-        public async Task<Microservice.Personel.Domain.Entities.Personel> GetPersonelByUsername(string username)
+        public async Task<Microservice.Personel.Domain.Entities.Personel?> GetPersonelByUsername(string username,CancellationToken cancellationToken = default)
         {
-            // await eklendi
-           var personel = await appDbContext.Personels.Where(s=>s.username==username).FirstOrDefaultAsync();
-
-           return personel;
+            return await appDbContext.Personels
+                .FirstOrDefaultAsync(x => x.username == username, cancellationToken);
+        }
+        public async Task<bool> AnyAsync(CancellationToken cancellationToken = default)
+        {
+            return await appDbContext.Personels.AnyAsync(cancellationToken);
         }
 
     }

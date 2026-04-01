@@ -1,6 +1,6 @@
 ﻿using Hangfire.Dashboard;
 
-namespace Mikroservice.Personel.Api.RecurringJob
+namespace Mikroservice.Ogrenci.Api.Jobs
 {
     public class AllowAll : IDashboardAuthorizationFilter
     {

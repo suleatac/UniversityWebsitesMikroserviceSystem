@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Microservice.Shared\Microservice.Shared.csproj" />
     <ProjectReference Include="..\Mikroservice.Ogrenci.Domain\Mikroservice.Ogrenci.Domain.csproj" />
   </ItemGroup>
 

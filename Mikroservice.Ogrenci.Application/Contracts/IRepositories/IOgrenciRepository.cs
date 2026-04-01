@@ -2,7 +2,8 @@
 {
     public interface IOgrenciRepository: IGenericRepository<Domain.Entities.Ogrenci>
     {
-   
-        Task<Microservice.Ogrenci.Domain.Entities.Ogrenci> GetOgrenciByOgrenciProgramId(int ogrenciprogramid);
+
+        Task<Domain.Entities.Ogrenci?> GetOgrenciByOgrenciProgramId(int ogrenciProgramId, CancellationToken cancellationToken = default);
+        Task<bool> AnyAsync(CancellationToken cancellationToken = default);
     }
 }
