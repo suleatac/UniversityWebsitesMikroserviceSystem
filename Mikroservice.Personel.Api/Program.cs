@@ -11,6 +11,7 @@ using Microsoft.EntityFrameworkCore;
 using Mikroservice.Personel.Api;
 using Mikroservice.Personel.Api.Endpoints.Personels.PersonelEndPointExt;
 using Mikroservice.Personel.Api.RecurringJob;
+using Mikroservice.Personel.Api.SeedDataJob;
 using Mikroservice.Personel.Persistence;
 using Mikroservice.Personel.Persistence.Extentions;
 
@@ -114,7 +115,15 @@ using (var scope = app.Services.CreateScope())
     var dbContext = serviceProvider.GetRequiredService<AppDbContext>();
     await dbContext.Database.MigrateAsync();
 }
-
+try
+{
+    await app.AddSeedDataExt();
+    Console.WriteLine("Seed data ekleme işlemi tamamlandı.");
+}
+catch (Exception ex)
+{
+    Console.WriteLine(ex.Message);
+}
 
 
 //CORS middleware'i eklendi

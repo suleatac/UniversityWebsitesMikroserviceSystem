@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using Mikroservice.Ogrenci.Api;
 using Mikroservice.Ogrenci.Api.Endpoints.OgrenciEndPoints.OgrenciEndPoints;
 using Mikroservice.Ogrenci.Api.RecurringJob;
+using Mikroservice.Ogrenci.Api.SeedDataJob;
 using Mikroservice.Ogrenci.Persistence;
 using Mikroservice.Ogrenci.Persistence.Extentions;
 using Serilog;
@@ -117,6 +118,15 @@ using (var scope = app.Services.CreateScope())
     await dbContext.Database.MigrateAsync();
 }
 
+try
+{
+    await app.AddSeedDataExt();
+    Console.WriteLine("Seed data ekleme işlemi tamamlandı.");
+}
+catch (Exception ex)
+{
+    Console.WriteLine(ex.Message);
+}
 //Ip Rate Limiting middleware'i eklendi
 app.UseIpRateLimiting();
 //CORS middleware'i eklendi
