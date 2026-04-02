@@ -151,7 +151,7 @@ app.UseHangfireDashboard("/hangfire", new DashboardOptions {
 
 // Hangfire Job Startup
 app.Lifetime.ApplicationStarted.Register(() => {
-    OgrenciHangfireJob.ScheduleDailySync();
+// OgrenciHangfireJob.ScheduleDailySync();
 });
 app.UseMiddleware<OpenTelemetryTraceIdMiddleware>();
 app.UseMiddleware<RequestAndResponseActivityMiddleware>();
