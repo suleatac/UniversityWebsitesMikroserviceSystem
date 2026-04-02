@@ -80,7 +80,7 @@ namespace Mikroservice.Ogrenci.Application.Services
                 throw new OgrenciSyncException("External API erişim hatası");
             }
 
-            var options = new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
+            var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
             return JsonSerializer.Deserialize<List<Microservice.Ogrenci.Domain.Entities.Ogrenci>>(jsonContent, options) ?? [];
         }
 
@@ -91,11 +91,12 @@ namespace Mikroservice.Ogrenci.Application.Services
             {
                 cancellationToken.ThrowIfCancellationRequested();
 
-                var existing = await _ogrenciRepository.GetOgrenciByOgrenciProgramId(Ogrenci.ogrenciprogramid);
+                var existing = await _ogrenciRepository.GetOgrenciByOgrenciProgramId(Ogrenci.OgrenciProgramId);
 
                 if (existing == null)
                 {
                     await _ogrenciRepository.AddAsync(Ogrenci);
+                    await _unitOfWork.SaveChangesAsync(cancellationToken);
                 }
                 else
                 {
@@ -104,7 +105,7 @@ namespace Mikroservice.Ogrenci.Application.Services
                 }
 
                 processed++;
-                if (processed % 100 == 0)
+                if (processed % 10 == 0)
                     await _unitOfWork.SaveChangesAsync(cancellationToken);
             }
 

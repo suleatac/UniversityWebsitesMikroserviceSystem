@@ -86,7 +86,7 @@ namespace Mikroservice.Personel.Application.Services
                 throw new PersonelSyncException("External API erişim hatası");
             }
 
-            var options = new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
+            var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
             return JsonSerializer.Deserialize<List<Microservice.Personel.Domain.Entities.Personel>>(jsonContent, options) ?? [];
         }
 
@@ -97,7 +97,7 @@ namespace Mikroservice.Personel.Application.Services
             {
                 cancellationToken.ThrowIfCancellationRequested();
 
-                var existing = await _PersonelRepository.GetPersonelByUsername(Personel.username!);
+                var existing = await _PersonelRepository.GetPersonelByUsername(Personel.Username!);
 
                 if (existing == null)
                 {

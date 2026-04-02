@@ -88,7 +88,7 @@ namespace Microservice.Shared.Extentions
 
                     })
                     .AddRedisInstrumentation(options => {
-                        options.SetVerboseDatabaseStatements = false; //şimdilik false . true yaparsan redis için trace bilgilerini alırsın.
+                        options.SetVerboseDatabaseStatements = true; //şimdilik false . true yaparsan redis için trace bilgilerini alırsın.
                     })//Redis
                     .SetSampler(new AlwaysOnSampler())
                     .AddConsoleExporter()

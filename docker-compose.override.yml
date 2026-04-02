@@ -10,6 +10,8 @@ services:
       - ConnectionStrings:Redis=redis.db.api:6379,password=Password12
       - ConnectionStrings:PostgreSqlServer=Host=postgres.db.ogrenci;Port=5432;Database=ogrenci_db;Username=ogrenci_db_user;Password=ogrenci_db_user_password
       - ConnectionStrings:HangfirePostgreSqlServer=Host=postgres.db.ogrenci;Port=5432;Database=ogrenci_db;Username=ogrenci_db_user;Password=ogrenci_db_user_password
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://jaeger:4317
+      - OTEL_EXPORTER_OTLP_PROTOCOL=grpc
     ports:
       - "8080:8080"
     depends_on:
@@ -27,6 +29,8 @@ services:
       - ConnectionStrings:Redis=redis.db.api:6379,password=Password12
       - ConnectionStrings:PostgreSqlServer=Host=postgres.db.personel;Port=5432;Database=personel_db;Username=personel_db_user;Password=personel_db_user_password
       - ConnectionStrings:HangfirePostgreSqlServer=Host=postgres.db.personel;Port=5432;Database=personel_db;Username=personel_db_user;Password=personel_db_user_password
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://jaeger:4317
+      - OTEL_EXPORTER_OTLP_PROTOCOL=grpc
     ports:
       - "8082:8080"
     depends_on:

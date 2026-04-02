@@ -7,7 +7,7 @@ namespace Mikroservice.Ogrenci.Application.Mappings
         public OgrenciMapping()
         {
             CreateMap<Microservice.Ogrenci.Domain.Entities.Ogrenci, Microservice.Ogrenci.Domain.Entities.Ogrenci>()
-                .ForMember(dest => dest.id, opt => opt.Ignore());
+                .ForMember(dest => dest.Id, opt => opt.Ignore());
 
         }
     }

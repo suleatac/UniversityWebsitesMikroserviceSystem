@@ -1,4 +1,5 @@
-﻿using Mikroservice.Personel.Application.Services;
+﻿using Microservice.Personel.Application.Contracts.Services;
+using Mikroservice.Personel.Application.Services;
 
 namespace Mikroservice.Personel.Api.SeedData
 {
@@ -8,7 +9,7 @@ namespace Mikroservice.Personel.Api.SeedData
         {
             using var scope = app.Services.CreateScope();
             var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
-            var seedService = scope.ServiceProvider.GetRequiredService<PersonelSeedService>();
+            var seedService = scope.ServiceProvider.GetRequiredService<IPersonelSeedService>();
 
             try
             {

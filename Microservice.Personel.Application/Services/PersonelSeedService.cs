@@ -1,10 +1,6 @@
 ﻿using Microservice.Personel.Application.Contracts.IRepositories;
 using Microservice.Personel.Application.Contracts.Services;
 using Microsoft.Extensions.Logging;
-using Mikroservice.Personel.Application.Contracts.Services;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Mikroservice.Personel.Application.Services
 {
@@ -25,10 +21,10 @@ namespace Mikroservice.Personel.Application.Services
         }
         public async Task<bool> IsDatabaseSeededAsync(CancellationToken cancellationToken = default)
         {
-            // En az 1 öğrenci var mı kontrol et
-            var hasStudents = await _PersonelRepository.AnyAsync(cancellationToken);
-            _logger.LogDebug("Database seeded kontrolü: {HasStudents}", hasStudents);
-            return hasStudents;
+            // En az 1 personel var mı kontrol et
+            var hasPersonels = await _PersonelRepository.AnyAsync(cancellationToken);
+            _logger.LogDebug("Database seeded kontrolü: {HasPersonels}", hasPersonels);
+            return hasPersonels;
         }
 
         public async Task SeedInitialDataAsync(CancellationToken cancellationToken = default)
@@ -38,7 +34,7 @@ namespace Mikroservice.Personel.Application.Services
             // Mevcut sync service'i kullanarak tüm verileri çek
             var response = await _PersonelSyncService.SyncPersonelsAsync(null, cancellationToken);
 
-            _logger.LogInformation("Seed tamamlandı. Eklenen öğrenci sayısı: {Count}", response.TotalCount);
+            _logger.LogInformation("Seed tamamlandı. Eklenen personel sayısı: {Count}", response.TotalCount);
 
         }
     }

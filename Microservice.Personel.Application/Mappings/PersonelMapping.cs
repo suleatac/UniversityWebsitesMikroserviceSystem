@@ -7,7 +7,7 @@ namespace Microservice.Personel.Application.Mappings
         public PersonelMapping()
         {
             CreateMap<Domain.Entities.Personel, Domain.Entities.Personel>()
-                .ForMember(dest => dest.id, opt => opt.Ignore());
+                .ForMember(dest => dest.Id, opt => opt.Ignore());
 
         }
     }

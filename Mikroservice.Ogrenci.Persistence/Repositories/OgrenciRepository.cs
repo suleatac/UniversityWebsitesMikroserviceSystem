@@ -6,10 +6,10 @@ namespace Mikroservice.Ogrenci.Persistence.Repositories
     public class OgrenciRepository(AppDbContext appDbContext) : GenericRepository<Microservice.Ogrenci.Domain.Entities.Ogrenci>(appDbContext), IOgrenciRepository
     {
      
-        public async Task<Microservice.Ogrenci.Domain.Entities.Ogrenci?> GetOgrenciByOgrenciProgramId(int ogrenciProgramId, CancellationToken cancellationToken = default)
+        public async Task<Microservice.Ogrenci.Domain.Entities.Ogrenci?> GetOgrenciByOgrenciProgramId(int? ogrenciProgramId, CancellationToken cancellationToken = default)
         {
             return await appDbContext.Ogrencis
-                .FirstOrDefaultAsync(x => x.ogrenciprogramid == ogrenciProgramId, cancellationToken);
+                .FirstOrDefaultAsync(x => x.OgrenciProgramId == ogrenciProgramId, cancellationToken);
         }
         
         public async Task<bool> AnyAsync(CancellationToken cancellationToken = default)

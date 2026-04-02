@@ -9,7 +9,7 @@ namespace Mikroservice.Personel.Persistence.Repositories
         public async Task<Microservice.Personel.Domain.Entities.Personel?> GetPersonelByUsername(string username,CancellationToken cancellationToken = default)
         {
             return await appDbContext.Personels
-                .FirstOrDefaultAsync(x => x.username == username, cancellationToken);
+                .FirstOrDefaultAsync(x => x.Username == username, cancellationToken);
         }
         public async Task<bool> AnyAsync(CancellationToken cancellationToken = default)
         {

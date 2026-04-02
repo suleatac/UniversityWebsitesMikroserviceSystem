@@ -1,54 +1,59 @@
-﻿
 using Microsoft.EntityFrameworkCore;
 
 namespace Microservice.Ogrenci.Domain.Entities
 {
-    [Index(nameof(ogrenciprogramid))]
-    [Index(nameof(adi), nameof(soyadi))]
-    [Index(nameof(eposta))]
-    [Index(nameof(username))]
-    [Index(nameof(songuncellemetarihi))]
+    [Index(nameof(OgrenciProgramId))]
+    [Index(nameof(Adi), nameof(Soyadi))]
+    [Index(nameof(Eposta))]
+    [Index(nameof(Username))]
+    [Index(nameof(SonGuncellemeTarihi))]
     public class Ogrenci
     {
-        public int id { get; set; }
-        public int ogrenciprogramid { get; set; }
-        public string? tcnumarasi { get; set; }
-        public string? uyruk { get; set; }
-        public string? adi { get; set; }
-        public string? soyadi { get; set; }
-        public string? cinsiyeti { get; set; }
-        public string? eposta { get; set; }
-        public string? telefoncep { get; set; }
-        public string? adres { get; set; }
-        public string? babaadi { get; set; }
-        public string? anaadi { get; set; }
-        public string? dogumyeri { get; set; }
-        public DateTime dogumtarihi { get; set; }
-        public string? kangrubu { get; set; }
-        public string? sehitgaziyakini { get; set; }
-        public string? resimkodu { get; set; }
-        public Nullable<int> fakulteid { get; set; }
-        public string? fakulte { get; set; }
-        public string? bolum { get; set; }
-        public string? fakulteingilizceadi { get; set; }
-        public string? bolumingilizceadi { get; set; }
-        public Nullable<int> sinif { get; set; }
-        public string? studentno { get; set; }
-        public string? akademikprogram { get; set; }
-        public string? programtipi { get; set; }
-        public string? scholarship { get; set; }
-        public string? durum { get; set; }
-        public string? ogretimtipi { get; set; }
-        public string? programturu { get; set; }
-        public Nullable<decimal> transcriptnotortalamasi { get; set; }
-        public DateTime kayittarihi { get; set; }
-        public Nullable<int> bolumid { get; set; }
-        public Nullable<int> yoksisogrenciid { get; set; }
-        public Nullable<int> yoksisid { get; set; }
-        public string? username { get; set; }
-        public DateTime songuncellemetarihi { get; set; }
-        public string? kisiseleposta { get; set; }
-        public string? kisiseltelefon { get; set; }
-        public string? personbase64image { get; set; }
+        // ── Internal / DB fields ─────────────────────────────
+        public int Id { get; set; }
+        public string? Username { get; set; }
+        public DateTime? SonGuncellemeTarihi { get; set; }
+        public string? KisiselEposta { get; set; }
+        public string? KisiselTelefon { get; set; }
+
+        // ── API fields (names match JSON keys exactly) ────────
+        public int? OgrenciProgramId { get; set; }
+        public string? TcNumarasi { get; set; }
+        public string? Uyruk { get; set; }
+        public string? Adi { get; set; }
+        public string? Soyadi { get; set; }
+        public string? Cinsiyeti { get; set; }
+        public string? Eposta { get; set; }
+        public string? TelefonCep { get; set; }
+        public string? Adres { get; set; }
+        public string? BabaAdi { get; set; }
+        public string? AnaAdi { get; set; }
+        public string? DogumYeri { get; set; }
+        public DateTime DogumTarihi { get; set; }
+        public string? KanGrubu { get; set; }
+        public string? SehitGaziYakini { get; set; }
+        public string? ResimKodu { get; set; }
+        public int? FakulteId { get; set; }
+        public string? Fakulte { get; set; }
+        public string? Bolum { get; set; }
+        public string? FakulteIngilizceAdi { get; set; }
+        public string? BolumIngilizceAdi { get; set; }
+        public int? Sinif { get; set; }
+        public string? StudentNo { get; set; }
+        public string? PersonBase64Image { get; set; }
+        public string? AkademikProgram { get; set; }
+        public string? ProgramTipi { get; set; }
+        public string? Scholarship { get; set; }
+        public string? Durum { get; set; }
+        public string? DurumDetail { get; set; }
+        public DateTime? MezuniyetTarihi { get; set; }
+        public DateTime? IlisikKesmeTarihi { get; set; }
+        public string? OgretimTipi { get; set; }
+        public string? ProgramTuru { get; set; }
+        public decimal? TranscriptNotOrtalamasi { get; set; }
+        public DateTime? KayitTarihi { get; set; }
+        public int? BolumId { get; set; }
+        public int? YoksisOgrenciId { get; set; }
+        public int? YoksisId { get; set; }
     }
 }

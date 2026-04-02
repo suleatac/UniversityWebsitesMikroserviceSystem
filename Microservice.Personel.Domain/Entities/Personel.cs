@@ -1,70 +1,70 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 
-namespace Microservice.Personel.Domain.Entities
+namespace Microservice.Personel.Domain.Entities;
+
+[Index(nameof(Adi), nameof(Soyadi))]
+[Index(nameof(Eposta))]
+[Index(nameof(Username))]
+[Index(nameof(SonGuncellemeTarihi))]
+public class Personel
 {
-   
-    [Index(nameof(adi), nameof(soyadi))]
-    [Index(nameof(eposta))]
-    [Index(nameof(username))]
-    [Index(nameof(songuncellemetarihi))]
-    public class Personel
-    {
-        public int id { get; set; }
-        public Nullable<int> personid { get; set; }
-        public string? tcnumarasi { get; set; }
-        public string? adi { get; set; }
-        public string? soyadi { get; set; }
-        public string? uyruk { get; set; }
-        public string? cinsiyeti { get; set; }
-        public string? eposta { get; set; }
-        public string? telefoncep { get; set; }
-        public string? telefondahili { get; set; }
-        public string? telefondahilinumara { get; set; }
-        public string? adres { get; set; }
-        public string? babaadi { get; set; }
-        public string? anaadi { get; set; }
-        public string? dogumyeri { get; set; }
-        public DateTime dogumtarihi { get; set; }
-        public string? kangrubu { get; set; }
-        public string? sehitgaziyakini { get; set; }
-        public Nullable<int> personeltipiid { get; set; }
-        public string? personeltipi { get; set; }
-        public Nullable<int> gorevyeriid { get; set; }
-        public string? gorevyeri { get; set; }
-        public DateTime? gorevebaslamatarihi { get; set; }
-        public DateTime? kurumdanayrilistarihi { get; set; }
-        public Nullable<int> kadrotipiid { get; set; }
-        public string? kadrotipi { get; set; }
-        public string? kadrokodu { get; set; }
-        public string? idarigorevler { get; set; }
-        public string? iliskilioldugupozisyonlar { get; set; }
-        public string? emeklisicilkodu { get; set; }
-        public Nullable<int> unvanid { get; set; }
-        public string? asliunvan { get; set; }
-        public Nullable<int> ekgosterge { get; set; }
-        public Nullable<int> gorevunvaniid { get; set; }
-        public string? gorevunvan { get; set; }
-        public Nullable<int> kadrounvanid { get; set; }
-        public string? kadrounvan { get; set; }
-        public string? kurumsicilno { get; set; }
-        public Nullable<int> ustgorevyeriid { get; set; }
-        public string? ustgorevyeriadi { get; set; }
-        public Nullable<int> ustgorevbirimid { get; set; }
-        public string? ustgorevbirimadi { get; set; }
-        public Nullable<int> kadrobirimid { get; set; }
-        public string? kadrobirimi { get; set; }
-        public Nullable<int> kadroustbirimid { get; set; }
-        public string? kadroustbirim { get; set; }
-        public string? username { get; set; }
-        public string? personencryptedid { get; set; }
-        public Nullable<decimal> brutucret { get; set; }
-        public DateTime? songuncellemetarihi { get; set; }
-        public string? kisiseleposta { get; set; }
-        public string? kisiseltelefon { get; set; }
-        public Nullable<bool> aktif { get; set; }
-        public string? personbase64imagemodifiedon { get; set; }
-        public string? personbase64image { get; set; }
-        public string? asili { get; set; }
-
-    }
+    public int Id { get; set; }
+    public int? PersonId { get; set; }
+    public string? TcNumarasi { get; set; }
+    public string? Adi { get; set; }
+    public string? Soyadi { get; set; }
+    public string? Uyruk { get; set; }
+    public string? Cinsiyeti { get; set; }
+    public string? Eposta { get; set; }
+    public string? TelefonCep { get; set; }
+    public string? TelefonDahili { get; set; }
+    public string? TelefonDahiliNumara { get; set; }
+    public string? Adres { get; set; }
+    public string? BabaAdi { get; set; }
+    public string? AnaAdi { get; set; }
+    public string? DogumYeri { get; set; }
+    public DateTime? DogumTarihi { get; set; }
+    public string? KanGrubu { get; set; }
+    public string? SehitGaziYakini { get; set; }
+    public int? PersonelTipiId { get; set; }
+    public string? PersonelTipi { get; set; }
+    public int? GorevYeriId { get; set; }
+    public string? GorevYeri { get; set; }
+    public DateTime? GoreveBaslamaTarihi { get; set; }
+    public DateTime? KurumdanAyrilisTarihi { get; set; }
+    public int? KadroTipiId { get; set; }
+    public string? KadroTipi { get; set; }
+    public string? KadroKodu { get; set; }
+    public string? IdariGorevler { get; set; }
+    public string? IliskiliOlduguPozisyonlar { get; set; }
+    public string? EmekliSicilKodu { get; set; }
+    public int? UnvanId { get; set; }
+    public string? AsliUnvan { get; set; }
+    public int? EkGosterge { get; set; }
+    public int? GorevUnvaniId { get; set; }
+    public string? GorevUnvan { get; set; }
+    public int? KadroUnvanId { get; set; }
+    public string? KadroUnvan { get; set; }
+    public string? KurumSicilNo { get; set; }
+    public int? UstGorevYeriId { get; set; }
+    public string? UstGorevYeriAdi { get; set; }
+    public int? UstGorevBirimId { get; set; }
+    public string? UstGorevBirimAdi { get; set; }
+    public int? KadroBirimId { get; set; }
+    public string? KadroBirimi { get; set; }
+    public int? KadroUstBirimId { get; set; }
+    public string? KadroUstBirim { get; set; }
+    public string? Username { get; set; }
+    public string? PersonEncryptedId { get; set; }
+    public decimal? BrutUcret { get; set; }
+    public DateTime? SonGuncellemeTarihi { get; set; }
+    public string? KisiselEposta { get; set; }
+    public string? KisiselTelefon { get; set; }
+    public bool? Aktif { get; set; }
+    public string? PersonBase64ImageModifiedOn { get; set; }
+    public string? PersonBase64Image { get; set; }
+    public string? Asili { get; set; }
+    public bool? CovidBagisik { get; set; }
+    public DateTime? SonTestZamani { get; set; }
+    public string? HesDurumu { get; set; }
 }

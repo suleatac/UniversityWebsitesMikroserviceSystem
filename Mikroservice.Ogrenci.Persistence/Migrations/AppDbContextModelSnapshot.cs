@@ -24,140 +24,149 @@ namespace Mikroservice.Ogrenci.Persistence.Migrations
 
             modelBuilder.Entity("Microservice.Ogrenci.Domain.Entities.Ogrenci", b =>
                 {
-                    b.Property<int>("id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("adi")
+                    b.Property<string>("Adi")
                         .HasColumnType("text");
 
-                    b.Property<string>("adres")
+                    b.Property<string>("Adres")
                         .HasColumnType("text");
 
-                    b.Property<string>("akademikprogram")
+                    b.Property<string>("AkademikProgram")
                         .HasColumnType("text");
 
-                    b.Property<string>("anaadi")
+                    b.Property<string>("AnaAdi")
                         .HasColumnType("text");
 
-                    b.Property<string>("babaadi")
+                    b.Property<string>("BabaAdi")
                         .HasColumnType("text");
 
-                    b.Property<string>("bolum")
+                    b.Property<string>("Bolum")
                         .HasColumnType("text");
 
-                    b.Property<int?>("bolumid")
+                    b.Property<int?>("BolumId")
                         .HasColumnType("integer");
 
-                    b.Property<string>("bolumingilizceadi")
+                    b.Property<string>("BolumIngilizceAdi")
                         .HasColumnType("text");
 
-                    b.Property<string>("cinsiyeti")
+                    b.Property<string>("Cinsiyeti")
                         .HasColumnType("text");
 
-                    b.Property<DateTime>("dogumtarihi")
+                    b.Property<DateTime>("DogumTarihi")
                         .HasColumnType("timestamp without time zone");
 
-                    b.Property<string>("dogumyeri")
+                    b.Property<string>("DogumYeri")
                         .HasColumnType("text");
 
-                    b.Property<string>("durum")
+                    b.Property<string>("Durum")
                         .HasColumnType("text");
 
-                    b.Property<string>("eposta")
+                    b.Property<string>("DurumDetail")
                         .HasColumnType("text");
 
-                    b.Property<string>("fakulte")
+                    b.Property<string>("Eposta")
                         .HasColumnType("text");
 
-                    b.Property<int?>("fakulteid")
+                    b.Property<string>("Fakulte")
+                        .HasColumnType("text");
+
+                    b.Property<int?>("FakulteId")
                         .HasColumnType("integer");
 
-                    b.Property<string>("fakulteingilizceadi")
+                    b.Property<string>("FakulteIngilizceAdi")
                         .HasColumnType("text");
 
-                    b.Property<string>("kangrubu")
-                        .HasColumnType("text");
-
-                    b.Property<DateTime>("kayittarihi")
+                    b.Property<DateTime?>("IlisikKesmeTarihi")
                         .HasColumnType("timestamp without time zone");
 
-                    b.Property<string>("kisiseleposta")
+                    b.Property<string>("KanGrubu")
                         .HasColumnType("text");
 
-                    b.Property<string>("kisiseltelefon")
-                        .HasColumnType("text");
-
-                    b.Property<int>("ogrenciprogramid")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("ogretimtipi")
-                        .HasColumnType("text");
-
-                    b.Property<string>("personbase64image")
-                        .HasColumnType("text");
-
-                    b.Property<string>("programtipi")
-                        .HasColumnType("text");
-
-                    b.Property<string>("programturu")
-                        .HasColumnType("text");
-
-                    b.Property<string>("resimkodu")
-                        .HasColumnType("text");
-
-                    b.Property<string>("scholarship")
-                        .HasColumnType("text");
-
-                    b.Property<string>("sehitgaziyakini")
-                        .HasColumnType("text");
-
-                    b.Property<int?>("sinif")
-                        .HasColumnType("integer");
-
-                    b.Property<DateTime>("songuncellemetarihi")
+                    b.Property<DateTime?>("KayitTarihi")
                         .HasColumnType("timestamp without time zone");
 
-                    b.Property<string>("soyadi")
+                    b.Property<string>("KisiselEposta")
                         .HasColumnType("text");
 
-                    b.Property<string>("studentno")
+                    b.Property<string>("KisiselTelefon")
                         .HasColumnType("text");
 
-                    b.Property<string>("tcnumarasi")
+                    b.Property<DateTime?>("MezuniyetTarihi")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<int?>("OgrenciProgramId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("OgretimTipi")
                         .HasColumnType("text");
 
-                    b.Property<string>("telefoncep")
+                    b.Property<string>("PersonBase64Image")
                         .HasColumnType("text");
 
-                    b.Property<decimal?>("transcriptnotortalamasi")
+                    b.Property<string>("ProgramTipi")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ProgramTuru")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ResimKodu")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Scholarship")
+                        .HasColumnType("text");
+
+                    b.Property<string>("SehitGaziYakini")
+                        .HasColumnType("text");
+
+                    b.Property<int?>("Sinif")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("SonGuncellemeTarihi")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("Soyadi")
+                        .HasColumnType("text");
+
+                    b.Property<string>("StudentNo")
+                        .HasColumnType("text");
+
+                    b.Property<string>("TcNumarasi")
+                        .HasColumnType("text");
+
+                    b.Property<string>("TelefonCep")
+                        .HasColumnType("text");
+
+                    b.Property<decimal?>("TranscriptNotOrtalamasi")
                         .HasColumnType("numeric");
 
-                    b.Property<string>("username")
+                    b.Property<string>("Username")
                         .HasColumnType("text");
 
-                    b.Property<string>("uyruk")
+                    b.Property<string>("Uyruk")
                         .HasColumnType("text");
 
-                    b.Property<int?>("yoksisid")
+                    b.Property<int?>("YoksisId")
                         .HasColumnType("integer");
 
-                    b.Property<int?>("yoksisogrenciid")
+                    b.Property<int?>("YoksisOgrenciId")
                         .HasColumnType("integer");
 
-                    b.HasKey("id");
+                    b.HasKey("Id");
 
-                    b.HasIndex("eposta");
+                    b.HasIndex("Eposta");
 
-                    b.HasIndex("ogrenciprogramid");
+                    b.HasIndex("OgrenciProgramId");
 
-                    b.HasIndex("songuncellemetarihi");
+                    b.HasIndex("SonGuncellemeTarihi");
 
-                    b.HasIndex("username");
+                    b.HasIndex("Username");
 
-                    b.HasIndex("adi", "soyadi");
+                    b.HasIndex("Adi", "Soyadi");
 
                     b.ToTable("Ogrencis");
                 });
