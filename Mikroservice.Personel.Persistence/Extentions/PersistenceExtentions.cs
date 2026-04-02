@@ -16,6 +16,10 @@ namespace Mikroservice.Personel.Persistence.Extentions
                 var connectionToString = configuration.GetSection(ConnectionTostringOption.Key).Get<ConnectionTostringOption>();
                 options.UseNpgsql(connectionToString!.PostgreSqlServer, sqlServerOptionAction => {
                     sqlServerOptionAction.MigrationsAssembly(typeof(PersistenceAssembly).Assembly.FullName);
+                    sqlServerOptionAction.EnableRetryOnFailure(
+         maxRetryCount: 5,
+         maxRetryDelay: TimeSpan.FromSeconds(30),
+         errorCodesToAdd: null);
                 });
 
             });
