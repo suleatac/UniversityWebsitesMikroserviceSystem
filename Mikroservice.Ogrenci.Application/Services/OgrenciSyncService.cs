@@ -34,7 +34,7 @@ namespace Mikroservice.Ogrenci.Application.Services
       DateTime? lastUpdateDate = null,
       CancellationToken cancellationToken = default)
         {
-            await _unitOfWork.BeginTransactionAsync(IsolationLevel.ReadCommitted, cancellationToken);
+
 
             try
             {
@@ -59,7 +59,7 @@ namespace Mikroservice.Ogrenci.Application.Services
 
                 await ProcessOgrencisAsync(ogrenciler, cancellationToken);
 
-                await _unitOfWork.CommitAsync(cancellationToken);
+              
 
                 _logger.LogInformation("Senkronizasyon tamamlandı. İşlenen: {Count}", ogrenciler.Count);
 
@@ -67,7 +67,7 @@ namespace Mikroservice.Ogrenci.Application.Services
             }
             catch (Exception ex)
             {
-                await _unitOfWork.RollbackAsync(cancellationToken);
+          
                 _logger.LogError(ex, "Senkronizasyon hatası");
                 throw;
             }

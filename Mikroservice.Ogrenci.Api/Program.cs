@@ -124,12 +124,12 @@ builder.Services.AddOpenApi();
 var app = builder.Build();
 
 //çalıştığında otomatik migration yapması için
-using (var scope = app.Services.CreateScope())
-{
-    var serviceProvider = scope.ServiceProvider;
-    var dbContext = serviceProvider.GetRequiredService<AppDbContext>();
-    await dbContext.Database.MigrateAsync();
-}
+//using (var scope = app.Services.CreateScope())
+//{
+//    var serviceProvider = scope.ServiceProvider;
+//    var dbContext = serviceProvider.GetRequiredService<AppDbContext>();
+//    await dbContext.Database.MigrateAsync();
+//}
 
 
 

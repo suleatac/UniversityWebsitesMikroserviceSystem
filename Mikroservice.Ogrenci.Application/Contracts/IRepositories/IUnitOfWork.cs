@@ -11,5 +11,9 @@ namespace Microservice.Ogrenci.Application.Contracts.IRepositories
         Task RollbackAsync(CancellationToken cancellationToken = default);
         Task SaveChangesAsync(CancellationToken cancellationToken = default);
         Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default);
+        Task<T> ExecuteInTransactionAsync<T>(
+         Func<CancellationToken, Task<T>> operation,
+         IsolationLevel isolationLevel = IsolationLevel.ReadCommitted,
+         CancellationToken cancellationToken = default);
     }
 }

@@ -18,7 +18,28 @@ namespace Mikroservice.Ogrenci.Infrastructure.Persistence.UnitOfWorks
         {
             _dbContext = dbContext;
         }
-
+        public async Task<T> ExecuteInTransactionAsync<T>(
+    Func<CancellationToken, Task<T>> operation,
+    IsolationLevel isolationLevel = IsolationLevel.ReadCommitted,
+    CancellationToken cancellationToken = default)
+        {
+            var strategy = _dbContext.Database.CreateExecutionStrategy();
+            return await strategy.ExecuteAsync(async () =>
+            {
+                await BeginTransactionAsync(isolationLevel, cancellationToken);
+                try
+                {
+                    var result = await operation(cancellationToken);
+                    await CommitAsync(cancellationToken);
+                    return result;
+                }
+                catch
+                {
+                    await RollbackAsync(cancellationToken);
+                    throw;
+                }
+            });
+        }
         public async Task<IDbTransaction> BeginTransactionAsync(
             IsolationLevel isolationLevel = IsolationLevel.ReadCommitted,
             CancellationToken cancellationToken = default)
