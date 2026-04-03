@@ -1,11 +1,7 @@
 ﻿using Microservice.Personel.Application.Contracts.IRepositories;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Storage;
-using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Text;
 
 namespace Mikroservice.Personel.Persistence.UnitOfWork
 {
@@ -22,12 +18,12 @@ namespace Mikroservice.Personel.Persistence.UnitOfWork
         }
 
         public async Task<IDbTransaction> BeginTransactionAsync(
-            IsolationLevel isolationLevel = IsolationLevel.ReadCommitted,
-            CancellationToken cancellationToken = default)
+           IsolationLevel isolationLevel = IsolationLevel.ReadCommitted,
+           CancellationToken cancellationToken = default)
         {
             if (_transaction != null)
             {
-                throw new InvalidOperationException("Zaten aktif bir transaction var.");
+                return _transaction.GetDbTransaction(); // 🔥 tekrar açma
             }
 
             _transaction = await _dbContext.Database.BeginTransactionAsync(isolationLevel, cancellationToken);
@@ -72,14 +68,15 @@ namespace Mikroservice.Personel.Persistence.UnitOfWork
 
         public async Task SaveChangesAsync(CancellationToken cancellationToken = default)
         {
+
             await _dbContext.SaveChangesAsync(cancellationToken);
         }
 
-        public async Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
-        {
-            return await _dbContext.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
-        }
 
+        public IExecutionStrategy GetExecutionStrategy()
+        {
+            return _dbContext.Database.CreateExecutionStrategy();
+        }
         public void Dispose()
         {
             _transaction?.Dispose();

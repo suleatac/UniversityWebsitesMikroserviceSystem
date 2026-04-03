@@ -1,7 +1,6 @@
 ﻿using Microservice.Ogrenci.Application.Contracts.IRepositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
-using Mikroservice.Ogrenci.Application.Contracts;
 using Mikroservice.Ogrenci.Persistence;
 using System.Data;
 
@@ -20,39 +19,65 @@ namespace Mikroservice.Ogrenci.Infrastructure.Persistence.UnitOfWorks
         }
 
         public async Task<IDbTransaction> BeginTransactionAsync(
-            IsolationLevel isolationLevel = IsolationLevel.ReadCommitted,
-            CancellationToken cancellationToken = default)
-        {
-            _transaction = await _dbContext.Database.BeginTransactionAsync(isolationLevel, cancellationToken);
-        }
-        // Commit ve Rollback:
-        public async Task CommitAsync(CancellationToken cancellationToken = default)
+           IsolationLevel isolationLevel = IsolationLevel.ReadCommitted,
+           CancellationToken cancellationToken = default)
         {
             if (_transaction != null)
             {
+                return _transaction.GetDbTransaction(); // 🔥 tekrar açma
+            }
+
+            _transaction = await _dbContext.Database.BeginTransactionAsync(isolationLevel, cancellationToken);
+            return _transaction.GetDbTransaction();
+        }
+
+        public async Task CommitAsync(CancellationToken cancellationToken = default)
+        {
+            if (_transaction == null)
+            {
+                throw new InvalidOperationException("Commit için transaction başlatılmamış.");
+            }
+
+            try
+            {
                 await _transaction.CommitAsync(cancellationToken);
+            }
+            finally
+            {
                 await _transaction.DisposeAsync();
+                _transaction = null;
             }
         }
 
         public async Task RollbackAsync(CancellationToken cancellationToken = default)
         {
-            if (_transaction != null)
+            if (_transaction == null)
+            {
+                return; // Nothing to rollback
+            }
+
+            try
             {
                 await _transaction.RollbackAsync(cancellationToken);
+            }
+            finally
+            {
                 await _transaction.DisposeAsync();
+                _transaction = null;
             }
         }
+
         public async Task SaveChangesAsync(CancellationToken cancellationToken = default)
         {
+    
             await _dbContext.SaveChangesAsync(cancellationToken);
         }
 
-        public async Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
-        {
-            return await _dbContext.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
-        }
 
+        public IExecutionStrategy GetExecutionStrategy()
+        {
+            return _dbContext.Database.CreateExecutionStrategy();
+        }
         public void Dispose()
         {
             _transaction?.Dispose();
@@ -60,6 +85,6 @@ namespace Mikroservice.Ogrenci.Infrastructure.Persistence.UnitOfWorks
             _dbContext.Dispose();
         }
 
-    
+
     }
 }

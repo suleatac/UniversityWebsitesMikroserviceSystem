@@ -2,6 +2,7 @@
 using Microservice.Personel.Application.Contracts.DTOs;
 using Microservice.Personel.Application.Contracts.IRepositories;
 using Microservice.Personel.Application.Contracts.Services;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Mikroservice.Personel.Application.Contracts.Services;
 using Mikroservice.Personel.Domain.Exceptions;
@@ -35,45 +36,52 @@ namespace Mikroservice.Personel.Application.Services
       DateTime? lastUpdateDate = null,
       CancellationToken cancellationToken = default)
         {
-       
-            try
-            {
-                _logger.LogInformation("Personel senkronizasyonu başlatılıyor. Tarih: {LastUpdateDate}",
-                    lastUpdateDate?.ToString("yyyy-MM-dd"));
+            // 🔥 CRITICAL: ExecutionStrategy al
+            var strategy = _unitOfWork.GetExecutionStrategy();
 
-                var request = new PersonelSyncRequest(
-                "GetWorkers",
-                lastUpdateDate.HasValue
-                 ? new {
-                 GetPersonEncryptedId = true,
-                 SonGuncellemeTarihi = lastUpdateDate.Value.ToString("u")
-                 }
-                : new {
-                   GetPersonEncryptedId = true
-                  });
+            return await strategy.ExecuteAsync(async () => {
+                await _unitOfWork.BeginTransactionAsync(IsolationLevel.ReadCommitted, cancellationToken);
 
-                var apiResponse = await _externalApiService.GetPersonelsAsync(request, cancellationToken);
-
-                if (!apiResponse.IsSuccess)
+                try
                 {
-                    _logger.LogWarning("External API hatası: {ErrorMessage}", apiResponse.ErrorMessage);
-                    return new PersonelSyncResponse(new List<Microservice.Personel.Domain.Entities.Personel>(), 0);
+                    _logger.LogInformation("Personel senkronizasyonu başlatılıyor. Tarih: {LastUpdateDate}",
+                        lastUpdateDate?.ToString("yyyy-MM-dd"));
+
+                    var request = new PersonelSyncRequest(
+                    "GetWorkers",
+                    lastUpdateDate.HasValue
+                     ? new {
+                         GetPersonEncryptedId = true,
+                         SonGuncellemeTarihi = lastUpdateDate.Value.ToString("u")
+                     }
+                    : new {
+                        GetPersonEncryptedId = true
+                    });
+
+                    var apiResponse = await _externalApiService.GetPersonelsAsync(request, cancellationToken);
+
+                    if (!apiResponse.IsSuccess)
+                    {
+                        _logger.LogWarning("External API hatası: {ErrorMessage}", apiResponse.ErrorMessage);
+                        return new PersonelSyncResponse(new List<Microservice.Personel.Domain.Entities.Personel>(), 0);
+                    }
+
+                    var Personeller = ParsePersonels(apiResponse.RawContent);
+
+                    await ProcessPersonelsAsync(Personeller, cancellationToken);
+
+                    await _unitOfWork.CommitAsync(cancellationToken);
+                    _logger.LogInformation("Senkronizasyon tamamlandı. İşlenen: {Count}", Personeller.Count);
+
+                    return new PersonelSyncResponse(Personeller, Personeller.Count);
                 }
-
-                var Personeller = ParsePersonels(apiResponse.RawContent);
-
-                await ProcessPersonelsAsync(Personeller, cancellationToken);
-
-      
-                _logger.LogInformation("Senkronizasyon tamamlandı. İşlenen: {Count}", Personeller.Count);
-
-                return new PersonelSyncResponse(Personeller, Personeller.Count);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Senkronizasyon hatası");
-                throw;
-            }
+                catch (Exception ex)
+                {
+                    await _unitOfWork.RollbackAsync(cancellationToken);
+                    _logger.LogError(ex, "Senkronizasyon hatası");
+                    throw;
+                }
+            });
         }
         private List<Microservice.Personel.Domain.Entities.Personel> ParsePersonels(string jsonContent)
         {

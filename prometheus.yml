@@ -1,7 +1,7 @@
 scrape_configs:
   - job_name: prometheus
     static_configs:
-      - targets: ['localhost:9090']
+      - targets: ['prometheus:9090']
 
   - job_name: mikroservice.ogrenci.api
     scrape_interval: 2s

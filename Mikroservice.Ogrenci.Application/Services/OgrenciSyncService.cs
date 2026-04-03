@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microservice.Ogrenci.Application.Contracts.IRepositories;
 using Microservice.Ogrenci.Domain.SeedData;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Mikroservice.Ogrenci.Application.Contracts.DTOs;
 using Mikroservice.Ogrenci.Application.Contracts.Services;
@@ -32,30 +33,59 @@ namespace Mikroservice.Ogrenci.Application.Services
         }
 
         public async Task<OgrenciSyncResponse> SyncOgrencisAsync(
-            DateTime? lastUpdateDate = null,
-            CancellationToken cancellationToken = default)
+         DateTime? lastUpdateDate = null,
+         CancellationToken cancellationToken = default)
         {
-            await _unitOfWork.BeginTransactionAsync(IsolationLevel.ReadCommitted, cancellationToken);
+            // 🔥 CRITICAL: ExecutionStrategy al
+            var strategy = _unitOfWork.GetExecutionStrategy();
 
-            try
+            return await strategy.ExecuteAsync(async () =>
             {
-                _logger.LogInformation("Öğrenci senkronizasyonu başlatılıyor. Tarih: {LastUpdateDate}",
-                    lastUpdateDate?.ToString("yyyy-MM-dd"));
+                await _unitOfWork.BeginTransactionAsync(IsolationLevel.ReadCommitted, cancellationToken);
 
-                var ogrenciler = OgrenciSeedData.GetOrnekOgrenciler();
-                await ProcessOgrencisAsync(ogrenciler, cancellationToken);
+                try
+                {
+                    _logger.LogInformation("Öğrenci senkronizasyonu başlatılıyor. Tarih: {LastUpdateDate}",
+                        lastUpdateDate?.ToString("yyyy-MM-dd"));
 
-                await _unitOfWork.CommitAsync(cancellationToken);
+                    // var ogrenciler = OgrenciSeedData.GetOrnekOgrenciler();
 
-                _logger.LogInformation("Senkronizasyon tamamlandı. İşlenen: {Count}", ogrenciler.Count);
-                return new OgrenciSyncResponse(ogrenciler, ogrenciler.Count);
-            }
-            catch (Exception ex)
-            {
-                await _unitOfWork.RollbackAsync(cancellationToken);
-                _logger.LogError(ex, "Senkronizasyon hatası");
-                throw;
-            }
+
+                    var request = new OgrenciSyncRequest(
+                     "GetPersonStudents",
+                     lastUpdateDate.HasValue
+                         ? new { SonGuncellemeTarihi = lastUpdateDate.Value.ToString("yyyy-MM-dd") }
+                         : new { });
+
+                    var apiResponse = await _externalApiService.GetOgrencisAsync(request, cancellationToken);
+
+                    if (!apiResponse.IsSuccess)
+                    {
+                        _logger.LogWarning("External API hatası: {ErrorMessage}", apiResponse.ErrorMessage);
+                        return new OgrenciSyncResponse(new List<Microservice.Ogrenci.Domain.Entities.Ogrenci>(), 0);
+                    }
+
+                    var ogrenciler = ParseOgrencis(apiResponse.RawContent);
+
+
+
+
+
+                    await ProcessOgrencisAsync(ogrenciler, cancellationToken);
+
+                    await _unitOfWork.CommitAsync(cancellationToken);
+
+                    _logger.LogInformation("Senkronizasyon tamamlandı. İşlenen: {Count}", ogrenciler.Count);
+
+                    return new OgrenciSyncResponse(ogrenciler, ogrenciler.Count);
+                }
+                catch (Exception ex)
+                {
+                    await _unitOfWork.RollbackAsync(cancellationToken);
+                    _logger.LogError(ex, "Senkronizasyon hatası");
+                    throw;
+                }
+            });
         }
         private List<Microservice.Ogrenci.Domain.Entities.Ogrenci> ParseOgrencis(string jsonContent)
         {
