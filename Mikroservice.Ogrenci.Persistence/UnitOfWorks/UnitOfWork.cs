@@ -18,77 +18,31 @@ namespace Mikroservice.Ogrenci.Infrastructure.Persistence.UnitOfWorks
         {
             _dbContext = dbContext;
         }
-        public async Task<T> ExecuteInTransactionAsync<T>(
-    Func<CancellationToken, Task<T>> operation,
-    IsolationLevel isolationLevel = IsolationLevel.ReadCommitted,
-    CancellationToken cancellationToken = default)
-        {
-            var strategy = _dbContext.Database.CreateExecutionStrategy();
-            return await strategy.ExecuteAsync(async () =>
-            {
-                await BeginTransactionAsync(isolationLevel, cancellationToken);
-                try
-                {
-                    var result = await operation(cancellationToken);
-                    await CommitAsync(cancellationToken);
-                    return result;
-                }
-                catch
-                {
-                    await RollbackAsync(cancellationToken);
-                    throw;
-                }
-            });
-        }
+
         public async Task<IDbTransaction> BeginTransactionAsync(
             IsolationLevel isolationLevel = IsolationLevel.ReadCommitted,
             CancellationToken cancellationToken = default)
         {
-            if (_transaction != null)
-            {
-                throw new InvalidOperationException("Zaten aktif bir transaction var.");
-            }
-
             _transaction = await _dbContext.Database.BeginTransactionAsync(isolationLevel, cancellationToken);
-            return _transaction.GetDbTransaction();
         }
-
+        // Commit ve Rollback:
         public async Task CommitAsync(CancellationToken cancellationToken = default)
         {
-            if (_transaction == null)
-            {
-                throw new InvalidOperationException("Commit için transaction başlatılmamış.");
-            }
-
-            try
+            if (_transaction != null)
             {
                 await _transaction.CommitAsync(cancellationToken);
-            }
-            finally
-            {
                 await _transaction.DisposeAsync();
-                _transaction = null;
             }
         }
 
         public async Task RollbackAsync(CancellationToken cancellationToken = default)
         {
-            if (_transaction == null)
-            {
-                return; // Nothing to rollback
-            }
-
-            try
+            if (_transaction != null)
             {
                 await _transaction.RollbackAsync(cancellationToken);
-            }
-            finally
-            {
                 await _transaction.DisposeAsync();
-                _transaction = null;
             }
         }
-
         public async Task SaveChangesAsync(CancellationToken cancellationToken = default)
         {
             await _dbContext.SaveChangesAsync(cancellationToken);

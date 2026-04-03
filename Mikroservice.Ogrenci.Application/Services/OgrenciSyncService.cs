@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microservice.Ogrenci.Application.Contracts.IRepositories;
+using Microservice.Ogrenci.Domain.SeedData;
 using Microsoft.Extensions.Logging;
 using Mikroservice.Ogrenci.Application.Contracts.DTOs;
 using Mikroservice.Ogrenci.Application.Contracts.Services;
@@ -31,43 +32,27 @@ namespace Mikroservice.Ogrenci.Application.Services
         }
 
         public async Task<OgrenciSyncResponse> SyncOgrencisAsync(
-      DateTime? lastUpdateDate = null,
-      CancellationToken cancellationToken = default)
+            DateTime? lastUpdateDate = null,
+            CancellationToken cancellationToken = default)
         {
-
+            await _unitOfWork.BeginTransactionAsync(IsolationLevel.ReadCommitted, cancellationToken);
 
             try
             {
                 _logger.LogInformation("Öğrenci senkronizasyonu başlatılıyor. Tarih: {LastUpdateDate}",
                     lastUpdateDate?.ToString("yyyy-MM-dd"));
 
-                var request = new OgrenciSyncRequest(
-                    "GetPersonStudents",
-                    lastUpdateDate.HasValue
-                        ? new { SonGuncellemeTarihi = lastUpdateDate.Value.ToString("yyyy-MM-dd") }
-                        : new { });
-              
-                var apiResponse = await _externalApiService.GetOgrencisAsync(request, cancellationToken);
-
-                if (!apiResponse.IsSuccess)
-                {
-                    _logger.LogWarning("External API hatası: {ErrorMessage}", apiResponse.ErrorMessage);
-                    return new OgrenciSyncResponse(new List<Microservice.Ogrenci.Domain.Entities.Ogrenci>(), 0);
-                }
-
-                var ogrenciler = ParseOgrencis(apiResponse.RawContent);
-
+                var ogrenciler = OgrenciSeedData.GetOrnekOgrenciler();
                 await ProcessOgrencisAsync(ogrenciler, cancellationToken);
 
-              
+                await _unitOfWork.CommitAsync(cancellationToken);
 
                 _logger.LogInformation("Senkronizasyon tamamlandı. İşlenen: {Count}", ogrenciler.Count);
-
                 return new OgrenciSyncResponse(ogrenciler, ogrenciler.Count);
             }
             catch (Exception ex)
             {
-          
+                await _unitOfWork.RollbackAsync(cancellationToken);
                 _logger.LogError(ex, "Senkronizasyon hatası");
                 throw;
             }
@@ -94,10 +79,7 @@ namespace Mikroservice.Ogrenci.Application.Services
                 var existing = await _ogrenciRepository.GetOgrenciByOgrenciProgramId(Ogrenci.OgrenciProgramId);
 
                 if (existing == null)
-                {
                     await _ogrenciRepository.AddAsync(Ogrenci);
-                    await _unitOfWork.SaveChangesAsync(cancellationToken);
-                }
                 else
                 {
                     _mapper.Map(Ogrenci, existing);
@@ -105,10 +87,12 @@ namespace Mikroservice.Ogrenci.Application.Services
                 }
 
                 processed++;
-                if (processed % 10 == 0)
+                if (processed % 100 == 0)
                     await _unitOfWork.SaveChangesAsync(cancellationToken);
+
             }
 
+            // Tüm değişiklikleri bir seferde kaydet
             await _unitOfWork.SaveChangesAsync(cancellationToken);
         }
     }

@@ -35,8 +35,7 @@ namespace Mikroservice.Personel.Application.Services
       DateTime? lastUpdateDate = null,
       CancellationToken cancellationToken = default)
         {
-            await _unitOfWork.BeginTransactionAsync(IsolationLevel.ReadCommitted, cancellationToken);
-
+       
             try
             {
                 _logger.LogInformation("Personel senkronizasyonu başlatılıyor. Tarih: {LastUpdateDate}",
@@ -65,15 +64,13 @@ namespace Mikroservice.Personel.Application.Services
 
                 await ProcessPersonelsAsync(Personeller, cancellationToken);
 
-                await _unitOfWork.CommitAsync(cancellationToken);
-
+      
                 _logger.LogInformation("Senkronizasyon tamamlandı. İşlenen: {Count}", Personeller.Count);
 
                 return new PersonelSyncResponse(Personeller, Personeller.Count);
             }
             catch (Exception ex)
             {
-                await _unitOfWork.RollbackAsync(cancellationToken);
                 _logger.LogError(ex, "Senkronizasyon hatası");
                 throw;
             }
