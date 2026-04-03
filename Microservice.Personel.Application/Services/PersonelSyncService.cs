@@ -2,6 +2,7 @@
 using Microservice.Personel.Application.Contracts.DTOs;
 using Microservice.Personel.Application.Contracts.IRepositories;
 using Microservice.Personel.Application.Contracts.Services;
+using Microservice.Personel.Domain.SeedData;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Mikroservice.Personel.Application.Contracts.Services;
@@ -47,26 +48,29 @@ namespace Mikroservice.Personel.Application.Services
                     _logger.LogInformation("Personel senkronizasyonu başlatılıyor. Tarih: {LastUpdateDate}",
                         lastUpdateDate?.ToString("yyyy-MM-dd"));
 
-                    var request = new PersonelSyncRequest(
-                    "GetWorkers",
-                    lastUpdateDate.HasValue
-                     ? new {
-                         GetPersonEncryptedId = true,
-                         SonGuncellemeTarihi = lastUpdateDate.Value.ToString("u")
-                     }
-                    : new {
-                        GetPersonEncryptedId = true
-                    });
+                    //var request = new PersonelSyncRequest(
+                    //"GetWorkers",
+                    //lastUpdateDate.HasValue
+                    // ? new {
+                    //     GetPersonEncryptedId = true,
+                    //     SonGuncellemeTarihi = lastUpdateDate.Value.ToString("u")
+                    // }
+                    //: new {
+                    //    GetPersonEncryptedId = true
+                    //});
 
-                    var apiResponse = await _externalApiService.GetPersonelsAsync(request, cancellationToken);
+                    //var apiResponse = await _externalApiService.GetPersonelsAsync(request, cancellationToken);
 
-                    if (!apiResponse.IsSuccess)
-                    {
-                        _logger.LogWarning("External API hatası: {ErrorMessage}", apiResponse.ErrorMessage);
-                        return new PersonelSyncResponse(new List<Microservice.Personel.Domain.Entities.Personel>(), 0);
-                    }
+                    //if (!apiResponse.IsSuccess)
+                    //{
+                    //    _logger.LogWarning("External API hatası: {ErrorMessage}", apiResponse.ErrorMessage);
+                    //    return new PersonelSyncResponse(new List<Microservice.Personel.Domain.Entities.Personel>(), 0);
+                    //}
 
-                    var Personeller = ParsePersonels(apiResponse.RawContent);
+                    //var Personeller = ParsePersonels(apiResponse.RawContent);
+
+                    // Metod ile
+                    var Personeller = PersonelSeedData.GetOrnekPersoneller();
 
                     await ProcessPersonelsAsync(Personeller, cancellationToken);
 

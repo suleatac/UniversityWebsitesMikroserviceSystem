@@ -48,24 +48,24 @@ namespace Mikroservice.Ogrenci.Application.Services
                     _logger.LogInformation("Öğrenci senkronizasyonu başlatılıyor. Tarih: {LastUpdateDate}",
                         lastUpdateDate?.ToString("yyyy-MM-dd"));
 
-                    // var ogrenciler = OgrenciSeedData.GetOrnekOgrenciler();
+                    var ogrenciler = OgrenciSeedData.GetOrnekOgrenciler();
 
 
-                    var request = new OgrenciSyncRequest(
-                     "GetPersonStudents",
-                     lastUpdateDate.HasValue
-                         ? new { SonGuncellemeTarihi = lastUpdateDate.Value.ToString("yyyy-MM-dd") }
-                         : new { });
+                    //var request = new OgrenciSyncRequest(
+                    // "GetPersonStudents",
+                    // lastUpdateDate.HasValue
+                    //     ? new { SonGuncellemeTarihi = lastUpdateDate.Value.ToString("yyyy-MM-dd") }
+                    //     : new { });
 
-                    var apiResponse = await _externalApiService.GetOgrencisAsync(request, cancellationToken);
+                    //var apiResponse = await _externalApiService.GetOgrencisAsync(request, cancellationToken);
 
-                    if (!apiResponse.IsSuccess)
-                    {
-                        _logger.LogWarning("External API hatası: {ErrorMessage}", apiResponse.ErrorMessage);
-                        return new OgrenciSyncResponse(new List<Microservice.Ogrenci.Domain.Entities.Ogrenci>(), 0);
-                    }
+                    //if (!apiResponse.IsSuccess)
+                    //{
+                    //    _logger.LogWarning("External API hatası: {ErrorMessage}", apiResponse.ErrorMessage);
+                    //    return new OgrenciSyncResponse(new List<Microservice.Ogrenci.Domain.Entities.Ogrenci>(), 0);
+                    //}
 
-                    var ogrenciler = ParseOgrencis(apiResponse.RawContent);
+                    //var ogrenciler = ParseOgrencis(apiResponse.RawContent);
 
 
 
