@@ -2,7 +2,7 @@ services:
   prometheus:
     build:
       context: .
-      dockerfile: Dockerfile.prometheus
+      dockerfile: Dockerfile
     container_name: prometheus.container
     restart: always
     ports:
