@@ -1,12 +1,13 @@
 services:
   prometheus:
-    image: prom/prometheus:latest
+    build:
+      context: .
+      dockerfile: Dockerfile.prometheus
     container_name: prometheus.container
     restart: always
     ports:
       - "9090:9090"
     volumes:
-      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
       - prometheus_data:/prometheus
     command:
       - "--config.file=/etc/prometheus/prometheus.yml"
@@ -15,6 +16,9 @@ services:
     depends_on:
       - mikroservice.ogrenci.api
       - mikroservice.personel.api
+    networks:
+      - university-network
+
   elasticsearch.db.log:
     image: docker.elastic.co/elasticsearch/elasticsearch:8.13.4
     container_name: elasticsearch.db.log
@@ -31,6 +35,8 @@ services:
       - "9201:9200"
     volumes:
       - esdatalog:/usr/share/elasticsearch/data
+    networks:
+      - university-network
    
 
 
@@ -54,6 +60,9 @@ services:
       retries: 120
     volumes:
       - kibanadata:/usr/share/kibana/data
+    networks:
+      - university-network
+
   redis.db.api:
     restart: always
     image: redis:7.0-alpine
@@ -63,6 +72,9 @@ services:
       - "6379:6379"
     volumes:
       - redis.db.api.volume:/data
+    networks:
+      - university-network
+
   redis.db.api.ui:
     image: rediscommander/redis-commander:latest
     container_name: redis.db.api.ui.container
@@ -77,6 +89,8 @@ services:
       REDIS_PASSWORD: ${REDIS_PASSWORD}
       HTTP_USER: ${REDIS_UI_USERNAME}
       HTTP_PASSWORD: ${REDIS_UI_PASSWORD}
+    networks:
+      - university-network
 
   rabbitmq:
     restart: always
@@ -90,6 +104,9 @@ services:
       RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
+    networks:
+      - university-network
+
   elasticsearch.db.Jaeger:
     image: docker.elastic.co/elasticsearch/elasticsearch:8.13.4
     container_name: elasticsearch.db.Jaeger.container
@@ -109,6 +126,9 @@ services:
       interval: 30s
       timeout: 10s
       retries: 5
+    networks:
+      - university-network
+
     #Jaeger
   jaeger:
     restart: always
@@ -131,7 +151,10 @@ services:
     depends_on:
       - elasticsearch.db.Jaeger
     volumes:
-      - jaeger.data.volume:/opt/jaeger/data  
+      - jaeger.data.volume:/opt/jaeger/data
+    networks:
+      - university-network
+
   postgres.db.ogrenci:
     restart: always
     image: postgres:16.2
@@ -144,6 +167,9 @@ services:
       - "5433:5432"
     volumes:
       -  postgres.db.ogrenci.volume:/var/lib/postgresql/data
+    networks:
+      - university-network
+
   postgres.db.personel:
     restart: always
     image: postgres:16.2
@@ -156,6 +182,9 @@ services:
       - "5434:5432"
     volumes:
       -  postgres.db.personel.volume:/var/lib/postgresql/data
+    networks:
+      - university-network
+
   #Postgres & Keycloak
   keycloak:
     restart: always
@@ -181,6 +210,9 @@ services:
       - keycloak-data:/opt/keycloak/data  
     depends_on:
       - postgres.db.keycloak
+    networks:
+      - university-network
+
   postgres.db.keycloak:
     restart: always
     image: postgres:16.2
@@ -193,6 +225,9 @@ services:
       - "5435:5432"
     volumes:
       -  postgres.db.keycloak.volume:/var/lib/postgresql/data
+    networks:
+      - university-network
+
   postgres.db.ui:
     restart: always
     image: dpage/pgadmin4
@@ -204,24 +239,32 @@ services:
       PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
     volumes:
       - postgres.db.ui.data:/var/lib/pgadmin
+    networks:
+      - university-network
 
   mikroservice.ogrenci.api:
     image: ${DOCKER_REGISTRY-}mikroserviceogrenciapi
     build:
       context: .
       dockerfile: Mikroservice.Ogrenci.Api/Dockerfile
+    networks:
+      - university-network
 
   mikroservice.personel.api:
     image: ${DOCKER_REGISTRY-}mikroservicepersonelapi
     build:
       context: .
       dockerfile: Mikroservice.Personel.Api/Dockerfile
+    networks:
+      - university-network
 
   mikroservice.gateway:
     image: ${DOCKER_REGISTRY-}mikroservicegateway
     build:
       context: .
       dockerfile: Mikroservice.Gateway/Dockerfile
+    networks:
+      - university-network
 
 volumes:
   jaeger.data.volume:
@@ -237,7 +280,6 @@ volumes:
   kibanadata:
   prometheus_data:
 
-
-
-
-
+networks:
+  university-network:
+    driver: bridge
