@@ -121,11 +121,6 @@ services:
       - "9200:9200"
     volumes:
       - esdatajaeger:/usr/share/elasticsearch/data
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:9200"]
-      interval: 30s
-      timeout: 10s
-      retries: 5
     networks:
       - university-network
 
