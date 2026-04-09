@@ -1,5 +1,6 @@
 using AspNetCoreRateLimit;
 using Microservice.Shared.Extentions;
+using Microsoft.AspNetCore.HttpOverrides;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -30,6 +31,10 @@ builder.Services.AddSingleton<IRateLimitConfiguration, RateLimitConfiguration>()
 // HttpContextAccessor
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
+
+
+
+
 // CORS politikası
 builder.Services.AddCors(opts => {
     opts.AddDefaultPolicy(policy => {
@@ -57,7 +62,9 @@ builder.Services.AddAuthenticationAndAuthorizationExt(builder.Configuration);
 var app = builder.Build();
 
 app.MapGet("/", () => "YARP (Gateway)!");
-
+app.UseForwardedHeaders(new ForwardedHeadersOptions {
+    ForwardedHeaders = ForwardedHeaders.XForwardedFor
+});
 // Rate limit middleware'ini ekleyin
 app.UseIpRateLimiting();
 

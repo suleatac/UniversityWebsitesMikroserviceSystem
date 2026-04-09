@@ -1,0 +1,7 @@
+@Mikroservice.Ogrenci.Api_HostAddress = http://10.58.5.91:8083
+@Mikroservice.Personel.Api_HostAddress = http://localhost:5127
+@Mikroservice.Gateway.Api_HostAddress = http://localhost:8084
+GET {{Mikroservice.Gateway.Api_HostAddress}}/v1/personels/
+Accept: application/json
+Authorization: Bearer
+###

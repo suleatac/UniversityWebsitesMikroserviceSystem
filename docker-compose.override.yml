@@ -44,8 +44,8 @@ services:
       - ASPNETCORE_HTTP_PORTS=8080
       - IdentityOption:Adress=http://keycloak:8080/realms/UniversityRealm
       - IdentityOption:Issuer=http://keycloak:8080/realms/UniversityRealm
-      - ReverseProxy__Clusters__personel__cluster__Destinations__destination1__Address=http://mikroservice.personel.api:8080/
-      - ReverseProxy__Clusters__ogrenci__cluster__Destinations__destination1__Address=http://mikroservice.ogrenci.api:8080/
+      - ReverseProxy:Clusters:personel.cluster:Destinations:destination1:Address=http://mikroservice.personel.api:8080/
+      - ReverseProxy:Clusters:ogrenci.cluster:Destinations:destination1:Address=http://mikroservice.ogrenci.api:8080/
     ports:
       - "8084:8080"
     depends_on:

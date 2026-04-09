@@ -1,4 +1,3 @@
-using AspNetCoreRateLimit;
 using Hangfire;
 using Hangfire.PostgreSql;
 using Logging.Shared;
@@ -52,25 +51,7 @@ builder.Services.AddCors(opts => {
 builder.Services.AddOptions();
 builder.Services.AddMemoryCache();
 
-// Rate limiting servisleri
-builder.Services.AddInMemoryRateLimiting();
 
-// Rate limit konfigürasyonları
-builder.Services.Configure<IpRateLimitOptions>(builder.Configuration.GetSection("IpRateLimiting"));
-builder.Services.Configure<IpRateLimitPolicies>(builder.Configuration.GetSection("IpRateLimitPolicies"));
-
-// **EKSİK OLAN SERVİSLERİ EKLEYİN**
-builder.Services.AddSingleton<IIpPolicyStore, MemoryCacheIpPolicyStore>();
-builder.Services.AddSingleton<IRateLimitCounterStore, MemoryCacheRateLimitCounterStore>();
-
-// **CRITICAL: ProcessingStrategy'yi EKLEYİN**
-builder.Services.AddSingleton<IProcessingStrategy, AsyncKeyLockProcessingStrategy>();
-
-// Rate limit configuration manager
-builder.Services.AddSingleton<IRateLimitConfiguration, RateLimitConfiguration>();
-
-// HttpContextAccessor
-builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
 
 
@@ -124,17 +105,14 @@ builder.Services.AddOpenApi();
 var app = builder.Build();
 
 //çalıştığında otomatik migration yapması için
-using (var scope = app.Services.CreateScope())
-{
-    var serviceProvider = scope.ServiceProvider;
-    var dbContext = serviceProvider.GetRequiredService<AppDbContext>();
-    await dbContext.Database.MigrateAsync();
-}
+//using (var scope = app.Services.CreateScope())
+//{
+//    var serviceProvider = scope.ServiceProvider;
+//    var dbContext = serviceProvider.GetRequiredService<AppDbContext>();
+//    await dbContext.Database.MigrateAsync();
+//}
 
 
-
-//Ip Rate Limiting middleware'i eklendi
-app.UseIpRateLimiting();
 //CORS middleware'i eklendi
 //app.UseCors();
 app.UseCors("AllowSivasOnly");
