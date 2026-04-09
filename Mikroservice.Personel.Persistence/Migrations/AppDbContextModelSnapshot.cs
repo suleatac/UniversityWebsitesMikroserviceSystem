@@ -60,7 +60,7 @@ namespace Mikroservice.Personel.Persistence.Migrations
                     b.Property<bool?>("CovidBagisik")
                         .HasColumnType("boolean");
 
-                    b.Property<DateTime>("DogumTarihi")
+                    b.Property<DateTime?>("DogumTarihi")
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("DogumYeri")
@@ -166,7 +166,7 @@ namespace Mikroservice.Personel.Persistence.Migrations
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<DateTime?>("SonTestZamani")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("Soyadi")
                         .HasColumnType("text");

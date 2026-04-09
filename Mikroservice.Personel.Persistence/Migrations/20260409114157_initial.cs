@@ -32,7 +32,7 @@ namespace Mikroservice.Personel.Persistence.Migrations
                     BabaAdi = table.Column<string>(type: "text", nullable: true),
                     AnaAdi = table.Column<string>(type: "text", nullable: true),
                     DogumYeri = table.Column<string>(type: "text", nullable: true),
-                    DogumTarihi = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    DogumTarihi = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
                     KanGrubu = table.Column<string>(type: "text", nullable: true),
                     SehitGaziYakini = table.Column<string>(type: "text", nullable: true),
                     PersonelTipiId = table.Column<int>(type: "integer", nullable: true),
@@ -74,7 +74,7 @@ namespace Mikroservice.Personel.Persistence.Migrations
                     PersonBase64Image = table.Column<string>(type: "text", nullable: true),
                     Asili = table.Column<string>(type: "text", nullable: true),
                     CovidBagisik = table.Column<bool>(type: "boolean", nullable: true),
-                    SonTestZamani = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    SonTestZamani = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
                     HesDurumu = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
