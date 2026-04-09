@@ -17,6 +17,7 @@ namespace Mikroservice.Personel.Persistence.Configurations
             builder.Property(p => p.GoreveBaslamaTarihi).HasColumnType("timestamp without time zone");
 
             builder.Property(p => p.SonTestZamani).HasColumnType("timestamp without time zone");
+
         }
     }
 }
