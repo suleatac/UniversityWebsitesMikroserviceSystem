@@ -1,4 +1,8 @@
-﻿using Microservice.Yonetici.Persistence.UnitOfWorks;
+﻿using Microservice.Yonetici.Application.Contracts.IRepositories;
+using Microservice.Yonetici.Application.Contracts.Services;
+using Microservice.Yonetici.Persistence.Repositories;
+using Microservice.Yonetici.Persistence.Services;
+using Microservice.Yonetici.Persistence.UnitOfWorks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -22,7 +26,10 @@ namespace Microservice.Yonetici.Persistence.Extentions
                 });
 
             });
-            services.AddScoped<IPersonelRepository, PersonelRepository>();
+            services.AddScoped<IYoneticiTipiRepository, YoneticiTipiRepository>();
+            services.AddScoped<IYoneticiDuyuruRepository, YoneticiDuyuruRepository>();
+            services.AddScoped<IYoneticiTipiSeedService, YoneticiTipiSeedService>();
+            services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             return services;
 

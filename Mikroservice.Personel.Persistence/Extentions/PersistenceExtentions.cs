@@ -28,6 +28,7 @@ namespace Mikroservice.Personel.Persistence.Extentions
             });
             services.AddScoped<IPersonelRepository, PersonelRepository>();
             services.AddScoped<IUnitOfWork, UnitOfWork.UnitOfWork>();
+            services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
             services.Configure<ExternalPersonelApiSettings>(configuration.GetSection("ExternalPersonelApiSettings"));
             return services;
 

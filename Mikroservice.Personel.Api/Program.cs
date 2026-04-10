@@ -24,35 +24,6 @@ builder.Services.AddAuthenticationAndAuthorizationExt(builder.Configuration);
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-//CORS politikası eklendi
-builder.Services.AddCors(opts => {
-
-    opts.AddDefaultPolicy(policy => {
-        policy.AllowAnyOrigin()
-              .AllowAnyHeader()
-              .AllowAnyMethod();
-    });
-
-    opts.AddPolicy("AllowSivasOnly", policy =>
-    {
-        policy.SetIsOriginAllowed(origin =>
-        {
-            if (string.IsNullOrEmpty(origin))
-                return false;
-
-            var uri = new Uri(origin);
-
-            // sivas.edu.tr veya alt domainleri
-            return uri.Host.EndsWith("sivas.edu.tr");
-        })
-        .AllowAnyHeader()
-        .AllowAnyMethod();
-    });
-});
-
-// Rate limit işlemi için TAMAMEN yapılandırma
-builder.Services.AddOptions();
-builder.Services.AddMemoryCache();
 
 
 

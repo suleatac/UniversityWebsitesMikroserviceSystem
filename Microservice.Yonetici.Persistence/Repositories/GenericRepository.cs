@@ -1,8 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
+﻿using Microservice.Yonetici.Application.Contracts.IRepositories;
+using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
-using System.Text;
 
 namespace Microservice.Yonetici.Persistence.Repositories
 {

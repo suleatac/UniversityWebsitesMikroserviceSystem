@@ -26,6 +26,7 @@ namespace Mikroservice.Ogrenci.Persistence.Extentions
             });
             services.AddScoped<IOgrenciRepository, OgrenciRepository>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
+            services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
             services.Configure<ExternalOgrenciApiSettings>(configuration.GetSection("ExternalOgrenciApiSettings"));
             return services;
 

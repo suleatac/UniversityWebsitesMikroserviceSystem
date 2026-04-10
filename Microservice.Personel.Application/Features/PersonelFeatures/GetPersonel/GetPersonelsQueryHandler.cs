@@ -1,15 +1,13 @@
-﻿using AutoMapper;
-using MediatR;
+﻿using MediatR;
 using Microservice.Personel.Application.Contracts.IRepositories;
 using Microservice.Shared;
 using Microservice.Shared.OpenTelemetry;
 using Microservice.Shared.Services.RedisServiceItems;
 using Microsoft.Extensions.Logging;
-using StackExchange.Redis;
 
 namespace Microservice.Personel.Application.Features.PersonelFeatures.GetPersonel
 {
-    public class GetPersonelsQueryHandler(IPersonelRepository personelRepository, IRedisCacheService redisCacheService, ILogger<GetPersonelsQueryHandler> _logger) : IRequestHandler<GetPersonelsQuery, ServiceResult<List<Microservice.Personel.Domain.Entities.Personel>>>
+    public class GetPersonelsQueryHandler(IPersonelRepository personelRepository, IRedisCacheService redisCacheService, ILogger<GetPersonelsQueryHandler> _logger) : IRequestHandler<GetPersonelsQuery, ServiceResult<List<Domain.Entities.Personel>>>
     {
   
         public async Task<ServiceResult<List<Domain.Entities.Personel>>> Handle(GetPersonelsQuery request, CancellationToken cancellationToken)
