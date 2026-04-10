@@ -5,7 +5,6 @@ using Microservice.Personel.Application.Contracts.Services;
 using Microservice.Personel.Domain.SeedData;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using Mikroservice.Personel.Application.Contracts.Services;
 using Mikroservice.Personel.Domain.Exceptions;
 using System.Data;
 using System.Text.Json;
@@ -14,19 +13,18 @@ namespace Mikroservice.Personel.Application.Services
 {
     public class PersonelSyncService : IPersonelSyncService
     {
-        private readonly IPersonelExternalApiService _externalApiService;
+     
         private readonly IPersonelRepository _PersonelRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly ILogger<PersonelSyncService> _logger;
         private readonly IMapper _mapper;
         public PersonelSyncService(
-            IPersonelExternalApiService externalApiService,
             IPersonelRepository PersonelRepository,
             IUnitOfWork unitOfWork,
             ILogger<PersonelSyncService> logger,
             IMapper mapper)
         {
-            _externalApiService = externalApiService;
+        
             _PersonelRepository = PersonelRepository;
             _unitOfWork = unitOfWork;
             _logger = logger;

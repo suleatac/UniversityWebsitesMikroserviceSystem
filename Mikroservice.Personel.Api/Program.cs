@@ -125,19 +125,16 @@ app.Lifetime.ApplicationStarted.Register(() => {
 app.UseMiddleware<OpenTelemetryTraceIdMiddleware>();
 app.UseMiddleware<RequestAndResponseActivityMiddleware>();
 app.UseExceptionMiddleware();
+await app.InitializeSeedDataAsync();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    await app.InitializeSeedDataAsync();
+   
     app.UseSwagger();
     app.UseSwaggerUI();
     app.MapOpenApi();
 }
-// Production'da da çalışsın ama sadece boş DB'de
-else if (!app.Environment.IsProduction())
-{
-    await app.InitializeSeedDataAsync();
-}
+
 //Metric işlemi için eklenen middleware
 app.UseOpenTelemetryPrometheusScrapingEndpoint("/metrics");
 app.Run();

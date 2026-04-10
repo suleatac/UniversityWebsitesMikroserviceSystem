@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore.Storage;
 using System.Data;
 
-namespace Microservice.Personel.Application.Contracts.IRepositories
+namespace Microservice.Yonetici.Application.Contracts.IRepositories
 {
     public interface IUnitOfWork
     {
