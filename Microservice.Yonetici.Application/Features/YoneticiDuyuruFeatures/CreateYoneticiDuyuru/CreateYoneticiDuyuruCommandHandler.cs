@@ -2,7 +2,6 @@
 using Microservice.Shared;
 using Microservice.Shared.Services.RedisServiceItems;
 using Microservice.Yonetici.Application.Contracts.IRepositories;
-using Microservice.Yonetici.Application.Features.YoneticiTipiFeatures.CreateYoneticiTipi;
 using Microservice.Yonetici.Domain.Entities;
 
 namespace Microservice.Yonetici.Application.Features.YoneticiDuyuruFeatures.CreateYoneticiDuyuru

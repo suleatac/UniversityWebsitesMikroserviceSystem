@@ -76,9 +76,6 @@ using (var scope = app.Services.CreateScope())
 }
 
 
-//CORS middleware'i eklendi
-//app.UseCors();
-app.UseCors("AllowSivasOnly");
 
 
 //Authentication ve Authorization middleware'leri eklendi

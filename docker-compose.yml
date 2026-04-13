@@ -149,7 +149,20 @@ services:
       - jaeger.data.volume:/opt/jaeger/data
     networks:
       - university-network
-
+  postgres.db.yonetici:
+    restart: always
+    image: postgres:16.2
+    container_name: postgres.db.yonetici.container
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB_Yonetici}
+      POSTGRES_USER: ${POSTGRES_USER_Yonetici}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD_Yonetici}
+    ports:
+      - "5433:5432"
+    volumes:
+      -  postgres.db.yonetici.volume:/var/lib/postgresql/data
+    networks:
+      - university-network
   postgres.db.ogrenci:
     restart: always
     image: postgres:16.2
@@ -159,7 +172,7 @@ services:
       POSTGRES_USER: ${POSTGRES_USER_Ogrenci}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD_Ogrenci}
     ports:
-      - "5433:5432"
+      - "5434:5432"
     volumes:
       -  postgres.db.ogrenci.volume:/var/lib/postgresql/data
     networks:
@@ -174,7 +187,7 @@ services:
       POSTGRES_USER: ${POSTGRES_USER_Personel}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD_Personel}
     ports:
-      - "5434:5432"
+      - "5435:5432"
     volumes:
       -  postgres.db.personel.volume:/var/lib/postgresql/data
     networks:
@@ -217,7 +230,7 @@ services:
       POSTGRES_USER: ${POSTGRES_USER_Keycloak}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD_Keycloak}
     ports:
-      - "5435:5432"
+      - "5436:5432"
     volumes:
       -  postgres.db.keycloak.volume:/var/lib/postgresql/data
     networks:
@@ -261,6 +274,13 @@ services:
     networks:
       - university-network
 
+  microservice.yonetici.api:
+    image: ${DOCKER_REGISTRY-}microserviceyoneticiapi
+    build:
+      context: .
+      dockerfile: Microservice.Yonetici.Api/Dockerfile
+    networks:
+      - university-network
 volumes:
   jaeger.data.volume:
   postgres.db.keycloak.volume:
@@ -268,6 +288,7 @@ volumes:
   keycloak-data:
   postgres.db.ogrenci.volume:  
   postgres.db.personel.volume:
+  postgres.db.yonetici.volume: 
   esdatajaeger:
   redis.db.api.volume:    
   rabbitmq_data:
