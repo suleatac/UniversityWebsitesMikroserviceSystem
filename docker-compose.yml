@@ -149,18 +149,18 @@ services:
       - jaeger.data.volume:/opt/jaeger/data
     networks:
       - university-network
-  postgres.db.yonetici:
+  postgres.db.site:
     restart: always
     image: postgres:16.2
-    container_name: postgres.db.yonetici.container
+    container_name: postgres.db.site.container
     environment:
-      POSTGRES_DB: ${POSTGRES_DB_Yonetici}
-      POSTGRES_USER: ${POSTGRES_USER_Yonetici}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD_Yonetici}
+      POSTGRES_DB: ${POSTGRES_DB_Site}
+      POSTGRES_USER: ${POSTGRES_USER_Site}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD_Site}
     ports:
       - "5433:5432"
     volumes:
-      -  postgres.db.yonetici.volume:/var/lib/postgresql/data
+      -  postgres.db.site.volume:/var/lib/postgresql/data
     networks:
       - university-network
   postgres.db.ogrenci:
@@ -273,12 +273,11 @@ services:
       dockerfile: Mikroservice.Gateway/Dockerfile
     networks:
       - university-network
-
-  microservice.yonetici.api:
-    image: ${DOCKER_REGISTRY-}microserviceyoneticiapi
+  mikroservice.site.api:
+    image: ${DOCKER_REGISTRY-}mikroservicesiteapi
     build:
       context: .
-      dockerfile: Microservice.Yonetici.Api/Dockerfile
+      dockerfile: Mikroservice.Site.Api/Dockerfile
     networks:
       - university-network
 volumes:
@@ -288,7 +287,7 @@ volumes:
   keycloak-data:
   postgres.db.ogrenci.volume:  
   postgres.db.personel.volume:
-  postgres.db.yonetici.volume: 
+  postgres.db.site.volume: 
   esdatajaeger:
   redis.db.api.volume:    
   rabbitmq_data:
@@ -299,3 +298,4 @@ volumes:
 networks:
   university-network:
     driver: bridge
+

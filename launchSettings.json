@@ -6,7 +6,8 @@
       "serviceActions": {
         "mikroservice.ogrenci.api": "StartDebugging",
         "mikroservice.personel.api": "StartDebugging",
-        "mikroservice.gateway": "StartDebugging"
+        "mikroservice.gateway": "StartDebugging",
+        "mikroservice.site.api": "StartDebugging"
       }
     }
   }

@@ -49,7 +49,7 @@ services:
       - mikroservice.personel.api
     restart: always
 
-  microservice.yonetici.api:
+  microservice.site.api:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_HTTP_PORTS=8080
@@ -57,10 +57,10 @@ services:
       - IdentityOption:Issuer="http://keycloak:8080/realms/UniversityRealm
       - ElasticSearch:BaseUrl=http://elasticsearch.db.log:9200
       - ConnectionStrings:Redis=redis.db.api:6379,password=Password12
-      - ConnectionStrings:PostgreSqlServer=Host=postgres.db.yonetici;Port=5432;Database=yonetici_db;Username=yonetici_db_user;Password=yonetici_db_user_password
+      - ConnectionStrings:PostgreSqlServer=Host=postgres.db.site;Port=5432;Database=site_db;Username=site_db_user;Password=site_db_user_password
     ports:
       - "8086:8080"
     depends_on:
       - redis.db.api
-      - postgres.db.yonetici
+      - postgres.db.site
     restart: always

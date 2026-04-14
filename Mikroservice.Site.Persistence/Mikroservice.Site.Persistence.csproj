@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <UserSecretsId>093e6586-0c5f-412a-9444-2cef3210f544</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+	<FrameworkReference Include="Microsoft.AspNetCore.App" />
+	<PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.5" />
+	<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.5">
+	  <PrivateAssets>all</PrivateAssets>
+	  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+	</PackageReference>
+	<PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.1" />
+    <ProjectReference Include="..\Mikroservice.Site.Application\Mikroservice.Site.Application.csproj" />
+  </ItemGroup>
+
+</Project>

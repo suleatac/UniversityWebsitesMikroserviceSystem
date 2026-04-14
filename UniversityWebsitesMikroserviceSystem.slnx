@@ -29,16 +29,16 @@
   <Folder Name="/src/services/Personel/infrastructure/">
     <Project Path="Mikroservice.Personel.Persistence/Mikroservice.Personel.Persistence.csproj" />
   </Folder>
-  <Folder Name="/src/services/Yonetici/" />
-  <Folder Name="/src/services/Yonetici/api/">
-    <Project Path="Microservice.Yonetici.Api/Microservice.Yonetici.Api.csproj" Id="a2523b1a-7d52-497c-96be-6862609ad831" />
+  <Folder Name="/src/services/Site/" />
+  <Folder Name="/src/services/Site/api/">
+    <Project Path="Mikroservice.Site.Api/Mikroservice.Site.Api.csproj" Id="64d57daf-7d9d-4b03-bdd8-947b2e48370e" />
   </Folder>
-  <Folder Name="/src/services/Yonetici/core/">
-    <Project Path="Microservice.Yonetici.Application/Microservice.Yonetici.Application.csproj" Id="1c6ea10e-e5e6-46e8-991f-31c278f9c686" />
-    <Project Path="Microservice.Yonetici.Domain/Microservice.Yonetici.Domain.csproj" Id="fb8125d3-c67c-4384-a154-efced73cd8c6" />
+  <Folder Name="/src/services/Site/core/">
+    <Project Path="Mikroservice.Site.Application/Mikroservice.Site.Application.csproj" Id="b91c2723-7502-438a-b419-b1914673498d" />
+    <Project Path="Mikroservice.Site.Domain/Mikroservice.Site.Domain.csproj" Id="f6601722-be3e-4593-8930-6940d31fbfad" />
   </Folder>
-  <Folder Name="/src/services/Yonetici/infrastructure/">
-    <Project Path="Microservice.Yonetici.Persistence/Microservice.Yonetici.Persistence.csproj" Id="17b075ac-7ea8-4ac0-aafb-b5409a76d55f" />
+  <Folder Name="/src/services/Site/infrastructure/">
+    <Project Path="Mikroservice.Site.Persistence/Mikroservice.Site.Persistence.csproj" Id="eacc3ed1-77bd-48b6-a0f7-83e5c15491c3" />
   </Folder>
   <Folder Name="/src/shared/">
     <Project Path="Microservice.Shared/Microservice.Shared.csproj" />
