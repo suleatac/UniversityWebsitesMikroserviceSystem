@@ -1,13 +1,13 @@
 ﻿using Microservice.Site.Application.Contracts.IRepositories;
-using Microservice.Site.Application.Contracts.Services;
-using Microservice.Site.Persistence;
 using Microservice.Site.Persistence.Repositories;
 using Microservice.Site.Persistence.Services;
 using Microservice.Site.Persistence.UnitOfWorks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Mikroservice.Site.Application.Contracts.Services;
 using Mikroservice.Site.Persistence;
+using Mikroservice.Site.Persistence.Services;
 namespace Microservice.Site.Persistence.Extentions
 {
     public static class PersistenceExtentions
@@ -26,9 +26,50 @@ namespace Microservice.Site.Persistence.Extentions
                 });
 
             });
+            
+
+            services.AddScoped<IBandLogoRepository, BandLogoRepository>();
+            services.AddScoped<IBannerRepository, BannerRepository>();
+            services.AddScoped<IBilgiRepository, BilgiRepository>();
+            services.AddScoped<IBirimRepository, BirimRepository>();
+            services.AddScoped<IDilRepository, DilRepository>();
+            services.AddScoped<IDuyuruRepository, DuyuruRepository>();
+            services.AddScoped<IEtkinlikRepository, EtkinlikRepository>();
+            services.AddScoped<IHaberRepository, HaberRepository>();
+            services.AddScoped<IHedefRepository, HedefRepository>();
+            services.AddScoped<IIcerikRepository, IcerikRepository>();
+            services.AddScoped<IMenuRepository, MenuRepository>();
+            services.AddScoped<IPersonelTelefonRepository, PersonelTelefonRepository>();
+            services.AddScoped<IPersonelTipRepository, PersonelTipRepository>();
+            services.AddScoped<IPopupRepository, PopupRepository>();
+            services.AddScoped<ISertifikaParmakIziRepository, SertifikaParmakIziRepository>();
+            services.AddScoped<ISikcaSorulanSoruKategoriRepository, SikcaSorulanSoruKategoriRepository>();
+            services.AddScoped<ISikcaSorulanSoruRepository, SikcaSorulanSoruRepository>();
+            services.AddScoped<ISiteOzellikleriRepository, SiteOzellikleriRepository>();
+            services.AddScoped<ISitePersonelRepository, SitePersonelRepository>();
+            services.AddScoped<ISiteRepository, SiteRepository>();
+            services.AddScoped<ITemplateRepository, TemplateRepository>();
+            services.AddScoped<IUnvanRepository, UnvanRepository>();
+            services.AddScoped<IVideoRepository, VideoRepository>();
+            services.AddScoped<IYoneticiRepository, YoneticiRepository>();
+            services.AddScoped<IYoneticiSiteRepository, YoneticiSiteRepository>();
             services.AddScoped<IYoneticiTipiRepository, YoneticiTipiRepository>();
-            services.AddScoped<IYoneticiDuyuruRepository, YoneticiDuyuruRepository>();
-            services.AddScoped<IYoneticiTipiSeedService, YoneticiTipiSeedService>();
+            services.AddScoped<IYonetimDuyuruRepository, YonetimDuyuruRepository>();
+
+            services.AddScoped<ISeedService, YoneticiTipiSeedService>();
+            services.AddScoped<ISeedService, UnvanSeedService>();
+            services.AddScoped<ISeedService, PersonelTipSeedService>();
+            services.AddScoped<ISeedService, HedefSeedService>();
+            services.AddScoped<ISeedService, DilSeedService>();
+            services.AddScoped<ISeedService, BirimSeedService>();
+
+
+
+
+
+
+
+
             services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             return services;

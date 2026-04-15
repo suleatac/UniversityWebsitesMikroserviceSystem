@@ -1,15 +1,14 @@
-﻿using AutoMapper;
-using Microservice.Site.Application.Contracts.IRepositories;
-using Microservice.Site.Application.Contracts.Services;
+﻿using Microservice.Site.Application.Contracts.IRepositories;
 using Microservice.Site.Domain.Entities;
 using Microservice.Site.Domain.SeedDatas;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Mikroservice.Site.Application.Contracts.Services;
 using System.Data;
 
 namespace Microservice.Site.Persistence.Services
 {
-    public class YoneticiTipiSeedService : IYoneticiTipiSeedService
+    public class YoneticiTipiSeedService : ISeedService
     {
 
         private readonly IYoneticiTipiRepository _YoneticiTipiRepository;
@@ -25,6 +24,7 @@ namespace Microservice.Site.Persistence.Services
             _UnitOfWork = UnitOfWork;
             _logger = logger;
         }
+        public int Sira => 2;
         public async Task<bool> IsDatabaseSeededAsync(CancellationToken cancellationToken = default)
         {
             // En az 1 personel var mı kontrol et

@@ -1,13 +1,14 @@
 ﻿using Microservice.Site.Application.Contracts.IRepositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Mikroservice.Site.Application.Contracts.Services;
 using Mikroservice.Site.Domain.Entities;
 using Mikroservice.Site.Domain.SeedDatas;
 using System.Data;
 
 namespace Mikroservice.Site.Persistence.Services
 {
-    public class PersonelTipSeedService
+    public class PersonelTipSeedService : ISeedService
     {
         private readonly IPersonelTipRepository _personelTipRepository;
         private readonly ILogger<PersonelTipSeedService> _logger;
@@ -22,6 +23,7 @@ namespace Mikroservice.Site.Persistence.Services
             _unitOfWork = unitOfWork;
             _logger = logger;
         }
+        public int Sira => 1;
         public async Task<bool> IsDatabaseSeededAsync(CancellationToken cancellationToken = default)
         {
             // En az 1 personel var mı kontrol et

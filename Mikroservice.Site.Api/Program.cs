@@ -4,12 +4,10 @@ using Microservice.Shared.OpenTelemetry;
 using Microservice.Shared.SeriLog;
 using Microservice.Site.Api.Endpoints.YoneticiDuyuruEndPoints;
 using Microservice.Site.Api.Endpoints.YoneticiTipiEndPoints;
-using Microservice.Site.Api.SeedDataInitializers;
-using Microservice.Site.Application.Contracts.Services;
 using Microservice.Site.Persistence;
-using Microservice.Site.Persistence.Services;
 using Microservice.Site.Persistence.Extentions;
 using Microsoft.EntityFrameworkCore;
+using Mikroservice.Site.Api.SeedDataInitializers;
 using Mikroservice.Site.Application;
 using Serilog;
 
@@ -24,8 +22,6 @@ builder.Services.AddOpenApi();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-//Yonetici tipi seed işlemi için eklenen servis
-builder.Services.AddScoped<IYoneticiTipiSeedService, YoneticiTipiSeedService>();
 
 //Authentication ve Authorization servisleri eklendi
 builder.Services.AddAuthenticationAndAuthorizationExt(builder.Configuration);
@@ -74,8 +70,8 @@ app.UseExceptionMiddleware();
 //Metric işlemi için eklenen middleware
 app.UseOpenTelemetryPrometheusScrapingEndpoint("/metrics");
 
-//Yonetici tipi seed işlemi için eklenen middleware
-await app.InitializeYoneticiTipiSeedDataAsync();
+//Seed işlemi için eklenen middleware
+await app.InitializeSeedDataAsync();
 
 //Endpointler eklendi
 var apiVersionSet = app.AddVersionSetExt();

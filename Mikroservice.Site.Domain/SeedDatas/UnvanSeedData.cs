@@ -11,7 +11,7 @@ namespace Mikroservice.Site.Domain.SeedDatas
             new Unvan { Id = 3, TipId = 1, Ad = "REKTÖR YARDIMCISI",KisaAd="Rektör Yrd.",Sira=2 }
         };
 
-        public static List<Unvan> GetYoneticiTipiSeedDatas()
+        public static List<Unvan> GetUnvanSeedDatas()
         {
             return Unvanlar;
         }
