@@ -8,9 +8,9 @@
 
         public string Ad { get; set; } = default!;
 
-        public bool IsDeleted { get; set; }
+        public bool IsDeleted { get; set; } = false;
 
-        public int Sira { get; set; }
+        public int Sira { get; set; } = 0;
 
         public Birim? Parent { get; set; }   // navigation (parent)
 

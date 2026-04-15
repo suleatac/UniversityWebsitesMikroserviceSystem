@@ -17,8 +17,9 @@
         public string GoogleplusAdress { get; set; } = default!;
         public string Hakkinda { get; set; } = default!;
         public string DeneyimVeCalismalari { get; set; } = default!;
+        public bool IsDeleted { get; set; } = false;
 
-        public PersonelTip PersonelTip { get; set; } // 🔥 bool yerine
+        public PersonelTip PersonelTip { get; set; } = default!; // 🔥 bool yerine
 
         // NAVIGATION
         public Site Site { get; set; } = default!;

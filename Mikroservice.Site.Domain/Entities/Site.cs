@@ -13,13 +13,19 @@
         public int SiteEPostaPort { get; set; }
         public int SertifikaParmakIziId { get; set; }
         public int TemplateId { get; set; }
-        public bool IsDeleted { get; set; }
+        public bool IsDeleted { get; set; } = false;
         public string SiteEPosta { get; set; } = default!;
+
         public Template Template { get; set; } = default!;
         public Birim Birim { get; set; } = default!;
         public SertifikaParmakIzi SertifikaParmakIzi { get; set; } = default!;
         public SiteOzellikleri SiteOzellikleri { get; set; } = default!;
         public ICollection<YoneticiSite> YoneticiSites { get; set; } = new List<YoneticiSite>();
         public ICollection<SitePersonel> SitePersonels { get; set; } = new List<SitePersonel>();
+        public ICollection<Menu> Menus { get; set; } = new List<Menu>();
+        public ICollection<Haber> Habers { get; set; } = new List<Haber>();
+        public ICollection<Duyuru> Duyurus { get; set; } = new List<Duyuru>();
+        public ICollection<BandLogo> BandLogos { get; set; } = new List<BandLogo>();
+        public ICollection<SikcaSorulanSoru> SikcaSorulanSorus { get; set; } = new List<SikcaSorulanSoru>();
     }
 }

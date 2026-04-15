@@ -16,14 +16,14 @@ namespace Mikroservice.Site.Persistence.Configurations
             builder.HasOne(x => x.Site)
                 .WithMany(s => s.SitePersonels)
                 .HasForeignKey(x => x.SiteId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.Restrict);
             // =========================
             // Telefon (ZORUNLU)
             // =========================
             builder.HasMany(x => x.PersonelTelefons)
                 .WithOne(x => x.SitePersonel)
                 .HasForeignKey(x => x.SitePersonelId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.Restrict);
             // =========================
             // UNVAN (ZORUNLU)
             // =========================
@@ -50,6 +50,11 @@ namespace Mikroservice.Site.Persistence.Configurations
                 .OnDelete(DeleteBehavior.Restrict);
 
             builder.HasIndex(x => new { x.SiteId, x.PersonelId }).IsUnique();
+
+            // =========================
+            // FILTER
+            // =========================
+            builder.HasQueryFilter(b => !b.IsDeleted);
         }
     }
 }

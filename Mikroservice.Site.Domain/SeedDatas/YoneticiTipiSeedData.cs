@@ -1,15 +1,17 @@
-﻿namespace Microservice.Site.Domain.SeedDatas
+﻿using Microservice.Site.Domain.Entities;
+
+namespace Microservice.Site.Domain.SeedDatas
 {
     public class YoneticiTipiSeedData
     {
 
-        public static List<Entities.YoneticiTipi> YoneticiTipleri => new List<Entities.YoneticiTipi>
+        public static List<YoneticiTipi> YoneticiTipleri => new List<YoneticiTipi>
         {
-            new Entities.YoneticiTipi { Id = 1, TipAdi = "Admin", Value = 1 },
-            new Entities.YoneticiTipi { Id = 2, TipAdi = "Birim Web Admini", Value = 2 }
+            new YoneticiTipi { Id = 1, TipAdi = "Admin", Value = 1 },
+            new YoneticiTipi { Id = 2, TipAdi = "Birim Web Admini", Value = 2 }
         };
 
-        public static List<Entities.YoneticiTipi> GetYoneticiTipiSeedDatas()
+        public static List<YoneticiTipi> GetYoneticiTipiSeedDatas()
         {
             return YoneticiTipleri;
         }

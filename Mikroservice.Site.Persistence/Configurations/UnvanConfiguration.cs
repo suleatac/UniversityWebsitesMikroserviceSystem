@@ -20,7 +20,11 @@ namespace Mikroservice.Site.Persistence.Configurations
             builder.Property(x => x.Sira)
                 .IsRequired();
 
-
+            // 1 Template → N Site
+            builder.HasOne(x => x.PersonelTip)
+                .WithMany(x => x.Unvans)
+                .HasForeignKey(x => x.TipId)
+                .OnDelete(DeleteBehavior.Restrict);
 
         }
     }
