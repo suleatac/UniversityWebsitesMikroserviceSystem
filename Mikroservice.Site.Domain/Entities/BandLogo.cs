@@ -5,7 +5,7 @@
         public int Id { get; set; }
 
         public int SiteId { get; set; }
-        public int? DilId { get; set; }
+        public int DilId { get; set; }
 
         public string Ad { get; set; } = default!;
         public string ImgUrl { get; set; } = default!;

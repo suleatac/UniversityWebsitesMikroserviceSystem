@@ -6,7 +6,7 @@ using Microservice.Site.Application.Contracts.IRepositories;
 namespace Microservice.Site.Application.Features.YoneticiDuyuruFeatures.DeleteYoneticiDuyuru
 {
     public class DeleteYoneticiDuyuruCommandHandler(
-          IYoneticiDuyuruRepository yoneticiDuyuruRepository,
+          IYonetimDuyuruRepository yoneticiDuyuruRepository,
           IUnitOfWork unitOfWork,
           IRedisCacheService redisCacheService
         )

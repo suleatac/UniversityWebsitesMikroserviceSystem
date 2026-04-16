@@ -56,6 +56,8 @@ services:
       - IdentityOption:Adress=http://keycloak:8080/realms/UniversityRealm
       - IdentityOption:Issuer="http://keycloak:8080/realms/UniversityRealm
       - ElasticSearch:BaseUrl=http://elasticsearch.db.log:9200
+      - BusOption:Address=rabbitmq 
+      - BusOption:Port=5672 
       - ConnectionStrings:Redis=redis.db.api:6379,password=Password12
       - ConnectionStrings:PostgreSqlServer=Host=postgres.db.site;Port=5432;Database=site_db;Username=site_db_user;Password=site_db_user_password
     ports:

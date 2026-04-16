@@ -8,7 +8,7 @@ namespace Microservice.Site.Application.Features.YoneticiDuyuruFeatures.CreateYo
 {
     public class CreateYoneticiDuyuruCommandHandler
         (
-          IYoneticiDuyuruRepository yoneticiDuyuruRepository,
+          IYonetimDuyuruRepository yoneticiDuyuruRepository,
           IUnitOfWork unitOfWork,
           IRedisCacheService redisCacheService
         )

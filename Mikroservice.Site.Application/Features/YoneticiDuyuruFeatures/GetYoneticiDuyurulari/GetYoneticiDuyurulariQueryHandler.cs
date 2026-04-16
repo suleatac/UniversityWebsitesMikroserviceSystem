@@ -8,7 +8,7 @@ using Microsoft.Extensions.Logging;
 namespace Microservice.Site.Application.Features.YoneticiDuyuruFeatures.GetYoneticiDuyurulari
 {
     public class GetYoneticiDuyurulariQueryHandler(
-          IYoneticiDuyuruRepository yoneticiDuyuruRepository,
+          IYonetimDuyuruRepository yoneticiDuyuruRepository,
           IRedisCacheService redisCacheService,
           ILogger<GetYoneticiDuyurulariQueryHandler> logger
         )

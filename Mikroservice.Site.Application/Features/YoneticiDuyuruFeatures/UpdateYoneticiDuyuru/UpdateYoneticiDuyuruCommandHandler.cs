@@ -6,7 +6,7 @@ using Microservice.Site.Application.Contracts.IRepositories;
 namespace Microservice.Site.Application.Features.YoneticiDuyuruFeatures.UpdateYoneticiDuyuru
 {
     public class UpdateYoneticiDuyuruCommandHandler(
-          IYoneticiDuyuruRepository yoneticiDuyuruRepository,
+          IYonetimDuyuruRepository yoneticiDuyuruRepository,
           IUnitOfWork unitOfWork,
           IRedisCacheService redisCacheService
         )

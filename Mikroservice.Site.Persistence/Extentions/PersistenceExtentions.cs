@@ -1,4 +1,8 @@
-﻿using Microservice.Site.Application.Contracts.IRepositories;
+﻿using MassTransit;
+using Microservice.Shared.Extentions;
+using Microservice.Shared.Options;
+using Microservice.Shared.Services.RabbitMqMasstransitServiceItems.Events;
+using Microservice.Site.Application.Contracts.IRepositories;
 using Microservice.Site.Persistence.Repositories;
 using Microservice.Site.Persistence.Services;
 using Microservice.Site.Persistence.UnitOfWorks;
@@ -7,6 +11,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Mikroservice.Site.Application.Contracts.Services;
 using Mikroservice.Site.Persistence;
+using Mikroservice.Site.Persistence.Messaging.Consumers;
+using Mikroservice.Site.Persistence.Messaging.RabbitmqExtentions;
 using Mikroservice.Site.Persistence.Services;
 namespace Microservice.Site.Persistence.Extentions
 {
@@ -26,7 +32,8 @@ namespace Microservice.Site.Persistence.Extentions
                 });
 
             });
-            
+
+           
 
             services.AddScoped<IBandLogoRepository, BandLogoRepository>();
             services.AddScoped<IBannerRepository, BannerRepository>();

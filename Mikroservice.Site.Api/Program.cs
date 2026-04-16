@@ -9,6 +9,7 @@ using Microservice.Site.Persistence.Extentions;
 using Microsoft.EntityFrameworkCore;
 using Mikroservice.Site.Api.SeedDataInitializers;
 using Mikroservice.Site.Application;
+using Mikroservice.Site.Persistence.Messaging.RabbitmqExtentions;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -40,6 +41,9 @@ builder.Services.AddCommonServiceExt(typeof(ApplicationAssembly));
 
 //Redis cache ekleme işlemi için eklenen extention
 builder.Services.AddRedisCacheExt(builder.Configuration);
+
+//Rabbitmq message sistemi için eklenen extention
+builder.Services.AddRabbitmqExtentions(builder.Configuration);
 
 //Versiyonlama eklendi
 builder.Services.AddVersioningExt();
