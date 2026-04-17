@@ -1,7 +1,7 @@
 ﻿using MassTransit;
 using MediatR;
 using Microservice.Shared;
-using Microservice.Shared.Services.RabbitMqMasstransitServiceItems.Events;
+using Microservice.Shared.Services.RabbitMqMasstransitServiceItems.Events.BilgiEvents;
 using Microservice.Site.Application.Contracts.IRepositories;
 
 namespace Mikroservice.Site.Application.Features.BilgiFeatures.DeleteBilgi

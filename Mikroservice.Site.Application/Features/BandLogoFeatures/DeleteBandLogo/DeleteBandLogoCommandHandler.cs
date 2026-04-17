@@ -1,9 +1,7 @@
 ﻿using MassTransit;
-using MassTransit.Transports;
 using MediatR;
 using Microservice.Shared;
-using Microservice.Shared.Services.RabbitMqMasstransitServiceItems.Events;
-using Microservice.Shared.Services.RedisServiceItems;
+using Microservice.Shared.Services.RabbitMqMasstransitServiceItems.Events.BandLogoEvents;
 using Microservice.Site.Application.Contracts.IRepositories;
 
 namespace Mikroservice.Site.Application.Features.BandLogoFeatures.DeleteBandLogo

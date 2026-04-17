@@ -26,9 +26,7 @@ namespace Mikroservice.Site.Application.Features.BirimFeatures.CreateBirim
             await unitOfWork.SaveChangesAsync(cancellationToken);
 
             // ✔ DOĞRU EVENT
-            await publishEndpoint.Publish(
-                new BirimCreatedEvent(),
-                cancellationToken);
+            await publishEndpoint.Publish(new BirimCreatedEvent(), cancellationToken);
 
             return ServiceResult.SuccessAsNoContent();
         }

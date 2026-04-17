@@ -1,7 +1,7 @@
 ﻿using MassTransit;
 using MediatR;
 using Microservice.Shared;
-using Microservice.Shared.Services.RabbitMqMasstransitServiceItems.Events;
+using Microservice.Shared.Services.RabbitMqMasstransitServiceItems.Events.BandLogoEvents;
 using Microservice.Site.Application.Contracts.IRepositories;
 
 namespace Mikroservice.Site.Application.Features.BandLogoFeatures.UpdateBandLogo
@@ -29,7 +29,7 @@ namespace Mikroservice.Site.Application.Features.BandLogoFeatures.UpdateBandLogo
             await unitOfWork.SaveChangesAsync(cancellationToken);
 
             //Cache temizleme işlemini yapabilsin diye bu event eklendi.
-            await publishEndpoint.Publish(new BandLogoDeletedEvent(request.SiteId, request.DilId), cancellationToken);
+            await publishEndpoint.Publish(new BandLogoUpdatedEvent(request.SiteId, request.DilId), cancellationToken);
 
 
             return ServiceResult.SuccessAsNoContent();

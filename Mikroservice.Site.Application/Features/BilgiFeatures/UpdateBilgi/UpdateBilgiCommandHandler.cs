@@ -2,6 +2,7 @@
 using MediatR;
 using Microservice.Shared;
 using Microservice.Shared.Services.RabbitMqMasstransitServiceItems.Events;
+using Microservice.Shared.Services.RabbitMqMasstransitServiceItems.Events.BilgiEvents;
 using Microservice.Site.Application.Contracts.IRepositories;
 
 namespace Mikroservice.Site.Application.Features.BilgiFeatures.UpdateBilgi
@@ -38,7 +39,7 @@ namespace Mikroservice.Site.Application.Features.BilgiFeatures.UpdateBilgi
             await unitOfWork.SaveChangesAsync(cancellationToken);
 
             //Cache temizleme işlemini yapabilsin diye bu event eklendi.
-            await publishEndpoint.Publish(new BilgiDeletedEvent(bilgi.SiteId, bilgi.DilId), cancellationToken);
+            await publishEndpoint.Publish(new BilgiUpdatedEvent(bilgi.SiteId, bilgi.DilId), cancellationToken);
 
 
             return ServiceResult.SuccessAsNoContent();

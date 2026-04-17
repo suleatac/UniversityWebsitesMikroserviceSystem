@@ -4,7 +4,6 @@ using Microservice.Shared.Services.RedisServiceItems;
 using Microservice.Site.Application.Contracts.IRepositories;
 using Microsoft.Extensions.Logging;
 using Mikroservice.Site.Domain.Entities;
-using static MassTransit.Monitoring.Performance.BuiltInCounters;
 
 namespace Mikroservice.Site.Application.Features.BandLogoFeatures.GetBandLogos
 {

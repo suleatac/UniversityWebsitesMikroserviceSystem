@@ -2,7 +2,8 @@
 using Microservice.Shared.Options;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Mikroservice.Site.Persistence.Messaging.Consumers;
+using Mikroservice.Site.Persistence.Messaging.Consumers.BandLogoConsumers;
+using Mikroservice.Site.Persistence.Messaging.Consumers.BannerConsumers;
 
 namespace Mikroservice.Site.Persistence.Messaging.RabbitmqExtentions
 {

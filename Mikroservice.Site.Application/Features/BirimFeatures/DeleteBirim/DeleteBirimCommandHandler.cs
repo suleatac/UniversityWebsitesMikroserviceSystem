@@ -3,6 +3,7 @@ using MediatR;
 using Microservice.Shared;
 using Microservice.Shared.Services.RabbitMqMasstransitServiceItems.Events.BirimEvents;
 using Microservice.Site.Application.Contracts.IRepositories;
+using Microsoft.EntityFrameworkCore;
 
 namespace Mikroservice.Site.Application.Features.BirimFeatures.DeleteBirim
 {
@@ -16,19 +17,34 @@ namespace Mikroservice.Site.Application.Features.BirimFeatures.DeleteBirim
         public async Task<ServiceResult> Handle(DeleteBirimCommand request, CancellationToken cancellationToken)
         {
             var birim = await birimRepository.GetByIdAsync(request.Id);
-            if (birim == null)
-            {
-                return ServiceResult.ErrorAsNotFound();
-            }
 
-            birim.IsDeleted = true;
-            birimRepository.Update(birim);
+            if (birim == null || birim.IsDeleted)
+                return ServiceResult.ErrorAsNotFound();
+
+            await SoftDeleteTree(request.Id);
+
             await unitOfWork.SaveChangesAsync(cancellationToken);
 
-            //Cache temizleme işlemini yapabilsin diye bu event eklendi.
             await publishEndpoint.Publish(new BirimDeletedEvent(), cancellationToken);
 
             return ServiceResult.SuccessAsNoContent();
         }
+        private async Task SoftDeleteTree(int parentId)
+        {
+            var children = await birimRepository.Where(x => x.ParentId == parentId).ToListAsync();
+
+            foreach (var child in children)
+            {
+                await SoftDeleteTree(child.Id);
+            }
+
+            var entity = await birimRepository.GetByIdAsync(parentId);
+            if (entity != null)
+            {
+                entity.IsDeleted = true;
+            }
+        }
     }
-}
+
+   
+    }

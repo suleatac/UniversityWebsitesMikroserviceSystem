@@ -28,6 +28,7 @@ namespace Mikroservice.Site.Persistence.Configurations
 
             builder.Property(x => x.OlusturulmaTarihi)
                 .IsRequired().HasColumnType("timestamp without time zone");
+
             builder.HasQueryFilter(b => !b.IsDeleted);
             // =========================
             // SITE

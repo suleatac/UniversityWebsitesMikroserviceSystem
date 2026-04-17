@@ -1,14 +1,9 @@
 ﻿using MassTransit;
-using MassTransit.Transports;
 using MediatR;
 using Microservice.Shared;
-using Microservice.Shared.Services.RabbitMqMasstransitServiceItems.Events;
-using Microservice.Shared.Services.RedisServiceItems;
+using Microservice.Shared.Services.RabbitMqMasstransitServiceItems.Events.BannerEvents;
 using Microservice.Site.Application.Contracts.IRepositories;
-using Mikroservice.Site.Application.Features.BandLogoFeatures.CreateBandLogo;
 using Mikroservice.Site.Domain.Entities;
-using System.Reflection;
-using static MassTransit.Monitoring.Performance.BuiltInCounters;
 
 namespace Mikroservice.Site.Application.Features.BannerFeatures.CreateBanner
 {
@@ -47,7 +42,7 @@ namespace Mikroservice.Site.Application.Features.BannerFeatures.CreateBanner
             await unitOfWork.SaveChangesAsync(cancellationToken);
 
             //Cache temizleme işlemini yapabilsin diye bu event eklendi.
-            await publishEndpoint.Publish(new BannerDeletedEvent(newBanner.SiteId, newBanner.DilId), cancellationToken);
+            await publishEndpoint.Publish(new BannerCreatedEvent(newBanner.SiteId, newBanner.DilId), cancellationToken);
 
 
             return ServiceResult.SuccessAsNoContent();
