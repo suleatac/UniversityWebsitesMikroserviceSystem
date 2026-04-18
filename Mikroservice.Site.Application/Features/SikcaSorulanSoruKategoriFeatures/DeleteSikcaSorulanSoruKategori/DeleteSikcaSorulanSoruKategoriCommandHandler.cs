@@ -1,28 +1,46 @@
+using MassTransit;
 using MediatR;
 using Microservice.Shared;
-using Mikroservice.Site.Domain.Entities;
+using Microservice.Shared.Services.RabbitMqMasstransitServiceItems.Events.SikcaSorulanSoruEvents;
+using Microservice.Shared.Services.RabbitMqMasstransitServiceItems.Events.SikcaSorulanSoruKategoriEvents;
 using Microservice.Site.Application.Contracts.IRepositories;
+using Mikroservice.Site.Domain.Entities;
 
 namespace Mikroservice.Site.Application.Features.SikcaSorulanSoruKategoriFeatures.DeleteSikcaSorulanSoruKategori
 {
-    public class DeleteSikcaSorulanSoruKategoriCommandHandler : IRequestHandler<DeleteSikcaSorulanSoruKategoriCommand, ServiceResult>
+    public class DeleteSikcaSorulanSoruKategoriCommandHandler(
+    ISikcaSorulanSoruKategoriRepository kategoriRepository,
+    ISikcaSorulanSoruRepository soruRepository,
+    IUnitOfWork unitOfWork,
+    IPublishEndpoint publishEndpoint
+) : IRequestHandler<DeleteSikcaSorulanSoruKategoriCommand, ServiceResult>
     {
-        private readonly ISikcaSorulanSoruKategoriRepository _repository;
-        private readonly IUnitOfWork _unitOfWork;
-
-        public DeleteSikcaSorulanSoruKategoriCommandHandler(ISikcaSorulanSoruKategoriRepository repository, IUnitOfWork unitOfWork)
-        {
-            _repository = repository;
-            _unitOfWork = unitOfWork;
-        }
-
         public async Task<ServiceResult> Handle(DeleteSikcaSorulanSoruKategoriCommand request, CancellationToken cancellationToken)
         {
-            var entity = await _repository.GetByIdAsync(request.Id);
-            if (entity == null)
+            var kategori = await kategoriRepository.GetByIdAsync(request.Id);
+
+            if (kategori == null || kategori.IsDeleted)
                 return ServiceResult.ErrorAsNotFound();
-            _repository.Delete(entity);
-            await _unitOfWork.SaveChangesAsync();
+
+            // 🔥 İçindeki soruları da sil
+            var sorular = soruRepository
+                .Where(x => x.KategoriId == kategori.Id && !x.IsDeleted)
+                .ToList();
+
+            foreach (var soru in sorular)
+            {
+                soru.IsDeleted = true;
+                await publishEndpoint.Publish(new SikcaSorulanSoruChangedEvent(soru.SiteId, soru.DilId), cancellationToken); // (isteğe bağlı)
+            }
+
+            kategori.IsDeleted = true;
+
+            await unitOfWork.SaveChangesAsync(cancellationToken);
+
+            // 🔥 Cache temizleme
+            await publishEndpoint.Publish(new SikcaSorulanSoruKategoriChangedEvent(), cancellationToken);
+         
+
             return ServiceResult.SuccessAsNoContent();
         }
     }

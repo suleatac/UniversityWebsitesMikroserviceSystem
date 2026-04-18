@@ -6,7 +6,7 @@ namespace Mikroservice.Site.Application.Features.SertifikaParmakIziFeatures.Upda
     {
         public int Id { get; init; }
         public string SertifikaParmakIziNumarasi { get; init; } = default!;
-        public DateTime? SertifikaYili { get; init; }
+        public DateTime SertifikaYili { get; init; }
         public bool Aktif { get; init; }
     }
 }

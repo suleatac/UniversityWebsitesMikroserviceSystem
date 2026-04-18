@@ -1,21 +1,18 @@
+using MassTransit;
 using MediatR;
 using Microservice.Shared;
-using Mikroservice.Site.Domain.Entities;
+using Microservice.Shared.Services.RabbitMqMasstransitServiceItems.Events.SikcaSorulanSoruEvents;
 using Microservice.Site.Application.Contracts.IRepositories;
+using Mikroservice.Site.Domain.Entities;
 
 namespace Mikroservice.Site.Application.Features.SikcaSorulanSoruFeatures.CreateSikcaSorulanSoru
 {
-    public class CreateSikcaSorulanSoruCommandHandler : IRequestHandler<CreateSikcaSorulanSoruCommand, ServiceResult>
+    public class CreateSikcaSorulanSoruCommandHandler(
+           ISikcaSorulanSoruRepository soruRepository,
+           IUnitOfWork unitOfWork,
+           IPublishEndpoint publishEndpoint
+       ) : IRequestHandler<CreateSikcaSorulanSoruCommand, ServiceResult>
     {
-        private readonly ISikcaSorulanSoruRepository _repository;
-        private readonly IUnitOfWork _unitOfWork;
-
-        public CreateSikcaSorulanSoruCommandHandler(ISikcaSorulanSoruRepository repository, IUnitOfWork unitOfWork)
-        {
-            _repository = repository;
-            _unitOfWork = unitOfWork;
-        }
-
         public async Task<ServiceResult> Handle(CreateSikcaSorulanSoruCommand request, CancellationToken cancellationToken)
         {
             var entity = new SikcaSorulanSoru
@@ -23,14 +20,24 @@ namespace Mikroservice.Site.Application.Features.SikcaSorulanSoruFeatures.Create
                 SiteId = request.SiteId,
                 DilId = request.DilId,
                 KategoriId = request.KategoriId,
+
                 Soru = request.Soru,
                 Cevap = request.Cevap,
+
                 Sira = request.Sira,
-                IsDeleted = request.IsDeleted,
-                SeoUrl = request.SeoUrl
+                SeoUrl = request.SeoUrl,
+
+                IsDeleted = false
             };
-            await _repository.AddAsync(entity);
-            await _unitOfWork.SaveChangesAsync();
+
+            await soruRepository.AddAsync(entity);
+            await unitOfWork.SaveChangesAsync(cancellationToken);
+
+            // 🔥 Cache invalidation event
+            await publishEndpoint.Publish(
+                new SikcaSorulanSoruChangedEvent(request.SiteId, request.DilId),
+                cancellationToken);
+
             return ServiceResult.SuccessAsNoContent();
         }
     }

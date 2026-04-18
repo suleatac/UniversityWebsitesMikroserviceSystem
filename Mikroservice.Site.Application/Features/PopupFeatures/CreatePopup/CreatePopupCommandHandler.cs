@@ -41,7 +41,7 @@ namespace Mikroservice.Site.Application.Features.PopupFeatures.CreatePopup
             await unitOfWork.SaveChangesAsync(cancellationToken);
 
             //Cache temizleme işlemini yapabilsin diye bu event eklendi.
-            await publishEndpoint.Publish(new PopupChangedEvent(), cancellationToken);
+            await publishEndpoint.Publish(new PopupChangedEvent(request.SiteId,request.DilId), cancellationToken);
 
 
             return ServiceResult.SuccessAsNoContent();

@@ -1,25 +1,46 @@
 using MediatR;
 using Microservice.Shared;
-using Mikroservice.Site.Domain.Entities;
+using Microservice.Shared.Services.RedisServiceItems;
 using Microservice.Site.Application.Contracts.IRepositories;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using Mikroservice.Site.Domain.Entities;
 
 namespace Mikroservice.Site.Application.Features.SertifikaParmakIziFeatures.GetSertifikaParmakIzi
 {
-    public class GetSertifikaParmakIziQueryHandler : IRequestHandler<GetSertifikaParmakIziQuery, ServiceResult>
+    public class GetSertifikaParmakIziQueryHandler(
+          ISertifikaParmakIziRepository sertifikaParmakIziRepository,
+          IRedisCacheService redisCacheService,
+          ILogger<GetSertifikaParmakIziQueryHandler> logger
+        )
+        : IRequestHandler<GetSertifikaParmakIziQuery, ServiceResult<List<SertifikaParmakIzi>>>
     {
-        private readonly ISertifikaParmakIziRepository _sertifikaParmakIziRepository;
-
-        public GetSertifikaParmakIziQueryHandler(ISertifikaParmakIziRepository sertifikaParmakIziRepository)
+        public async Task<ServiceResult<List<SertifikaParmakIzi>>> Handle(GetSertifikaParmakIziQuery request, CancellationToken cancellationToken)
         {
-            _sertifikaParmakIziRepository = sertifikaParmakIziRepository;
-        }
+            // Önce cache'e bak
+            var cacheKey = $"sertifikaparmakizi:list";
+            var cached = await redisCacheService.GetListAsync<SertifikaParmakIzi>(cacheKey, cancellationToken);
+            if (cached is not null)
+            {
+                //Örnek Loglama
+                logger.LogInformation(
+                    "Sertifika parmak izi verisi cacheden alındı. Count:{count}",
+                    cached.Count);
+                return ServiceResult<List<SertifikaParmakIzi>>.SuccessAsOK(cached);
+            }
 
-        public async Task<ServiceResult> Handle(GetSertifikaParmakIziQuery request, CancellationToken cancellationToken)
-        {
-            var entity = await _sertifikaParmakIziRepository.GetByIdAsync(request.Id);
-            if (entity == null)
-                return ServiceResult.ErrorAsNotFound();
-            return ServiceResult.SuccessAsOK(entity);
+
+            // Yoksa veritabanından çek
+            var data = await sertifikaParmakIziRepository.GetAll().ToListAsync(cancellationToken);
+
+            // Cache'e yaz
+            await redisCacheService.SetListAsync(cacheKey, data, TimeSpan.FromHours(24), cancellationToken);
+
+            //Örnek Loglama
+            logger.LogInformation(
+                "Sertifika parmak izi verisi veritabanından alındı. Count:{count}",
+                data.Count);
+            return ServiceResult<List<SertifikaParmakIzi>>.SuccessAsOK(data);
         }
     }
 }

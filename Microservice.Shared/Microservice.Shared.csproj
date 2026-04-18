@@ -7,6 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Services\RabbitMqMasstransitServiceItems\Commands\**" />
+    <EmbeddedResource Remove="Services\RabbitMqMasstransitServiceItems\Commands\**" />
+    <None Remove="Services\RabbitMqMasstransitServiceItems\Commands\**" />
+  </ItemGroup>
+
+  <ItemGroup>
 	<FrameworkReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Asp.Versioning.Http" Version="8.1.1" />
     <PackageReference Include="Asp.Versioning.Mvc" Version="8.1.1" />
@@ -34,10 +40,6 @@
     <PackageReference Include="Serilog.Formatting.Elasticsearch" Version="10.0.0" />
     <PackageReference Include="Serilog.Sinks.Elasticsearch" Version="10.0.0" />
     <PackageReference Include="StackExchange.Redis" Version="2.12.8" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Services\RabbitMqMasstransitServiceItems\Commands\" />
   </ItemGroup>
 
 </Project>

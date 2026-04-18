@@ -5,5 +5,6 @@ namespace Microservice.Site.Application.Contracts.IRepositories
     public interface ISikcaSorulanSoruKategoriRepository : IGenericRepository<SikcaSorulanSoruKategori>
     {
         Task<bool> AnyAsync(CancellationToken cancellationToken = default);
+        Task<bool> AnyByIdAsync(int Id, CancellationToken cancellationToken = default);
     }
 }

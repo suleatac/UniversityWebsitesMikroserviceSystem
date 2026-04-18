@@ -7,6 +7,5 @@ namespace Mikroservice.Site.Application.Features.SikcaSorulanSoruKategoriFeature
         public int Id { get; init; }
         public string Ad { get; init; } = default!;
         public int Sira { get; init; }
-        public bool IsDeleted { get; init; } = false;
     }
 }

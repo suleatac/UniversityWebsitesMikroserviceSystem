@@ -5,5 +5,6 @@ namespace Microservice.Site.Application.Contracts.IRepositories
     public interface IUnvanRepository : IGenericRepository<Unvan>
     {
         Task<bool> AnyAsync(CancellationToken cancellationToken = default);
+        Task<bool> AnyByAdAsync(string ad, CancellationToken cancellationToken = default);
     }
 }

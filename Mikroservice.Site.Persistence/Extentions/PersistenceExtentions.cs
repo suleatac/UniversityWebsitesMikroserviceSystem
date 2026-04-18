@@ -58,11 +58,9 @@ namespace Microservice.Site.Persistence.Extentions
             services.AddScoped<ITemplateRepository, TemplateRepository>();
             services.AddScoped<IUnvanRepository, UnvanRepository>();
             services.AddScoped<IVideoRepository, VideoRepository>();
-            services.AddScoped<IYoneticiRepository, YoneticiRepository>();
             services.AddScoped<IYoneticiSiteRepository, YoneticiSiteRepository>();
             services.AddScoped<IYoneticiTipiRepository, YoneticiTipiRepository>();
             services.AddScoped<IYonetimDuyuruRepository, YonetimDuyuruRepository>();
-
             services.AddScoped<ISeedService, YoneticiTipiSeedService>();
             services.AddScoped<ISeedService, UnvanSeedService>();
             services.AddScoped<ISeedService, PersonelTipSeedService>();

@@ -17,5 +17,9 @@ namespace Microservice.Site.Persistence.Repositories
         {
             return await _appDbContext.Set<SiteOzellikleri>().AnyAsync(cancellationToken);
         }
+        public async Task<bool> AnyBySiteIdAsync(int siteId, CancellationToken cancellationToken = default)
+        {
+            return await _appDbContext.Set<SiteOzellikleri>().AnyAsync(x => x.SiteId == siteId, cancellationToken);
+        }
     }
 }

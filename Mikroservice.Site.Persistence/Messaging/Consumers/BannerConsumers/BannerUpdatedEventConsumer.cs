@@ -22,6 +22,4 @@ namespace Mikroservice.Site.Persistence.Messaging.Consumers.BannerConsumers
             await _cache.RemoveAsync(key, context.CancellationToken);
         }
     }
-    {
-    }
 }

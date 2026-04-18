@@ -8,26 +8,31 @@ namespace Mikroservice.Site.Persistence.Configurations
     {
         public void Configure(EntityTypeBuilder<YoneticiSite> builder)
         {
-            // Composite Key
-            builder.HasKey(x => new { x.YoneticiId, x.SiteId });
+            // 🔥 Primary Key
+            builder.HasKey(x => x.Id);
 
-            // Yonetici ilişkisi
-            builder.HasOne(x => x.Yonetici)
-                .WithMany(x => x.YoneticiSites)
-                .HasForeignKey(x => x.YoneticiId)
-                .OnDelete(DeleteBehavior.Cascade);
+            // 🔐 Keycloak User Id
+            builder.Property(x => x.KeycloakUserId)
+                .IsRequired()
+                .HasMaxLength(100);
 
-            // Site ilişkisi
+            // 🔗 Site ilişkisi
             builder.HasOne(x => x.Site)
                 .WithMany(x => x.YoneticiSites)
                 .HasForeignKey(x => x.SiteId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            // YoneticiTipi (role per site)
+            // 🔗 YoneticiTipi (role per site)
             builder.HasOne(x => x.YoneticiTipi)
                 .WithMany()
                 .HasForeignKey(x => x.YoneticiTipiId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            // 🧠 Soft delete index (opsiyonel ama önerilir)
+            builder.Property(x => x.IsDeleted)
+                .HasDefaultValue(false);
+            builder.HasQueryFilter(b => !b.IsDeleted);
+            builder.HasIndex(x => new { x.SiteId, x.KeycloakUserId });
         }
     }
 }

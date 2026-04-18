@@ -2,6 +2,7 @@
 using Microservice.Shared;
 using Microservice.Shared.Services.RedisServiceItems;
 using Microservice.Site.Application.Contracts.IRepositories;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Mikroservice.Site.Domain.Entities;
 
@@ -32,7 +33,7 @@ namespace Mikroservice.Site.Application.Features.BilgiFeatures.GetBilgis
 
 
             // Yoksa veritabanından çek
-            var data = bilgiRepository.GetAll().Where(b => b.SiteId == request.SiteId && b.DilId == request.DilId).OrderBy(x => x.Sira).ToList();
+            var data = await bilgiRepository.GetAll().Where(b => b.SiteId == request.SiteId && b.DilId == request.DilId).ToListAsync(cancellationToken);
 
             // Cache'e yaz
             await redisCacheService.SetListAsync(cacheKey, data, TimeSpan.FromHours(24), cancellationToken);

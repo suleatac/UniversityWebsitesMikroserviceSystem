@@ -1,31 +1,35 @@
+using MassTransit;
 using MediatR;
 using Microservice.Shared;
-using Mikroservice.Site.Domain.Entities;
+using Microservice.Shared.Services.RabbitMqMasstransitServiceItems.Events.SikcaSorulanSoruKategoriEvents;
 using Microservice.Site.Application.Contracts.IRepositories;
+using Mikroservice.Site.Domain.Entities;
 
 namespace Mikroservice.Site.Application.Features.SikcaSorulanSoruKategoriFeatures.CreateSikcaSorulanSoruKategori
 {
-    public class CreateSikcaSorulanSoruKategoriCommandHandler : IRequestHandler<CreateSikcaSorulanSoruKategoriCommand, ServiceResult>
+    public class CreateSikcaSorulanSoruKategoriCommandHandler(
+         ISikcaSorulanSoruKategoriRepository kategoriRepository,
+         IUnitOfWork unitOfWork,
+         IPublishEndpoint publishEndpoint
+     ) : IRequestHandler<CreateSikcaSorulanSoruKategoriCommand, ServiceResult>
     {
-        private readonly ISikcaSorulanSoruKategoriRepository _repository;
-        private readonly IUnitOfWork _unitOfWork;
-
-        public CreateSikcaSorulanSoruKategoriCommandHandler(ISikcaSorulanSoruKategoriRepository repository, IUnitOfWork unitOfWork)
-        {
-            _repository = repository;
-            _unitOfWork = unitOfWork;
-        }
-
         public async Task<ServiceResult> Handle(CreateSikcaSorulanSoruKategoriCommand request, CancellationToken cancellationToken)
         {
             var entity = new SikcaSorulanSoruKategori
             {
                 Ad = request.Ad,
                 Sira = request.Sira,
-                IsDeleted = request.IsDeleted
+                IsDeleted = false
             };
-            await _repository.AddAsync(entity);
-            await _unitOfWork.SaveChangesAsync();
+
+            await kategoriRepository.AddAsync(entity);
+            await unitOfWork.SaveChangesAsync(cancellationToken);
+
+            // 🔥 Cache invalidation event
+            await publishEndpoint.Publish(
+                new SikcaSorulanSoruKategoriChangedEvent(),
+                cancellationToken);
+
             return ServiceResult.SuccessAsNoContent();
         }
     }

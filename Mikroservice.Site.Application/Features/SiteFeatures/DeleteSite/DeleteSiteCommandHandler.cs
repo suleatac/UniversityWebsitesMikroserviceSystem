@@ -1,28 +1,31 @@
+using MassTransit;
 using MediatR;
 using Microservice.Shared;
-using Mikroservice.Site.Domain.Entities;
+using Microservice.Shared.Services.RabbitMqMasstransitServiceItems.Events.SiteEvents;
 using Microservice.Site.Application.Contracts.IRepositories;
+using Mikroservice.Site.Domain.Entities;
 
 namespace Mikroservice.Site.Application.Features.SiteFeatures.DeleteSite
 {
-    public class DeleteSiteCommandHandler : IRequestHandler<DeleteSiteCommand, ServiceResult>
+    public class DeleteSiteCommandHandler(
+     ISiteRepository siteRepository,
+     IUnitOfWork unitOfWork,
+     IPublishEndpoint publishEndpoint
+ ) : IRequestHandler<DeleteSiteCommand, ServiceResult>
     {
-        private readonly ISiteRepository _siteRepository;
-        private readonly IUnitOfWork _unitOfWork;
-
-        public DeleteSiteCommandHandler(ISiteRepository siteRepository, IUnitOfWork unitOfWork)
-        {
-            _siteRepository = siteRepository;
-            _unitOfWork = unitOfWork;
-        }
-
         public async Task<ServiceResult> Handle(DeleteSiteCommand request, CancellationToken cancellationToken)
         {
-            var entity = await _siteRepository.GetByIdAsync(request.Id);
-            if (entity == null)
+            var site = await siteRepository.GetByIdAsync(request.Id);
+
+            if (site == null || site.IsDeleted)
                 return ServiceResult.ErrorAsNotFound();
-            _siteRepository.Delete(entity);
-            await _unitOfWork.SaveChangesAsync();
+
+            site.IsDeleted = true;
+
+            await unitOfWork.SaveChangesAsync(cancellationToken);
+
+            await publishEndpoint.Publish(new SiteChangedEvent(), cancellationToken);
+
             return ServiceResult.SuccessAsNoContent();
         }
     }

@@ -1,28 +1,33 @@
+using MassTransit;
 using MediatR;
 using Microservice.Shared;
-using Mikroservice.Site.Domain.Entities;
+using Microservice.Shared.Services.RabbitMqMasstransitServiceItems.Events.SikcaSorulanSoruEvents;
 using Microservice.Site.Application.Contracts.IRepositories;
 
 namespace Mikroservice.Site.Application.Features.SikcaSorulanSoruFeatures.DeleteSikcaSorulanSoru
 {
-    public class DeleteSikcaSorulanSoruCommandHandler : IRequestHandler<DeleteSikcaSorulanSoruCommand, ServiceResult>
+    public class DeleteSikcaSorulanSoruCommandHandler(
+          ISikcaSorulanSoruRepository sikcaSorulanSoruRepository,
+          IUnitOfWork unitOfWork,
+          IPublishEndpoint publishEndpoint
+        )
+        : IRequestHandler<DeleteSikcaSorulanSoruCommand, ServiceResult>
     {
-        private readonly ISikcaSorulanSoruRepository _repository;
-        private readonly IUnitOfWork _unitOfWork;
-
-        public DeleteSikcaSorulanSoruCommandHandler(ISikcaSorulanSoruRepository repository, IUnitOfWork unitOfWork)
-        {
-            _repository = repository;
-            _unitOfWork = unitOfWork;
-        }
-
         public async Task<ServiceResult> Handle(DeleteSikcaSorulanSoruCommand request, CancellationToken cancellationToken)
         {
-            var entity = await _repository.GetByIdAsync(request.Id);
-            if (entity == null)
+            var sikcaSorulanSoru = await sikcaSorulanSoruRepository.GetByIdAsync(request.Id);
+            if (sikcaSorulanSoru == null)
+            {
                 return ServiceResult.ErrorAsNotFound();
-            _repository.Delete(entity);
-            await _unitOfWork.SaveChangesAsync();
+            }
+
+            sikcaSorulanSoru.IsDeleted = true;
+            sikcaSorulanSoruRepository.Update(sikcaSorulanSoru);
+            await unitOfWork.SaveChangesAsync(cancellationToken);
+
+            //Cache temizleme işlemini yapabilsin diye bu event eklendi.
+            await publishEndpoint.Publish(new SikcaSorulanSoruChangedEvent(sikcaSorulanSoru.SiteId, sikcaSorulanSoru.DilId), cancellationToken);
+
             return ServiceResult.SuccessAsNoContent();
         }
     }

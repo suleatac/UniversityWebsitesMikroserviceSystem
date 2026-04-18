@@ -17,5 +17,9 @@ namespace Microservice.Site.Persistence.Repositories
         {
             return await _appDbContext.Set<SikcaSorulanSoruKategori>().AnyAsync(cancellationToken);
         }
+        public async Task<bool> AnyByIdAsync(int Id, CancellationToken cancellationToken = default)
+        {
+            return await _appDbContext.Set<SikcaSorulanSoruKategori>().AnyAsync(x=>x.Id== Id , cancellationToken);
+        }
     }
 }
