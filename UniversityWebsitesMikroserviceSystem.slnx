@@ -40,6 +40,9 @@
   <Folder Name="/src/services/Site/infrastructure/">
     <Project Path="Mikroservice.Site.Persistence/Mikroservice.Site.Persistence.csproj" Id="eacc3ed1-77bd-48b6-a0f7-83e5c15491c3" />
   </Folder>
+  <Folder Name="/src/services/UI/">
+    <Project Path="Microservice.Web/Microservice.Web.csproj" Id="5d83c667-b855-4e10-95d7-1e0343c42762" />
+  </Folder>
   <Folder Name="/src/shared/">
     <Project Path="Microservice.Shared/Microservice.Shared.csproj" />
   </Folder>

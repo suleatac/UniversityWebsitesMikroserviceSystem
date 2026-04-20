@@ -8,8 +8,7 @@ namespace Mikroservice.Site.Api.Endpoints.BandLogoEndPoints.EndPoints
     {
         public static RouteGroupBuilder DeleteBandLogoEndpointGroupItem(this RouteGroupBuilder group)
         {
-            group.MapDelete("/{id:int}", async (IMediator mediator, int id) =>
-            {
+            group.MapDelete("/{id:int}", async (IMediator mediator, int id) => {
                 if (id <= 0)
                     return Results.BadRequest("Geçersiz Id");
 
@@ -23,7 +22,7 @@ namespace Mikroservice.Site.Api.Endpoints.BandLogoEndPoints.EndPoints
             .Produces(StatusCodes.Status500InternalServerError)
             .WithName("DeleteBandLogo")
             .WithSummary("Delete Band Logo")
-            .WithDescription("Delete Band Logo by Id")
+            .WithDescription("Delete Band Logo by Id");
 
             return group;
         }

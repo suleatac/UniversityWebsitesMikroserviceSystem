@@ -2,11 +2,33 @@ using Logging.Shared;
 using Microservice.Shared.Extentions;
 using Microservice.Shared.OpenTelemetry;
 using Microservice.Shared.SeriLog;
-using Microservice.Site.Api.Endpoints.YoneticiDuyuruEndPoints;
 using Microservice.Site.Api.Endpoints.YoneticiTipiEndPoints;
+using Microservice.Site.Api.Endpoints.YonetimDuyuruEndPoints;
 using Microservice.Site.Persistence;
 using Microservice.Site.Persistence.Extentions;
 using Microsoft.EntityFrameworkCore;
+using Mikroservice.Site.Api.Endpoints.BandLogoEndPoints;
+using Mikroservice.Site.Api.Endpoints.BannerEndPoints;
+using Mikroservice.Site.Api.Endpoints.BilgiEndPoints;
+using Mikroservice.Site.Api.Endpoints.BirimEndPoints;
+using Mikroservice.Site.Api.Endpoints.DilEndPoints;
+using Mikroservice.Site.Api.Endpoints.DuyuruEndPoints;
+using Mikroservice.Site.Api.Endpoints.EtkinlikEndPoints;
+using Mikroservice.Site.Api.Endpoints.HaberEndPoints;
+using Mikroservice.Site.Api.Endpoints.HedefEndPoints;
+using Mikroservice.Site.Api.Endpoints.MenuEndPoints;
+using Mikroservice.Site.Api.Endpoints.PersonelTipEndPoints;
+using Mikroservice.Site.Api.Endpoints.PopupEndPoints;
+using Mikroservice.Site.Api.Endpoints.SertifikaParmakIziEndPoints;
+using Mikroservice.Site.Api.Endpoints.SikcaSorulanSoruEndPoints;
+using Mikroservice.Site.Api.Endpoints.SikcaSorulanSoruKategoriEndPoints;
+using Mikroservice.Site.Api.Endpoints.SiteEndPoints;
+using Mikroservice.Site.Api.Endpoints.SiteOzellikleriEndPoints;
+using Mikroservice.Site.Api.Endpoints.SitePersonelEndPoints;
+using Mikroservice.Site.Api.Endpoints.TemplateEndPoints;
+using Mikroservice.Site.Api.Endpoints.UnvanEndPoints;
+using Mikroservice.Site.Api.Endpoints.VideoEndPoints;
+using Mikroservice.Site.Api.Endpoints.YoneticiSiteEndPoints;
 using Mikroservice.Site.Api.SeedDataInitializers;
 using Mikroservice.Site.Application;
 using Mikroservice.Site.Persistence.Messaging.RabbitmqExtentions;
@@ -79,8 +101,32 @@ await app.InitializeSeedDataAsync();
 
 //Endpointler eklendi
 var apiVersionSet = app.AddVersionSetExt();
-app.AddYoneticiDuyuruGroupsEndpointExt(apiVersionSet);
+
+app.AddBandLogoGroupsEndpointExt(apiVersionSet);
+app.AddBannerGroupsEndpointExt(apiVersionSet);
+app.AddBilgiGroupsEndpointExt(apiVersionSet);
+app.AddYoneticiSiteGroupsEndpointExt(apiVersionSet);
+app.AddBirimGroupsEndpointExt(apiVersionSet);
+app.AddDilGroupsEndpointExt(apiVersionSet);
+app.AddDuyuruGroupsEndpointExt(apiVersionSet);
+app.AddEtkinlikGroupsEndpointExt(apiVersionSet);
+app.AddHaberGroupsEndpointExt(apiVersionSet);
+app.AddHedefGroupsEndpointExt(apiVersionSet);
+app.AddMenuGroupsEndpointExt(apiVersionSet);
+app.AddPersonelTipGroupsEndpointExt(apiVersionSet);
+app.AddPopupGroupsEndpointExt(apiVersionSet);
+app.AddSertifikaParmakIziGroupsEndpointExt(apiVersionSet);
+app.AddSikcaSorulanSoruGroupsEndpointExt(apiVersionSet);
+app.AddSikcaSorulanSoruKategoriGroupsEndpointExt(apiVersionSet);
+app.AddSiteGroupsEndpointExt(apiVersionSet);
+app.AddSiteOzellikleriGroupsEndpointExt(apiVersionSet);
+app.AddSitePersonelGroupsEndpointExt(apiVersionSet);
+app.AddTemplateGroupsEndpointExt(apiVersionSet);
+app.AddUnvanGroupsEndpointExt(apiVersionSet);
+app.AddVideoGroupsEndpointExt(apiVersionSet);
+app.AddYoneticiSiteGroupsEndpointExt(apiVersionSet);
 app.AddYoneticiTipiGroupsEndpointExt(apiVersionSet);
+app.AddYonetimDuyuruGroupsEndpointExt(apiVersionSet);
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

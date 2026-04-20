@@ -8,8 +8,7 @@ namespace Microservice.Site.Api.Endpoints.YonetimDuyuruEndPoints.EndPoints
     {
         public static RouteGroupBuilder DeleteYonetimDuyuruEndpointGroupItem(this RouteGroupBuilder group)
         {
-            group.MapDelete("/{id:int}", async (IMediator mediator, int id) =>
-            {
+            group.MapDelete("/{id:int}", async (IMediator mediator, int id) => {
                 if (id <= 0)
                     return Results.BadRequest("Geçersiz Id");
 
@@ -23,7 +22,7 @@ namespace Microservice.Site.Api.Endpoints.YonetimDuyuruEndPoints.EndPoints
             .Produces(StatusCodes.Status500InternalServerError)
             .WithName("DeleteYonetimDuyuru")
             .WithSummary("Delete Yonetim Duyuru")
-            .WithDescription("Delete Yonetim Duyuru by Id")
+            .WithDescription("Delete Yonetim Duyuru by Id");
 
             return group;
         }

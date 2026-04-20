@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using Microservice.Site.Application.Features.YonetimDuyuruFeatures.CreateYonetimDuyuru;
 
 namespace Microservice.Site.Application.Features.YoneticiDuyuruFeatures.CreateYoneticiDuyuru
 {
