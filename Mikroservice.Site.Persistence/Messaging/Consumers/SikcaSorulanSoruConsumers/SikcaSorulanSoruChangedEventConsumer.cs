@@ -1,5 +1,5 @@
 ﻿using MassTransit;
-using Microservice.Shared.Services.RabbitMqMasstransitServiceItems.Events.SikcaSorulanSoruEvents;
+using Microservice.Shared.Services.RabbitMqMasstransitServiceItems.Events.SikcaSorulanSoruEvents.Microservice.Shared.Services.RabbitMqMasstransitServiceItems.Events.SikcaSorulanSoruEvents;
 using Microservice.Shared.Services.RedisServiceItems;
 
 namespace Mikroservice.Site.Persistence.Messaging.Consumers.SikcaSorulanSoruConsumers

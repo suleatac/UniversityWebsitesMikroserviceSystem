@@ -11,11 +11,15 @@ namespace Mikroservice.Site.Persistence.Configurations
             builder.HasKey(m => m.Id);
             builder.Property(m => m.Path).IsRequired().HasMaxLength(300);
             builder.Property(m => m.Url).IsRequired().HasMaxLength(300);
-            builder.Property(m => m.CreatedAt).IsRequired().HasColumnType("timestamp without time zone"); 
+            builder.Property(m => m.CreatedAt).IsRequired().HasColumnType("timestamp without time zone");
             builder.HasOne(m => m.Site)
                 .WithMany(s => s.MediaFiles)
                 .HasForeignKey(m => m.SiteId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.Restrict);
+            builder.HasOne(m => m.Dil)
+                .WithMany()
+                .HasForeignKey(m => m.DilId)
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

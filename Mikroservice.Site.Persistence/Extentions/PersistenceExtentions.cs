@@ -1,18 +1,14 @@
-﻿using MassTransit;
-using Microservice.Shared.Extentions;
-using Microservice.Shared.Options;
-using Microservice.Shared.Services.RabbitMqMasstransitServiceItems.Events;
-using Microservice.Site.Application.Contracts.IRepositories;
+﻿using Microservice.Site.Application.Contracts.IRepositories;
 using Microservice.Site.Persistence.Repositories;
 using Microservice.Site.Persistence.Services;
 using Microservice.Site.Persistence.UnitOfWorks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Mikroservice.Site.Application.Contracts.IRepositories;
 using Mikroservice.Site.Application.Contracts.Services;
 using Mikroservice.Site.Persistence;
-using Mikroservice.Site.Persistence.Messaging.Consumers;
-using Mikroservice.Site.Persistence.Messaging.RabbitmqExtentions;
+using Mikroservice.Site.Persistence.Repositories;
 using Mikroservice.Site.Persistence.Services;
 namespace Microservice.Site.Persistence.Extentions
 {
@@ -45,6 +41,7 @@ namespace Microservice.Site.Persistence.Extentions
             services.AddScoped<IHaberRepository, HaberRepository>();
             services.AddScoped<IHedefRepository, HedefRepository>();
             services.AddScoped<IIcerikRepository, IcerikRepository>();
+            services.AddScoped<IMediaFileRepository, MediaFileRepository>();
             services.AddScoped<IMenuRepository, MenuRepository>();
             services.AddScoped<IPersonelTelefonRepository, PersonelTelefonRepository>();
             services.AddScoped<IPersonelTipRepository, PersonelTipRepository>();
@@ -61,6 +58,7 @@ namespace Microservice.Site.Persistence.Extentions
             services.AddScoped<IYoneticiSiteRepository, YoneticiSiteRepository>();
             services.AddScoped<IYoneticiTipiRepository, YoneticiTipiRepository>();
             services.AddScoped<IYonetimDuyuruRepository, YonetimDuyuruRepository>();
+
             services.AddScoped<ISeedService, YoneticiTipiSeedService>();
             services.AddScoped<ISeedService, UnvanSeedService>();
             services.AddScoped<ISeedService, PersonelTipSeedService>();

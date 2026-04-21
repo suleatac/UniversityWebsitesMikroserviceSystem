@@ -2,6 +2,7 @@ using MassTransit;
 using MediatR;
 using Microservice.Shared;
 using Microservice.Shared.Services.RabbitMqMasstransitServiceItems.Events.SikcaSorulanSoruEvents;
+using Microservice.Shared.Services.RabbitMqMasstransitServiceItems.Events.SikcaSorulanSoruEvents.Microservice.Shared.Services.RabbitMqMasstransitServiceItems.Events.SikcaSorulanSoruEvents;
 using Microservice.Site.Application.Contracts.IRepositories;
 using Mikroservice.Site.Domain.Entities;
 

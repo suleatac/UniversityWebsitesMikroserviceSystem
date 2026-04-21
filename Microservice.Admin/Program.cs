@@ -1,0 +1,58 @@
+using Microservice.Admin.Services;
+using Microservice.Admin.Services.Contracts;
+using Microservice.Admin.Settings;
+using Microsoft.Extensions.Options;
+using Minio;
+
+var builder = WebApplication.CreateBuilder(args);
+
+// Add services to the container.
+builder.Services.AddControllersWithViews();
+
+
+
+
+//Minio Client'ı yapılandırma
+builder.Services.Configure<MinioSetting>(
+    builder.Configuration.GetSection("Minio"));
+
+builder.Services.AddSingleton(sp => {
+    var settings = sp.GetRequiredService<IOptions<MinioSetting>>().Value;
+
+    return new MinioClient()
+        .WithEndpoint(settings.Endpoint)
+        .WithCredentials(settings.Username, settings.Password)
+        .WithSSL(settings.UseSSL)
+        .Build();
+});
+
+builder.Services.AddScoped<IMediaService, MediaService>();
+
+
+
+
+
+var app = builder.Build();
+
+// Configure the HTTP request pipeline.
+if (!app.Environment.IsDevelopment())
+{
+    app.UseExceptionHandler("/Home/Error");
+    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+    app.UseHsts();
+}
+
+app.UseHttpsRedirection();
+app.UseRouting();
+
+app.UseAuthorization();
+
+app.MapStaticAssets();
+
+app.MapControllerRoute(
+    name: "default",
+    pattern: "{controller=Home}/{action=Index}/{id?}")
+    .WithStaticAssets();
+
+
+app.Run();

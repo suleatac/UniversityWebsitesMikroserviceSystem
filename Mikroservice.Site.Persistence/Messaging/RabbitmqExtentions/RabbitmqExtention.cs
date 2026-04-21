@@ -9,6 +9,7 @@ using Mikroservice.Site.Persistence.Messaging.Consumers.BirimConsumers;
 using Mikroservice.Site.Persistence.Messaging.Consumers.DuyuruConsumers;
 using Mikroservice.Site.Persistence.Messaging.Consumers.EtkinlikConsumers;
 using Mikroservice.Site.Persistence.Messaging.Consumers.HaberConsumers;
+using Mikroservice.Site.Persistence.Messaging.Consumers.MediaFileConsumers;
 using Mikroservice.Site.Persistence.Messaging.Consumers.MenuConsumers;
 using Mikroservice.Site.Persistence.Messaging.Consumers.PersonelTipConsumers;
 using Mikroservice.Site.Persistence.Messaging.Consumers.PopupConsumers;
@@ -68,6 +69,9 @@ namespace Mikroservice.Site.Persistence.Messaging.RabbitmqExtentions
                 x.AddConsumer<HaberCreatedEventConsumer>();
                 x.AddConsumer<HaberDeletedEventConsumer>();
                 x.AddConsumer<HaberUpdatedEventConsumer>();
+
+                //MediaFile Consumers
+                x.AddConsumer<MediaFileChangedEventConsumer>();
 
                 //Menu Consumers
                 x.AddConsumer<MenuChangedEventConsumer>();

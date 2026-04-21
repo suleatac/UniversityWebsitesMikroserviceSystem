@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Microservice.Shared.Options
+﻿namespace Microservice.Shared.Options
 {
     public class RabbitMqMassTransitBusOption
     {
