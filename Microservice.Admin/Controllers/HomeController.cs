@@ -1,5 +1,5 @@
 using Microservice.Admin.Models;
-using Microservice.Admin.Services.Contracts;
+using Microservice.Admin.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 

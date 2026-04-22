@@ -1,4 +1,4 @@
-﻿using Microservice.Admin.Services.Contracts;
+﻿using Microservice.Admin.Services.Interfaces;
 using Microservice.Admin.Settings;
 using Microsoft.Extensions.Options;
 using Minio;

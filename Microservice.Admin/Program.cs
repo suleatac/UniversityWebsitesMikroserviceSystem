@@ -1,6 +1,7 @@
 using Microservice.Admin.Services;
-using Microservice.Admin.Services.Contracts;
+using Microservice.Admin.Services.Interfaces;
 using Microservice.Admin.Settings;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using Minio;
 
@@ -29,8 +30,13 @@ builder.Services.AddSingleton(sp => {
 builder.Services.AddScoped<IMediaService, MediaService>();
 
 
+//Identity Server Configuration
+builder.Services.AddOptions<IdentitySetting>()
+              .BindConfiguration(IdentitySetting.SectionName)
+              .ValidateDataAnnotations()
+              .ValidateOnStart();
 
-
+builder.Services.AddSingleton(sp => sp.GetRequiredService<IOptions<IdentitySetting>>().Value);
 
 var app = builder.Build();
 

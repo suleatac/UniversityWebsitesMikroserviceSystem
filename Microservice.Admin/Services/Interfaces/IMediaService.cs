@@ -1,4 +1,4 @@
-﻿namespace Microservice.Admin.Services.Contracts
+﻿namespace Microservice.Admin.Services.Interfaces
 {
     public interface IMediaService
     {
