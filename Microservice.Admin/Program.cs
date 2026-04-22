@@ -1,7 +1,6 @@
 using Microservice.Admin.Services;
 using Microservice.Admin.Services.Interfaces;
 using Microservice.Admin.Settings;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using Minio;
 

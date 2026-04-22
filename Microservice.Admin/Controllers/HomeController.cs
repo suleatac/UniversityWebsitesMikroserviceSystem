@@ -29,9 +29,9 @@ namespace Microservice.Admin.Controllers
 
 
             // 3. Upload et
-            var url = await _mediaService.UploadAsync(file, 1, "Haberler");
+            var urlbas = await _mediaService.UploadAsync(file, 1, "Haberler");
 
-
+         
             return View();
         }
 

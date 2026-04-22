@@ -32,12 +32,8 @@ namespace Microservice.Admin.Services
                 .WithObjectSize(file.Length)
                 .WithContentType(file.ContentType));
 
-            // 🔥 DOĞRU YAKLAŞIM
-            var url = await _minio.PresignedGetObjectAsync(new PresignedGetObjectArgs()
-                .WithBucket(_settings.BucketName)
-                .WithObject(objectName)
-                .WithExpiry(60 * 60));
-
+            // ❗ artık presigned yok
+            var url = $"{_settings.Endpoint}/{_settings.BucketName}/{objectName}";
             return url;
         }
     }
