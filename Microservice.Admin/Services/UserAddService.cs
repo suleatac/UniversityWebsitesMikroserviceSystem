@@ -5,7 +5,7 @@ using Microservice.Admin.ViewModels.User;
 
 namespace Microservice.Admin.Services
 {
-   
+
     public record UserCreateRequest(string Username,
        bool Enabled,
        string FirstName,
@@ -23,30 +23,33 @@ namespace Microservice.Admin.Services
     public class UserAddService
     {
         private readonly IdentitySetting _settings;
-        private readonly HttpClient _client;
+        private readonly IHttpClientFactory _httpClientFactory;
         private readonly ILogger<UserAddService> _logger;
-
+        private readonly TokenService _tokenService;
         public UserAddService(
             IdentitySetting settings,
-            HttpClient client,
-            ILogger<UserAddService> logger)
+            IHttpClientFactory httpClientFactory,
+            ILogger<UserAddService> logger,
+            TokenService tokenService)
         {
             _settings = settings;
-            _client = client;
+            _httpClientFactory = httpClientFactory;
             _logger = logger;
+            _tokenService = tokenService;
         }
 
         public async Task<ServiceResult> CreateAccount(UserAddVm model)
         {
-            var tokenResult = await GetAdminTokenAsync();
+            var tokenResult = await _tokenService.GetAdminTokenAsync();
             if (tokenResult.IsFail)
                 return tokenResult;
 
-            _client.SetBearerToken(tokenResult.Data!);
+            var client = _httpClientFactory.CreateClient();
+            client.SetBearerToken(tokenResult.Data!);
 
             var request = CreateUserRequest(model);
 
-            var response = await _client.PostAsJsonAsync(_settings.AdminUserAddAddress, request);
+            var response = await client.PostAsJsonAsync(_settings.AdminUserAddress, request);
 
             if (response.IsSuccessStatusCode)
                 return ServiceResult.Success();
@@ -54,36 +57,7 @@ namespace Microservice.Admin.Services
             return await HandleErrorResponse(response);
         }
 
-        private async Task<ServiceResult<string>> GetAdminTokenAsync()
-        {
-            var discovery = await _client.GetDiscoveryDocumentAsync(new DiscoveryDocumentRequest
-            {
-                Address = _settings.Address,
-                Policy = { RequireHttps = false }
-            });
 
-            if (discovery.IsError)
-            {
-                _logger.LogError("Discovery error: {Error}", discovery.Error);
-                return ServiceResult<string>.Error("Auth server not reachable");
-            }
-
-            var tokenResponse = await _client.RequestClientCredentialsTokenAsync(
-                new ClientCredentialsTokenRequest
-                {
-                    Address = discovery.TokenEndpoint,
-                    ClientId = _settings.Admin.ClientId,
-                    ClientSecret = _settings.Admin.ClientSecret
-                });
-
-            if (tokenResponse.IsError)
-            {
-                _logger.LogError("Token error: {Error}", tokenResponse.Error);
-                return ServiceResult<string>.Error("Token alınamadı");
-            }
-
-            return ServiceResult<string>.Success(tokenResponse.AccessToken!);
-        }
 
         private static UserCreateRequest CreateUserRequest(UserAddVm model)
         {
