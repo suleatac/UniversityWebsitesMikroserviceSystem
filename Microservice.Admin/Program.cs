@@ -1,3 +1,4 @@
+using Microservice.Admin.Configurations;
 using Microservice.Admin.Services;
 using Microservice.Admin.Services.Interfaces;
 using Microservice.Admin.Settings;
@@ -12,19 +13,7 @@ builder.Services.AddControllersWithViews();
 
 
 
-//Minio Client'ı yapılandırma
-builder.Services.Configure<MinioSetting>(
-    builder.Configuration.GetSection("Minio"));
-
-builder.Services.AddSingleton(sp => {
-    var settings = sp.GetRequiredService<IOptions<MinioSetting>>().Value;
-
-    return new MinioClient()
-        .WithEndpoint(settings.Endpoint)
-        .WithCredentials(settings.Username, settings.Password)
-        .WithSSL(settings.UseSSL)
-        .Build();
-});
+builder.Services.AddMinioExtentions(builder.Configuration);
 
 builder.Services.AddScoped<IMediaService, MediaService>();
 

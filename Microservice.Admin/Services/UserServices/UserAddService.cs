@@ -3,7 +3,7 @@ using Microservice.Admin.Services.ServiceResults;
 using Microservice.Admin.Settings;
 using Microservice.Admin.ViewModels.User;
 
-namespace Microservice.Admin.Services
+namespace Microservice.Admin.Services.UserServices
 {
 
     public record UserCreateRequest(string Username,
@@ -11,6 +11,7 @@ namespace Microservice.Admin.Services
        string FirstName,
        string LastName,
        string Email,
+       int PersonId, // yeni alan
        List<Credential> Credentials);
 
     public record Credential(
@@ -67,6 +68,7 @@ namespace Microservice.Admin.Services
                 model.FirstName!,
                 model.LastName!,
                 model.Email!,
+                model.PersonId,
                 new List<Credential>
                 {
                 new("password", model.Password!, false)

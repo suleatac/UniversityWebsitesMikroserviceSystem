@@ -16,10 +16,10 @@
 
   <ItemGroup>
     <Folder Include="Clients\" />
+    <Folder Include="Configurations\MinioConfiguration\" />
     <Folder Include="Filters\" />
     <Folder Include="Helpers\" />
     <Folder Include="Middleware\" />
-    <Folder Include="Configurations\" />
   </ItemGroup>
 
 </Project>
