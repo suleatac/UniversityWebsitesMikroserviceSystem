@@ -74,7 +74,7 @@ services:
     depends_on:
       - elasticsearch.db.log
     healthcheck:
-      test: ["CMD-SHELL", "curl -s -I http://localhost:5601 | grep -q '302 Found'"]
+      test: ["CMD-SHELL", "curl -s -I http://kibana.log.ui:5601 | grep -q '302 Found'"]
       interval: 10s
       timeout: 10s
       retries: 120
@@ -232,6 +232,9 @@ services:
       KC_DB_URL: jdbc:postgresql://postgres.db.keycloak/${POSTGRES_DB_Keycloak}
       KC_DB_USERNAME: ${POSTGRES_USER_Keycloak}
       KC_DB_PASSWORD: ${POSTGRES_PASSWORD_Keycloak}
+      # KC_HOSTNAME: localhost
+      # KC_HOSTNAME_STRICT: false
+      # KC_HOSTNAME_URL: http://localhost:8081
     ports:
       - "8081:8080"
     volumes:
@@ -300,6 +303,13 @@ services:
       dockerfile: Mikroservice.Site.Api/Dockerfile
     networks:
       - university-network
+  microservice.admin:
+    image: ${DOCKER_REGISTRY-}microserviceadmin
+    build:
+      context: .
+      dockerfile: Microservice.Admin/Dockerfile
+    networks:
+      - university-network
 volumes:
   jaeger.data.volume:
   postgres.db.keycloak.volume:
@@ -314,10 +324,10 @@ volumes:
   esdatalog:
   kibanadata:
   prometheus_data:
-  volumes:
   minio_data:
 
 networks:
   university-network:
     driver: bridge
+
 

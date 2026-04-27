@@ -1,5 +1,5 @@
 ﻿using Duende.IdentityModel.Client;
-using Microservice.Admin.Services;
+using Microservice.Admin.Services.Interfaces;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
@@ -7,7 +7,7 @@ using System.Security.Claims;
 
 namespace Microservice.Admin.HttpHandlers
 {
-    public class AuthenticatedHttpClientHandler(IHttpContextAccessor httpContextAccessor, TokenService tokenService) : DelegatingHandler
+    public class AuthenticatedHttpClientHandler(IHttpContextAccessor httpContextAccessor, ITokenService tokenService) : DelegatingHandler
     {
         protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
@@ -46,7 +46,7 @@ namespace Microservice.Admin.HttpHandlers
 
 
             var tokenResponse = await tokenService.GetNewAccessTokenByRefreshToken(refreshToken);
-            if (tokenResponse.IsError)
+            if (tokenResponse.IsFail)
             {
                 throw new UnauthorizedAccessException("Failed to refresh access token. ");
             }
@@ -54,7 +54,7 @@ namespace Microservice.Admin.HttpHandlers
             //Cookie güncelleme işlemi yapıldı.
 
 
-            var authenticationProperties = tokenService.CreateAuthenticationProperties(tokenResponse);
+            var authenticationProperties = tokenService.CreateAuthenticationProperties(tokenResponse.Data!);
             var userClaim = httpContextAccessor.HttpContext.User.Claims;
 
             var claimIdentity = new ClaimsIdentity(userClaim, CookieAuthenticationDefaults.AuthenticationScheme, ClaimTypes.Name, ClaimTypes.Role);
@@ -64,7 +64,7 @@ namespace Microservice.Admin.HttpHandlers
 
 
 
-            request.SetBearerToken(tokenResponse.AccessToken!);
+            request.SetBearerToken(tokenResponse.Data!.AccessToken!);
             return await base.SendAsync(request, cancellationToken);
 
 

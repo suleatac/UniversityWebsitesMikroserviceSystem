@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Microservice.Shared.Services.RedisServiceItems
+﻿namespace Microservice.Shared.Services.RedisServiceItems
 {
     public interface IRedisCacheService
     {

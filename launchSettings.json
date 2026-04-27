@@ -7,7 +7,8 @@
         "mikroservice.ogrenci.api": "StartDebugging",
         "mikroservice.personel.api": "StartDebugging",
         "mikroservice.gateway": "StartDebugging",
-        "mikroservice.site.api": "StartDebugging"
+        "mikroservice.site.api": "StartDebugging",
+        "microservice.admin": "StartDebugging"
       }
     }
   }

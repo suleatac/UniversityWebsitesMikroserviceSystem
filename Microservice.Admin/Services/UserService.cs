@@ -1,9 +1,10 @@
 ﻿using Duende.IdentityModel.Client;
+using Microservice.Admin.Services.Interfaces;
 using Microservice.Admin.Services.ServiceResults;
 using Microservice.Admin.Settings;
 using Microservice.Admin.ViewModels.User;
 
-namespace Microservice.Admin.Services.UserServices
+namespace Microservice.Admin.Services
 {
 
     public record UserCreateRequest(string Username,
@@ -21,17 +22,17 @@ namespace Microservice.Admin.Services.UserServices
         );
 
     public record KeycloakErrorResponse(string ErrorMessage);
-    public class UserAddService
+    public class UserService: IUserService
     {
         private readonly IdentitySetting _settings;
         private readonly IHttpClientFactory _httpClientFactory;
-        private readonly ILogger<UserAddService> _logger;
-        private readonly TokenService _tokenService;
-        public UserAddService(
+        private readonly ILogger<UserService> _logger;
+        private readonly ITokenService _tokenService;
+        public UserService(
             IdentitySetting settings,
             IHttpClientFactory httpClientFactory,
-            ILogger<UserAddService> logger,
-            TokenService tokenService)
+            ILogger<UserService> logger,
+            ITokenService tokenService)
         {
             _settings = settings;
             _httpClientFactory = httpClientFactory;
@@ -46,7 +47,7 @@ namespace Microservice.Admin.Services.UserServices
                 return tokenResult;
 
             var client = _httpClientFactory.CreateClient();
-            client.SetBearerToken(tokenResult.Data!);
+            client.SetBearerToken(tokenResult.Data!.AccessToken!);
 
             var request = CreateUserRequest(model);
 

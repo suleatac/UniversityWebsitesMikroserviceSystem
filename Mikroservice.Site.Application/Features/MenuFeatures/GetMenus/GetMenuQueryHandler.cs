@@ -3,7 +3,7 @@ using Microservice.Shared;
 using Microservice.Shared.Services.RedisServiceItems;
 using Microservice.Site.Application.Contracts.IRepositories;
 using Microsoft.Extensions.Logging;
-using Mikroservice.Site.Application.Contracts.DTOs;
+using Mikroservice.Site.Application.DTOs;
 using Mikroservice.Site.Domain.Entities;
 
 namespace Mikroservice.Site.Application.Features.MenuFeatures.GetMenus

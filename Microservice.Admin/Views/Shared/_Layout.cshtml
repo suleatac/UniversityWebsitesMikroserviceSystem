@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+﻿@using System.Security.Claims
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -26,6 +27,45 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li>
+                    </ul>
+                    <ul class="navbar-nav ms-auto">
+                        @if (User?.Identity?.IsAuthenticated ?? false)
+                        {
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Hoşgeldin
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                             
+                                    @if (User?.Identity?.IsAuthenticated == true)
+                                    {
+                                        <li>
+                                            <h6 class="dropdown-header">@User.Identity.Name</h6>
+                                        </li>
+                                    }
+                                    <li><hr class="dropdown-divider" /></li>
+                                  @*   @if (User.Claims.Any(c => c.Type == ClaimTypes.Role && c.Value == "Eğitmen Rolü"))
+                                    {
+                                        <li><a class="dropdown-item" asp-area="" asp-page="/Instructor/Index">Instructor Home Page</a></li>
+                                    } *@
+                                    <li><a class="dropdown-item" asp-controller="Site" asp-action="Index">Siteler</a></li>
+                                   
+                                    <li><hr class="dropdown-divider" /></li>
+                                    <li>
+                                       
+                                        <form method="post" asp-controller="Auth" asp-action="LogOut">
+                                            <button type="submit" class="dropdown-item">Sign out</button>
+                                        </form>
+                                    </li>
+                                </ul>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-page="/Auth/SignIn">Sign in</a>
+                            </li>
+                        }
                     </ul>
                 </div>
             </div>

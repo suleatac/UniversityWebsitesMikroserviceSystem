@@ -5,7 +5,7 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_HTTP_PORTS=8080
       - IdentityOption:Adress=http://keycloak:8080/realms/UniversityRealm
-      - IdentityOption:Issuer="http://keycloak:8080/realms/UniversityRealm
+      - IdentityOption:Issuer=http://keycloak:8080/realms/UniversityRealm
       - ElasticSearch:BaseUrl=http://elasticsearch.db.log:9200
       - ConnectionStrings:Redis=redis.db.api:6379,password=Password12
       - ConnectionStrings:PostgreSqlServer=Host=postgres.db.ogrenci;Port=5432;Database=ogrenci_db;Username=ogrenci_db_user;Password=ogrenci_db_user_password
@@ -22,7 +22,7 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_HTTP_PORTS=8080
       - IdentityOption:Adress=http://keycloak:8080/realms/UniversityRealm
-      - IdentityOption:Issuer="http://keycloak:8080/realms/UniversityRealm
+      - IdentityOption:Issuer=http://keycloak:8080/realms/UniversityRealm
       - ElasticSearch:BaseUrl=http://elasticsearch.db.log:9200
       - ConnectionStrings:Redis=redis.db.api:6379,password=Password12
       - ConnectionStrings:PostgreSqlServer=Host=postgres.db.personel;Port=5432;Database=personel_db;Username=personel_db_user;Password=personel_db_user_password
@@ -56,7 +56,8 @@ services:
       - MINIO_ROOT_USER=${MINIO_ROOT_USER}
       - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD}
       - IdentityOption:Adress=http://keycloak:8080/realms/UniversityRealm
-      - IdentityOption:Issuer="http://keycloak:8080/realms/UniversityRealm
+      - IdentityOption:Issuer=http://keycloak:8080/realms/UniversityRealm
+      - IdentityOption:Audience=site.api
       - ElasticSearch:BaseUrl=http://elasticsearch.db.log:9200
       - RabbitMqMassTransitBusOption:Address=rabbitmq 
       - RabbitMqMassTransitBusOption:Port=5672 
@@ -68,3 +69,24 @@ services:
       - redis.db.api
       - postgres.db.site
     restart: always
+
+  microservice.admin:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080
+      - ASPNETCORE_HTTPS_PORTS=8081
+      - ConnectionStrings:Redis=redis.db.api:6379,password=Password12
+      - Identity:Adress=http://keycloak:8080/realms/UniversityRealm
+      - Identity:BaseAddress=http://keycloak:8080
+      - Identity:AdminUserAddress=http://keycloak:8080/admin/realms/UniversityRealm/users
+      - Microservices:Site:BaseUrl=http://mikroservice.site.api:8086
+      - Microservices:Personel:BaseUrl=http://mikroservice.personel.api:8085
+      - Microservices:Ogrenci:BaseUrl=http://mikroservice.ogrenci.api:8083
+
+    ports:
+      - "8087:8080"
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
+      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
+      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro

@@ -1,26 +1,31 @@
+using AutoMapper;
 using MediatR;
 using Microservice.Shared;
 using Microservice.Shared.Services.RedisServiceItems;
 using Microservice.Site.Application.Contracts.IRepositories;
 using Microsoft.Extensions.Logging;
+using Mikroservice.Site.Application.DTOs.SiteDtos;
 
 namespace Mikroservice.Site.Application.Features.SiteFeatures.GetSite
 {
     public class GetSiteQueryHandler(
     ISiteRepository siteRepository,
     IRedisCacheService redis,
-    ILogger<GetSiteQueryHandler> logger
-) : IRequestHandler<GetSiteQuery, ServiceResult<List<Domain.Entities.Site>>>
+    ILogger<GetSiteQueryHandler> logger,
+    IMapper mapper
+) : IRequestHandler<GetSiteQuery, ServiceResult<List<SiteDto>>>
     {
-        public async Task<ServiceResult<List<Domain.Entities.Site>>> Handle(GetSiteQuery request, CancellationToken cancellationToken)
+        public async Task<ServiceResult<List<SiteDto>>> Handle(GetSiteQuery request, CancellationToken cancellationToken)
         {
             var cacheKey = "site:list";
 
-            var cached = await redis.GetListAsync<Domain.Entities.Site>(cacheKey, cancellationToken);
+            var cached = await redis.GetListAsync<SiteDto>(cacheKey, cancellationToken);
             if (cached is not null)
             {
                 logger.LogInformation("Site cache'den alındı");
-                return ServiceResult<List<Domain.Entities.Site>>.SuccessAsOK(cached);
+
+                var mappedCached = mapper.Map<List<SiteDto>>(cached);
+                return ServiceResult<List<SiteDto>>.SuccessAsOK(mappedCached);
             }
 
             var data = siteRepository.GetAll()
@@ -29,7 +34,8 @@ namespace Mikroservice.Site.Application.Features.SiteFeatures.GetSite
 
             await redis.SetListAsync(cacheKey, data, TimeSpan.FromHours(12), cancellationToken);
 
-            return ServiceResult<List<Domain.Entities.Site>>.SuccessAsOK(data);
+            var mappedData = mapper.Map<List<SiteDto>>(data);
+            return ServiceResult<List<SiteDto>>.SuccessAsOK(mappedData);
         }
     }
 }

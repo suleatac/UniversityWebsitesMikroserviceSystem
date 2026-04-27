@@ -21,6 +21,7 @@ namespace Mikroservice.Site.Api.Endpoints.SiteEndPoints
             group.UpdateSiteEndpointGroupItem();
             group.DeleteSiteEndpointGroupItem();
             group.GetSitesEndpointGroupItem();
+            group.GetSiteByIdEndpointGroupItem();
             group.RequireAuthorization("Password");
         }
     }

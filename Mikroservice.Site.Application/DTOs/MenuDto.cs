@@ -1,4 +1,4 @@
-﻿namespace Mikroservice.Site.Application.Contracts.DTOs
+﻿namespace Mikroservice.Site.Application.DTOs
 {
     public class MenuDto
     {

@@ -1,9 +1,10 @@
+using Microservice.Admin.Clients.SiteClients;
 using Microservice.Admin.Configurations;
-using Microservice.Admin.Services;
-using Microservice.Admin.Services.Interfaces;
-using Microservice.Admin.Settings;
-using Microsoft.Extensions.Options;
-using Minio;
+using Microservice.Admin.HttpHandlers;
+using Microservice.Admin.Services.ServicesExtentions;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Localization;
+using System.Globalization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,22 +12,69 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 
 
-
-
+//Configuration Ayarları
+builder.Services.AddIdentityServerExtentions(builder.Configuration);
+builder.Services.AddMicroservicesConfiguration(builder.Configuration); 
 builder.Services.AddMinioExtentions(builder.Configuration);
+builder.Services.AddRedisExtentions(builder.Configuration);
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddHttpClient();
 
-builder.Services.AddScoped<IMediaService, MediaService>();
+//Http handler Ayarları
+builder.Services.AddScoped<AuthenticatedHttpClientHandler>();
+builder.Services.AddScoped<ClientAuthenticatedHttpClientHandler>();
+
+//Services Ayarları
+builder.Services.AddServicesExtentions(builder.Configuration);
+
+//Client Extentions Ayarları
+builder.Services.AddClientExtentions(builder.Configuration);
 
 
-//Identity Server Configuration
-builder.Services.AddOptions<IdentitySetting>()
-              .BindConfiguration(IdentitySetting.SectionName)
-              .ValidateDataAnnotations()
-              .ValidateOnStart();
+//Cookie Authentication Ayarları
+builder.Services.AddAuthentication(configureOption => {
+    configureOption.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+    configureOption.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+    configureOption.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+})
+    .AddCookie(options => {
+        options.LoginPath = "/Auth/SignIn";
+        options.LogoutPath = "/Auth/SignOutAsync";
+        options.ExpireTimeSpan = TimeSpan.FromMinutes(60);
+        options.Cookie.Name = "MikroserviceAuthWebCookie";
+        options.AccessDeniedPath = "/Auth/AccessDenied";
 
-builder.Services.AddSingleton(sp => sp.GetRequiredService<IOptions<IdentitySetting>>().Value);
+    });
+
+builder.Services.AddAuthorization();
+
+
+
+
+
+
+
+
+
+
+
 
 var app = builder.Build();
+
+
+
+var cultueInfo = new CultureInfo("tr-TR");
+CultureInfo.DefaultThreadCurrentCulture = cultueInfo;
+CultureInfo.DefaultThreadCurrentUICulture = cultueInfo;
+app.UseRequestLocalization(new RequestLocalizationOptions {
+    DefaultRequestCulture = new RequestCulture(cultueInfo),
+    SupportedCultures = new List<CultureInfo> { cultueInfo },
+    SupportedUICultures = new List<CultureInfo> { cultueInfo }
+});
+
+
+
+
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
@@ -39,13 +87,14 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapStaticAssets();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}")
+    pattern: "{controller=Auth}/{action=SignIn}/{id?}")
     .WithStaticAssets();
 
 

@@ -1,16 +1,19 @@
 ﻿using Duende.IdentityModel.Client;
+using Microservice.Admin.Services.Interfaces;
 using Microservice.Admin.Services.ServiceResults;
 using Microservice.Admin.Settings;
 using Microservice.Admin.ViewModels.SignIn;
 using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 
 namespace Microservice.Admin.Services
 {
-    public class TokenService(IHttpClientFactory httpClientFactory, IdentitySetting identitySetting)
+    public class TokenService(
+        IHttpClientFactory httpClientFactory,
+        IdentitySetting identitySetting,
+        IRedisCacheService redisCacheService
+        ):ITokenService
     {
 
         public List<Claim> ExtractClaims(string accessToken)
@@ -22,167 +25,175 @@ namespace Microservice.Admin.Services
         }
         public AuthenticationProperties CreateAuthenticationProperties(TokenResponse tokenResponse)
         {
-            var authenticationProperties = new AuthenticationProperties
-            {
+            var expiresAt = DateTime.UtcNow.AddSeconds(tokenResponse.ExpiresIn);
+
+            var props = new AuthenticationProperties {
                 IsPersistent = true,
-                ExpiresUtc = DateTimeOffset.UtcNow.AddSeconds(tokenResponse.ExpiresIn)
+                ExpiresUtc = expiresAt
             };
-            authenticationProperties.StoreTokens(new List<AuthenticationToken>
+
+            var tokens = new List<AuthenticationToken>
             {
                 new AuthenticationToken
                 {
-                    Name = OpenIdConnectParameterNames.AccessToken,
-                    Value = tokenResponse.AccessToken!
+                  Name = "access_token",
+                  Value = tokenResponse.AccessToken!
                 },
                 new AuthenticationToken
                 {
-                    Name =  OpenIdConnectParameterNames.RefreshToken,
-                    Value = tokenResponse.RefreshToken!
+                  Name = "refresh_token",
+                  Value = tokenResponse.RefreshToken ?? ""
                 },
                 new AuthenticationToken
                 {
-                    Name =  OpenIdConnectParameterNames.ExpiresIn,
-                    Value = authenticationProperties.ExpiresUtc?.ToString("o")!
+                  Name = "expires_at",
+                  Value = expiresAt.ToString("o")
                 }
+            };
 
-
-
-
-            });
-            return authenticationProperties;
+            props.StoreTokens(tokens);
+            return props;
         }
 
-        public async Task<TokenResponse> GetNewAccessTokenByRefreshToken(string refreshToken)
+        public async Task<ServiceResult<TokenResponse>> GetNewAccessTokenByRefreshToken(string refreshToken)
         {
+            if (string.IsNullOrEmpty(refreshToken))
+                return ServiceResult<TokenResponse>.Error("Refresh token boş");
 
+            var client = httpClientFactory.CreateClient("RefreshTokenClient");
 
-
-            var discoveryRequest = new DiscoveryDocumentRequest()
-            {
+            var discovery = await client.GetDiscoveryDocumentAsync(new DiscoveryDocumentRequest {
                 Address = identitySetting.Address,
-                Policy =
-               {
-                    RequireHttps=false
-                }
-            };
-            var httpClient = httpClientFactory.CreateClient("GetNewAccessTokenByRefreshToken");
-            httpClient.BaseAddress = new Uri(identitySetting.Address);
-            var discoveryResponse = await httpClient.GetDiscoveryDocumentAsync(discoveryRequest);
+                Policy = { RequireHttps = false } // sadece dev
+            });
 
-            if (discoveryResponse.IsError)
-            {
-                throw new Exception(discoveryResponse.Error);
-            }
+            if (discovery.IsError)
+                return ServiceResult<TokenResponse>.Error(discovery.Error!);
 
-
-            var tokenResponse = await httpClient.RequestRefreshTokenAsync(new RefreshTokenRequest
-            {
-                Address = discoveryResponse.TokenEndpoint,
+            var tokenResponse = await client.RequestRefreshTokenAsync(new RefreshTokenRequest {
+                Address = discovery.TokenEndpoint,
                 ClientId = identitySetting.WebAdmin.ClientId,
                 ClientSecret = identitySetting.WebAdmin.ClientSecret,
                 RefreshToken = refreshToken
             });
 
-            return tokenResponse;
-
-
-        }
-
-        public async Task<TokenResponse> GetClientCredentialsAccessToken()
-        {
-            var discoveryRequest = new DiscoveryDocumentRequest()
-            {
-                Address = identitySetting.Address,
-                Policy =
-               {
-                    RequireHttps=false
-                }
-            };
-            var httpClient = httpClientFactory.CreateClient("GetClientAccessToken");
-            httpClient.BaseAddress = new Uri(identitySetting.Address);
-            var discoveryResponse = await httpClient.GetDiscoveryDocumentAsync(discoveryRequest);
-            if (discoveryResponse.IsError)
-            {
-                throw new Exception(discoveryResponse.Error);
-            }
-
-
-            var tokenResponse = await httpClient.RequestClientCredentialsTokenAsync(new ClientCredentialsTokenRequest
-            {
-                Address = discoveryResponse.TokenEndpoint,
-                ClientId = identitySetting.WebAdmin.ClientId,
-                ClientSecret = identitySetting.WebAdmin.ClientSecret
-            });
             if (tokenResponse.IsError)
-            {
-                throw new Exception(tokenResponse.Error);
-            }
-            return tokenResponse;
+                return ServiceResult<TokenResponse>.Error(tokenResponse.Error!);
+            
+
+
+            return ServiceResult<TokenResponse>.Success(tokenResponse);
         }
 
-
-        public async Task<TokenResponse> GetPasswordAccessToken(SignInVm signInViewModel)
+        public async Task<ServiceResult<TokenResponse>> GetClientCredentialsAccessToken()
         {
-            var discoveryRequest = new DiscoveryDocumentRequest()
-            {
-                Address = identitySetting.Address,
-                Policy =
-                {
-                    RequireHttps=false
-                }
-            };
-            var httpPasswordClient = httpClientFactory.CreateClient("GetPasswordAccessToken");
-            httpPasswordClient.BaseAddress = new Uri(identitySetting.Address);
-            var discoveryResponse = await httpPasswordClient.GetDiscoveryDocumentAsync(discoveryRequest);
+            var cacheKey = "auth:client:token";
+            var lockKey = "auth:client:lock";
 
-            if (discoveryResponse.IsError)
+            // 1. Cache kontrol
+            var cachedToken = await redisCacheService.GetAsync<TokenResponse>(cacheKey);
+            if (cachedToken != null)
             {
-                throw new Exception(discoveryResponse.Error);
+                return ServiceResult<TokenResponse>.Success(cachedToken);
             }
 
+            // 2. Lock almaya çalış
+            var lockAcquired = await redisCacheService.AcquireLockAsync(lockKey, TimeSpan.FromSeconds(10));
 
-
-            var tokenResponse = await httpPasswordClient.RequestPasswordTokenAsync(new PasswordTokenRequest
+            if (!lockAcquired)
             {
-                Address = discoveryResponse.TokenEndpoint,
+                // başka instance token alıyor → bekle
+                await Task.Delay(500);
+
+                var retryToken = await redisCacheService.GetAsync<TokenResponse>(cacheKey);
+                if (retryToken != null)
+                {
+                    return ServiceResult<TokenResponse>.Success(retryToken);
+                }
+            }
+
+            try
+            {
+                // 3. Token al
+                var client = httpClientFactory.CreateClient();
+
+                var discovery = await client.GetDiscoveryDocumentAsync(new DiscoveryDocumentRequest {
+                    Address = identitySetting.Address,
+                    Policy = { RequireHttps = false }
+                });
+
+                if (discovery.IsError)
+                    return ServiceResult<TokenResponse>.Error(discovery.Error!);
+
+                var tokenResponse = await client.RequestClientCredentialsTokenAsync(
+                    new ClientCredentialsTokenRequest {
+                        Address = discovery.TokenEndpoint,
+                        ClientId = identitySetting.WebAdmin.ClientId,
+                        ClientSecret = identitySetting.WebAdmin.ClientSecret,
+                        Scope = "api.read api.write"
+                    });
+
+                if (tokenResponse.IsError)
+                    return ServiceResult<TokenResponse>.Error(tokenResponse.Error!);
+
+                // 4. Cache’e yaz
+                await redisCacheService.SetAsync(
+                    cacheKey,
+                    tokenResponse,
+                    TimeSpan.FromSeconds(tokenResponse.ExpiresIn - 60)
+                );
+
+                return ServiceResult<TokenResponse>.Success(tokenResponse);
+            }
+            finally
+            {
+                // 5. Lock bırak
+                await redisCacheService.ReleaseLockAsync(lockKey);
+            }
+        }
+
+        public async Task<ServiceResult<TokenResponse>> GetPasswordAccessToken(SignInVm signInViewModel)
+        {
+            var client = httpClientFactory.CreateClient("AuthClient");
+
+            var discovery = await client.GetDiscoveryDocumentAsync(new DiscoveryDocumentRequest {
+                Address = identitySetting.Address,
+                Policy = { RequireHttps = false } // sadece dev
+            });
+
+            if (discovery.IsError)
+                return ServiceResult<TokenResponse>.Error(discovery.Error!);
+
+            var tokenResponse = await client.RequestPasswordTokenAsync(new PasswordTokenRequest {
+                Address = discovery.TokenEndpoint,
                 ClientId = identitySetting.WebAdmin.ClientId,
                 ClientSecret = identitySetting.WebAdmin.ClientSecret,
                 UserName = signInViewModel.Email!,
                 Password = signInViewModel.Password,
-                Scope = "offline_access"
+                Scope = "openid profile email offline_access"
             });
 
-
-
-
-
             if (tokenResponse.IsError)
-            {
-                throw new Exception(tokenResponse.Error);
-            }
+                return ServiceResult<TokenResponse>.Error(tokenResponse.Error!);
 
-
-            return tokenResponse;
+            return ServiceResult<TokenResponse>.Success(tokenResponse);
         }
 
-
-        public async Task<ServiceResult<string>> GetAdminTokenAsync()
+        public async Task<ServiceResult<TokenResponse>> GetAdminTokenAsync()
         {
             var client = httpClientFactory.CreateClient();
-            var discovery = await client.GetDiscoveryDocumentAsync(new DiscoveryDocumentRequest
-            {
+            var discovery = await client.GetDiscoveryDocumentAsync(new DiscoveryDocumentRequest {
                 Address = identitySetting.Address,
                 Policy = { RequireHttps = false }
             });
 
             if (discovery.IsError)
             {
-                return ServiceResult<string>.Error("Auth server not reachable");
+                return ServiceResult<TokenResponse>.Error("Auth server not reachable");
             }
 
             var tokenResponse = await client.RequestClientCredentialsTokenAsync(
-                new ClientCredentialsTokenRequest
-                {
+                new ClientCredentialsTokenRequest {
                     Address = discovery.TokenEndpoint,
                     ClientId = identitySetting.Admin.ClientId,
                     ClientSecret = identitySetting.Admin.ClientSecret
@@ -190,10 +201,10 @@ namespace Microservice.Admin.Services
 
             if (tokenResponse.IsError)
             {
-                return ServiceResult<string>.Error("Token alınamadı");
+                return ServiceResult<TokenResponse>.Error("Token alınamadı");
             }
 
-            return ServiceResult<string>.Success(tokenResponse.AccessToken!);
+            return ServiceResult<TokenResponse>.Success(tokenResponse);
         }
 
 

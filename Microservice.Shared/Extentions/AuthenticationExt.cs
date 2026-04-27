@@ -1,13 +1,9 @@
 ﻿using Microservice.Shared.Options;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
-using System;
-using System.Collections.Generic;
 using System.Security.Claims;
-using System.Text;
 
 namespace Microservice.Shared.Extentions
 {
@@ -79,7 +75,7 @@ namespace Microservice.Shared.Extentions
                         policy.AuthenticationSchemes.Add(JwtBearerDefaults.AuthenticationScheme);
                         policy.RequireAuthenticatedUser();
                         policy.RequireClaim(ClaimTypes.Email);
-                        policy.RequireRole(ClaimTypes.Role, "Eğitmen Rolü");
+                        policy.RequireRole(ClaimTypes.Role, "Admin");
                     });
                     Options.AddPolicy("Password", policy =>
                     {
