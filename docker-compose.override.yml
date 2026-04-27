@@ -75,13 +75,12 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_HTTP_PORTS=8080
       - ConnectionStrings:Redis=redis.db.api:6379,password=Password12
-      - Identity:Adress=http://keycloak:8080/realms/UniversityRealm
+      - Identity:Address=http://keycloak:8080/realms/UniversityRealm
       - Identity:BaseAddress=http://keycloak:8080
       - Identity:AdminUserAddress=http://keycloak:8080/admin/realms/UniversityRealm/users
-      - Microservices:Site:BaseUrl=http://mikroservice.site.api:8086
-      - Microservices:Personel:BaseUrl=http://mikroservice.personel.api:8085
-      - Microservices:Ogrenci:BaseUrl=http://mikroservice.ogrenci.api:8083
-
+      - Microservices:Site:BaseUrl=http://mikroservice.site.api:8080
+      - Microservices:Personel:BaseUrl=http://mikroservice.personel.api:8080
+      - Microservices:Ogrenci:BaseUrl=http://mikroservice.ogrenci.api:8080
     ports:
       - "8087:8080"
 
