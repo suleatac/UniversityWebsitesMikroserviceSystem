@@ -35,7 +35,7 @@ namespace Microservice.Shared.Extentions
 
                     options.TokenValidationParameters = new TokenValidationParameters {
                         ValidateAudience = true,
-                        ValidateIssuer = true,
+                        ValidateIssuer = false,
                         ValidateLifetime = true,
                         ValidateIssuerSigningKey = true,
                         RoleClaimType = ClaimTypes.Role,
@@ -50,7 +50,7 @@ namespace Microservice.Shared.Extentions
 
                     options.TokenValidationParameters = new TokenValidationParameters {
                         ValidateAudience = true,
-                        ValidateIssuer = true,
+                        ValidateIssuer = false,
                         ValidateLifetime = true,
                         ValidateIssuerSigningKey = true
                     };

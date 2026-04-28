@@ -1,12 +1,12 @@
-﻿namespace Mikroservice.Site.Domain.Entities
+﻿using Microservice.Shared;
+
+namespace Mikroservice.Site.Application.Features.TemplateFeatures.CreateTemplate
 {
-    public class Template
+    public record CreateTemplateCommand : IRequestByServiceResult
     {
-        public int Id { get; set; }
         public string TemplateAdi { get; set; } = default!;
         public string TemplateTuru { get; set; } = default!;
         public string? FolderName { get; set; } = default!;
         public string? LayoutPath { get; set; } = default!;
-        public ICollection<Site> Sites { get; set; } = new List<Site>();
     }
 }

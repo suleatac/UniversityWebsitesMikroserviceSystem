@@ -14,6 +14,7 @@ namespace Microservice.Admin.Services.ServicesExtentions
             services.AddScoped<ITokenService, TokenService>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<ISiteService, SiteService>();
+            services.AddScoped<ITemplateService, TemplateService>();
             return services;
         }
     }

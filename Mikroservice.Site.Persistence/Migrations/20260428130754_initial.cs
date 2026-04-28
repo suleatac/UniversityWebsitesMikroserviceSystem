@@ -115,8 +115,8 @@ namespace Mikroservice.Site.Persistence.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     TemplateAdi = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
                     TemplateTuru = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
-                    FolderName = table.Column<string>(type: "character varying(300)", maxLength: 300, nullable: false),
-                    LayoutPath = table.Column<string>(type: "character varying(300)", maxLength: 300, nullable: false)
+                    FolderName = table.Column<string>(type: "text", nullable: true),
+                    LayoutPath = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {

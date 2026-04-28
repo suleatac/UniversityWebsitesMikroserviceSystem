@@ -1,0 +1,81 @@
+﻿@model Microservice.Admin.ViewModels.Site.CreateSiteVm
+
+@{
+    ViewData["Title"] = "Create";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Create</h1>
+
+<h4>CreateSiteVm</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="SiteAdi" class="control-label"></label>
+                <input asp-for="SiteAdi" class="form-control" />
+                <span asp-validation-for="SiteAdi" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="SiteAdiEng" class="control-label"></label>
+                <input asp-for="SiteAdiEng" class="form-control" />
+                <span asp-validation-for="SiteAdiEng" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="SiteUrl" class="control-label"></label>
+                <input asp-for="SiteUrl" class="form-control" />
+                <span asp-validation-for="SiteUrl" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="BirimId" class="control-label"></label>
+                <input asp-for="BirimId" class="form-control" />
+                <span asp-validation-for="BirimId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="SiteAlanAdi" class="control-label"></label>
+                <input asp-for="SiteAlanAdi" class="form-control" />
+                <span asp-validation-for="SiteAlanAdi" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="SiteEPosta" class="control-label"></label>
+                <input asp-for="SiteEPosta" class="form-control" />
+                <span asp-validation-for="SiteEPosta" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="SiteEPostaSifre" class="control-label"></label>
+                <input asp-for="SiteEPostaSifre" class="form-control" />
+                <span asp-validation-for="SiteEPostaSifre" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="SiteEPostaHost" class="control-label"></label>
+                <input asp-for="SiteEPostaHost" class="form-control" />
+                <span asp-validation-for="SiteEPostaHost" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="SiteEPostaPort" class="control-label"></label>
+                <input asp-for="SiteEPostaPort" class="form-control" />
+                <span asp-validation-for="SiteEPostaPort" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="SertifikaParmakIziId" class="control-label"></label>
+                <input asp-for="SertifikaParmakIziId" class="form-control" />
+                <span asp-validation-for="SertifikaParmakIziId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="TemplateId" class="control-label"></label>
+                <input asp-for="TemplateId" class="form-control" />
+                <span asp-validation-for="TemplateId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+

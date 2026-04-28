@@ -19,6 +19,7 @@ using Mikroservice.Site.Persistence.Messaging.Consumers.SikcaSorulanSoruKategori
 using Mikroservice.Site.Persistence.Messaging.Consumers.SiteConsumers;
 using Mikroservice.Site.Persistence.Messaging.Consumers.SiteOzellikleriConsumers;
 using Mikroservice.Site.Persistence.Messaging.Consumers.SitePersonelConsumers;
+using Mikroservice.Site.Persistence.Messaging.Consumers.TemplateConsumers;
 using Mikroservice.Site.Persistence.Messaging.Consumers.UnvanConsumers;
 using Mikroservice.Site.Persistence.Messaging.Consumers.VideoConsumer;
 using Mikroservice.Site.Persistence.Messaging.Consumers.YoneticiSiteConsumers;
@@ -109,7 +110,8 @@ namespace Mikroservice.Site.Persistence.Messaging.RabbitmqExtentions
                 //YoneticiSite Consumers
                 x.AddConsumer<YoneticiSiteChangedEventConsumer>();
 
-
+                //Template Consumers
+                x.AddConsumer<TemplateChangedEventConsumer>();
 
 
 

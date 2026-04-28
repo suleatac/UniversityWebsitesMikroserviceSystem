@@ -1,4 +1,4 @@
-using Microservice.Admin.Clients.SiteClients;
+using Microservice.Admin.Clients;
 using Microservice.Admin.Configurations;
 using Microservice.Admin.HttpHandlers;
 using Microservice.Admin.Services.ServicesExtentions;

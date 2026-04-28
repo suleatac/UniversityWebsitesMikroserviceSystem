@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Mikroservice.Site.Persistence.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260421095629_initial")]
+    [Migration("20260428130754_initial")]
     partial class initial
     {
         /// <inheritdoc />
@@ -790,14 +790,10 @@ namespace Mikroservice.Site.Persistence.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("FolderName")
-                        .IsRequired()
-                        .HasMaxLength(300)
-                        .HasColumnType("character varying(300)");
+                        .HasColumnType("text");
 
                     b.Property<string>("LayoutPath")
-                        .IsRequired()
-                        .HasMaxLength(300)
-                        .HasColumnType("character varying(300)");
+                        .HasColumnType("text");
 
                     b.Property<string>("TemplateAdi")
                         .IsRequired()
