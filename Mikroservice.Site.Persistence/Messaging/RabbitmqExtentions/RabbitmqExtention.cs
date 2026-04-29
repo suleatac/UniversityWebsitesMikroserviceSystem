@@ -30,108 +30,28 @@ namespace Mikroservice.Site.Persistence.Messaging.RabbitmqExtentions
     {
         public static IServiceCollection AddRabbitmqExtentions(this IServiceCollection services, IConfiguration configuration)
         {
+  
+            services.AddMassTransit(x =>
+            {
+                x.AddConsumers(typeof(TemplateChangedEventConsumer).Assembly);
 
-            //RabbitMq Banner Delete Event Consumer
-            services.AddMassTransit(x => {
-                // 👇 Consumer’ları burada eklenmeli
-
-
-                //BandLogo Consumers
-                x.AddConsumer<BandLogoCreatedEventConsumer>();
-                x.AddConsumer<BandLogoDeletedEventConsumer>();
-                x.AddConsumer<BandLogoUpdatedEventConsumer>();
-
-                //Banner Consumers
-                x.AddConsumer<BannerCreatedEventConsumer>();
-                x.AddConsumer<BannerDeletedEventConsumer>();
-                x.AddConsumer<BannerUpdatedEventConsumer>();
-
-                //Bilgi Consumers
-                x.AddConsumer<BilgiCreatedEventConsumer>();
-                x.AddConsumer<BilgiDeletedEventConsumer>();
-                x.AddConsumer<BilgiUpdatedEventConsumer>();
-
-                //Birim Consumers
-                x.AddConsumer<BirimCreatedEventConsumer>();
-                x.AddConsumer<BirimDeletedEventConsumer>();
-                x.AddConsumer<BirimUpdatedEventConsumer>();
-
-                //Duyuru Consumers
-                x.AddConsumer<DuyuruCreatedEventConsumer>();
-                x.AddConsumer<DuyuruDeletedEventConsumer>();
-                x.AddConsumer<DuyuruUpdatedEventConsumer>();
-
-                //Etkinlik Consumers
-                x.AddConsumer<EtkinlikCreatedEventConsumer>();
-                x.AddConsumer<EtkinlikDeletedEventConsumer>();
-                x.AddConsumer<EtkinlikUpdatedEventConsumer>();
-
-                //Haber Consumers
-                x.AddConsumer<HaberCreatedEventConsumer>();
-                x.AddConsumer<HaberDeletedEventConsumer>();
-                x.AddConsumer<HaberUpdatedEventConsumer>();
-
-                //MediaFile Consumers
-                x.AddConsumer<MediaFileChangedEventConsumer>();
-
-                //Menu Consumers
-                x.AddConsumer<MenuChangedEventConsumer>();
-
-                //PersonelTip Consumers
-                x.AddConsumer<PersonelTipChangedEventConsumer>();
-
-                //Popup Consumers
-                x.AddConsumer<PopupChangedEventConsumer>();
-
-                //SertifikaParmakIzi Consumers
-                x.AddConsumer<SertifikaParmakIziChangedConsumer>();
-
-                //SikcaSorulanSoru Consumers
-                x.AddConsumer<SikcaSorulanSoruChangedEventConsumer>();
-
-                //SikcaSorulanSoruKategori Consumers
-                x.AddConsumer<SikcaSorulanSoruKategoriChangedEventConsumer>();
-
-                //Site Consumers
-                x.AddConsumer<SiteChangedEventConsumer>();
-
-                //SiteOzellikleri Consumers
-                x.AddConsumer<SiteOzellikleriChangedEventConsumer>();
-
-                //SitePersonel Consumers
-                x.AddConsumer<SitePersonelChangedEventConsumer>();
-
-                //Unvan Consumers
-                x.AddConsumer<UnvanChangedEventConsumer>();
-
-                //Video Consumers
-                x.AddConsumer<VideoChangedEventConsumer>();
-
-                //YoneticiSite Consumers
-                x.AddConsumer<YoneticiSiteChangedEventConsumer>();
-
-                //Template Consumers
-                x.AddConsumer<TemplateChangedEventConsumer>();
-
-
-
-                x.UsingRabbitMq((context, cfg) => {
+                x.UsingRabbitMq((context, cfg) =>
+                {
                     var busOptions = configuration
                         .GetSection(nameof(RabbitMqMassTransitBusOption))
                         .Get<RabbitMqMassTransitBusOption>();
 
-                    cfg.Host(new Uri($"rabbitmq://{busOptions!.Address}:{busOptions.Port}"), h => {
+                    cfg.Host(new Uri($"rabbitmq://{busOptions!.Address}:{busOptions.Port}"), h =>
+                    {
                         h.Username(busOptions.UserName);
                         h.Password(busOptions.Password);
                     });
 
-
-                    // 👇 otomatik endpoint binding
                     cfg.ConfigureEndpoints(context);
                 });
             });
 
-
+          
             return services;
         }
     }

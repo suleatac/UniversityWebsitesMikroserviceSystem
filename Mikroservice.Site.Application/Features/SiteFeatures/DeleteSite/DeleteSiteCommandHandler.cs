@@ -3,7 +3,6 @@ using MediatR;
 using Microservice.Shared;
 using Microservice.Shared.Services.RabbitMqMasstransitServiceItems.Events.SiteEvents;
 using Microservice.Site.Application.Contracts.IRepositories;
-using Mikroservice.Site.Domain.Entities;
 
 namespace Mikroservice.Site.Application.Features.SiteFeatures.DeleteSite
 {

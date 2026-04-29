@@ -2,7 +2,7 @@
 
 namespace Mikroservice.Site.Application.Features.TemplateFeatures.CreateTemplate
 {
-    public record CreateTemplateCommand : IRequestByServiceResult
+    public record CreateTemplateCommand : IRequestByServiceResult<CreateTemplateResponse>
     {
         public string TemplateAdi { get; set; } = default!;
         public string TemplateTuru { get; set; } = default!;

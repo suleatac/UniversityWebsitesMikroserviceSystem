@@ -8,6 +8,7 @@ namespace Microservice.Admin.Services.ServicesExtentions
         {
 
             services.AddScoped<IAuthService, AuthService>();
+            services.AddScoped<IBirimService, BirimService>();
             services.AddScoped<ICurrentUserService, CurrentUserService>();
             services.AddScoped<IMediaService, MediaService>();
             services.AddScoped<IRedisCacheService, RedisCacheService>();

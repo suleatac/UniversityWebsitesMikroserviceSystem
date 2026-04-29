@@ -1,41 +1,38 @@
 ﻿using AutoMapper;
 using MediatR;
 using Microservice.Shared;
-using Microservice.Shared.Services.RedisServiceItems;
 using Microservice.Site.Application.Contracts.IRepositories;
 using Microsoft.Extensions.Logging;
 using Mikroservice.Site.Application.DTOs.SiteDtos;
+using System.Net;
 
 namespace Mikroservice.Site.Application.Features.SiteFeatures.GetSiteById
 {
     public class GetSiteByIdQueryHandler(
     ISiteRepository siteRepository,
-    IRedisCacheService redis,
     ILogger<GetSiteByIdQueryHandler> logger,
     IMapper mapper
 ) : IRequestHandler<GetSiteByIdQuery, ServiceResult<SiteDetailDto>>
     {
         public async Task<ServiceResult<SiteDetailDto>> Handle(GetSiteByIdQuery request, CancellationToken cancellationToken)
         {
-            var cacheKey = $"site:{request.Id}";
 
-            var cached = await redis.GetAsync<SiteDetailDto>(cacheKey, cancellationToken);
-            if (cached is not null)
+            // ✔ DB'den TEK kayıt çek
+            var entity = await siteRepository.GetByIdAsync(request.Id);
+
+            if (entity is null)
             {
-                logger.LogInformation("Site cache'den alındı");
+                logger.LogWarning("Site bulunamadı. Id: {Id}", request.Id);
 
-                var mappedCached = mapper.Map<SiteDetailDto>(cached);
-                return ServiceResult<SiteDetailDto>.SuccessAsOK(mappedCached);
+                return ServiceResult<SiteDetailDto>.Error("Site bulunamadı", HttpStatusCode.NotFound);
             }
 
-            var data = siteRepository.GetAll()
-                .Where(x => !x.IsDeleted)
-                .ToList();
+            // ✔ map
+            var dto = mapper.Map<SiteDetailDto>(entity);
 
-            await redis.SetListAsync(cacheKey, data, TimeSpan.FromHours(12), cancellationToken);
+            logger.LogInformation("Site DB'den alındı. Id: {Id}", request.Id);
 
-            var mappedData = mapper.Map<SiteDetailDto>(data);
-            return ServiceResult<SiteDetailDto>.SuccessAsOK(mappedData);
+            return ServiceResult<SiteDetailDto>.SuccessAsOK(dto);
         }
     }
 }

@@ -22,7 +22,6 @@ namespace Microservice.Site.Persistence
         public DbSet<PersonelTelefon> PersonelTelefonlar { get; set; }
         public DbSet<PersonelTip> PersonelTipleri { get; set; }
         public DbSet<Popup> Popuplar { get; set; }
-        public DbSet<SertifikaParmakIzi> SertifikaParmakIzleri { get; set; }
         public DbSet<SikcaSorulanSoru> SikcaSorulanSorular { get; set; }
         public DbSet<SikcaSorulanSoruKategori> SikcaSorulanSoruKategorileri { get; set; }
         public DbSet<Mikroservice.Site.Domain.Entities.Site> Siteler { get; set; }

@@ -18,7 +18,8 @@ namespace Mikroservice.Site.Api.Endpoints.TemplateEndPoints
             group.MapToApiVersion(1.0);
             group.GetTemplatesEndpointGroupItem();
             group.CreateTemplateEndpointGroupItem();
-
+            group.DeleteTemplateEndpointGroupItem();
+            group.GetTemplateByIdEndpointGroupItem();
             group.RequireAuthorization("Password");
         }
     }

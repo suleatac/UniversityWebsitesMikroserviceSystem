@@ -1,4 +1,5 @@
-﻿using Microservice.Admin.Services.Interfaces;
+﻿using Microservice.Admin.Services;
+using Microservice.Admin.Services.Interfaces;
 using Microservice.Admin.ViewModels.Template;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -71,5 +72,53 @@ namespace Microservice.Admin.Controllers
             TempData["Success"] = "Template başarıyla oluşturuldu.";
             return RedirectToAction(nameof(Index));
         }
+
+        [HttpGet]
+        public async Task<IActionResult> Delete(int id)
+        {
+            _logger.LogInformation("Template delete sayfası açıldı. Id: {Id}", id);
+
+            var result = await _templateService.GetTemplateByIdAsync(id);
+
+            if (!result.IsSuccess || result.Data == null)
+            {
+                _logger.LogWarning("Template bulunamadı. Id: {Id}", id);
+
+                TempData["Error"] = "Silinecek kayıt bulunamadı.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            return View(result.Data);
+        }
+        // DELETE
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            _logger.LogWarning("Template silme isteği alındı. Id: {Id}", id);
+
+            var result = await _templateService.DeleteTemplateAsync(id);
+
+            if (!result.IsSuccess)
+            {
+                _logger.LogError("Template silinemedi. Id: {Id}, Hata: {Error}", id, result.Fail?.Detail);
+
+                TempData["Error"] = result.Fail?.Detail
+                                    ?? result.Fail?.Title
+                                    ?? "Silme işlemi başarısız";
+
+                return RedirectToAction(nameof(Index));
+            }
+
+            _logger.LogInformation("Template başarıyla silindi. Id: {Id}", id);
+
+            TempData["Success"] = "Kayıt başarıyla silindi.";
+            return RedirectToAction(nameof(Index));
+        }
+
+
+
+
+
     }
 }

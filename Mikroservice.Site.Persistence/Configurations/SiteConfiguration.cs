@@ -16,7 +16,6 @@ namespace Mikroservice.Site.Persistence.Configurations
             builder.Property(s => s.SiteEPostaSifre).IsRequired().HasMaxLength(200);
             builder.Property(s => s.SiteEPostaHost).IsRequired().HasMaxLength(200);
             builder.Property(s => s.SiteEPostaPort).IsRequired();
-            builder.Property(s => s.SertifikaParmakIziId).IsRequired();
             builder.Property(s => s.SiteEPosta).IsRequired().HasMaxLength(200);
             builder.Property(s => s.TemplateId).IsRequired();
             builder.HasQueryFilter(b => !b.IsDeleted);
@@ -31,11 +30,6 @@ namespace Mikroservice.Site.Persistence.Configurations
                    .WithMany(b => b.Sites)
                    .HasForeignKey(s => s.BirimId)
                    .OnDelete(DeleteBehavior.Cascade);
-
-            builder.HasOne(s => s.SertifikaParmakIzi)
-                   .WithMany(sp => sp.Sites)
-                   .HasForeignKey(s => s.SertifikaParmakIziId)
-                   .OnDelete(DeleteBehavior.SetNull);
 
             builder.HasOne(s => s.SiteOzellikleri)
                    .WithOne(so => so.Site)

@@ -1,7 +1,7 @@
 ﻿using MediatR;
 using Mikroservice.Site.Application.Features.BirimFeatures.GetBirim;
 using Microservice.Shared.Extentions;
-using Mikroservice.Site.Application.DTOs;
+using Mikroservice.Site.Application.DTOs.BirimDtos;
 
 namespace Mikroservice.Site.Api.Endpoints.BirimEndPoints.EndPoints
 {

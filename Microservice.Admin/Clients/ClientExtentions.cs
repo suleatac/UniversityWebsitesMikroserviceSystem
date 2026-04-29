@@ -1,4 +1,5 @@
-﻿using Microservice.Admin.Clients.SiteClients;
+﻿using Microservice.Admin.Clients.BirimClients;
+using Microservice.Admin.Clients.SiteClients;
 using Microservice.Admin.Clients.TemplateClients;
 using Microservice.Admin.HttpHandlers;
 using Microservice.Admin.Settings;
@@ -20,6 +21,7 @@ namespace Microservice.Admin.Clients
             .AddHttpMessageHandler<AuthenticatedHttpClientHandler>()//bu usertoken için istek atarken kullanmak için
             .AddHttpMessageHandler<ClientAuthenticatedHttpClientHandler>();//bu clientcredential için token alıp istek göndermek için
 
+
             //Template Clients
              services.AddRefitClient<ITemplateClientService>()
             .ConfigureHttpClient(c => {
@@ -30,6 +32,17 @@ namespace Microservice.Admin.Clients
             .AddHttpMessageHandler<AuthenticatedHttpClientHandler>()//bu usertoken için istek atarken kullanmak için
             .AddHttpMessageHandler<ClientAuthenticatedHttpClientHandler>();//bu clientcredential için token alıp istek göndermek için
 
+
+
+            //Birim Clients
+            services.AddRefitClient<IBirimClientServices>()
+           .ConfigureHttpClient(c => {
+
+               var microserviceOption = configuration.GetSection(MicroservicesSetting.SectionName).Get<MicroservicesSetting>();
+               c.BaseAddress = new Uri(microserviceOption!.Site.BaseUrl);
+           })
+           .AddHttpMessageHandler<AuthenticatedHttpClientHandler>()//bu usertoken için istek atarken kullanmak için
+           .AddHttpMessageHandler<ClientAuthenticatedHttpClientHandler>();//bu clientcredential için token alıp istek göndermek için
 
 
 

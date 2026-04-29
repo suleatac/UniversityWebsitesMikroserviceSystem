@@ -29,8 +29,6 @@ namespace Mikroservice.Site.Application.Features.SiteFeatures.UpdateSite
             site.SiteEPostaSifre = request.SiteEPostaSifre;
             site.SiteEPostaHost = request.SiteEPostaHost;
             site.SiteEPostaPort = request.SiteEPostaPort;
-
-            site.SertifikaParmakIziId = request.SertifikaParmakIziId;
             site.TemplateId = request.TemplateId;
 
             await unitOfWork.SaveChangesAsync(cancellationToken);

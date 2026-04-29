@@ -7,5 +7,7 @@ namespace Microservice.Admin.Services.Interfaces
     {
         Task<ServiceResult<List<GetTemplateVm>>> GetTemplatesAsync();
         Task<ServiceResult<bool>> CreateTemplateAsync(CreateTemplateVm dto);
+        Task<ServiceResult<bool>> DeleteTemplateAsync(int id);
+        Task<ServiceResult<GetTemplateVm>> GetTemplateByIdAsync(int id);
     }
 }

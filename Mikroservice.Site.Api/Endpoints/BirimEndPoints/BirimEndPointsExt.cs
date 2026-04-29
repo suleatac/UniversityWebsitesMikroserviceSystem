@@ -21,7 +21,7 @@ namespace Mikroservice.Site.Api.Endpoints.BirimEndPoints
             group.UpdateBirimEndpointGroupItem();
             group.DeleteBirimEndpointGroupItem();
             group.GetBirimsEndpointGroupItem();
-
+            group.GetBirimByIdEndpointGroupItem();
             group.RequireAuthorization("Password");
         }
     }

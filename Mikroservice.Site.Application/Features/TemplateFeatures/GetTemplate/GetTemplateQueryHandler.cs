@@ -26,8 +26,7 @@ namespace Mikroservice.Site.Application.Features.TemplateFeatures.GetTemplate
                 logger.LogInformation("Template cache'den alındı. Count:{count}", cached.Count);
 
 
-                var mappedCached = mapper.Map<List<TemplateListDto>>(cached);
-                return ServiceResult<List<TemplateListDto>>.SuccessAsOK(mappedCached);
+                return ServiceResult<List<TemplateListDto>>.SuccessAsOK(cached);
             }
 
             // ✔ DB'den flat veri çek

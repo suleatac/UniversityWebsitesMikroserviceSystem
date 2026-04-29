@@ -2,7 +2,7 @@
 
 namespace Mikroservice.Site.Application.Features.BirimFeatures.CreateBirim
 {
-    public record CreateBirimCommand : IRequestByServiceResult
+    public record CreateBirimCommand : IRequestByServiceResult<CreateBirimResponse>
     {
         public int? ParentId { get; init; }
 

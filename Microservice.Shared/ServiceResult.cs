@@ -16,7 +16,7 @@ namespace Microservice.Shared
         [JsonIgnore]
         public HttpStatusCode StatusCode { get; set; }
         public ProblemDetails? Fail { get; set; }
-        [JsonIgnore] public bool IsSuccess => Fail is null;
+        [JsonIgnore] public bool IsSuccess => ((int)StatusCode >= 200 && (int)StatusCode < 300);
         [JsonIgnore] public bool IsFail => !IsSuccess;
 
         // Static factory method for success result with 200 OK status
@@ -27,6 +27,12 @@ namespace Microservice.Shared
                 StatusCode = HttpStatusCode.NoContent
             };
 
+        }
+        public static ServiceResult Success(HttpStatusCode statusCode = HttpStatusCode.OK)
+        {
+            return new ServiceResult {
+                StatusCode = statusCode
+            };
         }
         // Static factory method for error result with 404 Not Found status
         public static ServiceResult ErrorAsNotFound()
@@ -56,7 +62,9 @@ namespace Microservice.Shared
                         Title = "Not Found"
 
                     },
-                    StatusCode = exception.StatusCode
+                    StatusCode = exception.StatusCode == 0
+                        ? HttpStatusCode.InternalServerError
+                        : exception.StatusCode
                 };
             }
 
@@ -67,7 +75,9 @@ namespace Microservice.Shared
 
             return new ServiceResult() {
                 Fail = problemDetails,
-                StatusCode = exception.StatusCode
+                StatusCode = exception.StatusCode == 0
+                        ? HttpStatusCode.InternalServerError
+                        : exception.StatusCode
             };
 
 
@@ -147,16 +157,20 @@ namespace Microservice.Shared
         // Static factory method for success result with 201 Created status
         public static ServiceResult<T> SuccessAsCreated(T data, string url)
         {
-
             return new ServiceResult<T> {
-                StatusCode = HttpStatusCode.OK,
+                StatusCode = HttpStatusCode.Created, // ✔ DOĞRU
                 Data = data,
                 UrlAsCreated = url
             };
-
         }
 
-
+        public static ServiceResult<T> Success(T data, HttpStatusCode statusCode = HttpStatusCode.OK)
+        {
+            return new ServiceResult<T> {
+                StatusCode = statusCode,
+                Data = data
+            };
+        }
 
         public new static ServiceResult<T> ErrorFromProblemDetails(ApiException exception)
         {
@@ -169,7 +183,9 @@ namespace Microservice.Shared
                         Title = "Not Found"
 
                     },
-                    StatusCode = exception.StatusCode
+                    StatusCode = exception.StatusCode == 0
+                        ? HttpStatusCode.InternalServerError
+                        : exception.StatusCode
                 };
             }
 
@@ -180,7 +196,9 @@ namespace Microservice.Shared
 
             return new ServiceResult<T>() {
                 Fail = problemDetails,
-                StatusCode = exception.StatusCode
+                StatusCode = exception.StatusCode == 0
+                        ? HttpStatusCode.InternalServerError
+                        : exception.StatusCode
             };
 
 
@@ -233,7 +251,7 @@ namespace Microservice.Shared
                 Fail = new ProblemDetails() {
                     Title = "Validation errors occured",
                     Detail = "Please check the errors property for more details",
-                    Status = HttpStatusCode.BadRequest.GetHashCode(),
+                    Status = (int)HttpStatusCode.BadRequest,
                     Extensions = errors
                 }
             };

@@ -9,6 +9,7 @@ namespace Mikroservice.Site.Application.Mappings
         {
             // READ
             CreateMap<Domain.Entities.Template, TemplateListDto>();
+            CreateMap<Domain.Entities.Template, TemplateDetailDto>();
         }
     }
 }

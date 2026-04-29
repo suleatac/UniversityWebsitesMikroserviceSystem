@@ -26,8 +26,6 @@ namespace Mikroservice.Site.Application.Features.SiteFeatures.CreateSite
                 SiteEPostaSifre = request.SiteEPostaSifre,
                 SiteEPostaHost = request.SiteEPostaHost,
                 SiteEPostaPort = request.SiteEPostaPort,
-
-                SertifikaParmakIziId = request.SertifikaParmakIziId,
                 TemplateId = request.TemplateId,
 
                 IsDeleted = false

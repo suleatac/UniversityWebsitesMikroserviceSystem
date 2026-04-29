@@ -10,9 +10,9 @@ namespace Mikroservice.Site.Application.Features.TemplateFeatures.CreateTemplate
      ITemplateRepository templateRepository,
      IUnitOfWork unitOfWork,
      IPublishEndpoint publishEndpoint
- ) : IRequestHandler<CreateTemplateCommand, ServiceResult>
+ ) : IRequestHandler<CreateTemplateCommand, ServiceResult<CreateTemplateResponse>>
     {
-        public async Task<ServiceResult> Handle(CreateTemplateCommand request, CancellationToken cancellationToken)
+        public async Task<ServiceResult<CreateTemplateResponse>> Handle(CreateTemplateCommand request, CancellationToken cancellationToken)
         {
             var template = new Domain.Entities.Template {
                 TemplateAdi = request.TemplateAdi,
@@ -27,7 +27,10 @@ namespace Mikroservice.Site.Application.Features.TemplateFeatures.CreateTemplate
 
             await publishEndpoint.Publish(new TemplateChangedEvent(), cancellationToken);
 
-            return ServiceResult.SuccessAsNoContent();
+            var response = new CreateTemplateResponse(template.Id);
+            return ServiceResult<CreateTemplateResponse>
+            .SuccessAsCreated(response, $"/api/v1/templates/{template.Id}");
+
         }
     }
 }

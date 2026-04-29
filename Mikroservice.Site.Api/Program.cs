@@ -20,7 +20,6 @@ using Mikroservice.Site.Api.Endpoints.MediaFileEndPoints;
 using Mikroservice.Site.Api.Endpoints.MenuEndPoints;
 using Mikroservice.Site.Api.Endpoints.PersonelTipEndPoints;
 using Mikroservice.Site.Api.Endpoints.PopupEndPoints;
-using Mikroservice.Site.Api.Endpoints.SertifikaParmakIziEndPoints;
 using Mikroservice.Site.Api.Endpoints.SikcaSorulanSoruEndPoints;
 using Mikroservice.Site.Api.Endpoints.SikcaSorulanSoruKategoriEndPoints;
 using Mikroservice.Site.Api.Endpoints.SiteEndPoints;
@@ -68,6 +67,14 @@ builder.Services.AddRedisCacheExt(builder.Configuration);
 //Rabbitmq message sistemi için eklenen extention
 builder.Services.AddRabbitmqExtentions(builder.Configuration);
 
+
+
+
+
+
+
+
+
 //Versiyonlama eklendi
 builder.Services.AddVersioningExt();
 
@@ -78,12 +85,12 @@ builder.Services.AddVersioningExt();
 var app = builder.Build();
 
 //Çalıştığında otomatik migration yapması için
-using (var scope = app.Services.CreateScope())
-{
-    var serviceProvider = scope.ServiceProvider;
-    var dbContext = serviceProvider.GetRequiredService<AppDbContext>();
-    await dbContext.Database.MigrateAsync();
-}
+//using (var scope = app.Services.CreateScope())
+//{
+//    var serviceProvider = scope.ServiceProvider;
+//    var dbContext = serviceProvider.GetRequiredService<AppDbContext>();
+//    await dbContext.Database.MigrateAsync();
+//}
 
 
 //Authentication ve Authorization middleware'leri eklendi
@@ -116,7 +123,6 @@ app.AddMediaFileGroupsEndpointExt(apiVersionSet);
 app.AddMenuGroupsEndpointExt(apiVersionSet);
 app.AddPersonelTipGroupsEndpointExt(apiVersionSet);
 app.AddPopupGroupsEndpointExt(apiVersionSet);
-app.AddSertifikaParmakIziGroupsEndpointExt(apiVersionSet);
 app.AddSikcaSorulanSoruGroupsEndpointExt(apiVersionSet);
 app.AddSikcaSorulanSoruKategoriGroupsEndpointExt(apiVersionSet);
 app.AddSiteGroupsEndpointExt(apiVersionSet);

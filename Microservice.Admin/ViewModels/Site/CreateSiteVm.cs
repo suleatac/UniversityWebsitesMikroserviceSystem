@@ -12,8 +12,6 @@
         public string SiteEPostaSifre { get; init; } = default!;
         public string SiteEPostaHost { get; init; } = default!;
         public int SiteEPostaPort { get; init; }
-
-        public int SertifikaParmakIziId { get; init; }
         public int TemplateId { get; init; }
     }
 }

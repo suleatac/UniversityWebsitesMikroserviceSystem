@@ -22,9 +22,15 @@ namespace Microservice.Admin.Services
 
             //Burası önemli cookie oluşturuyoruz.
             var userClaims = tokenService.ExtractClaims(tokenResponse.Data!.AccessToken!);
+            var filteredClaims = userClaims
+               .Where(c =>
+                       c.Type == ClaimTypes.Name ||
+                       c.Type == ClaimTypes.NameIdentifier ||
+                           c.Type == ClaimTypes.Role)
+               .ToList();
             var authenticationProperties = tokenService.CreateAuthenticationProperties(tokenResponse.Data!);
 
-            var claimsIdentity = new ClaimsIdentity(userClaims, CookieAuthenticationDefaults.AuthenticationScheme, ClaimTypes.Name, ClaimTypes.Role);
+            var claimsIdentity = new ClaimsIdentity(filteredClaims, CookieAuthenticationDefaults.AuthenticationScheme, ClaimTypes.Name, ClaimTypes.Role);
 
             var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
 
