@@ -11,8 +11,10 @@ namespace Mikroservice.Site.Application.Features.SiteFeatures.UpdateSite
             RuleFor(x => x.SiteAdi).NotEmpty();
 
             RuleFor(x => x.SiteUrl)
-                .Must(x => Uri.TryCreate(x, UriKind.Absolute, out _))
-                .WithMessage("Geçerli URL giriniz.");
+               .NotEmpty().WithMessage("Geçerli bir URL giriniz.")
+               .Must(x => Uri.TryCreate(x, UriKind.Absolute, out _)
+                       || Uri.TryCreate("http://" + x, UriKind.Absolute, out _))
+               .WithMessage("Geçerli bir URL giriniz.");
         }
     }
 }

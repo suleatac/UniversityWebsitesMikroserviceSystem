@@ -32,9 +32,10 @@ namespace Mikroservice.Site.Application.Features.SiteFeatures.GetSite
                 .Where(x => !x.IsDeleted)
                 .ToList();
 
-            await redis.SetListAsync(cacheKey, data, TimeSpan.FromHours(24), cancellationToken);
-
+      
             var mappedData = mapper.Map<List<SiteDto>>(data);
+            await redis.SetListAsync(cacheKey, mappedData, TimeSpan.FromHours(24), cancellationToken);
+
             return ServiceResult<List<SiteDto>>.SuccessAsOK(mappedData);
         }
     }

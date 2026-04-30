@@ -9,13 +9,13 @@ namespace Microservice.Admin.Clients.SiteClients
         Task<ApiResponse<List<SiteGetVm>>> GetSitesAsync();
 
         [Get("/api/v1/sites/{id}")]
-        Task<ApiResponse<SiteGetVm>> GetSiteByIdAsync(int id);
+        Task<ApiResponse<SiteDetailGetVm>> GetSiteByIdAsync(int id);
 
         [Post("/api/v1/sites")]
-        Task<ApiResponse<SiteGetVm>> CreateSiteAsync([Body] CreateSiteVm dto);
+        Task<ApiResponse<object>> CreateSiteAsync([Body] CreateSiteVm dto);
 
         [Put("/api/v1/sites/{id}")]
-        Task<ApiResponse<object>> UpdateSiteAsync(int id, [Body] UpdateSiteVm dto);
+        Task<ApiResponse<object>> UpdateSiteAsync(int id, [Body] SiteDetailGetVm dto);
 
         [Delete("/api/v1/sites/{id}")]
         Task<ApiResponse<object>> DeleteSiteAsync(int id);

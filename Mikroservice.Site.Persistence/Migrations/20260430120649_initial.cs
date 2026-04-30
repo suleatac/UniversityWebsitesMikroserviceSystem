@@ -78,21 +78,6 @@ namespace Mikroservice.Site.Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "SertifikaParmakIzleri",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    SertifikaParmakIziNumarasi = table.Column<string>(type: "text", nullable: false),
-                    SertifikaYili = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
-                    Aktif = table.Column<bool>(type: "boolean", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_SertifikaParmakIzleri", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "SikcaSorulanSoruKategorileri",
                 columns: table => new
                 {
@@ -189,7 +174,6 @@ namespace Mikroservice.Site.Persistence.Migrations
                     SiteEPostaSifre = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
                     SiteEPostaHost = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
                     SiteEPostaPort = table.Column<int>(type: "integer", nullable: false),
-                    SertifikaParmakIziId = table.Column<int>(type: "integer", nullable: false),
                     TemplateId = table.Column<int>(type: "integer", nullable: false),
                     IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
                     SiteEPosta = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false)
@@ -203,12 +187,6 @@ namespace Mikroservice.Site.Persistence.Migrations
                         principalTable: "Birimler",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Siteler_SertifikaParmakIzleri_SertifikaParmakIziId",
-                        column: x => x.SertifikaParmakIziId,
-                        principalTable: "SertifikaParmakIzleri",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.SetNull);
                     table.ForeignKey(
                         name: "FK_Siteler_Templateler_TemplateId",
                         column: x => x.TemplateId,
@@ -272,8 +250,6 @@ namespace Mikroservice.Site.Persistence.Migrations
                     SeoDescription = table.Column<string>(type: "text", nullable: true),
                     Tip = table.Column<int>(type: "integer", nullable: false),
                     Sira = table.Column<int>(type: "integer", nullable: true),
-                    SiteId1 = table.Column<int>(type: "integer", nullable: true),
-                    SiteId2 = table.Column<int>(type: "integer", nullable: true),
                     TamEkranMi = table.Column<bool>(type: "boolean", nullable: true, defaultValue: false),
                     GosterimSuresiSaniye = table.Column<int>(type: "integer", nullable: true, defaultValue: 5),
                     CookieIleTekrarGosterme = table.Column<bool>(type: "boolean", nullable: true),
@@ -287,27 +263,15 @@ namespace Mikroservice.Site.Persistence.Migrations
                         column: x => x.DilId,
                         principalTable: "Diller",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Icerik_Hedefler_HedefId",
                         column: x => x.HedefId,
                         principalTable: "Hedefler",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.SetNull);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Icerik_Siteler_SiteId",
                         column: x => x.SiteId,
-                        principalTable: "Siteler",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Icerik_Siteler_SiteId1",
-                        column: x => x.SiteId1,
-                        principalTable: "Siteler",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_Icerik_Siteler_SiteId2",
-                        column: x => x.SiteId2,
                         principalTable: "Siteler",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -611,16 +575,6 @@ namespace Mikroservice.Site.Persistence.Migrations
                 columns: new[] { "SiteId", "Sira" });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Icerik_SiteId1",
-                table: "Icerik",
-                column: "SiteId1");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Icerik_SiteId2",
-                table: "Icerik",
-                column: "SiteId2");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_MediaFile_DilId",
                 table: "MediaFile",
                 column: "DilId");
@@ -695,11 +649,6 @@ namespace Mikroservice.Site.Persistence.Migrations
                 name: "IX_Siteler_BirimId",
                 table: "Siteler",
                 column: "BirimId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Siteler_SertifikaParmakIziId",
-                table: "Siteler",
-                column: "SertifikaParmakIziId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Siteler_TemplateId",
@@ -797,9 +746,6 @@ namespace Mikroservice.Site.Persistence.Migrations
 
             migrationBuilder.DropTable(
                 name: "Birimler");
-
-            migrationBuilder.DropTable(
-                name: "SertifikaParmakIzleri");
 
             migrationBuilder.DropTable(
                 name: "Templateler");

@@ -33,7 +33,7 @@ namespace Mikroservice.Site.Persistence.Messaging.RabbitmqExtentions
   
             services.AddMassTransit(x =>
             {
-                x.AddConsumers(typeof(TemplateChangedEventConsumer).Assembly);
+                x.AddConsumers(typeof(BirimChangedEventConsumer).Assembly);
 
                 x.UsingRabbitMq((context, cfg) =>
                 {

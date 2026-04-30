@@ -6,7 +6,7 @@ namespace Microservice.Admin.Services.ServicesExtentions
     {
         public static IServiceCollection AddServicesExtentions(this IServiceCollection services, IConfiguration configuration)
         {
-
+            services.AddScoped<IMinioService, MinioService>();
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<IBirimService, BirimService>();
             services.AddScoped<ICurrentUserService, CurrentUserService>();
@@ -16,6 +16,9 @@ namespace Microservice.Admin.Services.ServicesExtentions
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<ISiteService, SiteService>();
             services.AddScoped<ITemplateService, TemplateService>();
+            services.AddScoped<IDilService, DilService>();
+            services.AddScoped<IHedefService, HedefService>();
+            services.AddScoped<IHaberService, HaberService>();
             return services;
         }
     }

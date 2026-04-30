@@ -10,7 +10,7 @@ namespace Mikroservice.Site.Api.Endpoints.HaberEndPoints
             ApiVersionSet apiVersionSet)
         {
             var group = app
-                .MapGroup("/api/v{version:apiVersion}/haberler")
+                .MapGroup("/api/v{version:apiVersion}/habers")
                 .WithTags("Haber")
                 .WithApiVersionSet(apiVersionSet)
                 .RequireAuthorization();
@@ -21,6 +21,7 @@ namespace Mikroservice.Site.Api.Endpoints.HaberEndPoints
             group.UpdateHaberEndpointGroupItem();
             group.DeleteHaberEndpointGroupItem();
             group.GetHaberlerEndpointGroupItem();
+            group.GetHaberByIdEndpointGroupItem();
             group.RequireAuthorization("Password");
         }
     }

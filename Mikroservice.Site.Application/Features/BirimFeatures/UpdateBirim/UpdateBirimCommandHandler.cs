@@ -29,7 +29,7 @@ namespace Mikroservice.Site.Application.Features.BirimFeatures.UpdateBirim
             await unitOfWork.SaveChangesAsync(cancellationToken);
 
             //Cache temizleme işlemini yapabilsin diye bu event eklendi.
-            await publishEndpoint.Publish(new BirimUpdatedEvent(), cancellationToken);
+            await publishEndpoint.Publish(new BirimChangedEvent(), cancellationToken);
 
 
             return ServiceResult.SuccessAsNoContent();

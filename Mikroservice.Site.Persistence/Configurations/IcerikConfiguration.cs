@@ -51,23 +51,7 @@ namespace Mikroservice.Site.Persistence.Configurations
             builder.Property(x => x.BaslamaTarihi).HasColumnType("timestamp without time zone");
             builder.Property(x => x.BitisTarihi).HasColumnType("timestamp without time zone");
 
-            // =========================
-            // RELATIONS
-            // =========================
-            builder.HasOne(x => x.Site)
-                .WithMany()
-                .HasForeignKey(x => x.SiteId)
-                .OnDelete(DeleteBehavior.Cascade);
 
-            builder.HasOne(x => x.Dil)
-                .WithMany()
-                .HasForeignKey(x => x.DilId)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            builder.HasOne(x => x.Hedef)
-                .WithMany()
-                .HasForeignKey(x => x.HedefId)
-                .OnDelete(DeleteBehavior.SetNull);
 
             // =========================
             // INDEX

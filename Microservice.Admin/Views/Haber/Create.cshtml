@@ -1,0 +1,112 @@
+@model Microservice.Admin.ViewModels.Haber.CreateHaberVm
+
+@{
+    ViewData["Title"] = "Create";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Create</h1>
+
+<h4>HaberDetailVm</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="form-group">
+                <label asp-for="SiteId" class="control-label"></label>
+                <input asp-for="SiteId" class="form-control" />
+                <span asp-validation-for="SiteId" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="DilId" class="control-label"></label>
+                <input asp-for="DilId" class="form-control" />
+                <span asp-validation-for="DilId" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="HedefId" class="control-label"></label>
+                <input asp-for="HedefId" class="form-control" />
+                <span asp-validation-for="HedefId" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Baslik" class="control-label"></label>
+                <input asp-for="Baslik" class="form-control" />
+                <span asp-validation-for="Baslik" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="KisaAciklama" class="control-label"></label>
+                <input asp-for="KisaAciklama" class="form-control" />
+                <span asp-validation-for="KisaAciklama" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="IcerikMetni" class="control-label"></label>
+                <input asp-for="IcerikMetni" class="form-control" />
+                <span asp-validation-for="IcerikMetni" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Link" class="control-label"></label>
+                <input asp-for="Link" class="form-control" />
+                <span asp-validation-for="Link" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="ResimUrl" class="control-label"></label>
+                <input asp-for="ResimUrl" class="form-control" />
+                <span asp-validation-for="ResimUrl" class="text-danger"></span>
+            </div>
+
+
+            <div class="form-group">
+                <label asp-for="YayimTarihi" class="control-label"></label>
+                <input asp-for="YayimTarihi" class="form-control" />
+                <span asp-validation-for="YayimTarihi" class="text-danger"></span>
+            </div>
+
+          
+
+            <div class="form-group">
+                <label asp-for="BaslamaTarihi" class="control-label"></label>
+                <input asp-for="BaslamaTarihi" class="form-control" />
+                <span asp-validation-for="BaslamaTarihi" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="BitisTarihi" class="control-label"></label>
+                <input asp-for="BitisTarihi" class="form-control" />
+                <span asp-validation-for="BitisTarihi" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="SeoUrl" class="control-label"></label>
+                <input asp-for="SeoUrl" class="form-control" />
+                <span asp-validation-for="SeoUrl" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="SeoTitle" class="control-label"></label>
+                <input asp-for="SeoTitle" class="form-control" />
+                <span asp-validation-for="SeoTitle" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="SeoDescription" class="control-label"></label>
+                <input asp-for="SeoDescription" class="form-control" />
+                <span asp-validation-for="SeoDescription" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>

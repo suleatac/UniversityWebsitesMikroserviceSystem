@@ -39,11 +39,11 @@ namespace Microservice.Admin.Services
                   Name = "access_token",
                   Value = tokenResponse.AccessToken!
                 },
-                //new AuthenticationToken
-                //{
-                //  Name = "refresh_token",
-                //  Value = tokenResponse.RefreshToken ?? ""
-                //},
+                new AuthenticationToken
+                {
+                  Name = "refresh_token",
+                  Value = tokenResponse.RefreshToken ?? ""
+                },
                 new AuthenticationToken
                 {
                   Name = "expires_at",

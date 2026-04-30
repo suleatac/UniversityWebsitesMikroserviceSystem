@@ -2,6 +2,7 @@
 
 namespace Microservice.Admin.Controllers
 {
+    using Microservice.Admin.Services;
     using Microservice.Admin.ViewModels.Site;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
@@ -67,7 +68,7 @@ namespace Microservice.Admin.Controllers
                 return View(model);
             }
 
-            _logger.LogInformation("Yeni site oluşturuldu. SiteId: {SiteId}", result.Data?.Id);
+            _logger.LogInformation("Yeni site oluşturuldu. SiteId: {SiteId}", result.Data);
             return RedirectToAction(nameof(Index));
         }
 
@@ -91,7 +92,7 @@ namespace Microservice.Admin.Controllers
         // UPDATE - POST
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(UpdateSiteVm model)
+        public async Task<IActionResult> Edit(SiteDetailGetVm model)
         {
             if (!ModelState.IsValid)
             {
@@ -112,10 +113,27 @@ namespace Microservice.Admin.Controllers
             _logger.LogInformation("Site güncellendi. Id: {Id}", model.Id);
             return RedirectToAction(nameof(Index));
         }
+        [HttpGet]
+        public async Task<IActionResult> Delete(int id)
+        {
+            _logger.LogInformation("Site delete sayfası açıldı. Id: {Id}", id);
+
+            var result = await _siteService.GetSiteByIdAsync(id);
+
+            if (!result.IsSuccess || result.Data == null)
+            {
+                _logger.LogWarning("Site bulunamadı. Id: {Id}", id);
+
+                TempData["Error"] = "Silinecek kayıt bulunamadı.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            return View(result.Data);
+        }
         // DELETE
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> DeleteConfirmed(int id)
         {
             _logger.LogWarning("Site silme isteği alındı. Id: {Id}", id);
 
@@ -125,12 +143,18 @@ namespace Microservice.Admin.Controllers
             {
                 _logger.LogError("Site silinemedi. Id: {Id}, Hata: {Error}", id, result.Fail?.Detail);
 
-                TempData["Error"] = result.Fail?.Detail ?? result.Fail?.Title ?? "Silme işlemi başarısız";
+                TempData["Error"] = result.Fail?.Detail
+                                    ?? result.Fail?.Title
+                                    ?? "Silme işlemi başarısız";
+
                 return RedirectToAction(nameof(Index));
             }
 
-            _logger.LogInformation("Site silindi. Id: {Id}", id);
+            _logger.LogInformation("Site başarıyla silindi. Id: {Id}", id);
+
+            TempData["Success"] = "Kayıt başarıyla silindi.";
             return RedirectToAction(nameof(Index));
         }
+
     }
 }

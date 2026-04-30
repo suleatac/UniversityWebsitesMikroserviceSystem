@@ -17,7 +17,7 @@ namespace Mikroservice.Site.Persistence.Messaging.Consumers.SiteConsumers
         {
             var message = context.Message;
 
-            var key = $"site:list";
+            var key = "site:list";
 
             await _cache.RemoveAsync(key, context.CancellationToken);
         }

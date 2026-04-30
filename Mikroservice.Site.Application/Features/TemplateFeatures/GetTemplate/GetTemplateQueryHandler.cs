@@ -31,13 +31,16 @@ namespace Mikroservice.Site.Application.Features.TemplateFeatures.GetTemplate
 
             // ✔ DB'den flat veri çek
             var data = templateRepository.GetAll().ToList();
-            // Cache'e yaz
-            await redisCacheService.SetListAsync(cacheKey, data, TimeSpan.FromHours(24), cancellationToken);
-
+           
 
             logger.LogInformation("Template DB'den alındı. Count:{count}", data.Count);
 
             var mappedData = mapper.Map<List<TemplateListDto>>(data);
+
+            // Cache'e yaz
+            await redisCacheService.SetListAsync(cacheKey, mappedData, TimeSpan.FromHours(24), cancellationToken);
+
+
             return ServiceResult<List<TemplateListDto>>.SuccessAsOK(mappedData);
         }
 

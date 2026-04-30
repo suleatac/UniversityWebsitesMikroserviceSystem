@@ -15,7 +15,6 @@ namespace Mikroservice.Site.Application.Features.SiteFeatures.CreateSite
         public string SiteEPostaHost { get; init; } = default!;
         public int SiteEPostaPort { get; init; }
 
-        public int SertifikaParmakIziId { get; init; }
         public int TemplateId { get; init; }
     }
 }

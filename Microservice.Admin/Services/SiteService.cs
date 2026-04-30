@@ -47,7 +47,7 @@ namespace Microservice.Admin.Services
         }
 
         // GET BY ID
-        public async Task<ServiceResult<SiteGetVm>> GetSiteByIdAsync(int id)
+        public async Task<ServiceResult<SiteDetailGetVm>> GetSiteByIdAsync(int id)
         {
             _logger.LogInformation("Site getiriliyor. Id: {Id}", id);
 
@@ -66,16 +66,16 @@ namespace Microservice.Admin.Services
                     problemDetails?.Detail
                 );
 
-                return ServiceResult<SiteGetVm>
+                return ServiceResult<SiteDetailGetVm>
                     .Error(problemDetails?.Detail ?? problemDetails?.Title ?? "Siteler alınamadı");
 
             }
 
-            return ServiceResult<SiteGetVm>.Success(response.Content!);
+            return ServiceResult<SiteDetailGetVm>.Success(response.Content!);
         }
 
         // CREATE
-        public async Task<ServiceResult<SiteGetVm>> CreateSiteAsync(CreateSiteVm dto)
+        public async Task<ServiceResult<object>> CreateSiteAsync(CreateSiteVm dto)
         {
             _logger.LogInformation("Yeni site oluşturuluyor. Name: {Name}", dto.SiteAdi);
 
@@ -94,17 +94,17 @@ namespace Microservice.Admin.Services
                     problemDetails?.Detail
                 );
 
-                return ServiceResult<SiteGetVm>
+                return ServiceResult<object>
                     .Error(problemDetails?.Detail ?? problemDetails?.Title ?? "Site oluşturulamadı");
 
             }
 
-            _logger.LogInformation("Site başarıyla oluşturuldu. Id: {Id}", response.Content?.Id);
-            return ServiceResult<SiteGetVm>.Success(response.Content!);
+            _logger.LogInformation("Site başarıyla oluşturuldu. Id: {Id}", response.Content);
+            return ServiceResult<object>.Success(true);
         }
 
         // UPDATE
-        public async Task<ServiceResult<bool>> UpdateSiteAsync(UpdateSiteVm dto)
+        public async Task<ServiceResult<bool>> UpdateSiteAsync(SiteDetailGetVm dto)
         {
             _logger.LogInformation("Site güncelleniyor. Id: {Id}", dto.Id);
 

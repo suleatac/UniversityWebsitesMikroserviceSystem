@@ -18,6 +18,7 @@ namespace Mikroservice.Site.Persistence.Configurations
             builder.Property(s => s.SiteEPostaPort).IsRequired();
             builder.Property(s => s.SiteEPosta).IsRequired().HasMaxLength(200);
             builder.Property(s => s.TemplateId).IsRequired();
+
             builder.HasQueryFilter(b => !b.IsDeleted);
             
 

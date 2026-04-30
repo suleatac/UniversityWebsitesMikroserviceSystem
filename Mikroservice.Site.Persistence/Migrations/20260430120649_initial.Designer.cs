@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Mikroservice.Site.Persistence.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260428130754_initial")]
+    [Migration("20260430120649_initial")]
     partial class initial
     {
         /// <inheritdoc />
@@ -435,29 +435,6 @@ namespace Mikroservice.Site.Persistence.Migrations
                     b.ToTable("PersonelTipleri");
                 });
 
-            modelBuilder.Entity("Mikroservice.Site.Domain.Entities.SertifikaParmakIzi", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<bool>("Aktif")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("SertifikaParmakIziNumarasi")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<DateTime>("SertifikaYili")
-                        .HasColumnType("timestamp without time zone");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("SertifikaParmakIzleri");
-                });
-
             modelBuilder.Entity("Mikroservice.Site.Domain.Entities.SikcaSorulanSoru", b =>
                 {
                     b.Property<int>("Id")
@@ -549,9 +526,6 @@ namespace Mikroservice.Site.Persistence.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
 
-                    b.Property<int>("SertifikaParmakIziId")
-                        .HasColumnType("integer");
-
                     b.Property<string>("SiteAdi")
                         .IsRequired()
                         .HasMaxLength(200)
@@ -596,8 +570,6 @@ namespace Mikroservice.Site.Persistence.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("BirimId");
-
-                    b.HasIndex("SertifikaParmakIziId");
 
                     b.HasIndex("TemplateId");
 
@@ -897,11 +869,6 @@ namespace Mikroservice.Site.Persistence.Migrations
                 {
                     b.HasBaseType("Mikroservice.Site.Domain.Entities.Icerik");
 
-                    b.Property<int?>("SiteId1")
-                        .HasColumnType("integer");
-
-                    b.HasIndex("SiteId1");
-
                     b.HasDiscriminator().HasValue(2);
                 });
 
@@ -915,11 +882,6 @@ namespace Mikroservice.Site.Persistence.Migrations
             modelBuilder.Entity("Mikroservice.Site.Domain.Entities.Haber", b =>
                 {
                     b.HasBaseType("Mikroservice.Site.Domain.Entities.Icerik");
-
-                    b.Property<int>("SiteId2")
-                        .HasColumnType("integer");
-
-                    b.HasIndex("SiteId2");
 
                     b.HasDiscriminator().HasValue(1);
                 });
@@ -989,25 +951,16 @@ namespace Mikroservice.Site.Persistence.Migrations
                     b.HasOne("Mikroservice.Site.Domain.Entities.Dil", "Dil")
                         .WithMany()
                         .HasForeignKey("DilId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Mikroservice.Site.Domain.Entities.Hedef", "Hedef")
                         .WithMany()
-                        .HasForeignKey("HedefId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.HasOne("Mikroservice.Site.Domain.Entities.Site", "Site")
-                        .WithMany()
-                        .HasForeignKey("SiteId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("HedefId");
 
                     b.Navigation("Dil");
 
                     b.Navigation("Hedef");
-
-                    b.Navigation("Site");
                 });
 
             modelBuilder.Entity("Mikroservice.Site.Domain.Entities.MediaFile", b =>
@@ -1109,12 +1062,6 @@ namespace Mikroservice.Site.Persistence.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Mikroservice.Site.Domain.Entities.SertifikaParmakIzi", "SertifikaParmakIzi")
-                        .WithMany("Sites")
-                        .HasForeignKey("SertifikaParmakIziId")
-                        .OnDelete(DeleteBehavior.SetNull)
-                        .IsRequired();
-
                     b.HasOne("Mikroservice.Site.Domain.Entities.Template", "Template")
                         .WithMany("Sites")
                         .HasForeignKey("TemplateId")
@@ -1122,8 +1069,6 @@ namespace Mikroservice.Site.Persistence.Migrations
                         .IsRequired();
 
                     b.Navigation("Birim");
-
-                    b.Navigation("SertifikaParmakIzi");
 
                     b.Navigation("Template");
                 });
@@ -1196,20 +1141,81 @@ namespace Mikroservice.Site.Persistence.Migrations
                     b.Navigation("YoneticiTipi");
                 });
 
+            modelBuilder.Entity("Mikroservice.Site.Domain.Entities.Banner", b =>
+                {
+                    b.HasOne("Mikroservice.Site.Domain.Entities.Site", "Site")
+                        .WithMany()
+                        .HasForeignKey("SiteId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Site");
+                });
+
+            modelBuilder.Entity("Mikroservice.Site.Domain.Entities.Bilgi", b =>
+                {
+                    b.HasOne("Mikroservice.Site.Domain.Entities.Site", "Site")
+                        .WithMany()
+                        .HasForeignKey("SiteId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Site");
+                });
+
             modelBuilder.Entity("Mikroservice.Site.Domain.Entities.Duyuru", b =>
                 {
-                    b.HasOne("Mikroservice.Site.Domain.Entities.Site", null)
+                    b.HasOne("Mikroservice.Site.Domain.Entities.Site", "Site")
                         .WithMany("Duyurus")
-                        .HasForeignKey("SiteId1");
+                        .HasForeignKey("SiteId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Site");
+                });
+
+            modelBuilder.Entity("Mikroservice.Site.Domain.Entities.Etkinlik", b =>
+                {
+                    b.HasOne("Mikroservice.Site.Domain.Entities.Site", "Site")
+                        .WithMany()
+                        .HasForeignKey("SiteId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Site");
                 });
 
             modelBuilder.Entity("Mikroservice.Site.Domain.Entities.Haber", b =>
                 {
-                    b.HasOne("Mikroservice.Site.Domain.Entities.Site", null)
+                    b.HasOne("Mikroservice.Site.Domain.Entities.Site", "Site")
                         .WithMany("Habers")
-                        .HasForeignKey("SiteId2")
+                        .HasForeignKey("SiteId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Site");
+                });
+
+            modelBuilder.Entity("Mikroservice.Site.Domain.Entities.Popup", b =>
+                {
+                    b.HasOne("Mikroservice.Site.Domain.Entities.Site", "Site")
+                        .WithMany()
+                        .HasForeignKey("SiteId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Site");
+                });
+
+            modelBuilder.Entity("Mikroservice.Site.Domain.Entities.Video", b =>
+                {
+                    b.HasOne("Mikroservice.Site.Domain.Entities.Site", "Site")
+                        .WithMany()
+                        .HasForeignKey("SiteId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Site");
                 });
 
             modelBuilder.Entity("Mikroservice.Site.Domain.Entities.Birim", b =>
@@ -1229,11 +1235,6 @@ namespace Mikroservice.Site.Persistence.Migrations
                     b.Navigation("SitePersonels");
 
                     b.Navigation("Unvans");
-                });
-
-            modelBuilder.Entity("Mikroservice.Site.Domain.Entities.SertifikaParmakIzi", b =>
-                {
-                    b.Navigation("Sites");
                 });
 
             modelBuilder.Entity("Mikroservice.Site.Domain.Entities.SikcaSorulanSoruKategori", b =>

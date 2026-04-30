@@ -8,13 +8,12 @@ using Mikroservice.Site.Domain.Entities;
 namespace Mikroservice.Site.Application.Features.HaberFeatures.CreateHaber
 {
     public class CreateHaberCommandHandler(
-          IHaberRepository haberRepository,
-          IUnitOfWork unitOfWork,
-          IPublishEndpoint publishEndpoint
-        )
-        : IRequestHandler<CreateHaberCommand, ServiceResult>
+     IHaberRepository haberRepository,
+     IUnitOfWork unitOfWork,
+     IPublishEndpoint publishEndpoint
+ ) : IRequestHandler<CreateHaberCommand, ServiceResult<CreateHaberResponse>>
     {
-        public async Task<ServiceResult> Handle(CreateHaberCommand request, CancellationToken cancellationToken)
+        public async Task<ServiceResult<CreateHaberResponse>> Handle(CreateHaberCommand request, CancellationToken cancellationToken)
         {
             var newHaber = new Haber {
                 Baslik = request.Baslik,
@@ -44,7 +43,10 @@ namespace Mikroservice.Site.Application.Features.HaberFeatures.CreateHaber
             await publishEndpoint.Publish(new HaberCreatedEvent(newHaber.SiteId, newHaber.DilId), cancellationToken);
 
 
-            return ServiceResult.SuccessAsNoContent();
+
+            var response = new CreateHaberResponse(newHaber.Id);
+            return ServiceResult<CreateHaberResponse>
+            .SuccessAsCreated(response, $"/api/v1/habers/{newHaber.Id}");
         }
     }
 }

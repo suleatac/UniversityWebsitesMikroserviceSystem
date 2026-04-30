@@ -2,7 +2,7 @@
 
 namespace Mikroservice.Site.Application.Features.HaberFeatures.CreateHaber
 {
-    public record CreateHaberCommand : IRequestByServiceResult
+    public record CreateHaberCommand : IRequestByServiceResult<CreateHaberResponse>
     {
         public int SiteId { get; init; }
         public int DilId { get; init; }

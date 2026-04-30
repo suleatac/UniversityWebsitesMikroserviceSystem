@@ -25,7 +25,7 @@ namespace Mikroservice.Site.Application.Features.BirimFeatures.DeleteBirim
 
             await unitOfWork.SaveChangesAsync(cancellationToken);
 
-            await publishEndpoint.Publish(new BirimDeletedEvent(), cancellationToken);
+            await publishEndpoint.Publish(new BirimChangedEvent(), cancellationToken);
 
             return ServiceResult.SuccessAsNoContent();
         }
