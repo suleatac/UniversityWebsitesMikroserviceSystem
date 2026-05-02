@@ -5,6 +5,7 @@
         public string Title { get; set; } = default!;
         public string Key { get; set; } = default!;
         public bool Folder { get; set; }
-        public bool Lazy { get; set; } = true;
+        // Sadece klasörler lazy (açılabilir) olmalı
+        public bool Lazy => Folder;
     }
 }

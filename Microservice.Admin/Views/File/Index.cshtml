@@ -1,261 +1,353 @@
 @{
     ViewData["Title"] = "File Manager";
     Layout = "~/Views/Shared/_Layout.cshtml";
-    var siteId = ViewBag.SiteId ?? 0; // ViewBag'den gelen siteId
+    var siteId = ViewBag.SiteId ?? 0;
 }
 
 <style>
     #menu {
-        min-width: 150px;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        min-width: 160px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
         padding: 5px 0;
-        border-radius: 4px;
+        border-radius: 6px;
+        background: white;
+        border: 1px solid #ddd;
     }
 
         #menu div {
-            padding: 8px 12px;
+            padding: 10px 15px;
             cursor: pointer;
+            font-size: 14px;
+            transition: background 0.2s;
         }
 
             #menu div:hover {
-                background-color: #f1f1f1;
+                background-color: #f8f9fa;
+                color: #007bff;
             }
 
     .fancytree-container {
         outline: none;
+        border: none !important;
+    }
+
+    #tree {
+        padding: 10px;
+    }
+
+    /* Checkbox stil iyileştirmesi */
+    span.fancytree-checkbox {
+        margin-right: 5px;
     }
 </style>
-<link href="https://cdn.jsdelivr.net/npm/jquery.fancytree/dist/skin-win8/ui.fancytree.min.css" rel="stylesheet">
 
-<h1>File Manager</h1>
+@section Styles {
+    <link href="https://cdn.jsdelivr.net/npm/jquery.fancytree/dist/skin-win8/ui.fancytree.min.css" rel="stylesheet">
+}
 
-<div style="display:flex; height:600px; gap: 20px;">
-    <!-- Sol Panel: Ağaç Yapısı -->
-    <div style="width:30%; border:1px solid #ddd; overflow: auto; border-radius: 5px;" id="tree"></div>
-
-    <!-- Sağ Panel: Önizleme ve Yükleme -->
-    <div style="width:70%; padding:15px; border:1px solid #ddd; border-radius: 5px; display: flex; flex-direction: column;">
-
-        <div style="margin-bottom: 20px; padding: 15px; background: #f9f9f9;">
-            <p><strong>Seçili Klasör:</strong> <span id="selectedFolderName">Lütfen bir klasör seçin</span></p>
-            <input type="file" id="fileInput" multiple class="form-control" style="display: inline-block; width: auto;" />
-            <button class="btn btn-primary" onclick="uploadSelected()">Yükle</button>
+<div class="container-fluid mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h1>Medya Kütüphanesi</h1>
+        <div>
+            <button class="btn btn-outline-danger" onclick="deleteSelected()">
+                <i class="fa fa-trash"></i> Seçilenleri Sil
+            </button>
         </div>
+    </div>
 
-        <div id="dropZone" style="border:2px dashed #aaa; padding:40px; text-align: center; color: #777;">
-            Dosyaları buraya sürükleyip bırakabilirsiniz
-        </div>
+    <div style="display:flex; height:700px; gap: 20px;">
 
-        <div id="previewContainer" style="margin-top:20px; text-align: center; flex-grow: 1; display: none;">
-            <h5>Dosya Önizleme</h5>
-            <img id="preview" style="max-width:100%; max-height: 350px; border: 1px solid #eee;" />
-            <p id="fileName" style="margin-top: 10px; font-weight: bold;"></p>
+        <!-- SOL PANEL: TREE -->
+        <div id="tree" style="width:30%; border:1px solid #ddd; overflow:auto; border-radius:8px; background: #fff;"></div>
+
+        <!-- SAĞ PANEL: İŞLEMLER VE ÖNİZLEME -->
+        <div style="width:70%; padding:20px; border:1px solid #ddd; border-radius:8px; display:flex; flex-direction:column; background: #fff;">
+
+            <div style="margin-bottom:20px; padding:20px; background:#f8f9fa; border-radius: 8px;">
+                <p class="mb-3"><strong>Aktif Konum:</strong> <span id="selectedFolderName" class="badge bg-primary fs-6">Kök</span></p>
+
+                <div class="input-group">
+                    <input type="file" id="fileInput" multiple class="form-control" />
+                    <button class="btn btn-success" onclick="uploadSelected()">
+                        <i class="fa fa-upload"></i> Dosyaları Yükle
+                    </button>
+                </div>
+            </div>
+
+            <div id="dropZone" style="border:2px dashed #ccc; padding:60px; text-align:center; color:#999; border-radius: 8px; cursor: pointer;">
+                <i class="fa fa-cloud-upload-alt fa-3x mb-2"></i><br>
+                Dosyaları buraya sürükleyip bırakın
+            </div>
+
+            <div id="previewContainer" style="margin-top:30px; text-align:center; display:none; border-top: 1px solid #eee; padding-top: 20px;">
+                <h5 class="mb-3 text-muted">Dosya Önizleme</h5>
+                <img id="preview" style="max-width:100%; max-height:400px; border-radius: 5px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);" />
+                <p id="fileName" class="mt-2 fw-bold"></p>
+            </div>
         </div>
     </div>
 </div>
-<script src="https://cdn.jsdelivr.net/npm/jquery/dist/jquery.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/jquery.fancytree/dist/jquery.fancytree-all-deps.min.js"></script>
-<script>
-    let selectedNode = null;
-    const siteId = @siteId;
-    // MinIO endpoint'iniz (Kendi ayarlarınıza göre güncelleyin)
-    const baseUrl = "http://localhost:9000/site-media/";
 
-    $(function () {
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/jquery/dist/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery.fancytree/dist/jquery.fancytree-all-deps.min.js"></script>
+
+    <script>
+        let selectedNode = null;
+        const siteId = @siteId;
+        const baseUrl = "http://localhost:9000/site-media/"; // MinIO CDN linkin
+
+        $(function () {
         $("#tree").fancytree({
-            extensions: ["dnd5", "edit", "multi"],
-            checkbox: true,
-            selectMode: 3, // Multi-selection için
+        extensions: ["dnd5", "edit"],
+        checkbox: true, // ✅ Çoklu seçim aktif
+        selectMode: 3,  // ✅ Klasör seçilince altındakileri de seçer
+        source: {
+        url: `/File/Tree?siteId=${siteId}`
+        },
 
-            source: {
-                url: `/File/Tree?siteId=${siteId}`
-            },
+        activate: function (event, data) {
+        selectedNode = data.node;
 
-            activate: function (event, data) {
-                selectedNode = data.node;
+        if (data.node.folder) {
+        $("#selectedFolderName").text(data.node.title);
+        $("#previewContainer").hide();
+        } else {
+        $("#selectedFolderName").text(data.node.parent?.title || "Kök");
+        $("#fileName").text(data.node.title);
+        $("#preview").attr("src", baseUrl + data.node.key);
+        $("#previewContainer").show();
+        }
+        },
 
-                if (data.node.folder) {
-                    $("#selectedFolderName").text(data.node.title);
-                    $("#previewContainer").hide();
-                } else {
-                    $("#selectedFolderName").text(data.node.parent.title || "Kök");
-                    $("#fileName").text(data.node.title);
-                    $("#preview").attr("src", baseUrl + data.node.key);
-                    $("#previewContainer").show();
-                }
-            },
+        lazyLoad: function (event, data) {
+        // Sadece klasörse lazyLoad tetiklensin
+        if (data.node.folder) {
+        data.result = {
+        url: `/File/Tree?path=${encodeURIComponent(data.node.key)}&siteId=${siteId}`
+        };
+        } else {
+        data.result = [];
+        }
+        },
 
-            lazyLoad: function (event, data) {
-                data.result = {
-                    url: `/File/Tree?path=${encodeURIComponent(data.node.key)}&siteId=${siteId}`
-                };
-            },
+        // ✅ YENİDEN ADLANDIRMA (F2)
+        edit: {
+        triggerStart: ["f2", "shift+click"],
+        save: function (event, data) {
+        const newName = data.input.val().trim();
+        if (!newName) return false;
 
-            // ✏️ RENAME (F2 ile tetiklenir)
-            edit: {
-                triggerStart: ["f2", "shift+click"],
-                save: function (event, data) {
-                    const newName = data.input.val();
-                    if(!newName) return false;
-
-                    fetch(`/File/Rename?siteId=${siteId}`, {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({
-                            oldPath: data.node.key,
-                            newName: newName
-                        })
-                    }).then(res => {
-                        if (res.ok) data.node.setTitle(newName);
-                        else alert("Adlandırma hatası!");
-                    });
-                }
-            },
-
-            // 🧲 MOVE (Sürükle-Bırak)
-            dnd5: {
-                dragStart: (node, data) => true,
-                dragEnter: (node, data) => node.folder ? ["over"] : false, // Sadece klasörlerin üzerine bırakılabilir
-                dragDrop: function (node, data) {
-                    if (!node.folder) return;
-
-                    fetch(`/File/Move?siteId=${siteId}`, {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({
-                            source: data.otherNode.key,
-                            target: node.key
-                        })
-                    }).then(res => {
-                        if (res.ok) data.otherNode.moveTo(node, "child");
-                        else alert("Taşıma işlemi başarısız.");
-                    });
-                }
-            }
+        fetch(`/File/Rename?siteId=${siteId}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+        oldPath: data.node.key,
+        newName: newName
+        })
+        }).then(res => {
+        if (res.ok) {
+        location.reload(); // İsim değişikliğinde yol hiyerarşisi değiştiği için reload en sağlıklısıdır
+        } else {
+        alert("Yeniden adlandırma hatası.");
+        }
         });
-    });
+        }
+        },
 
-    // 🟢 CONTEXT MENU (Sağ Tık)
-    $("#tree").on("contextmenu", function (e) {
+        // ✅ SÜRÜKLE BIRAK TAŞIMA
+        dnd5: {
+        dragStart: () => true,
+        dragEnter: (node) => node.folder ? ["over"] : false,
+        dragDrop: function (node, data) {
+        fetch(`/File/Move?siteId=${siteId}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+        source: data.otherNode.key,
+        target: node.key
+        })
+        }).then(res => {
+        if (res.ok) {
+        location.reload();
+        } else {
+        alert("Taşıma hatası.");
+        }
+        });
+        }
+        }
+        });
+
+        // ✅ SAĞ TIK MENÜSÜ
+        $("#tree").on("contextmenu", function (e) {
         e.preventDefault();
         let node = $.ui.fancytree.getNode(e);
-        if (!node) return;
+        if (node) {
         node.setActive();
         selectedNode = node;
+        }
+
+
+        // Seçili olan düğümleri al
+        const tree = $.ui.fancytree.getTree("#tree");
+        const selNodes = tree.getSelectedNodes();
+
+
+
+
+        let deleteHtml = "";
+
+        // EĞER ÇOKLU SEÇİM VARSA
+        if (selNodes.length > 0) {
+        // Eğer sağ tıklanan düğüm seçili olanlar arasında değilse,
+        // kullanıcıyı uyarmak için seçim sayısını gösteren özel buton
+        deleteHtml = `<div onclick="deleteSelected()"><i class="fa fa-trash-alt text-danger"></i> Seçilenleri Sil (${selNodes.length})</div>`;
+        } else {
+        // HİÇ SEÇİM YOKSA (Standart Tekli Silme)
+        deleteHtml = `<div onclick="deleteSingleNode()"><i class="fa fa-trash text-danger"></i> Sil</div>`;
+        }
 
         $("#menu").remove();
+
         let menu = `
-            <div id="menu" style="position:absolute; background:#fff; border:1px solid #ccc; z-index:999;">
-                <div onclick="createFolder()">📁 Yeni Klasör</div>
-                <div onclick="renameNode()">✏️ Yeniden Adlandır</div>
-                <div onclick="deleteNode()">🗑 Sil (Seçilileri)</div>
-            </div>
-        `;
+        <div id="menu" style="position:absolute; z-index:999; top:${e.pageY}px; left:${e.pageX}px;">
+        <div onclick="createFolder()"><i class="fa fa-folder-plus text-primary"></i> Yeni Klasör</div>
+        <div onclick="renameNode()"><i class="fa fa-edit text-warning"></i> Yeniden Adlandır</div>
+        <div class="dropdown-divider" style="height: 1px; margin: 5px 0; overflow: hidden; background-color: #e9ecef;"></div>
+        ${deleteHtml}
+        </div>`;
+
         $("body").append(menu);
-        $("#menu").css({ top: e.pageY, left: e.pageX });
         $(document).one("click", () => $("#menu").remove());
-    });
+        });
+        });
 
-    function renameNode() {
+        function renameNode() {
         if (selectedNode) selectedNode.editStart();
-    }
-
-    // 📁 CREATE FOLDER
-    function createFolder() {
-        if (!selectedNode || !selectedNode.folder) {
-            alert("Lütfen bir klasör seçin!");
-            return;
         }
+
+        // ✅ YENİ KLASÖR OLUŞTURMA
+        function createFolder() {
+        let basePath = "";
+
+        if (!selectedNode) {
+        basePath = `site/${siteId}/`;
+        } else if (!selectedNode.folder) {
+        basePath = selectedNode.parent.key;
+        } else {
+        basePath = selectedNode.key;
+        }
+
+        // Yolun sonunun '/' ile bittiğinden emin ol (Backend ile uyum)
+        if (!basePath.endsWith('/')) basePath += '/';
 
         let name = prompt("Yeni klasör adı:");
-        if (!name) return;
+        if (!name || name.trim() === "") return;
 
         fetch(`/File/CreateFolder?siteId=${siteId}`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                path: selectedNode.key,
-                name: name
-            })
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+        path: basePath,
+        name: name.trim()
         })
-        .then(res => {
-            if(res.ok) selectedNode.load(true);
-            else alert("Klasör oluşturulamadı.");
+        }).then(res => {
+        if (res.ok) location.reload();
+        else alert("Klasör oluşturulamadı.");
         });
-    }
-
-    // ❌ DELETE MULTIPLE
-    function deleteNode() {
-        let tree = $.ui.fancytree.getTree("#tree");
-        let nodes = tree.getSelectedNodes();
-
-        if (nodes.length === 0 && selectedNode) {
-            nodes = [selectedNode];
         }
 
-        if (nodes.length === 0) {
-            alert("Silinecek öğe seçilmedi.");
-            return;
-        }
+        // ✅ TEKLİ SİLME (Sağ Tık)
+        function deleteSingleNode() {
+        if (!selectedNode) return;
+        if (!confirm(`"${selectedNode.title}" silinsin mi?`)) return;
 
-        if (!confirm(`${nodes.length} adet öğe silinecek. Emin misiniz?`)) return;
-
-        let paths = nodes.map(n => n.key);
-
-        // Controller: [FromBody] List<string> paths, int siteId
         fetch(`/File/DeleteMultiple?siteId=${siteId}`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(paths) // Sadece listeyi gönderiyoruz, siteId URL'de
-        })
-        .then(res => {
-            if(res.ok) location.reload();
-            else alert("Silme işlemi sırasında hata oluştu.");
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify([selectedNode.key])
+        }).then(res => {
+        if (res.ok) location.reload();
+        else alert("Silme hatası.");
         });
-    }
-
-    // 📦 UPLOAD FUNCTION
-    function uploadSelected() {
-        let fileInput = document.getElementById("fileInput");
-        handleUpload(fileInput.files);
-    }
-
-    function handleUpload(files) {
-        if (files.length === 0) return;
-        if (!selectedNode || !selectedNode.folder) {
-            alert("Lütfen önce hedef klasörü seçin!");
-            return;
         }
+
+        // ✅ ÇOKLU SİLME (Checkbox ile)
+        function deleteSelected() {
+        const tree = $.ui.fancytree.getTree("#tree");
+        const selNodes = tree.getSelectedNodes();
+
+        if (selNodes.length === 0) {
+        alert("Lütfen silmek istediğiniz öğeleri seçin.");
+        return;
+        }
+
+        const keys = selNodes.map(node => node.key);
+
+        if (!confirm(`${keys.length} öğe silinecek. Onaylıyor musunuz?`)) return;
+
+        fetch(`/File/DeleteMultiple?siteId=${siteId}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(keys)
+        }).then(res => {
+        if (res.ok) {
+        alert("Seçilenler silindi.");
+        location.reload();
+        } else {
+        alert("Bazı dosyalar silinemedi.");
+        }
+        });
+        }
+
+        // ✅ DOSYA YÜKLEME
+        function uploadSelected() {
+        let files = document.getElementById("fileInput").files;
+        handleUpload(files);
+        }
+
+        function handleUpload(files) {
+        if (files.length === 0) return;
+
+        let path = "";
+        if (!selectedNode) {
+        path = `site/${siteId}/`;
+        } else if (selectedNode.folder) {
+        path = selectedNode.key;
+        } else {
+        path = selectedNode.parent.key;
+        }
+
+        if (!path.endsWith('/')) path += '/';
 
         let formData = new FormData();
         for (let f of files) {
-            formData.append("files", f);
+        formData.append("files", f);
         }
-        formData.append("path", selectedNode.key);
-        // Controller'da UploadMultiple siteId almıyor görünüyor,
-        // ama ihtiyaç varsa URL'e eklenebilir: `/File/UploadMultiple?siteId=${siteId}`
+        formData.append("path", path);
 
         fetch("/File/UploadMultiple", {
-            method: "POST",
-            body: formData
-        })
-        .then(res => {
-            if(res.ok) {
-                alert("Yükleme başarılı.");
-                selectedNode.load(true);
-            } else {
-                alert("Yükleme hatası!");
-            }
+        method: "POST",
+        body: formData
+        }).then(res => {
+        if (res.ok) {
+        alert("Yüklendi");
+        location.reload();
+        } else {
+        alert("Yükleme hatası.");
+        }
         });
-    }
+        }
 
-    // 🧲 DRAG DROP UPLOAD
-    const dropZone = document.getElementById("dropZone");
-    dropZone.addEventListener("dragover", e => { e.preventDefault(); dropZone.style.background = "#eee"; });
-    dropZone.addEventListener("dragleave", e => { e.preventDefault(); dropZone.style.background = "transparent"; });
-    dropZone.addEventListener("drop", e => {
+        // SÜRÜKLE BIRAK LOGIC
+        const dropZone = document.getElementById("dropZone");
+        dropZone.addEventListener("dragover", e => { e.preventDefault(); dropZone.style.background = "#e9ecef"; });
+        dropZone.addEventListener("dragleave", e => { dropZone.style.background = "transparent"; });
+        dropZone.addEventListener("drop", e => {
         e.preventDefault();
         dropZone.style.background = "transparent";
         handleUpload(e.dataTransfer.files);
-    });
-</script>
+        });
+        dropZone.addEventListener("click", () => document.getElementById("fileInput").click());
+    </script>
+}
