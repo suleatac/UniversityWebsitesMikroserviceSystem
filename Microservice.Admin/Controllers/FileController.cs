@@ -1,50 +1,76 @@
-﻿using Microservice.Admin.Services;
-using Microsoft.AspNetCore.Http;
+﻿using Microservice.Admin.Services.Interfaces;
+using Microservice.Admin.ViewModels.File;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Microservice.Admin.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class FileController : ControllerBase
+    [Route("[controller]")] // Bu satır metodun /File/Tree olarak çalışmasını sağlar
+    public class FileController : Controller
     {
-        private readonly MinioService _service;
+        private readonly IMinioService _minioService;
 
-        public FileController(MinioService service)
+        public FileController(IMinioService minioService)
         {
-            _service = service;
+            _minioService = minioService;
+        }
+        public async Task<IActionResult> Index(int siteId = 1)
+        {
+            ViewBag.SiteId=siteId;
+            return View();
+        }
+        [HttpGet("Tree")]
+        public async Task<IActionResult> Tree(int siteId, string? path)
+        {
+            var result = await _minioService.GetTreeAsync(siteId, path);
+            return Json(result);
         }
 
-        [HttpGet]
-        public async Task<IActionResult> Get([FromQuery] int siteId)
+        [HttpPost("Upload")]
+        public async Task<IActionResult> Upload(IFormFile file, int siteId, string module)
         {
-            var prefix = $"site{siteId}";
-            var files = await _service.GetFilesAsync(prefix);
-
-            return Ok(files.Select(f => new {
-                name = Path.GetFileName(f),
-                fullPath = f,
-                url = _service.GetFileUrl(f)
-            }));
+            var result = await _minioService.UploadAsync(file, siteId, module);
+            return Json(result);
         }
 
-        [HttpPost]
-        public async Task<IActionResult> Upload([FromQuery] int siteId, List<IFormFile> files)
+        [HttpPost("UploadMultiple")]
+        public async Task<IActionResult> UploadMultiple(List<IFormFile> files, string path)
         {
-            var prefix = $"site{siteId}";
-
-            foreach (var file in files)
-            {
-                await _service.UploadAsync(prefix, file);
-            }
-
+            await _minioService.UploadMultipleAsync(files, path);
             return Ok();
         }
 
-        [HttpDelete]
-        public async Task<IActionResult> Delete([FromQuery] string path)
+        [HttpDelete("Delete")]
+        public async Task<IActionResult> Delete(string path, int siteId)
         {
-            await _service.DeleteAsync(path);
+            await _minioService.DeleteAsync(path, siteId);
+            return Ok();
+        }
+
+        [HttpPost("DeleteMultiple")]
+        public async Task<IActionResult> DeleteMultiple([FromBody] List<string> paths, int siteId)
+        {
+            await _minioService.DeleteMultipleAsync(paths, siteId);
+            return Ok();
+        }
+
+        [HttpPost("Rename")]
+        public async Task<IActionResult> Rename([FromBody] RenameRequest request, int siteId)
+        {
+            await _minioService.RenameAsync(request.OldPath, request.NewName, siteId);
+            return Ok();
+        }
+
+        [HttpPost("Move")]
+        public async Task<IActionResult> Move([FromBody] MoveRequest request, int siteId)
+        {
+            await _minioService.MoveAsync(request.Source, request.Target, siteId);
+            return Ok();
+        }
+
+        [HttpPost("CreateFolder")]
+        public async Task<IActionResult> CreateFolder([FromBody] CreateFolderRequest request, int siteId)
+        {
+            await _minioService.CreateFolderAsync(request.Path, request.Name, siteId);
             return Ok();
         }
     }

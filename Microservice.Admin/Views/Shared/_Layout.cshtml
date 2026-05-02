@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/Microservice.Admin.styles.css" asp-append-version="true" />
+
 </head>
 <body>
     <header>
@@ -52,6 +53,7 @@
                                     <li><a class="dropdown-item" asp-controller="Template" asp-action="Index">Templateler</a></li>
                                     <li><a class="dropdown-item" asp-controller="Birim" asp-action="Index">Birimler</a></li>
                                     <li><a class="dropdown-item" asp-controller="Haber" asp-action="Index">Haberler</a></li>
+                                    <li><a class="dropdown-item" asp-controller="File" asp-action="Index">File</a></li>
                                     <li><hr class="dropdown-divider" /></li>
                                     <li>
                                        
@@ -86,7 +88,7 @@
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script> 
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
