@@ -22,6 +22,9 @@ namespace Microservice.Admin.Controllers
         public async Task<IActionResult> Tree(int siteId, string? path)
         {
             var result = await _minioService.GetTreeAsync(siteId, path);
+
+            // ✅ KÖK NODE İÇİN ÖZEL BAŞLIK
+          
             return Json(result);
         }
 
@@ -66,7 +69,28 @@ namespace Microservice.Admin.Controllers
             await _minioService.MoveAsync(request.Source, request.Target, siteId);
             return Ok();
         }
+        [HttpPost("Copy")]
+        public async Task<IActionResult> Copy([FromBody] CopyRequest req, int siteId)
+        {
+            await _minioService.CopyAsync(req.Source, req.Target, siteId);
+            return Ok();
+        }
+        [HttpPost("CopyMultiple")]
+        public async Task<IActionResult> CopyMultiple([FromBody] List<CopyRequest> requests, int siteId)
+        {
+            try
+            {
+                var tasks = requests.Select(async r =>
+                    await _minioService.CopyAsync(r.Source, r.Target, siteId));
 
+                await Task.WhenAll(tasks);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
         [HttpPost("CreateFolder")]
         public async Task<IActionResult> CreateFolder([FromBody] CreateFolderRequest request, int siteId)
         {

@@ -8,7 +8,8 @@ namespace Microservice.Admin.Services.Interfaces
 
         Task<string> UploadAsync(IFormFile file, int siteId, string module);
         Task UploadMultipleAsync(List<IFormFile> files, string path);
-
+        Task CopyAsync(string source, string target, int siteId);
+        Task CopyMultipleAsync(List<(string source, string target)> items, int siteId);
         Task DeleteAsync(string path, int siteId);
         Task DeleteMultipleAsync(List<string> paths, int siteId);
 

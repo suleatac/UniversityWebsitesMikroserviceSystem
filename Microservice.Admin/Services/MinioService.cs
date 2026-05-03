@@ -78,8 +78,12 @@ public class MinioService : IMinioService
     {
         foreach (var file in files)
         {
-            var fileName = $"{Guid.NewGuid()}{Path.GetExtension(file.FileName)}";
-            var objectName = $"{path}{fileName}";
+            // GUID yerine orijinal ismi al
+            var fileName = file.FileName;
+            var fullPath = $"{path}{fileName}";
+
+            // Eğer bu isimde dosya varsa benzersiz yap, yoksa orijinal ismi kullan
+            var objectName = await GetUniqueObjectName(fullPath);
 
             using var stream = file.OpenReadStream();
 
@@ -200,19 +204,32 @@ public class MinioService : IMinioService
         }
     }
 
+    // ✅ MOVE METODUNU DÜZELT (Unique isim garantisi)
     public async Task MoveAsync(string source, string target, int siteId)
     {
         ValidatePath(source, siteId);
         ValidatePath(target, siteId);
 
-        var fileName = Path.GetFileName(source);
-        var newPath = $"{target}{fileName}";
+        if (!target.EndsWith("/")) target += "/";
 
-        await CopyObject(source, newPath);
-        await DeleteAsync(source, siteId);
+        if (source.EndsWith("/")) // KLASÖR TAŞIMA
+        {
+            var folderName = source.TrimEnd('/').Split('/').Last();
+            var newFolderPath = await GetUniqueFolderName($"{target}{folderName}/");
+
+            // Rename ile taşı (içindekilerle beraber)
+            await RenameAsync(source, newFolderPath.TrimEnd('/').Split('/').Last(), siteId);
+        }
+        else // DOSYA TAŞIMA
+        {
+            var fileName = Path.GetFileName(source);
+            var uniqueTarget = await GetUniqueFileNameAsync(target, fileName, siteId);
+            var newPath = $"{target}{uniqueTarget}";
+
+            await CopyObject(source, newPath);
+            await DeleteAsync(source, siteId);
+        }
     }
-
-
 
 
     public async Task CreateFolderAsync(string path, string name, int siteId)
@@ -241,6 +258,208 @@ public class MinioService : IMinioService
             await _minio.PutObjectAsync(putObjectArgs);
         }
     }
+
+    // ✅ DOSYA ADI VAR MI KONTROLÜ (Optimize)
+    public async Task<bool> FileNameExistsAsync(string folderPath, string fileName, int siteId)
+    {
+        ValidatePath(folderPath, siteId);
+        if (!folderPath.EndsWith("/")) folderPath += "/";
+        var fullPath = $"{folderPath}{fileName}";
+
+        var listArgs = new ListObjectsArgs()
+            .WithBucket(_settings.BucketName)
+            .WithPrefix(fullPath)
+            .WithRecursive(false);
+
+        var objects = new List<string>();
+        var tcs = new TaskCompletionSource<bool>();
+
+        // ✅ Subscription dispose edilebilir
+        using var subscription = _minio.ListObjectsAsync(listArgs).Subscribe(
+            item => {
+                objects.Add(item.Key);
+            },
+            ex => {
+                tcs.TrySetException(ex);
+            },
+            () => {
+                tcs.TrySetResult(objects.Any(obj => obj == fullPath));
+            }
+        );
+
+        // ✅ 5 saniye timeout
+        var timeoutTask = Task.Delay(TimeSpan.FromSeconds(5));
+        var completedTask = await Task.WhenAny(tcs.Task, timeoutTask);
+
+        if (completedTask == timeoutTask)
+        {
+            return false; // Timeout = yok say
+        }
+
+        return await tcs.Task;
+    }
+
+    // ✅ YENİ: BENZERSİZ DOSYA ADI ÜRETME (Sonsuz döngü yok!)
+    public async Task<string> GetUniqueFileNameAsync(string folderPath, string originalName, int siteId)
+    {
+        ValidatePath(folderPath, siteId);
+        if (!folderPath.EndsWith("/")) folderPath += "/";
+
+        if (!await FileNameExistsAsync(folderPath, originalName, siteId))
+            return originalName;
+
+        var baseName = Path.GetFileNameWithoutExtension(originalName);
+        var ext = Path.GetExtension(originalName);
+
+        // ✅ MAX 100 DENEME (sonsuz döngü yok)
+        for (int i = 1; i <= 100; i++)
+        {
+            var newName = $"{baseName} ({i}){ext}";
+            if (!await FileNameExistsAsync(folderPath, newName, siteId))
+                return newName;
+        }
+
+        // ✅ Son çare: timestamp
+        var timestamp = DateTime.UtcNow.Ticks;
+        return $"{folderPath}{baseName}_{timestamp}{ext}";
+    }
+    // ✅ COPY METODUNU DÜZELT (Aynı klasör kontrolü)
+    public async Task CopyAsync(string source, string target, int siteId)
+    {
+        ValidatePath(source, siteId);
+        ValidatePath(target, siteId);
+
+        if (!target.EndsWith("/")) target += "/";
+
+        if (!source.EndsWith("/")) // DOSYA KOPYALA
+        {
+            var fileName = Path.GetFileName(source);
+            var sourceFolder = source.Substring(0, source.LastIndexOf('/') + 1);
+
+            string finalPath;
+            if (sourceFolder == target)
+            {
+                // ✅ AYNI KLASÖR: _copy ekle
+                var baseName = Path.GetFileNameWithoutExtension(fileName);
+                var ext = Path.GetExtension(fileName);
+                finalPath = await GetUniqueFileNameAsync(target, $"{baseName}_copy{ext}", siteId);
+            }
+            else
+            {
+                // FARKLI KLASÖR: Benzersiz isim + TAM YOL
+                var uniqueFileName = await GetUniqueFileNameAsync(target, fileName, siteId);
+                finalPath = $"{target}{uniqueFileName}";  // ✅ TAM YOL!
+            }
+
+            await CopyObject(source, finalPath);
+        }
+        else // KLASÖR KOPYALA
+        {
+            var folderName = source.TrimEnd('/').Split('/').Last();
+            var sourceParent = source.Substring(0, source.LastIndexOf('/'));
+            var newFolderPath = await GetUniqueFolderName($"{target}{folderName}/");
+
+            // Boş klasör oluştur
+            await CreateEmptyFolder(newFolderPath);
+
+            // İçeriği kopyala
+            var listArgs = new ListObjectsArgs()
+                .WithBucket(_settings.BucketName)
+                .WithPrefix(source)
+                .WithRecursive(true);
+
+            var objects = new List<string>();
+            var tcs = new TaskCompletionSource<bool>();
+
+            _minio.ListObjectsAsync(listArgs).Subscribe(
+                item => { if (item.Key != source) objects.Add(item.Key); },
+                ex => tcs.SetException(ex),
+                () => tcs.SetResult(true)
+            );
+
+            await tcs.Task;
+
+            var copyTasks = objects.Select(obj => {
+                var relativePath = obj.Replace(source, "");
+                return CopyObject(obj, newFolderPath + relativePath);
+            });
+
+            await Task.WhenAll(copyTasks);
+        }
+    }
+
+
+    private async Task CreateEmptyFolder(string folderPath)
+    {
+        byte[] content = new byte[] { 32 };
+        using var memoryStream = new MemoryStream(content);
+
+        await _minio.PutObjectAsync(new PutObjectArgs()
+            .WithBucket(_settings.BucketName)
+            .WithObject(folderPath)
+            .WithStreamData(memoryStream)
+            .WithObjectSize(1)
+            .WithContentType("application/x-directory"));
+    }
+
+    public async Task CopyMultipleAsync(List<(string source, string target)> items, int siteId)
+    {
+        var tasks = items.Select(item => CopyAsync(item.source, item.target, siteId));
+        await Task.WhenAll(tasks);
+    }
+    private async Task<string> GetUniqueObjectName(string objectName)
+    {
+        // Eğer hedefte bu dosya YOKSA, direkt ismi döndür (Sayı ekleme!)
+        if (!await ObjectExists(objectName))
+            return objectName;
+
+        // Sadece dosya varsa buraya girer:
+        var dir = objectName.Substring(0, objectName.LastIndexOf('/') + 1);
+        var fileName = Path.GetFileName(objectName);
+        var baseName = Path.GetFileNameWithoutExtension(fileName);
+        var ext = Path.GetExtension(fileName);
+
+        for (int counter = 1; counter <= 50; counter++)
+        {
+            string newName = $"{dir}{baseName} ({counter}){ext}";
+            if (!await ObjectExists(newName)) return newName;
+        }
+        return $"{dir}{baseName}_{DateTime.UtcNow.Ticks}{ext}";
+    }
+    private async Task<string> GetUniqueFolderName(string folderPath)
+    {
+        // Eğer klasör (veya dummy objesi) YOKSA orijinal ismi döndür
+        if (!await ObjectExists(folderPath))
+            return folderPath;
+
+        var basePath = folderPath.TrimEnd('/');
+        var parent = basePath.Substring(0, basePath.LastIndexOf('/') + 1);
+        var name = basePath.Substring(parent.Length);
+
+        for (int counter = 1; counter <= 50; counter++)
+        {
+            string newPath = $"{parent}{name} ({counter})/";
+            if (!await ObjectExists(newPath)) return newPath;
+        }
+        return $"{parent}{name}_{DateTime.UtcNow.Ticks}/";
+    }
+    // ✅ DAHA SAĞLAM EXIST KONTROLÜ (Timeout 100ms'den 2 saniyeye çıkarıldı)
+    // ✅ GENEL OBJECT VAR MI KONTROLÜ (Timeout korumalı)
+    private async Task<bool> ObjectExists(string objectName)
+    {
+        try
+        {
+            using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(2));
+            await _minio.StatObjectAsync(new StatObjectArgs()
+                .WithBucket(_settings.BucketName)
+                .WithObject(objectName), cts.Token);
+            return true;
+        }
+        catch
+        {
+            return false;
+        }
+    }
     private async Task CopyObject(string source, string destination)
     {
         await _minio.CopyObjectAsync(new CopyObjectArgs()
@@ -251,7 +470,6 @@ public class MinioService : IMinioService
                     .WithBucket(_settings.BucketName)
                     .WithObject(source)));
     }
-
     // 1. Güvenlik ve Yol Doğrulama Metodu
     private void ValidatePath(string path, int siteId)
     {

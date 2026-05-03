@@ -17,4 +17,9 @@
         public string Path { get; set; } = default!;
         public string Name { get; set; } = default!;
     }
+    public class CopyRequest
+    {
+        public string Source { get; set; } = default!;
+        public string Target { get; set; } = default!;
+    }
 }

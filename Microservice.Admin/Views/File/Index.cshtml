@@ -39,6 +39,16 @@
     span.fancytree-checkbox {
         margin-right: 5px;
     }
+
+    .fancytree-root .fancytree-title {
+        font-weight: bold;
+        color: #007bff;
+        font-size: 15px;
+    }
+
+    #selectedFolderName {
+        font-size: 16px !important;
+    }
 </style>
 
 @section Styles {
@@ -89,6 +99,11 @@
         let selectedNode = null;
         const siteId = @siteId;
         const baseUrl = "http://localhost:9000/site-media/"; // MinIO CDN linkin
+        let clipboard = {
+        type: null, // "cut" | "copy"
+        nodes: []
+        };
+
 
         $(function () {
         $("#tree").fancytree({
@@ -102,10 +117,13 @@
         activate: function (event, data) {
         selectedNode = data.node;
 
-        if (data.node.folder) {
-        $("#selectedFolderName").text(data.node.title);
+        if (data.node.folder || data.node.key === `site/${siteId}/`) {
+        // ✅ KÖK VE KLASÖRLER İÇİN
+        const folderName = data.node.title === "📁 Kök Klasör" ? "Kök" : data.node.title;
+        $("#selectedFolderName").text(folderName);
         $("#previewContainer").hide();
         } else {
+        // DOSYA İÇİN
         $("#selectedFolderName").text(data.node.parent?.title || "Kök");
         $("#fileName").text(data.node.title);
         $("#preview").attr("src", baseUrl + data.node.key);
@@ -171,10 +189,41 @@
         }
         });
 
+        // ✅ BOŞ ALANA TIKLAYINCA KÖK SEÇİLİR
+        $("#tree").on("click", function (e) {
+        let node = $.ui.fancytree.getNode(e);
+
+        if (!node) {
+        selectedNode = null; // Kök klasör
+        $("#selectedFolderName").text("Kök");
+        $("#previewContainer").hide();
+        $("#menu").remove();
+
+        // Aktif odaklanmayı ağaçtan kaldır
+        const tree = $.ui.fancytree.getTree("#tree");
+        if (tree.getActiveNode()) tree.getActiveNode().setActive(false);
+
+        e.stopPropagation();
+        }
+        });
+
         // ✅ SAĞ TIK MENÜSÜ
         $("#tree").on("contextmenu", function (e) {
         e.preventDefault();
         let node = $.ui.fancytree.getNode(e);
+
+        if (!node) {
+        // Boş alana tıklandıysa seçimi temizle
+        const tree = $.ui.fancytree.getTree("#tree");
+        tree.getSelectedNodes().forEach(n => n.setSelected(false)); // Seçili checkboxları kaldır (opsiyonel)
+
+        selectedNode = null; // Kök dizin olduğunu belirtmek için null yapıyoruz
+        $("#selectedFolderName").text("Kök");
+        } else {
+        node.setActive();
+        selectedNode = node;
+        }
+
         if (node) {
         node.setActive();
         selectedNode = node;
@@ -206,7 +255,15 @@
         <div id="menu" style="position:absolute; z-index:999; top:${e.pageY}px; left:${e.pageX}px;">
         <div onclick="createFolder()"><i class="fa fa-folder-plus text-primary"></i> Yeni Klasör</div>
         <div onclick="renameNode()"><i class="fa fa-edit text-warning"></i> Yeniden Adlandır</div>
-        <div class="dropdown-divider" style="height: 1px; margin: 5px 0; overflow: hidden; background-color: #e9ecef;"></div>
+
+        <div class="dropdown-divider"></div>
+
+        <div onclick="cutNode()"><i class="fa fa-cut text-secondary"></i> Kes</div>
+        <div onclick="copyNode()"><i class="fa fa-copy text-info"></i> Kopyala</div>
+        <div onclick="pasteNode()"><i class="fa fa-paste text-success"></i> Yapıştır</div>
+
+        <div class="dropdown-divider"></div>
+
         ${deleteHtml}
         </div>`;
 
@@ -219,23 +276,137 @@
         if (selectedNode) selectedNode.editStart();
         }
 
+
+        //Kopyala yapıştır fonksiyonları.
+        function cutNode() {
+        const tree = $.ui.fancytree.getTree("#tree");
+        const selNodes = tree.getSelectedNodes();
+
+        clipboard.type = "cut";
+        clipboard.nodes = selNodes.length > 0 ? selNodes : [selectedNode];
+
+        // Görsel feedback
+        clipboard.nodes.forEach(n => {
+        $(n.span).css("opacity", "0.5");
+        });
+
+        alert(`${clipboard.nodes.length} öğe kesildi.`);
+        }
+
+        function copyNode() {
+        const tree = $.ui.fancytree.getTree("#tree");
+        const selNodes = tree.getSelectedNodes();
+
+        clipboard.type = "copy";
+        clipboard.nodes = selNodes.length > 0 ? selNodes : [selectedNode];
+
+        alert(`${clipboard.nodes.length} öğe kopyalandı.`);
+        }
+
+
+        // ✅ PASTE İŞLEMİ
+        function pasteNode() {
+        if (!clipboard.nodes || clipboard.nodes.length === 0) {
+        alert("Panoda öğe yok.");
+        return;
+        }
+
+        // ✅ HEDEF KLASÖR YOLUNU DOĞRU HESAPLA
+        let targetPath = "";
+
+        if (selectedNode) {
+        if (selectedNode.folder) {
+        targetPath = selectedNode.key;  // Klasör seçili → o klasöre yapıştır
+        } else {
+        targetPath = selectedNode.parent.key;  // Dosya seçili → parent klasöre yapıştır
+        }
+        } else {
+        targetPath = `site/${siteId}/`;  // Hiçbir şey seçili değil → kök klasöre
+        }
+
+        if (!targetPath.endsWith('/')) targetPath += '/';
+
+        // ✅ BATCH İŞLEMİ - Backend otomatik unique isim verecek
+        const requests = clipboard.nodes.map(node => {
+        if (clipboard.type === "cut") {
+        return fetch(`/File/Move?siteId=${siteId}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+        source: node.key,
+        target: targetPath
+        })
+        });
+        } else {
+        return fetch(`/File/Copy?siteId=${siteId}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+        source: node.key,
+        target: targetPath
+        })
+        });
+        }
+        });
+
+        // Yükleniyor durumu
+        const uploadBtn = document.getElementById("uploadBtn");
+        uploadBtn.disabled = true;
+        uploadBtn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> İşlem yapılıyor...';
+
+        Promise.all(requests)
+        .then(async (responses) => {
+        const failed = responses.filter(r => !r.ok);
+
+        if (failed.length === 0) {
+        clipboard = { type: null, nodes: [] };
+        location.reload();
+        } else {
+        alert(`${failed.length}/${clipboard.nodes.length} işlem başarısız.`);
+        uploadBtn.disabled = false;
+        uploadBtn.innerHTML = '<i class="fa fa-upload"></i> Dosyaları Yükle';
+        }
+        })
+        .catch(err => {
+        console.error(err);
+        alert("Beklenmeyen hata oluştu.");
+        uploadBtn.disabled = false;
+        uploadBtn.innerHTML = '<i class="fa fa-upload"></i> Dosyaları Yükle';
+        });
+
+        // Görsel feedback temizle
+        $(".fancytree-node").css("opacity", "1");
+        }
+
+
+
+
         // ✅ YENİ KLASÖR OLUŞTURMA
         function createFolder() {
         let basePath = "";
 
-        if (!selectedNode) {
+        // selectedNode null ise veya key'i kök dizini andırıyorsa (isteğe bağlı kontrol)
+        if (!selectedNode || selectedNode.key === `site/${siteId}/` || selectedNode.isRootNode()) {
         basePath = `site/${siteId}/`;
         } else if (!selectedNode.folder) {
+        // Dosya seçiliyse bir üst klasörüne oluştur
         basePath = selectedNode.parent.key;
         } else {
+        // Klasör seçiliyse onun içine oluştur
         basePath = selectedNode.key;
         }
 
-        // Yolun sonunun '/' ile bittiğinden emin ol (Backend ile uyum)
+        // ✅ YOL SONUNA / EKLE
         if (!basePath.endsWith('/')) basePath += '/';
 
         let name = prompt("Yeni klasör adı:");
         if (!name || name.trim() === "") return;
+
+        // Yükleniyor durumu
+        const uploadBtn = document.getElementById("uploadBtn");
+        const originalContent = uploadBtn.innerHTML;
+        uploadBtn.disabled = true;
+        uploadBtn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Klasör oluşturuluyor...';
 
         fetch(`/File/CreateFolder?siteId=${siteId}`, {
         method: "POST",
@@ -245,10 +416,22 @@
         name: name.trim()
         })
         }).then(res => {
-        if (res.ok) location.reload();
-        else alert("Klasör oluşturulamadı.");
+        uploadBtn.disabled = false;
+        uploadBtn.innerHTML = originalContent;
+
+        if (res.ok) {
+        location.reload();
+        } else {
+        alert("Klasör oluşturulamadı.");
+        }
+        }).catch(err => {
+        uploadBtn.disabled = false;
+        uploadBtn.innerHTML = originalContent;
+        alert("Hata oluştu: " + err.message);
         });
         }
+
+
 
         // ✅ TEKLİ SİLME (Sağ Tık)
         function deleteSingleNode() {
