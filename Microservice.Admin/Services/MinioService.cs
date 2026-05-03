@@ -153,78 +153,77 @@ public class MinioService : IMinioService
     {
         ValidatePath(oldPath, siteId);
 
-        // 1. ADIM: Ebeveyn (Parent) dizini doğru hesapla
-        // "site/1/haberler/" -> TrimEnd('/') ile "site/1/haberler" yaparız.
-        // Sonra son '/' işaretinden öncesini alarak "site/1/" ebeveyn yolunu buluruz.
-        var trimmedOldPath = oldPath.TrimEnd('/');
-        var lastSlashIndex = trimmedOldPath.LastIndexOf('/');
-        var parentPath = lastSlashIndex >= 0 ? trimmedOldPath.Substring(0, lastSlashIndex + 1) : "";
-
-        // Yeni yolu oluştur (Eğer klasörse sonuna / ekle)
-        var newPath = parentPath + newName.Trim();
+        // Yeni tam yol oluştur
+        var parentPath = oldPath.TrimEnd('/').Substring(0, oldPath.TrimEnd('/').LastIndexOf('/') + 1);
+        var newPath = $"{parentPath}{newName}";
         if (oldPath.EndsWith("/")) newPath += "/";
 
-        // 2. ADIM: Eğer bu bir klasörse içindeki TÜM nesneleri taşı
-        if (oldPath.EndsWith("/"))
+        Console.WriteLine($"Rename: {oldPath} → {newPath}");
+
+        if (oldPath.EndsWith("/")) // KLASÖR
         {
-            // Klasörün içindeki her şeyi listele (Recursive: true)
-            var listArgs = new ListObjectsArgs()
-                .WithBucket(_settings.BucketName)
-                .WithPrefix(oldPath)
-                .WithRecursive(true);
+            // Tüm içerikleri listele
+            var contents = await ListFolderContents(oldPath);
 
-            var objectsToMove = new List<string>();
-            var tcs = new TaskCompletionSource<bool>();
-
-            _minio.ListObjectsAsync(listArgs).Subscribe(
-                item => objectsToMove.Add(item.Key),
-                ex => tcs.SetException(ex),
-                () => tcs.SetResult(true)
-            );
-
-            await tcs.Task;
-
-            // Her bir alt dosyayı yeni prefix ile kopyala ve eskiyi sil
-            foreach (var oldObjectKey in objectsToMove)
+            // Her birini yeni yola taşı
+            foreach (var oldObjectKey in contents)
             {
-                // Örn: site/1/haberler/resim.jpg -> site/1/news/resim.jpg
-                var newObjectKey = oldObjectKey.Replace(oldPath, newPath);
+                var relativePath = oldObjectKey.Replace(oldPath, "");
+                var newObjectKey = newPath + relativePath;
 
-                await CopyObject(oldObjectKey, newObjectKey);
-                await _minio.RemoveObjectAsync(new RemoveObjectArgs()
-                    .WithBucket(_settings.BucketName)
-                    .WithObject(oldObjectKey));
+                // ✅ Farklı yol kontrolü
+                if (oldObjectKey != newObjectKey)
+                {
+                    await CopyObject(oldObjectKey, newObjectKey);
+                    await _minio.RemoveObjectAsync(new RemoveObjectArgs()
+                        .WithBucket(_settings.BucketName)
+                        .WithObject(oldObjectKey));
+                }
+            }
+
+            // Eski placeholder'ı sil
+            await _minio.RemoveObjectAsync(new RemoveObjectArgs()
+                .WithBucket(_settings.BucketName)
+                .WithObject(oldPath));
+        }
+        else // DOSYA
+        {
+            if (oldPath != newPath)
+            {
+                await CopyObject(oldPath, newPath);
+                await DeleteAsync(oldPath, siteId);
             }
         }
-        else
+
+        // Yeni placeholder oluştur
+        if (newPath.EndsWith("/"))
         {
-            // 3. ADIM: Eğer bu sadece bir dosyaysa direkt taşı
-            await CopyObject(oldPath, newPath);
-            await DeleteAsync(oldPath, siteId);
+            await CreateEmptyFolder(newPath);
         }
     }
 
     // ✅ MOVE METODUNU DÜZELT (Unique isim garantisi)
-    public async Task MoveAsync(string source, string target, int siteId)
+    public async Task MoveAsync(string source, string targetFolder, int siteId)
     {
         ValidatePath(source, siteId);
-        ValidatePath(target, siteId);
+        ValidatePath(targetFolder, siteId);
 
-        if (!target.EndsWith("/")) target += "/";
+        if (!targetFolder.EndsWith("/")) targetFolder += "/";
 
         if (source.EndsWith("/")) // KLASÖR TAŞIMA
         {
+            // ✅ RenameAsync ile taşı (CopyObject kullanMA!)
             var folderName = source.TrimEnd('/').Split('/').Last();
-            var newFolderPath = await GetUniqueFolderName($"{target}{folderName}/");
+            var uniqueFolderName = await GetUniqueFolderName($"{targetFolder}{folderName}/");
+            var newFolderName = uniqueFolderName.TrimEnd('/').Split('/').Last(); // Sadece isim
 
-            // Rename ile taşı (içindekilerle beraber)
-            await RenameAsync(source, newFolderPath.TrimEnd('/').Split('/').Last(), siteId);
+            await RenameAsync(source, newFolderName, siteId);  // ✅ Bu copy+delete yapar
         }
         else // DOSYA TAŞIMA
         {
             var fileName = Path.GetFileName(source);
-            var uniqueTarget = await GetUniqueFileNameAsync(target, fileName, siteId);
-            var newPath = $"{target}{uniqueTarget}";
+            var uniqueFileName = await GetUniqueFileNameAsync(targetFolder, fileName, siteId);
+            var newPath = $"{targetFolder}{uniqueFileName}";
 
             await CopyObject(source, newPath);
             await DeleteAsync(source, siteId);
@@ -354,42 +353,44 @@ public class MinioService : IMinioService
 
             await CopyObject(source, finalPath);
         }
-        else // KLASÖR KOPYALA
+        else // KLASÖR KOPYALAMA
         {
             var folderName = source.TrimEnd('/').Split('/').Last();
-            var sourceParent = source.Substring(0, source.LastIndexOf('/'));
             var newFolderPath = await GetUniqueFolderName($"{target}{folderName}/");
 
-            // Boş klasör oluştur
+            // ✅ Klasör placeholder oluştur (zorunlu!)
             await CreateEmptyFolder(newFolderPath);
 
             // İçeriği kopyala
-            var listArgs = new ListObjectsArgs()
-                .WithBucket(_settings.BucketName)
-                .WithPrefix(source)
-                .WithRecursive(true);
-
-            var objects = new List<string>();
-            var tcs = new TaskCompletionSource<bool>();
-
-            _minio.ListObjectsAsync(listArgs).Subscribe(
-                item => { if (item.Key != source) objects.Add(item.Key); },
-                ex => tcs.SetException(ex),
-                () => tcs.SetResult(true)
-            );
-
-            await tcs.Task;
-
-            var copyTasks = objects.Select(obj => {
-                var relativePath = obj.Replace(source, "");
-                return CopyObject(obj, newFolderPath + relativePath);
-            });
-
-            await Task.WhenAll(copyTasks);
+            var contents = await ListFolderContents(source);
+            foreach (var item in contents)
+            {
+                var relativePath = item.Replace(source, "");
+                await CopyObject(item, newFolderPath + relativePath);
+            }
         }
     }
 
+    // Helper: Klasör içindekileri listele
+    private async Task<List<string>> ListFolderContents(string folderPath)
+    {
+        var listArgs = new ListObjectsArgs()
+            .WithBucket(_settings.BucketName)
+            .WithPrefix(folderPath)
+            .WithRecursive(true);
 
+        var contents = new List<string>();
+        var tcs = new TaskCompletionSource<bool>();
+
+        _minio.ListObjectsAsync(listArgs).Subscribe(
+            item => contents.Add(item.Key),
+            ex => tcs.SetException(ex),
+            () => tcs.SetResult(true)
+        );
+
+        await tcs.Task;
+        return contents;
+    }
     private async Task CreateEmptyFolder(string folderPath)
     {
         byte[] content = new byte[] { 32 };
@@ -429,20 +430,56 @@ public class MinioService : IMinioService
     }
     private async Task<string> GetUniqueFolderName(string folderPath)
     {
-        // Eğer klasör (veya dummy objesi) YOKSA orijinal ismi döndür
-        if (!await ObjectExists(folderPath))
+        // ✅ KLASÖR KONTROLÜ
+        if (!await FolderExistsAsync(folderPath))
             return folderPath;
 
         var basePath = folderPath.TrimEnd('/');
         var parent = basePath.Substring(0, basePath.LastIndexOf('/') + 1);
         var name = basePath.Substring(parent.Length);
 
+        // (1), (2)... dene
         for (int counter = 1; counter <= 50; counter++)
         {
-            string newPath = $"{parent}{name} ({counter})/";
-            if (!await ObjectExists(newPath)) return newPath;
+            var newPath = $"{parent}{name} ({counter})/";
+            if (!await FolderExistsAsync(newPath))
+                return newPath;
         }
-        return $"{parent}{name}_{DateTime.UtcNow.Ticks}/";
+
+        // Timestamp fallback
+        var timestamp = DateTime.UtcNow.ToString("yyyyMMddHHmmssfff");
+        return $"{parent}{name}_{timestamp}/";
+    }
+
+    private async Task<bool> FolderExistsAsync(string folderPath)
+    {
+        if (!folderPath.EndsWith("/")) folderPath += "/";
+
+        // ✅ KLASÖR İÇİNDE OBJE VAR MI KONTROL ET
+        var listArgs = new ListObjectsArgs()
+            .WithBucket(_settings.BucketName)
+            .WithPrefix(folderPath)
+            .WithRecursive(false);
+
+        var tcs = new TaskCompletionSource<bool>();
+        var hasChildren = false;
+
+        using var subscription = _minio.ListObjectsAsync(listArgs).Subscribe(
+            item => {
+                // Klasörün kendisi hariç, içinde başka obje varsa klasör var say
+                if (item.Key != folderPath && item.Key.StartsWith(folderPath))
+                {
+                    hasChildren = true;
+                    tcs.TrySetResult(true);
+                }
+            },
+            ex => tcs.TrySetException(ex),
+            () => tcs.TrySetResult(hasChildren)
+        );
+
+        var timeoutTask = Task.Delay(3000);
+        var result = await Task.WhenAny(tcs.Task, timeoutTask);
+        return result != timeoutTask && await tcs.Task;
     }
     // ✅ DAHA SAĞLAM EXIST KONTROLÜ (Timeout 100ms'den 2 saniyeye çıkarıldı)
     // ✅ GENEL OBJECT VAR MI KONTROLÜ (Timeout korumalı)
