@@ -342,7 +342,8 @@ public class MinioService : IMinioService
                 // ✅ AYNI KLASÖR: _copy ekle
                 var baseName = Path.GetFileNameWithoutExtension(fileName);
                 var ext = Path.GetExtension(fileName);
-                finalPath = await GetUniqueFileNameAsync(target, $"{baseName}_copy{ext}", siteId);
+                var uniqueFilesName = await GetUniqueFileNameAsync(target, $"{baseName}_copy{ext}", siteId);
+                finalPath = $"{target}{uniqueFilesName}";  // ✅ TAM YOL!
             }
             else
             {
