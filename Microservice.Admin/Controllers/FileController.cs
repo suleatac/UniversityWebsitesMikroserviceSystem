@@ -35,10 +35,27 @@ namespace Microservice.Admin.Controllers
             return Json(result);
         }
 
-        [HttpPost("UploadMultiple")]
-        public async Task<IActionResult> UploadMultiple(List<IFormFile> files, string path)
+        [HttpPost("CheckConflicts")]
+        public async Task<IActionResult> CheckConflicts([FromBody] FileConflictRequest model)
         {
-            await _minioService.UploadMultipleAsync(files, path);
+            var conflicts = new List<string>();
+
+            foreach (var fileName in model.FileNames)
+            {
+                var fullPath = $"{model.Path}{fileName}";
+
+                if (await _minioService.FileNameExistsAsync(model.Path, fileName, model.SiteId))
+                {
+                    conflicts.Add(fileName);
+                }
+            }
+
+            return Ok(conflicts);
+        }
+        [HttpPost("UploadMultiple")]
+        public async Task<IActionResult> UploadMultiple(List<IFormFile> files, string path, string mode)
+        {
+            await _minioService.UploadMultipleAsync(files, path, mode);
             return Ok();
         }
 

@@ -46,7 +46,8 @@ public class MinioService : IMinioService
                 {
                     Title = title,
                     Key = item.Key,
-                    Folder = item.Key.EndsWith("/")
+                    Folder = item.Key.EndsWith("/"),
+                    Size=(long)item.Size
                 });
             },
             ex => tcs.SetException(ex),
@@ -74,16 +75,28 @@ public class MinioService : IMinioService
         return objectName;
     }
 
-    public async Task UploadMultipleAsync(List<IFormFile> files, string path)
+    public async Task UploadMultipleAsync(List<IFormFile> files, string path, string mode)
     {
         foreach (var file in files)
         {
-            // GUID yerine orijinal ismi al
             var fileName = file.FileName;
             var fullPath = $"{path}{fileName}";
 
-            // Eğer bu isimde dosya varsa benzersiz yap, yoksa orijinal ismi kullan
-            var objectName = await GetUniqueObjectName(fullPath);
+            string objectName = fullPath;
+
+            if (mode == "rename") // (1) ekle
+            {
+                objectName = await GetUniqueObjectName(fullPath);
+            }
+            else if (mode == "overwrite") // direkt yaz
+            {
+                objectName = fullPath;
+            }
+            else if (mode == "skip") // atla
+            {
+                if (await ObjectExists(fullPath))
+                    continue;
+            }
 
             using var stream = file.OpenReadStream();
 
@@ -209,15 +222,37 @@ public class MinioService : IMinioService
         ValidatePath(targetFolder, siteId);
 
         if (!targetFolder.EndsWith("/")) targetFolder += "/";
+        // ✅ AYNI PATH KONTROLÜ: Kaynak klasörün parent'ı ile hedef aynıysa, taşıma yapma
+        var sourceParent = source.Substring(0, source.LastIndexOf('/') + 1);
+        if (sourceParent == targetFolder)
+        {
+            // Aynı klasörde kalıyor, işlem yapma veya hata döndür
+            return; // veya throw new InvalidOperationException("Klasör zaten hedef konumda.");
+        }
 
         if (source.EndsWith("/")) // KLASÖR TAŞIMA
         {
-            // ✅ RenameAsync ile taşı (CopyObject kullanMA!)
             var folderName = source.TrimEnd('/').Split('/').Last();
-            var uniqueFolderName = await GetUniqueFolderName($"{targetFolder}{folderName}/");
-            var newFolderName = uniqueFolderName.TrimEnd('/').Split('/').Last(); // Sadece isim
 
-            await RenameAsync(source, newFolderName, siteId);  // ✅ Bu copy+delete yapar
+            // hedefte benzersiz klasör adı oluştur
+            var newFolderPath = await GetUniqueFolderName($"{targetFolder}{folderName}/");
+
+            // 1. hedef klasörü oluştur
+            await CreateEmptyFolder(newFolderPath);
+
+            // 2. tüm içerikleri taşı (copy + delete)
+            var contents = await ListFolderContents(source);
+
+            foreach (var item in contents)
+            {
+                var relativePath = item.Replace(source, "");
+                var newPath = newFolderPath + relativePath;
+
+                await CopyObject(item, newPath);
+            }
+
+            // 3. eski klasörü komple sil
+            await DeleteAsync(source, siteId);
         }
         else // DOSYA TAŞIMA
         {
@@ -414,7 +449,10 @@ public class MinioService : IMinioService
         // Eğer hedefte bu dosya YOKSA, direkt ismi döndür (Sayı ekleme!)
         if (!await ObjectExists(objectName))
             return objectName;
-
+        if (await ObjectExists(objectName + "/"))
+        {
+            return objectName; // klasör var diye dosya ismini değiştirme
+        }
         // Sadece dosya varsa buraya girer:
         var dir = objectName.Substring(0, objectName.LastIndexOf('/') + 1);
         var fileName = Path.GetFileName(objectName);
@@ -487,15 +525,20 @@ public class MinioService : IMinioService
     {
         try
         {
-            using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(2));
-            await _minio.StatObjectAsync(new StatObjectArgs()
+            var stat = await _minio.StatObjectAsync(new StatObjectArgs()
                 .WithBucket(_settings.BucketName)
-                .WithObject(objectName), cts.Token);
-            return true;
+                .WithObject(objectName));
+
+            return stat != null;
+        }
+        catch (Minio.Exceptions.ObjectNotFoundException)
+        {
+            return false;
         }
         catch
         {
-            return false;
+            // ❗ Diğer hatalarda false dönme → yanlış karar olur
+            throw;
         }
     }
     private async Task CopyObject(string source, string destination)

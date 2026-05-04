@@ -7,12 +7,12 @@ namespace Microservice.Admin.Services.Interfaces
         Task<List<TreeNode>> GetTreeAsync(int siteId, string? path);
 
         Task<string> UploadAsync(IFormFile file, int siteId, string module);
-        Task UploadMultipleAsync(List<IFormFile> files, string path);
+        Task UploadMultipleAsync(List<IFormFile> files, string path, string mode);
         Task CopyAsync(string source, string target, int siteId);
         Task CopyMultipleAsync(List<(string source, string target)> items, int siteId);
         Task DeleteAsync(string path, int siteId);
         Task DeleteMultipleAsync(List<string> paths, int siteId);
-
+        Task<bool> FileNameExistsAsync(string folderPath, string fileName, int siteId);
         Task RenameAsync(string oldPath, string newName, int siteId);
         Task MoveAsync(string source, string target, int siteId);
 

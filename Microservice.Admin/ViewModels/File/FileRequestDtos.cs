@@ -22,4 +22,10 @@
         public string Source { get; set; } = default!;
         public string Target { get; set; } = default!;
     }
+    public class FileConflictRequest
+    {
+        public List<string> FileNames { get; set; } = default!;
+        public string Path { get; set; }
+        public int SiteId { get; set; }
+    }
 }
