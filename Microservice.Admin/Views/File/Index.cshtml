@@ -4,91 +4,227 @@
     var siteId = ViewBag.SiteId ?? 0;
 }
 
-<style>
-    #menu {
-        min-width: 160px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-        padding: 5px 0;
-        border-radius: 6px;
-        background: white;
-        border: 1px solid #ddd;
-    }
-
-        #menu div {
-            padding: 10px 15px;
-            cursor: pointer;
-            font-size: 14px;
-            transition: background 0.2s;
-        }
-
-            #menu div:hover {
-                background-color: #f8f9fa;
-                color: #007bff;
-            }
-
-    .fancytree-container {
-        outline: none;
-        border: none !important;
-    }
-
-    #tree {
-        padding: 10px;
-    }
-
-    /* Checkbox stil iyileştirmesi */
-    span.fancytree-checkbox {
-        margin-right: 5px;
-    }
-
-    .fancytree-root .fancytree-title {
-        font-weight: bold;
-        color: #007bff;
-        font-size: 15px;
-    }
-
-    #selectedFolderName {
-        font-size: 16px !important;
-    }
-</style>
-
 @section Styles {
     <link href="https://cdn.jsdelivr.net/npm/jquery.fancytree/dist/skin-win8/ui.fancytree.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            background: #f5f7fb;
+        }
+
+        .card {
+            border: none;
+            border-radius: 12px;
+        }
+
+            .card:hover {
+                box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+            }
+
+        #tree {
+            font-size: 14px;
+        }
+
+        .fancytree-active .fancytree-title {
+            background: #0d6efd;
+            color: white;
+            border-radius: 4px;
+            padding: 2px 6px;
+        }
+
+        .fancytree-title {
+            padding: 2px 4px;
+        }
+
+/*         #dropZone {
+            border: 2px dashed #ced4da;
+            border-radius: 10px;
+            padding: 60px;
+            text-align: center;
+            color: #888;
+            transition: 0.2s;
+        }
+
+            #dropZone:hover {
+                background: #f1f3f5;
+            } */
+
+        #menu {
+            min-width: 170px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            border-radius: 8px;
+            background: #fff;
+            border: 1px solid #ddd;
+        }
+
+            #menu div {
+                padding: 10px 14px;
+                cursor: pointer;
+                font-size: 14px;
+            }
+
+                #menu div:hover {
+                    background: #f8f9fa;
+                    color: #0d6efd;
+                }
+    
+        
+         .upload-toolbar {
+        background: #ffffff;
+        padding: 10px 15px;
+        border-bottom: 1px solid #edf2f9;
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+    }
+
+    .btn-action {
+        border-radius: 8px;
+        padding: 8px 16px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .btn-upload-trigger {
+        background-color: #0d6efd;
+        color: white;
+        border: none;
+    }
+
+    .btn-upload-trigger:hover {
+        background-color: #0b5ed7;
+        box-shadow: 0 4px 12px rgba(13, 110, 253, 0.2);
+    }
+
+    /* Modern Dropzone */
+    #dropZone {
+        border: 2px dashed #dce1e6;
+        background-color: #f8fbff;
+        border-radius: 16px;
+        padding: 40px 20px;
+        text-align: center;
+        color: #5e6e82;
+        transition: all 0.2s ease-in-out;
+        cursor: pointer;
+        position: relative;
+    }
+
+    #dropZone:hover {
+        border-color: #0d6efd;
+        background-color: #f1f7ff;
+        color: #0d6efd;
+    }
+
+    #dropZone i {
+        font-size: 3rem;
+        margin-bottom: 15px;
+        display: block;
+        opacity: 0.7;
+    }
+
+    #dropZone .drop-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin-bottom: 5px;
+    }
+
+    #dropZone .drop-text {
+        font-size: 0.9rem;
+        opacity: 0.8;
+    }
+
+    /* Gizli dosya inputu */
+    #fileInput {
+        display: none;
+    }
+            
+            
+            
+            
+            
+            
+            </style>
 }
 
-<div class="container-fluid mt-4">
+<div class="container-fluid mt-3">
 
 
-    <div style="display:flex; height:700px; gap: 20px;">
+    <div class="row g-3">
 
         <!-- SOL PANEL: TREE -->
-        <div id="tree" style="width:30%; border:1px solid #ddd; overflow:auto; border-radius:8px; background: #fff;"></div>
-
-        <!-- SAĞ PANEL: İŞLEMLER VE ÖNİZLEME -->
-        <div style="width:70%; padding:20px; border:1px solid #ddd; border-radius:8px; display:flex; flex-direction:column; background: #fff;">
-
-            <div style="margin-bottom:20px; padding:20px; background:#f8f9fa; border-radius: 8px;">
-                <p class="mb-3"><strong>Aktif Konum:</strong> <span id="selectedFolderName" class="badge bg-primary fs-6">Kök</span></p>
-
-                <div class="input-group">
-                    <input type="file" id="fileInput" multiple class="form-control" />
-                    <button id="uploadBtn" class="btn btn-success" onclick="uploadSelected()">
-                        <i class="fa fa-upload"></i> Dosyaları Yükle
-                    </button>
+        <div class="col-md-4 col-lg-3">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-white fw-bold">
+                    📁 Klasörler
+                </div>
+                <div class="card-body p-2" style="overflow:auto; height:650px;">
+                    <div id="tree" style=" height:100%;"></div>
                 </div>
             </div>
+        </div>
 
-            <div id="dropZone" style="border:2px dashed #ccc; padding:60px; text-align:center; color:#999; border-radius: 8px; cursor: pointer;">
-                <i class="fa fa-cloud-upload-alt fa-3x mb-2"></i><br>
-                Dosyaları buraya sürükleyip bırakın
-            </div>
+        <!-- SAĞ PANEL: İŞLEMLER VE ÖNİZLEME -->
+        <div class="col-md-8 col-lg-9">
 
-            <div id="previewContainer" style="margin-top:30px; display:none; border-top: 1px solid #eee; padding-top: 20px;">
+            <div class="card shadow-sm h-100">
 
-                <h5 class="mb-3 text-muted">Önizleme</h5>
-                <div id="previewArea" style="text-align:center;"></div>
+                <!-- HEADER -->
+                <div class="card-header bg-white d-flex justify-content-between align-items-center">
 
-                <h6 class="mt-4 text-muted">Dosya Detayı</h6>
-                <div id="fileDetails" style="text-align:left; font-size:14px;"></div>
+                    <div>
+                        📍 <span id="selectedFolderName" class="text-primary fw-bold">Kök</span>
+                    </div>
+
+
+                    <div class="d-flex gap-2">
+                        <!-- Yeni Klasör Butonu (Opsiyonel buraya da alınabilir) -->
+                        <button class="btn btn-outline-success btn-sm"
+                                onclick="createFolder()">
+                            📁 Yeni Klasör
+                        </button>
+
+                        <!-- Yükleme Butonu (Input'u tetikler) -->
+                        <button id="uploadBtn" class="btn btn-outline-primary btn-sm" onclick="document.getElementById('fileInput').click()">
+                              📤 Yükle
+                        </button>
+                        <input type="file" id="fileInput" multiple onchange="uploadSelected()" />
+                    </div>
+
+
+
+                </div>
+
+                <!-- BODY -->
+                <div class="card-body">
+                    <!-- DROPZONE -->
+                    <div id="dropZone" class="mb-4">
+                        <i class="fa fa-cloud-upload-alt fa-3x mb-2"></i>
+                        <div>Dosyaları buraya sürükle & bırak</div>
+                    </div>
+
+                    <!-- PREVIEW -->
+                    <div id="previewContainer" style="display:none;">
+                        <div class="row">
+
+                            <!-- PREVIEW -->
+                            <div class="col-md-8">
+                                <div class="border rounded p-3 bg-light text-center" id="previewArea"></div>
+                            </div>
+
+                            <!-- DETAILS -->
+                            <div class="col-md-4">
+                                <div class="border rounded p-3 bg-white">
+                                    <h6 class="text-muted">Dosya Bilgisi</h6>
+                                    <div id="fileDetails" class="small"></div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
 
             </div>
         </div>
