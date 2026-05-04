@@ -41,7 +41,9 @@
             </div>
             <div class="form-group">
                 <label asp-for="IcerikMetni" class="control-label"></label>
-                <input asp-for="IcerikMetni" class="form-control" />
+
+                <textarea asp-for="IcerikMetni" id="IcerikMetniEditor"></textarea>
+
                 <span asp-validation-for="IcerikMetni" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -49,11 +51,37 @@
                 <input asp-for="Link" class="form-control" />
                 <span asp-validation-for="Link" class="text-danger"></span>
             </div>
+            <!-- ResimUrl input -->
             <div class="form-group">
                 <label asp-for="ResimUrl" class="control-label"></label>
-                <input asp-for="ResimUrl" class="form-control" />
-                <span asp-validation-for="ResimUrl" class="text-danger"></span>
+                <div class="input-group">
+                    <input asp-for="ResimUrl" id="ResimUrlInput" class="form-control" readonly />
+                    <div class="input-group-append">
+                        <button type="button" class="btn btn-outline-primary" id="openFileManagerBtn">
+                            <i class="fa fa-image"></i> Dosya Seç
+                        </button>
+                    </div>
+                </div>
             </div>
+
+            <!-- File Manager Modal -->
+            <div class="modal fade" id="fileManagerModal" tabindex="-1">
+                <div class="modal-dialog modal-xl">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Dosya Yöneticisi</h5>
+                            <button type="button" class="close" data-bs-dismiss="modal">
+                                <span>&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body" style="height: 700px;">
+                            <iframe id="fileManagerFrame" style="width:100%; height:100%; border:none;"></iframe>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
             <div class="form-group">
                 <label asp-for="GosterimSayisi" class="control-label"></label>
                 <input asp-for="GosterimSayisi" class="form-control" />
@@ -107,4 +135,80 @@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tinymce/5.10.5/tinymce.min.js"></script>
+    <script>
+        tinymce.init({
+        selector: "#IcerikMetniEditor",
+        height: 500,
+
+        plugins: "image media link code table lists",
+        toolbar: "undo redo | bold italic underline | alignleft aligncenter alignright | bullist numlist | image media link | code",
+
+        // 🔥 FILE MANAGER ENTEGRASYONU
+        // Edit.cshtml içindeki script
+        file_picker_callback: function (callback, value, meta) {
+        let typeFilter = "";
+        if (meta.filetype === "image") {
+        typeFilter = "image";
+        } else if (meta.filetype === "media") {
+        typeFilter = "video";
+        }
+
+        openFileManager(function (url) {
+        if (meta.filetype === 'image') {
+        callback(url, { alt: 'Görsel' }); // Resim seçildiyse alt text ekle
+        } else {
+        callback(url);
+        }
+        }, typeFilter);
+        }
+
+
+
+
+        });
+    </script>
+    <script>
+
+        // Unobtrusive JavaScript
+        $(function () {
+        $('#openFileManagerBtn').on('click', function () {
+        const siteId = '@ViewBag.SiteId'; // Controller'dan geliyor
+        const type = 'image';
+        $('#fileManagerFrame').attr('src', `/File?siteId=${siteId}&mode=picker&type=${type}`);
+        $('#fileManagerModal').modal('show');
+        });
+
+        window.addEventListener('message', function (event) {
+        if (event.data.type === 'file-selected') {
+        $('#ResimUrlInput').val(event.data.url);
+        $('#fileManagerModal').modal('hide');
+        }
+        });
+        });
+
+
+        function openFileManager(callback, type) {
+
+        let w = window.open(
+        `/File?siteId=1&mode=picker&type=${type}`,
+        "FileManager",
+        "width=1200,height=700"
+        );
+
+        window.addEventListener("message", function handler(event) {
+
+        if (event.data.type === "file-selected") {
+        callback(event.data.url);
+        w.close();
+        window.removeEventListener("message", handler);
+        }
+
+        });
+        }
+    </script>
+
+
+
 }

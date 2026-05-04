@@ -1,10 +1,10 @@
-@{
+﻿@{
     ViewData["Title"] = "File Manager";
-    Layout = ViewBag.Mode == "picker" ? null : "~/Views/Shared/_Layout.cshtml";
+    Layout =  null ;
     var siteId = ViewBag.SiteId ?? 0;
 }
-
-@section Styles {
+<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link href="https://cdn.jsdelivr.net/npm/jquery.fancytree/dist/skin-win8/ui.fancytree.min.css" rel="stylesheet">
 
     <style>
@@ -26,8 +26,8 @@
         }
 
         .fancytree-active .fancytree-title {
-        /*     background-color: #0d6efd !important;
-            color: white; */
+            /*     background-color: #0d6efd !important;
+                    color: white; */
             border-radius: 4px;
             padding: 2px 6px;
         }
@@ -36,18 +36,18 @@
             padding: 2px 4px;
         }
 
-/*         #dropZone {
-            border: 2px dashed #ced4da;
-            border-radius: 10px;
-            padding: 60px;
-            text-align: center;
-            color: #888;
-            transition: 0.2s;
-        }
+        /*         #dropZone {
+                    border: 2px dashed #ced4da;
+                    border-radius: 10px;
+                    padding: 60px;
+                    text-align: center;
+                    color: #888;
+                    transition: 0.2s;
+                }
 
-            #dropZone:hover {
-                background: #f1f3f5;
-            } */
+                    #dropZone:hover {
+                        background: #f1f3f5;
+                    } */
 
         #menu {
             min-width: 170px;
@@ -67,87 +67,81 @@
                     background: #f8f9fa;
                     color: #0d6efd;
                 }
+
     
-        
-         .upload-toolbar {
-        background: #ffffff;
-        padding: 10px 15px;
-        border-bottom: 1px solid #edf2f9;
-        display: flex;
-        justify-content: flex-end;
-        gap: 10px;
-    }
+        .upload-toolbar {
+            background: #ffffff;
+            padding: 10px 15px;
+            border-bottom: 1px solid #edf2f9;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
 
-    .btn-action {
-        border-radius: 8px;
-        padding: 8px 16px;
-        font-weight: 500;
-        transition: all 0.3s ease;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-    }
+        .btn-action {
+            border-radius: 8px;
+            padding: 8px 16px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
 
-    .btn-upload-trigger {
-        background-color: #0d6efd;
-        color: white;
-        border: none;
-    }
+        .btn-upload-trigger {
+            background-color: #0d6efd;
+            color: white;
+            border: none;
+        }
 
-    .btn-upload-trigger:hover {
-        background-color: #0b5ed7;
-        box-shadow: 0 4px 12px rgba(13, 110, 253, 0.2);
-    }
+            .btn-upload-trigger:hover {
+                background-color: #0b5ed7;
+                box-shadow: 0 4px 12px rgba(13, 110, 253, 0.2);
+            }
 
-    /* Modern Dropzone */
-    #dropZone {
-        border: 2px dashed #dce1e6;
-        background-color: #f8fbff;
-        border-radius: 16px;
-        padding: 40px 20px;
-        text-align: center;
-        color: #5e6e82;
-        transition: all 0.2s ease-in-out;
-        cursor: pointer;
-        position: relative;
-    }
+        /* Modern Dropzone */
+        #dropZone {
+            border: 2px dashed #dce1e6;
+            background-color: #f8fbff;
+            border-radius: 16px;
+            padding: 40px 20px;
+            text-align: center;
+            color: #5e6e82;
+            transition: all 0.2s ease-in-out;
+            cursor: pointer;
+            position: relative;
+        }
 
-    #dropZone:hover {
-        border-color: #0d6efd;
-        background-color: #f1f7ff;
-        color: #0d6efd;
-    }
+            #dropZone:hover {
+                border-color: #0d6efd;
+                background-color: #f1f7ff;
+                color: #0d6efd;
+            }
 
-    #dropZone i {
-        font-size: 3rem;
-        margin-bottom: 15px;
-        display: block;
-        opacity: 0.7;
-    }
+            #dropZone i {
+                font-size: 3rem;
+                margin-bottom: 15px;
+                display: block;
+                opacity: 0.7;
+            }
 
-    #dropZone .drop-title {
-        font-size: 1.1rem;
-        font-weight: 600;
-        margin-bottom: 5px;
-    }
+            #dropZone .drop-title {
+                font-size: 1.1rem;
+                font-weight: 600;
+                margin-bottom: 5px;
+            }
 
-    #dropZone .drop-text {
-        font-size: 0.9rem;
-        opacity: 0.8;
-    }
+            #dropZone .drop-text {
+                font-size: 0.9rem;
+                opacity: 0.8;
+            }
 
-    /* Gizli dosya inputu */
-    #fileInput {
-        display: none;
-    }
-            
-            
-            
-            
-            
-            
-            </style>
-}
+        /* Gizli dosya inputu */
+        #fileInput {
+            display: none;
+        }
+    </style>
+
 
 <div class="container-fluid mt-3">
 
@@ -188,7 +182,7 @@
 
                         <!-- Yükleme Butonu (Input'u tetikler) -->
                         <button id="uploadBtn" class="btn btn-outline-primary btn-sm" onclick="document.getElementById('fileInput').click()">
-                              📤 Yükle
+                            📤 Yükle
                         </button>
                         <input type="file" id="fileInput" multiple onchange="uploadSelected()" />
                     </div>
@@ -231,7 +225,9 @@
     </div>
 </div>
 
-@section Scripts {
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<script src="~/js/site.js" asp-append-version="true"></script>
     <script src="https://cdn.jsdelivr.net/npm/jquery/dist/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/jquery.fancytree/dist/jquery.fancytree-all-deps.min.js"></script>
 
@@ -924,4 +920,4 @@
         });
         dropZone.addEventListener("click", () => document.getElementById("fileInput").click());
     </script>
-}
+

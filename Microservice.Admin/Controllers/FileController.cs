@@ -13,9 +13,18 @@ namespace Microservice.Admin.Controllers
         {
             _minioService = minioService;
         }
-        public async Task<IActionResult> Index(int siteId = 1)
+        public async Task<IActionResult> Index(int siteId = 1, string? mode = null, string? type = null)
         {
-            ViewBag.SiteId=siteId;
+            ViewBag.SiteId = siteId;
+            ViewBag.Mode = mode;
+            ViewBag.Type = type;
+
+            // ✅ picker modunda layout kullanma
+            if (mode == "picker")
+            {
+                return View("PickerView"); // Ayrı bir view oluştur
+            }
+
             return View();
         }
         [HttpGet("Tree")]
