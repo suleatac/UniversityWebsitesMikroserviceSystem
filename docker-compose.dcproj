@@ -9,6 +9,9 @@
     <DockerServiceName>mikroservice.gateway</DockerServiceName>
   </PropertyGroup>
   <ItemGroup>
+    <None Remove="Microservice.Admin\**" />
+  </ItemGroup>
+  <ItemGroup>
     <None Include=".env" />
     <None Include="prometheus.yml" />
     <None Include="docker-compose.override.yml">

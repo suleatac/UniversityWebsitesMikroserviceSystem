@@ -1,96 +1,52 @@
-﻿@using System.Security.Claims
-<!DOCTYPE html>
-<html lang="en">
+﻿<!doctype html>
+<html lang="tr">
 <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - Microservice.Admin</title>
-    <script type="importmap"></script>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/Microservice.Admin.styles.css" asp-append-version="true" />
-    @RenderSection("Styles", false)
- 
+    <title>@ViewBag.Title  | SBTU</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta content="SBTU Admin paneli" name="description" />
+    <meta content="Codebucks" name="author" />
+    <!-- App favicon -->
+    <link rel="shortcut icon" href="~/assets/images/favicon.ico">
+    <!-- dark layout js -->
+    <script src="~/assets/js/pages/layout.js"></script>
+    @RenderSection("styles", required: false)
+    <!-- Bootstrap Css -->
+    <link href="~/assets/css/bootstrap.min.css" id="bootstrap-style" rel="stylesheet" type="text/css" />
+    <!-- Icons Css -->
+    <link href="~/assets/css/icons.min.css" rel="stylesheet" type="text/css" />
+    <!-- simplebar css -->
+    <link href="~/assets/libs/simplebar/simplebar.min.css" rel="stylesheet">
+    <!-- App Css-->
+    <link href="~/assets/css/app.min.css" id="app-style" rel="stylesheet" type="text/css" />
 </head>
 <body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Microservice.Admin</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
-                    </ul>
-                    <ul class="navbar-nav ms-auto">
-                        @if (User?.Identity?.IsAuthenticated ?? false)
-                        {
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    Hoşgeldin
-                                </a>
-                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                             
-                                    @if (User?.Identity?.IsAuthenticated == true)
-                                    {
-                                        <li>
-                                            <h6 class="dropdown-header">@User.Identity.Name</h6>
-                                        </li>
-                                    }
-                                    <li><hr class="dropdown-divider" /></li>
-                                  @*   @if (User.Claims.Any(c => c.Type == ClaimTypes.Role && c.Value == "Eğitmen Rolü"))
-                                    {
-                                        <li><a class="dropdown-item" asp-area="" asp-page="/Instructor/Index">Instructor Home Page</a></li>
-                                    } *@
-                                    <li><a class="dropdown-item" asp-controller="Site" asp-action="Index">Siteler</a></li>
-                                    <li><a class="dropdown-item" asp-controller="Template" asp-action="Index">Templateler</a></li>
-                                    <li><a class="dropdown-item" asp-controller="Birim" asp-action="Index">Birimler</a></li>
-                                    <li><a class="dropdown-item" asp-controller="Haber" asp-action="Index">Haberler</a></li>
-                                    <li><a class="dropdown-item" asp-controller="File" asp-action="Index">File</a></li>
-                                    <li><hr class="dropdown-divider" /></li>
-                                    <li>
-                                       
-                                        <form method="post" asp-controller="Auth" asp-action="LogOut">
-                                            <button type="submit" class="dropdown-item">Sign out</button>
-                                        </form>
-                                    </li>
-                                </ul>
-                            </li>
-                        }
-                        else
-                        {
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-page="/Auth/SignIn">Sign in</a>
-                            </li>
-                        }
-                    </ul>
-                </div>
-            </div>
-        </nav>
-    </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>
+    <div id="layout-wrapper">
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2026 - Microservice.Admin - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+        <partial name="~/Views/Shared/menu.cshtml" />
+        <div class="main-content">
+
+            <div class="page-content">
+                <div class="container-fluid">
+                    <partial name="~/Views/Shared/pagetitle.cshtml" />
+
+                    @RenderBody()
+                </div> 
+            </div>
+            <partial name="~/Views/Shared/footer.cshtml" />
+
         </div>
-    </footer>
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script> 
-   
-    @await RenderSectionAsync("Scripts", required: false)
+        <!-- end main content-->
+
+    </div>
+ @*    <partial name="~/Views/Shared/rightsidebar.cshtml" /> *@
+
+    <!-- JAVASCRIPT -->
+    <script src="~/assets/libs/jquery/jquery.min.js"></script>
+    <script src="~/assets/libs/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="~/assets/libs/metismenu/metisMenu.min.js"></script>
+    <script src="~/assets/libs/simplebar/simplebar.min.js"></script>
+    <script src="~/assets/libs/node-waves/waves.min.js"></script>
+    @RenderSection("scripts", required: false)
 </body>
 </html>

@@ -136,15 +136,23 @@
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/tinymce/5.10.5/tinymce.min.js"></script>
+    <!--tinymce js-->
+    <script src="~/assets/libs/tinymce/tinymce.min.js"></script>
     <script>
         tinymce.init({
         selector: "#IcerikMetniEditor",
         height: 500,
 
-        plugins: "image media link code table lists",
-        toolbar: "undo redo | bold italic underline | alignleft aligncenter alignright | bullist numlist | image media link | code",
-
+        plugins: [
+        'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
+        'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
+        'insertdatetime', 'media', 'table', 'help', 'wordcount'
+        ],
+        toolbar: 'undo redo | blocks | ' +
+        'bold italic backcolor | alignleft aligncenter ' +
+        'alignright alignjustify | bullist numlist outdent indent | ' +
+        'removeformat | help',
+        content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:16px }',
         // 🔥 FILE MANAGER ENTEGRASYONU
         // Edit.cshtml içindeki script
         file_picker_callback: function (callback, value, meta) {
