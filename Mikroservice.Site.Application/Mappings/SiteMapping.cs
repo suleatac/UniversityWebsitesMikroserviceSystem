@@ -9,6 +9,7 @@ namespace Mikroservice.Site.Application.Mappings
         {
             CreateMap<Domain.Entities.Site, SiteDto>().ReverseMap();
             CreateMap<Domain.Entities.Site, SiteDetailDto>().ReverseMap();
+      
         }
     }
 }

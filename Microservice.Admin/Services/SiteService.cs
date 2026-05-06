@@ -2,6 +2,7 @@
 using Microservice.Admin.Services.Interfaces;
 using Microservice.Admin.Services.ServiceResults;
 using Microservice.Admin.ViewModels.Site;
+using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
 
 namespace Microservice.Admin.Services
@@ -46,6 +47,32 @@ namespace Microservice.Admin.Services
             return ServiceResult<List<SiteGetVm>>.Success(response.Content!);
         }
 
+        //Site paginated list
+        public async Task<ServiceResult<PaginatedResult<SiteGetVm>>> GetSitesPaginatedAsync(
+     int page, int pageSize, string? search, string? orderBy, string? orderDir)
+        {
+            _logger.LogInformation("API'den paginated site listesi çekiliyor. Page: {Page}, PageSize: {PageSize}", page, pageSize);
+
+            var response = await _siteRefitService.GetSitesPaginatedAsync(page, pageSize, search, orderBy, orderDir);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var problemDetails = response.Error != null
+                    ? JsonSerializer.Deserialize<Microsoft.AspNetCore.Mvc.ProblemDetails>(response.Error.Content!)
+                    : null;
+
+                _logger.LogError("API Error -> StatusCode: {StatusCode}, Title: {Title}",
+                    response.StatusCode, problemDetails?.Title);
+
+                return ServiceResult<PaginatedResult<SiteGetVm>>.Error(
+                    problemDetails?.Detail ?? problemDetails?.Title ?? "Paginated site listesi alınamadı");
+            }
+
+            _logger.LogInformation("Paginated site listesi başarıyla alındı. TotalCount: {TotalCount}",
+                response.Content?.TotalCount);
+
+            return ServiceResult<PaginatedResult<SiteGetVm>>.Success(response.Content!);
+        }
         // GET BY ID
         public async Task<ServiceResult<SiteDetailGetVm>> GetSiteByIdAsync(int id)
         {

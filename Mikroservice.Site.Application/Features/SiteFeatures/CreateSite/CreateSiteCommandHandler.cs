@@ -1,7 +1,6 @@
-using MassTransit;
 using MediatR;
 using Microservice.Shared;
-using Microservice.Shared.Services.RabbitMqMasstransitServiceItems.Events.SiteEvents;
+using Microservice.Shared.Services.RedisServiceItems;
 using Microservice.Site.Application.Contracts.IRepositories;
 
 namespace Mikroservice.Site.Application.Features.SiteFeatures.CreateSite
@@ -9,10 +8,10 @@ namespace Mikroservice.Site.Application.Features.SiteFeatures.CreateSite
     public class CreateSiteCommandHandler(
      ISiteRepository siteRepository,
      IUnitOfWork unitOfWork,
-     IPublishEndpoint publishEndpoint
- ) : IRequestHandler<CreateSiteCommand, ServiceResult>
+      IRedisCacheService redisCache
+ ) : IRequestHandler<CreateSiteCommand, ServiceResult<CreateSiteResponse>>
     {
-        public async Task<ServiceResult> Handle(CreateSiteCommand request, CancellationToken cancellationToken)
+        public async Task<ServiceResult<CreateSiteResponse>> Handle(CreateSiteCommand request, CancellationToken cancellationToken)
         {
             var site = new Domain.Entities.Site
             {
@@ -34,9 +33,13 @@ namespace Mikroservice.Site.Application.Features.SiteFeatures.CreateSite
             await siteRepository.AddAsync(site);
             await unitOfWork.SaveChangesAsync(cancellationToken);
 
-            await publishEndpoint.Publish(new SiteChangedEvent(), cancellationToken);
+            //Cache temizleme işlemini yapabilsin diye bu event eklendi.
+            await redisCache.RemoveByPatternAsync("site:paginated:*", cancellationToken);
+            await redisCache.RemoveAsync("site:list", cancellationToken);
 
-            return ServiceResult.SuccessAsNoContent();
+            var response = new CreateSiteResponse(site.Id);
+            return ServiceResult<CreateSiteResponse>
+            .SuccessAsCreated(response, $"/api/v1/sites/{site.Id}");
         }
     }
 }

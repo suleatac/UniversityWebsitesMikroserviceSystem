@@ -17,9 +17,8 @@ namespace Mikroservice.Site.Persistence.Messaging.Consumers.SiteConsumers
         {
             var message = context.Message;
 
-            var key = "site:list";
-
-            await _cache.RemoveAsync(key, context.CancellationToken);
+            await _cache.RemoveByPatternAsync("site:paginated:*", context.CancellationToken);
+            await _cache.RemoveAsync("site:list", context.CancellationToken);
         }
     }
 }

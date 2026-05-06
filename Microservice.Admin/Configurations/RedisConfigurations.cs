@@ -12,9 +12,10 @@ namespace Microservice.Admin.Configurations
             // Redis Bağlantı ayarları. Bu ayar trace için yapıldı. IDistributedCache kullanmıyorsun burda direk redis kullanıyorsun.
             services.AddSingleton<IConnectionMultiplexer>(sp => {
                 var connectiontostring = configuration.GetSection(RedisSetting.Key).Get<RedisSetting>();
+
                 var config = ConfigurationOptions.Parse(connectiontostring!.Redis);
                 config.AbortOnConnectFail = false;
-
+                config.ConnectTimeout = 100;
                 var multiplexer = ConnectionMultiplexer.Connect(config);
 
                 // 🔴 KRİTİK: instrumentation bunu otomatik yakalamaz

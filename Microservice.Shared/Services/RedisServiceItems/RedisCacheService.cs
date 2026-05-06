@@ -61,7 +61,19 @@ public class RedisCacheService : IRedisCacheService
         cancellationToken.ThrowIfCancellationRequested();
         await _db.KeyDeleteAsync(key);
     }
+    // 🔹 Sil
+    public async Task RemoveByPatternAsync(string pattern, CancellationToken cancellationToken = default)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
 
+        var server = _db.Multiplexer.GetServer(_db.Multiplexer.GetEndPoints().First());
+        var keys = server.Keys(pattern: pattern).ToArray();
+
+        foreach (var key in keys)
+        {
+            await _db.KeyDeleteAsync(key);
+        }
+    }
     // 🔹 Var mı kontrolü
     public async Task<bool> ExistsAsync(string key, CancellationToken cancellationToken = default)
     {

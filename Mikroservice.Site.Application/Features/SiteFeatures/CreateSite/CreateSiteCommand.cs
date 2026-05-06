@@ -2,7 +2,7 @@ using Microservice.Shared;
 
 namespace Mikroservice.Site.Application.Features.SiteFeatures.CreateSite
 {
-    public record CreateSiteCommand : IRequestByServiceResult
+    public record CreateSiteCommand : IRequestByServiceResult<CreateSiteResponse>
     {
         public string SiteAdi { get; init; } = default!;
         public string SiteAdiEng { get; init; } = default!;

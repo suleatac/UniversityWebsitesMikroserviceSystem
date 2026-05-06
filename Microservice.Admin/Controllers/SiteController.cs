@@ -2,22 +2,34 @@
 
 namespace Microservice.Admin.Controllers
 {
+    using Microservice.Admin.Clients.SiteClients;
     using Microservice.Admin.Services;
     using Microservice.Admin.ViewModels.Site;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Logging;
+    using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
     [Authorize]
     public class SiteController : Controller
     {
         private readonly ISiteService _siteService;
         private readonly ILogger<SiteController> _logger;
+        private readonly ITemplateService _templateService;
+        private readonly IBirimService _birimService;
 
-        public SiteController(ISiteService siteService, ILogger<SiteController> logger)
+        public SiteController
+            (
+               ISiteService siteService, 
+               ILogger<SiteController> logger, 
+               ITemplateService templateService, 
+               IBirimService birimService
+            )
         {
             _siteService = siteService;
             _logger = logger;
+            _templateService = templateService;
+            _birimService = birimService;
         }
 
         // LIST
@@ -39,18 +51,66 @@ namespace Microservice.Admin.Controllers
             return View(result.Data);
         }
 
+        [HttpGet]
+        public async Task<IActionResult> GetSitesForPagination
+            (
+               int page = 1,
+               int pageSize = 10,
+               string search = "",
+               int orderColumn = 0,
+               string orderDir = "desc"
+            )
+        {
+            // Sütun indeksini isimlere çevir
+            var columnName = orderColumn switch {
+                1 => "SiteAdi",
+                2 => "SiteUrl",
+                3 => "SiteEPosta",
+                _ => "Id"
+            };
+
+            var result = await _siteService.GetSitesPaginatedAsync(page, pageSize, search, columnName, orderDir);
+
+            if (!result.IsSuccess)
+            {
+                _logger.LogError("Paginated site listesi alınamadı. Hata: {Error}", result.Fail?.Detail);
+                return BadRequest(new { error = result.Fail?.Detail });
+            }
+
+            return Ok(new {
+                data = result.Data!.Data,           // ← İlk Data: ServiceResult, ikinci Data: PaginatedResult.Data
+                recordsTotal = result.Data.TotalCount,
+                recordsFiltered = result.Data.TotalCount
+            });
+        }
+
+
+
+
+
+
+
+
         // CREATE - GET
         [HttpGet]
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            _logger.LogInformation("Site oluşturma sayfası açıldı.");
-            return View();
+            var birimler = await _birimService.GetBirimsAsync();
+            var templates = await _templateService.GetTemplatesAsync();
+
+            var viewModel = new SiteIndexVm {
+                CreateSite = new CreateSiteVm(),
+                Birimler = birimler.Data!,
+                Templates = templates.Data!
+            };
+
+            return View(viewModel);
         }
 
         // CREATE - POST
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(CreateSiteVm model)
+        public async Task<IActionResult> Create(SiteIndexVm model)
         {
             if (!ModelState.IsValid)
             {
@@ -58,7 +118,7 @@ namespace Microservice.Admin.Controllers
                 return View(model);
             }
 
-            var result = await _siteService.CreateSiteAsync(model);
+            var result = await _siteService.CreateSiteAsync(model.CreateSite);
 
             if (!result.IsSuccess)
             {

@@ -1,76 +1,221 @@
-﻿@model Microservice.Admin.ViewModels.Site.CreateSiteVm
-
+﻿@model Microservice.Admin.ViewModels.Site.SiteIndexVm
 @{
-    ViewData["Title"] = "Create";
+    ViewBag.pTitle = "Ana Sayfa";
+    ViewBag.Title = "Yeni Site";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Create</h1>
+<div class="row justify-content-center">
+    <div class="col-xxl-10">
+        <div class="card shadow-lg border-0">
+            <div class="card-header bg-primary bg-opacity-10 border-bottom">
+                <div class="d-flex align-items-center">
+                    <div class="avatar-sm me-3">
+                        <div class="avatar-title bg-primary rounded-circle">
+                            <i class="mdi mdi-web fs-5"></i>
+                        </div>
+                    </div>
+                    <div>
+                        <h5 class="card-title mb-1">Site Bilgileri</h5>
+                        <p class="card-text text-muted mb-0">Yeni bir web sitesi oluşturmak için formu doldurun</p>
+                    </div>
+                </div>
+            </div>
 
-<h4>CreateSiteVm</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="SiteAdi" class="control-label"></label>
-                <input asp-for="SiteAdi" class="form-control" />
-                <span asp-validation-for="SiteAdi" class="text-danger"></span>
+            <div class="card-body p-4">
+                <form asp-action="Create" class="needs-validation" novalidate>
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger d-none" role="alert">
+                        <i class="mdi mdi-block-helper me-2"></i>
+                    </div>
+
+                    <!-- Temel Bilgiler -->
+                    <div class="mb-4">
+                        <h6 class="text-primary border-bottom pb-2">
+                            <i class="mdi mdi-information-outline me-1"></i> Temel Bilgiler
+                        </h6>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label asp-for="CreateSite.SiteAdi" class="form-label">
+                                        Site Adı <span class="text-danger">*</span>
+                                    </label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="mdi mdi-label"></i></span>
+                                        <input asp-for="CreateSite.SiteAdi" class="form-control" placeholder="Örn: Üniversite Ana Site" />
+                                    </div>
+                                    <span asp-validation-for="CreateSite.SiteAdi" class="text-danger small"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label asp-for="CreateSite.SiteAdiEng" class="form-label">
+                                        Site Adı (İngilizce)
+                                    </label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="mdi mdi-translate"></i></span>
+                                        <input asp-for="CreateSite.SiteAdiEng" class="form-control" placeholder="e.g.: University Main Site" />
+                                    </div>
+                                    <span asp-validation-for="CreateSite.SiteAdiEng" class="text-danger small"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label asp-for="CreateSite.SiteUrl" class="form-label">
+                                        Site URL <span class="text-danger">*</span>
+                                    </label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="mdi mdi-link"></i></span>
+                                        <input asp-for="CreateSite.SiteUrl" class="form-control" placeholder="https://www.example.com" />
+                                    </div>
+                                    <span asp-validation-for="CreateSite.SiteUrl" class="text-danger small"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label asp-for="CreateSite.SiteAlanAdi" class="form-label">
+                                        Site Alan Adı
+                                    </label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="mdi mdi-domain"></i></span>
+                                        <input asp-for="CreateSite.SiteAlanAdi" class="form-control" placeholder="example.com" />
+                                    </div>
+                                    <span asp-validation-for="CreateSite.SiteAlanAdi" class="text-danger small"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Birim ve Template -->
+                    <div class="mb-4">
+                        <h6 class="text-primary border-bottom pb-2">
+                            <i class="mdi mdi-puzzle-outline me-1"></i> Birim ve Şablon
+                        </h6>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label asp-for="CreateSite.BirimId" class="form-label">
+                                        Birim <span class="text-danger">*</span>
+                                    </label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="mdi mdi-office-building"></i></span>
+                                        <select asp-for="CreateSite.BirimId" class="form-select"
+                                                asp-items="@(new SelectList(Model.Birimler, "Id", "Ad"))">
+                                            <option value="">Birim seçiniz...</option>
+                                        </select>
+                                    </div>
+                                    <span asp-validation-for="CreateSite.BirimId" class="text-danger small"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label asp-for="CreateSite.TemplateId" class="form-label">
+                                        Template <span class="text-danger">*</span>
+                                    </label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="mdi mdi-palette"></i></span>
+                                        <select asp-for="CreateSite.TemplateId" class="form-select"
+                                                asp-items="@(new SelectList(Model.Templates, "Id", "TemplateAdi"))">
+                                            <option value="">Template seçiniz...</option>
+                                        </select>
+                                    </div>
+                                    <span asp-validation-for="CreateSite.TemplateId" class="text-danger small"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- E-Posta Ayarları -->
+                    <div class="mb-4">
+                        <h6 class="text-primary border-bottom pb-2">
+                            <i class="mdi mdi-email-outline me-1"></i> E-Posta Ayarları
+                        </h6>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label asp-for="CreateSite.SiteEPosta" class="form-label">
+                                        E-Posta Adresi
+                                    </label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="mdi mdi-email"></i></span>
+                                        <input asp-for="CreateSite.SiteEPosta" class="form-control" placeholder="info@example.com" />
+                                    </div>
+                                    <span asp-validation-for="CreateSite.SiteEPosta" class="text-danger small"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label asp-for="CreateSite.SiteEPostaSifre" class="form-label">
+                                        E-Posta Şifresi
+                                    </label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="mdi mdi-lock"></i></span>
+                                        <input asp-for="CreateSite.SiteEPostaSifre" type="password" class="form-control" placeholder="••••••••" />
+                                    </div>
+                                    <span asp-validation-for="CreateSite.SiteEPostaSifre" class="text-danger small"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label asp-for="CreateSite.SiteEPostaHost" class="form-label">
+                                        SMTP Host
+                                    </label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="mdi mdi-server"></i></span>
+                                        <input asp-for="CreateSite.SiteEPostaHost" class="form-control" placeholder="smtp.example.com" />
+                                    </div>
+                                    <span asp-validation-for="CreateSite.SiteEPostaHost" class="text-danger small"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label asp-for="CreateSite.SiteEPostaPort" class="form-label">
+                                        SMTP Port
+                                    </label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="mdi mdi-numeric"></i></span>
+                                        <input asp-for="CreateSite.SiteEPostaPort" type="number" class="form-control" placeholder="587" />
+                                    </div>
+                                    <span asp-validation-for="CreateSite.SiteEPostaPort" class="text-danger small"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Form Actions -->
+                    <div class="d-flex justify-content-between align-items-center pt-3 border-top">
+                        <a asp-action="Index" class="btn btn-outline-secondary">
+                            <i class="mdi mdi-arrow-left me-1"></i> Listeye Dön
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="mdi mdi-content-save me-1"></i> Kaydet
+                        </button>
+                    </div>
+                </form>
             </div>
-            <div class="form-group">
-                <label asp-for="SiteAdiEng" class="control-label"></label>
-                <input asp-for="SiteAdiEng" class="form-control" />
-                <span asp-validation-for="SiteAdiEng" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="SiteUrl" class="control-label"></label>
-                <input asp-for="SiteUrl" class="form-control" />
-                <span asp-validation-for="SiteUrl" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="BirimId" class="control-label"></label>
-                <input asp-for="BirimId" class="form-control" />
-                <span asp-validation-for="BirimId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="SiteAlanAdi" class="control-label"></label>
-                <input asp-for="SiteAlanAdi" class="form-control" />
-                <span asp-validation-for="SiteAlanAdi" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="SiteEPosta" class="control-label"></label>
-                <input asp-for="SiteEPosta" class="form-control" />
-                <span asp-validation-for="SiteEPosta" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="SiteEPostaSifre" class="control-label"></label>
-                <input asp-for="SiteEPostaSifre" class="form-control" />
-                <span asp-validation-for="SiteEPostaSifre" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="SiteEPostaHost" class="control-label"></label>
-                <input asp-for="SiteEPostaHost" class="form-control" />
-                <span asp-validation-for="SiteEPostaHost" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="SiteEPostaPort" class="control-label"></label>
-                <input asp-for="SiteEPostaPort" class="form-control" />
-                <span asp-validation-for="SiteEPostaPort" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="TemplateId" class="control-label"></label>
-                <input asp-for="TemplateId" class="form-control" />
-                <span asp-validation-for="TemplateId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-        </form>
+        </div>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+        // Validation summary gösterimi
+        $(document).ready(function () {
+            var validationSummary = $('div[asp-validation-summary="ModelOnly"]');
+            if (validationSummary.find('li').length > 0) {
+                validationSummary.removeClass('d-none');
+            }
+        });
+    </script>
+}

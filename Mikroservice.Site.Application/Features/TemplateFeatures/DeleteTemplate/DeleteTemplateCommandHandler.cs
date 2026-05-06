@@ -2,6 +2,7 @@
 using MediatR;
 using Microservice.Shared;
 using Microservice.Shared.Services.RabbitMqMasstransitServiceItems.Events.TemplateEvents;
+using Microservice.Shared.Services.RedisServiceItems;
 using Microservice.Site.Application.Contracts.IRepositories;
 
 namespace Mikroservice.Site.Application.Features.TemplateFeatures.DeleteTemplate

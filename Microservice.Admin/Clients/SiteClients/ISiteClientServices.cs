@@ -1,4 +1,5 @@
 ﻿using Microservice.Admin.ViewModels.Site;
+using Microsoft.AspNetCore.Mvc;
 using Refit;
 
 namespace Microservice.Admin.Clients.SiteClients
@@ -19,5 +20,13 @@ namespace Microservice.Admin.Clients.SiteClients
 
         [Delete("/api/v1/sites/{id}")]
         Task<ApiResponse<object>> DeleteSiteAsync(int id);
+
+        [Get("/api/v1/sites/paginated")]
+        Task<ApiResponse<PaginatedResult<SiteGetVm>>> GetSitesPaginatedAsync(
+          [AliasAs("page")] int page,
+          [AliasAs("pageSize")] int pageSize,
+          [AliasAs("search")] string? search,
+          [AliasAs("orderBy")] string? orderBy,
+          [AliasAs("orderDir")] string? orderDir);
     }
 }

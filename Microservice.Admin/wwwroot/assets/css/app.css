@@ -48,8 +48,8 @@ File: Custom Css File
 
 @media (max-width: 991.98px) {
   .sidebar-enable {
-    -webkit-transition: all 0.5s ease-in !important;
-    transition: all 0.5s ease-in !important;
+    -webkit-transition: all 0.1s ease-in !important;
+    transition: all 0.1s ease-in !important;
   }
   .sidebar-enable .navbar-logo-box {
     width: 255px !important;
@@ -287,8 +287,8 @@ body[data-layout=horizontal] .footer {
   overflow: hidden;
   -webkit-transition-timing-function: ease;
           transition-timing-function: ease;
-  -webkit-transition-duration: 0.35s;
-          transition-duration: 0.35s;
+  -webkit-transition-duration: 0.1s;
+          transition-duration: 0.1s;
   -webkit-transition-property: height, visibility;
   transition-property: height, visibility;
 }
@@ -330,28 +330,28 @@ body[data-layout=horizontal] .footer {
   transition: transform 0.2s, -webkit-transform 0.2s;
   font-size: 1rem;
 }
-#sidebar-menu ul li a {
-  display: block;
-  padding: 0.625rem 1.5rem;
-  color: #787c79;
-  position: relative;
-  font-size: 13.3px;
-  -webkit-transition: all 0.4s;
-  transition: all 0.4s;
-  font-family: "Wix Madefor Text", sans-serif;
-  font-weight: 500;
-}
-#sidebar-menu ul li a i {
-  display: inline-block;
-  min-width: 1.5rem;
-  padding-bottom: 0.125em;
-  font-size: 14px;
-  line-height: 1.40625rem;
-  color: #506953;
-  -webkit-transition: all 0.4s;
-  transition: all 0.4s;
-  opacity: 0.75;
-}
+    #sidebar-menu ul li a {
+        display: block;
+        padding: 0.625rem 1.5rem;
+        color: #787c79;
+        position: relative;
+        font-size: 13.3px;
+        -webkit-transition: all 0.1s !important;
+        transition: all 0.1s !important;
+        font-family: "Wix Madefor Text", sans-serif;
+        font-weight: 500;
+    }
+        #sidebar-menu ul li a i {
+            display: inline-block;
+            min-width: 1.5rem;
+            padding-bottom: 0.125em;
+            font-size: 14px;
+            line-height: 1.40625rem;
+            color: #506953;
+            -webkit-transition: all 0.1s !important;
+            transition: all 0.1s !important;
+            opacity: 0.75;
+        }
 #sidebar-menu ul li a:hover {
   color: var(--bs-body-color);
 }
@@ -2317,8 +2317,8 @@ a {
   color: var(--bs-secondary-color);
   border: 2px solid var(--bs-border-color);
   border-radius: 4px;
-  -webkit-transition: all 0.4s;
-  transition: all 0.4s;
+  -webkit-transition: all 0.1s;
+  transition: all 0.1s;
   text-align: center;
   margin-left: 16px;
   sidebar-align: middle;
@@ -3141,8 +3141,8 @@ a {
   border-radius: 50%;
   color: #adb5bd;
   text-align: center;
-  -webkit-transition: all 0.4s;
-  transition: all 0.4s;
+  -webkit-transition: all 0.1s;
+  transition: all 0.1s;
 }
 .social-list-item:hover {
   color: #74788d;
@@ -3600,8 +3600,8 @@ a {
   opacity: 0;
   background: rgba(0, 0, 0, 0.2);
   background: radial-gradient(rgba(0, 0, 0, 0.2) 0, rgba(0, 0, 0, 0.3) 40%, rgba(0, 0, 0, 0.4) 50%, rgba(0, 0, 0, 0.5) 60%, rgba(255, 255, 255, 0) 70%);
-  -webkit-transition: all 0.5s ease-out;
-  transition: all 0.5s ease-out;
+  -webkit-transition: all 0.1s ease-out;
+  transition: all 0.1s ease-out;
   -webkit-transition-property: -webkit-transform, opacity;
   -webkit-transition-property: opacity, -webkit-transform;
   transition-property: opacity, -webkit-transform;
@@ -36329,8 +36329,8 @@ readers do not read off random characters that represent icons */
 .product-box {
   padding: 24px;
   border: 1px solid #e5edf0;
-  -webkit-transition: all 0.4s;
-  transition: all 0.4s;
+  -webkit-transition: all 0.1s;
+  transition: all 0.1s;
 }
 .product-box:hover {
   -webkit-box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
@@ -36859,8 +36859,8 @@ readers do not read off random characters that represent icons */
   display: block;
   padding: 14px 16px;
   color: #74788d;
-  -webkit-transition: all 0.4s;
-  transition: all 0.4s;
+  -webkit-transition: all 0.1s;
+  transition: all 0.1s;
   border-top: 1px solid var(--bs-border-color);
   border-radius: 4px;
 }
