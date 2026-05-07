@@ -33,9 +33,10 @@ namespace Mikroservice.Site.Application.Features.SiteFeatures.CreateSite
             await siteRepository.AddAsync(site);
             await unitOfWork.SaveChangesAsync(cancellationToken);
 
-            //Cache temizleme işlemini yapabilsin diye bu event eklendi.
-            await redisCache.RemoveByPatternAsync("site:paginated:*", cancellationToken);
-            await redisCache.RemoveAsync("site:list", cancellationToken);
+            // Cache invalidation
+            await redisCache.RemoveByPatternAsync(
+                "site:list:*",
+                cancellationToken);
 
             var response = new CreateSiteResponse(site.Id);
             return ServiceResult<CreateSiteResponse>

@@ -1,7 +1,6 @@
-using MassTransit;
 using MediatR;
 using Microservice.Shared;
-using Microservice.Shared.Services.RabbitMqMasstransitServiceItems.Events.SiteEvents;
+using Microservice.Shared.Services.RedisServiceItems;
 using Microservice.Site.Application.Contracts.IRepositories;
 
 namespace Mikroservice.Site.Application.Features.SiteFeatures.UpdateSite
@@ -9,7 +8,7 @@ namespace Mikroservice.Site.Application.Features.SiteFeatures.UpdateSite
     public class UpdateSiteCommandHandler(
      ISiteRepository siteRepository,
      IUnitOfWork unitOfWork,
-     IPublishEndpoint publishEndpoint
+     IRedisCacheService redisCache
  ) : IRequestHandler<UpdateSiteCommand, ServiceResult>
     {
         public async Task<ServiceResult> Handle(UpdateSiteCommand request, CancellationToken cancellationToken)
@@ -33,7 +32,10 @@ namespace Mikroservice.Site.Application.Features.SiteFeatures.UpdateSite
 
             await unitOfWork.SaveChangesAsync(cancellationToken);
 
-            await publishEndpoint.Publish(new SiteChangedEvent(), cancellationToken);
+            // Cache invalidation
+            await redisCache.RemoveByPatternAsync(
+                "site:list:*",
+                cancellationToken);
 
             return ServiceResult.SuccessAsNoContent();
         }

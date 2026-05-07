@@ -1,112 +1,278 @@
-@model Microservice.Admin.ViewModels.Haber.CreateHaberVm
-
+@model Microservice.Admin.ViewModels.Haber.HaberCreateIndexVm
 @{
-    ViewData["Title"] = "Create";
+    ViewBag.pTitle = "Haberler";
+    ViewBag.Title = "Yeni Haber";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Create</h1>
-
-<h4>HaberDetailVm</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-
-            <div class="form-group">
-                <label asp-for="SiteId" class="control-label"></label>
-                <input asp-for="SiteId" class="form-control" />
-                <span asp-validation-for="SiteId" class="text-danger"></span>
+<div class="row justify-content-center">
+    <div class="col-xxl-10">
+        <div class="card shadow-lg border-0">
+            <div class="card-header bg-primary bg-opacity-10 border-bottom">
+                <div class="d-flex align-items-center">
+                    <div class="avatar-sm me-3">
+                        <div class="avatar-title bg-primary rounded-circle">
+                            <i class="mdi mdi-newspaper fs-5"></i>
+                        </div>
+                    </div>
+                    <div>
+                        <h5 class="card-title mb-1">Haber Bilgileri</h5>
+                        <p class="card-text text-muted mb-0">Yeni bir haber oluşturmak için formu doldurun</p>
+                    </div>
+                </div>
             </div>
 
-            <div class="form-group">
-                <label asp-for="DilId" class="control-label"></label>
-                <input asp-for="DilId" class="form-control" />
-                <span asp-validation-for="DilId" class="text-danger"></span>
-            </div>
+            <div class="card-body p-4">
+                <form asp-action="Create" class="needs-validation" novalidate>
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger d-none" role="alert" id="validationSummary">
+                        <i class="mdi mdi-block-helper me-2"></i>
+                        <ul></ul>
+                    </div>
 
-            <div class="form-group">
-                <label asp-for="HedefId" class="control-label"></label>
-                <input asp-for="HedefId" class="form-control" />
-                <span asp-validation-for="HedefId" class="text-danger"></span>
-            </div>
+                    <!-- Temel Bilgiler -->
+                    <div class="mb-4">
+                        <h6 class="text-primary border-bottom pb-2">
+                            <i class="mdi mdi-information-outline me-1"></i> Temel Bilgiler
+                        </h6>
 
-            <div class="form-group">
-                <label asp-for="Baslik" class="control-label"></label>
-                <input asp-for="Baslik" class="form-control" />
-                <span asp-validation-for="Baslik" class="text-danger"></span>
-            </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label asp-for="CreateHaber.SiteId" class="form-label">
+                                        Site <span class="text-danger">*</span>
+                                    </label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="mdi mdi-web"></i></span>
+                                        <select asp-for="CreateHaber.SiteId" class="form-select"
+                                                asp-items="@(new SelectList(Model.Siteler, "Id", "SiteAdi"))">
+                                            <option value="">Site seçiniz...</option>
+                                        </select>
+                                    </div>
+                                    <span asp-validation-for="CreateHaber.SiteId" class="text-danger small"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label asp-for="CreateHaber.DilId" class="form-label">
+                                        Dil <span class="text-danger">*</span>
+                                    </label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="mdi mdi-translate"></i></span>
+                                        <select asp-for="CreateHaber.DilId" class="form-select"
+                                                asp-items="@(new SelectList(Model.Diller, "Id", "Ad"))">
+                                            <option value="">Dil seçiniz...</option>
+                                        </select>
+                                    </div>
+                                    <span asp-validation-for="CreateHaber.DilId" class="text-danger small"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label asp-for="CreateHaber.HedefId" class="form-label">
+                                        Hedef
+                                    </label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="mdi mdi-target"></i></span>
+                                        <select asp-for="CreateHaber.HedefId" class="form-select"
+                                                asp-items="@(new SelectList(Model.Hedefler, "Id", "Aciklama"))">
+                                            <option value="">Hedef seçiniz...</option>
+                                        </select>
+                                    </div>
+                                    <span asp-validation-for="CreateHaber.HedefId" class="text-danger small"></span>
+                                </div>
+                            </div>
+                        </div>
 
-            <div class="form-group">
-                <label asp-for="KisaAciklama" class="control-label"></label>
-                <input asp-for="KisaAciklama" class="form-control" />
-                <span asp-validation-for="KisaAciklama" class="text-danger"></span>
-            </div>
+                        <div class="row">
+                            <div class="col-md-8">
+                                <div class="mb-3">
+                                    <label asp-for="CreateHaber.Baslik" class="form-label">
+                                        Başlık <span class="text-danger">*</span>
+                                    </label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="mdi mdi-format-title"></i></span>
+                                        <input asp-for="CreateHaber.Baslik" class="form-control" placeholder="Haber başlığını giriniz" />
+                                    </div>
+                                    <span asp-validation-for="CreateHaber.Baslik" class="text-danger small"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label asp-for="CreateHaber.KisaAciklama" class="form-label">
+                                        Kısa Açıklama <span class="text-danger">*</span>
+                                    </label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="mdi mdi-text-short"></i></span>
+                                        <input asp-for="CreateHaber.KisaAciklama" class="form-control" placeholder="Kısa açıklama giriniz" />
+                                    </div>
+                                    <span asp-validation-for="CreateHaber.KisaAciklama" class="text-danger small"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
-            <div class="form-group">
-                <label asp-for="IcerikMetni" class="control-label"></label>
-                <input asp-for="IcerikMetni" class="form-control" />
-                <span asp-validation-for="IcerikMetni" class="text-danger"></span>
-            </div>
+                    <!-- İçerik ve Medya -->
+                    <div class="mb-4">
+                        <h6 class="text-primary border-bottom pb-2">
+                            <i class="mdi mdi-file-document-outline me-1"></i> İçerik ve Medya
+                        </h6>
 
-            <div class="form-group">
-                <label asp-for="Link" class="control-label"></label>
-                <input asp-for="Link" class="form-control" />
-                <span asp-validation-for="Link" class="text-danger"></span>
-            </div>
+                        <div class="mb-3">
+                            <label asp-for="CreateHaber.IcerikMetni" class="form-label">
+                                İçerik Metni <span class="text-danger">*</span>
+                            </label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="mdi mdi-text-box-outline"></i></span>
+                                <textarea asp-for="CreateHaber.IcerikMetni" class="form-control" rows="5" placeholder="Haber içeriğini giriniz..."></textarea>
+                            </div>
+                            <span asp-validation-for="CreateHaber.IcerikMetni" class="text-danger small"></span>
+                        </div>
 
-            <div class="form-group">
-                <label asp-for="ResimUrl" class="control-label"></label>
-                <input asp-for="ResimUrl" class="form-control" />
-                <span asp-validation-for="ResimUrl" class="text-danger"></span>
-            </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label asp-for="CreateHaber.Link" class="form-label">
+                                        Link
+                                    </label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="mdi mdi-link"></i></span>
+                                        <input asp-for="CreateHaber.Link" class="form-control" placeholder="https://..." />
+                                    </div>
+                                    <span asp-validation-for="CreateHaber.Link" class="text-danger small"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label asp-for="CreateHaber.ResimUrl" class="form-label">
+                                        Resim URL
+                                    </label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="mdi mdi-image-outline"></i></span>
+                                        <input asp-for="CreateHaber.ResimUrl" class="form-control" placeholder="https://example.com/image.jpg" />
+                                    </div>
+                                    <span asp-validation-for="CreateHaber.ResimUrl" class="text-danger small"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
+                    <!-- Tarih Bilgileri -->
+                    <div class="mb-4">
+                        <h6 class="text-primary border-bottom pb-2">
+                            <i class="mdi mdi-calendar-outline me-1"></i> Tarih Bilgileri
+                        </h6>
 
-            <div class="form-group">
-                <label asp-for="YayimTarihi" class="control-label"></label>
-                <input asp-for="YayimTarihi" class="form-control" />
-                <span asp-validation-for="YayimTarihi" class="text-danger"></span>
-            </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label asp-for="CreateHaber.YayimTarihi" class="form-label">
+                                        Yayım Tarihi <span class="text-danger">*</span>
+                                    </label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="mdi mdi-calendar-check"></i></span>
+                                        <input asp-for="CreateHaber.YayimTarihi" type="datetime-local" class="form-control" />
+                                    </div>
+                                    <span asp-validation-for="CreateHaber.YayimTarihi" class="text-danger small"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label asp-for="CreateHaber.BaslamaTarihi" class="form-label">
+                                        Başlama Tarihi
+                                    </label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="mdi mdi-calendar-start"></i></span>
+                                        <input asp-for="CreateHaber.BaslamaTarihi" type="datetime-local" class="form-control" />
+                                    </div>
+                                    <span asp-validation-for="CreateHaber.BaslamaTarihi" class="text-danger small"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label asp-for="CreateHaber.BitisTarihi" class="form-label">
+                                        Bitiş Tarihi
+                                    </label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="mdi mdi-calendar-end"></i></span>
+                                        <input asp-for="CreateHaber.BitisTarihi" type="datetime-local" class="form-control" />
+                                    </div>
+                                    <span asp-validation-for="CreateHaber.BitisTarihi" class="text-danger small"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
-          
+                    <!-- SEO Ayarları -->
+                    <div class="mb-4">
+                        <h6 class="text-primary border-bottom pb-2">
+                            <i class="mdi mdi-search-web me-1"></i> SEO Ayarları
+                        </h6>
 
-            <div class="form-group">
-                <label asp-for="BaslamaTarihi" class="control-label"></label>
-                <input asp-for="BaslamaTarihi" class="form-control" />
-                <span asp-validation-for="BaslamaTarihi" class="text-danger"></span>
-            </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label asp-for="CreateHaber.SeoUrl" class="form-label">
+                                        SEO URL
+                                    </label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="mdi mdi-link-variant"></i></span>
+                                        <input asp-for="CreateHaber.SeoUrl" class="form-control" placeholder="haber-basligi" />
+                                    </div>
+                                    <span asp-validation-for="CreateHaber.SeoUrl" class="text-danger small"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label asp-for="CreateHaber.SeoTitle" class="form-label">
+                                        SEO Title
+                                    </label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="mdi mdi-format-text"></i></span>
+                                        <input asp-for="CreateHaber.SeoTitle" class="form-control" placeholder="SEO başlığı" />
+                                    </div>
+                                    <span asp-validation-for="CreateHaber.SeoTitle" class="text-danger small"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label asp-for="CreateHaber.SeoDescription" class="form-label">
+                                        SEO Description
+                                    </label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="mdi mdi-text-box-search-outline"></i></span>
+                                        <input asp-for="CreateHaber.SeoDescription" class="form-control" placeholder="SEO açıklaması" />
+                                    </div>
+                                    <span asp-validation-for="CreateHaber.SeoDescription" class="text-danger small"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
-            <div class="form-group">
-                <label asp-for="BitisTarihi" class="control-label"></label>
-                <input asp-for="BitisTarihi" class="form-control" />
-                <span asp-validation-for="BitisTarihi" class="text-danger"></span>
+                    <!-- Form Actions -->
+                    <div class="d-flex justify-content-between align-items-center pt-3 border-top">
+                        <a asp-action="Index" class="btn btn-outline-secondary">
+                            <i class="mdi mdi-arrow-left me-1"></i> Listeye Dön
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="mdi mdi-content-save me-1"></i> Kaydet
+                        </button>
+                    </div>
+                </form>
             </div>
-
-            <div class="form-group">
-                <label asp-for="SeoUrl" class="control-label"></label>
-                <input asp-for="SeoUrl" class="form-control" />
-                <span asp-validation-for="SeoUrl" class="text-danger"></span>
-            </div>
-
-            <div class="form-group">
-                <label asp-for="SeoTitle" class="control-label"></label>
-                <input asp-for="SeoTitle" class="form-control" />
-                <span asp-validation-for="SeoTitle" class="text-danger"></span>
-            </div>
-
-            <div class="form-group">
-                <label asp-for="SeoDescription" class="control-label"></label>
-                <input asp-for="SeoDescription" class="form-control" />
-                <span asp-validation-for="SeoDescription" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-        </form>
+        </div>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+        $(document).ready(function () {
+            var validationSummary = $('#validationSummary');
+            if (validationSummary.find('li').length > 0 || validationSummary.find('span').length > 0) {
+                validationSummary.removeClass('d-none');
+            }
+        });
+    </script>
+}

@@ -168,7 +168,7 @@
 
             if (document.getElementById("datatable-site")) {
                 a = $("#datatable-site").DataTable({
-                    dom: '<"row"<"col-sm-12 col-md-6"B><"col-sm-12 col-md-6"l>>' +
+                    dom: '<"row"<"col-sm-12 col-md-6"B><"col-sm-12 col-md-6"f>>' +
                          '<"row"<"col-sm-12"tr>>' +
                          '<"row"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>',
                     fixedHeader: true,
@@ -187,7 +187,7 @@
                         { extend: 'colvis', text: '<i class="fas fa-columns"></i> Sütunlar', className: 'btn btn-sm btn-secondary' },
                         { extend: 'pageLength', className: 'btn btn-sm btn-danger' }
                     ],
-                    lengthMenu: [[2, 25, 50, -1], ['2 adet', '25 adet', '50 adet', 'Hepsi']],
+                    lengthMenu: [[10, 25, 50, -1], ['10 adet', '25 adet', '50 adet', 'Hepsi']],
                     language: {
                         url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/tr.json',
                         paginate: {

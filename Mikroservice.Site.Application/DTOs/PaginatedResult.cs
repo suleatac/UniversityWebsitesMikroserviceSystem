@@ -1,6 +1,6 @@
-﻿namespace Mikroservice.Site.Application.DTOs.SiteDtos
+﻿namespace Mikroservice.Site.Application.DTOs
 {
-    public class SitePaginatedResult<T>
+    public class PaginatedResult<T>
     {
         public List<T> Data { get; set; } = new();
         public int TotalCount { get; set; }

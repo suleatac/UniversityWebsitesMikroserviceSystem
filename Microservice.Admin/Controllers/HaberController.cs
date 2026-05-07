@@ -1,4 +1,5 @@
-﻿using Microservice.Admin.Services.Interfaces;
+﻿using Microservice.Admin.Services;
+using Microservice.Admin.Services.Interfaces;
 using Microservice.Admin.ViewModels.Haber;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -9,11 +10,22 @@ namespace Microservice.Admin.Controllers
     public class HaberController : Controller
     {
         private readonly IHaberService _haberService;
+        private readonly ISiteService _siteService;
+        private readonly IDilService _dilService;
+        private readonly IHedefService _hedefService;
         private readonly ILogger<HaberController> _logger;
 
-        public HaberController(IHaberService haberService, ILogger<HaberController> logger)
+        public HaberController(
+            IHaberService haberService,
+            ISiteService siteService,
+            IDilService dilService,
+            IHedefService hedefService,
+            ILogger<HaberController> logger)
         {
             _haberService = haberService;
+            _siteService = siteService;
+            _dilService = dilService;
+            _hedefService = hedefService;
             _logger = logger;
         }
 
@@ -37,6 +49,45 @@ namespace Microservice.Admin.Controllers
             return View(result.Data);
         }
 
+        // 🔹 PAGINATED LIST
+        [HttpGet]
+        public async Task<IActionResult> GetHabersForPagination
+            (
+               int siteId,
+               int dilId,
+               int page = 1,
+               int pageSize = 2,
+               string search = "",
+               int orderColumn = 0,
+               string orderDir = "desc"
+            )
+        {
+            // Sütun indeksini isimlere çevir
+            var columnName = orderColumn switch {
+                1 => "Baslik",
+                2 => "KisaAciklama",
+                3 => "YayimTarihi",
+                _ => "Id"
+            };
+
+            var result = await _haberService.GetHabersPaginatedAsync(siteId, dilId, page, pageSize, search, columnName, orderDir);
+
+            if (!result.IsSuccess)
+            {
+                _logger.LogError("Paginated haber listesi alınamadı. Hata: {Error}", result.Fail?.Detail);
+                return BadRequest(new { error = result.Fail?.Detail });
+            }
+
+            return Ok(new {
+                data = result.Data!.Data,
+                recordsTotal = result.Data.TotalCount,
+                recordsFiltered = result.Data.TotalCount
+            });
+        }
+
+
+
+
         // 🔹 DETAIL - GET
         [HttpGet]
         public async Task<IActionResult> Details(int id)
@@ -58,37 +109,70 @@ namespace Microservice.Admin.Controllers
 
         // 🔹 CREATE - GET
         [HttpGet]
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
             _logger.LogInformation("Haber oluşturma sayfası açıldı.");
-            return View();
+
+            var siteler = await _siteService.GetSitesAsync();
+            var diller = await _dilService.GetDilsAsync();
+            var hedefler = await _hedefService.GetHedefsAsync();
+
+            var viewModel = new HaberCreateIndexVm
+            {
+                CreateHaber = new CreateHaberVm(),
+                Siteler = siteler.Data ?? new List<ViewModels.Site.SiteGetVm>(),
+                Diller = diller.Data ?? new List<ViewModels.Dil.GetDilVm>(),
+                Hedefler = hedefler.Data ?? new List<ViewModels.Hedef.GetHedefVm>()
+            };
+
+            return View(viewModel);
         }
 
         // 🔹 CREATE - POST
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(CreateHaberVm model)
+        public async Task<IActionResult> Create(HaberCreateIndexVm model)
         {
             if (!ModelState.IsValid)
             {
                 _logger.LogWarning("Create Haber - ModelState geçersiz.");
+
+                // Dropdown'ları yeniden yükle
+                var siteler = await _siteService.GetSitesAsync();
+                var diller = await _dilService.GetDilsAsync();
+                var hedefler = await _hedefService.GetHedefsAsync();
+
+                model.Siteler = siteler.Data ?? new List<ViewModels.Site.SiteGetVm>();
+                model.Diller = diller.Data ?? new List<ViewModels.Dil.GetDilVm>();
+                model.Hedefler = hedefler.Data ?? new List<ViewModels.Hedef.GetHedefVm>();
+
                 return View(model);
             }
 
-            var result = await _haberService.CreateHaberAsync(model);
+            var result = await _haberService.CreateHaberAsync(model.CreateHaber);
 
             if (!result.IsSuccess)
             {
                 _logger.LogError("Haber oluşturulamadı. Hata: {Error}", result.Fail?.Detail);
 
                 ModelState.AddModelError("", result.Fail?.Detail ?? result.Fail?.Title ?? "Haber oluşturulamadı.");
+
+                // Dropdown'ları yeniden yükle
+                var siteler = await _siteService.GetSitesAsync();
+                var diller = await _dilService.GetDilsAsync();
+                var hedefler = await _hedefService.GetHedefsAsync();
+
+                model.Siteler = siteler.Data ?? new List<ViewModels.Site.SiteGetVm>();
+                model.Diller = diller.Data ?? new List<ViewModels.Dil.GetDilVm>();
+                model.Hedefler = hedefler.Data ?? new List<ViewModels.Hedef.GetHedefVm>();
+
                 return View(model);
             }
 
-            _logger.LogInformation("Haber oluşturuldu. Başlık: {Title}", model.Baslik);
+            _logger.LogInformation("Haber oluşturuldu. Başlık: {Title}", model.CreateHaber.Baslik);
 
             TempData["Success"] = "Haber başarıyla oluşturuldu.";
-            return RedirectToAction(nameof(Index), new { siteId = model.SiteId, dilId = model.DilId });
+            return RedirectToAction(nameof(Index), new { siteId = model.CreateHaber.SiteId, dilId = model.CreateHaber.DilId });
         }
 
         // 🔹 UPDATE - GET

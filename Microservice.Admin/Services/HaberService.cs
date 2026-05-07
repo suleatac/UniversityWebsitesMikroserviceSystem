@@ -1,7 +1,9 @@
 ﻿using Microservice.Admin.Clients.HaberClients;
 using Microservice.Admin.Services.Interfaces;
 using Microservice.Admin.Services.ServiceResults;
+using Microservice.Admin.ViewModels;
 using Microservice.Admin.ViewModels.Haber;
+using Microservice.Admin.ViewModels.Site;
 using System.Text.Json;
 
 namespace Microservice.Admin.Services
@@ -45,6 +47,44 @@ namespace Microservice.Admin.Services
             _logger.LogInformation("Haber listesi alındı. Count: {Count}", response.Content?.Count);
             return ServiceResult<List<GetHaberVm>>.Success(response.Content!);
         }
+
+
+
+        //Haber paginated list
+        public async Task<ServiceResult<PaginatedResult<GetHaberVm>>> GetHabersPaginatedAsync
+            (
+               int siteId, 
+               int dilId,
+               int page, 
+               int pageSize, 
+               string? search, 
+               string? orderBy, 
+               string? orderDir
+            )
+        {
+            _logger.LogInformation("API'den paginated haber listesi çekiliyor. Page: {Page}, PageSize: {PageSize}", page, pageSize);
+
+            var response = await _haberClient.GetHabersPaginatedAsync(siteId, dilId, page, pageSize, search, orderBy, orderDir);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var problemDetails = response.Error != null
+                    ? JsonSerializer.Deserialize<Microsoft.AspNetCore.Mvc.ProblemDetails>(response.Error.Content!)
+                    : null;
+
+                _logger.LogError("API Error -> StatusCode: {StatusCode}, Title: {Title}",
+                    response.StatusCode, problemDetails?.Title);
+
+                return ServiceResult<PaginatedResult<GetHaberVm>>.Error(
+                    problemDetails?.Detail ?? problemDetails?.Title ?? "Paginated haber listesi alınamadı");
+            }
+
+            _logger.LogInformation("Paginated haber listesi başarıyla alındı. TotalCount: {TotalCount}",
+                response.Content?.TotalCount);
+
+            return ServiceResult<PaginatedResult<GetHaberVm>>.Success(response.Content!);
+        }
+
 
         // GET BY ID
         public async Task<ServiceResult<HaberDetailVm>> GetHaberByIdAsync(int id)

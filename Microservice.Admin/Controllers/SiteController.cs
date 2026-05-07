@@ -35,27 +35,14 @@ namespace Microservice.Admin.Controllers
         // LIST
         public async Task<IActionResult> Index()
         {
-            _logger.LogInformation("Site listesi getiriliyor.");
-
-            var result = await _siteService.GetSitesAsync();
-
-            if (!result.IsSuccess)
-            {
-                _logger.LogError("Site listesi alınamadı. Hata: {Error}", result.Fail?.Detail);
-
-                TempData["Error"] = result.Fail?.Detail ?? result.Fail?.Title;
-                return View("Error");
-            }
-
-            _logger.LogInformation("Site listesi başarıyla getirildi. Count: {Count}", result.Data!.Count);
-            return View(result.Data);
+            return View();
         }
 
         [HttpGet]
         public async Task<IActionResult> GetSitesForPagination
             (
                int page = 1,
-               int pageSize = 10,
+               int pageSize = 2,
                string search = "",
                int orderColumn = 0,
                string orderDir = "desc"
@@ -138,39 +125,63 @@ namespace Microservice.Admin.Controllers
         {
             _logger.LogInformation("Site düzenleme sayfası açılıyor. Id: {Id}", id);
 
-            var result = await _siteService.GetSiteByIdAsync(id);
+            var siteResult = await _siteService.GetSiteByIdAsync(id);
 
-            if (!result.IsSuccess)
+            if (!siteResult.IsSuccess)
             {
                 _logger.LogError("Site bulunamadı. Id: {Id}", id);
                 return NotFound();
             }
 
-            return View(result.Data);
+            // Load dropdowns
+            var birimler = await _birimService.GetBirimsAsync();
+            var templates = await _templateService.GetTemplatesAsync();
+
+            var viewModel = new SiteEditVm {
+                Site = siteResult.Data!,
+                Birimler = birimler.Data!,
+                Templates = templates.Data!
+            };
+
+            return View(viewModel);
         }
 
         // UPDATE - POST
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(SiteDetailGetVm model)
+        public async Task<IActionResult> Edit(SiteEditVm model)
         {
+            // Dropdown'ları her durumda yükle (hata durumunda view'a geri göndermek için)
+            model.Birimler = (await _birimService.GetBirimsAsync()).Data!;
+            model.Templates = (await _templateService.GetTemplatesAsync()).Data!;
+
             if (!ModelState.IsValid)
             {
-                _logger.LogWarning("Update Site - ModelState geçersiz. Id: {Id}", model.Id);
+                _logger.LogWarning("Update Site - ModelState geçersiz. Id: {Id}", model.Site.Id);
                 return View(model);
             }
 
-            var result = await _siteService.UpdateSiteAsync(model);
+            // Password boş geldiyse, mevcut şifreyi koru
+            //if (string.IsNullOrWhiteSpace(model.Site.SiteEPostaSifre))
+            //{
+            //    var existingSite = await _siteService.GetSiteByIdAsync(model.Site.Id);
+            //    if (existingSite.IsSuccess)
+            //    {
+            //        model.Site.SiteEPostaSifre = existingSite.Data!.SiteEPostaSifre;
+            //    }
+            //}
+
+            var result = await _siteService.UpdateSiteAsync(model.Site);
 
             if (!result.IsSuccess)
             {
-                _logger.LogError("Site güncellenemedi. Id: {Id}, Hata: {Error}", model.Id, result.Fail?.Detail);
+                _logger.LogError("Site güncellenemedi. Id: {Id}, Hata: {Error}", model.Site.Id, result.Fail?.Title);
 
                 ModelState.AddModelError("", result.Fail?.Detail ?? result.Fail?.Title ?? "Güncelleme hatası");
                 return View(model);
             }
 
-            _logger.LogInformation("Site güncellendi. Id: {Id}", model.Id);
+            _logger.LogInformation("Site güncellendi. Id: {Id}", model.Site.Id);
             return RedirectToAction(nameof(Index));
         }
         [HttpGet]

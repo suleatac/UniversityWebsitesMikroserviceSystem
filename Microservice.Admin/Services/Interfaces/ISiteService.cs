@@ -1,4 +1,5 @@
 ﻿using Microservice.Admin.Services.ServiceResults;
+using Microservice.Admin.ViewModels;
 using Microservice.Admin.ViewModels.Site;
 
 namespace Microservice.Admin.Services.Interfaces

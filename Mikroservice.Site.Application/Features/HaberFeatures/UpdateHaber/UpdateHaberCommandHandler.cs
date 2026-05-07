@@ -1,7 +1,6 @@
-﻿using MassTransit;
-using MediatR;
+﻿using MediatR;
 using Microservice.Shared;
-using Microservice.Shared.Services.RabbitMqMasstransitServiceItems.Events.HaberEvents;
+using Microservice.Shared.Services.RedisServiceItems;
 using Microservice.Site.Application.Contracts.IRepositories;
 
 namespace Mikroservice.Site.Application.Features.HaberFeatures.UpdateHaber
@@ -9,7 +8,7 @@ namespace Mikroservice.Site.Application.Features.HaberFeatures.UpdateHaber
     public class UpdateHaberCommandHandler(
           IHaberRepository haberRepository,
           IUnitOfWork unitOfWork,
-          IPublishEndpoint publishEndpoint
+          IRedisCacheService redisCache
         )
         : IRequestHandler<UpdateHaberCommand, ServiceResult>
     {
@@ -38,8 +37,10 @@ namespace Mikroservice.Site.Application.Features.HaberFeatures.UpdateHaber
             await unitOfWork.SaveChangesAsync(cancellationToken);
 
             //Cache temizleme işlemini yapabilsin diye bu event eklendi.
-            await publishEndpoint.Publish(new HaberUpdatedEvent(haber.SiteId, haber.DilId), cancellationToken);
-
+            var cacheKey = $"haber:list:{haber.SiteId}:{haber.DilId}:*";
+            await redisCache.RemoveByPatternAsync(
+                cacheKey,
+                cancellationToken);
 
             return ServiceResult.SuccessAsNoContent();
         }

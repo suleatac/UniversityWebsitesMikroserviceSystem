@@ -7,24 +7,25 @@ using Microservice.Site.Application.Contracts.IRepositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Mikroservice.Site.Application.DTOs;
-using Mikroservice.Site.Application.DTOs.SiteDtos;
+using Mikroservice.Site.Application.DTOs.HaberDtos;
 
-namespace Mikroservice.Site.Application.Features.SiteFeatures.GetPaginatedSite
+namespace Mikroservice.Site.Application.Features.HaberFeatures.GetPaginatedHaber
 {
-    public class GetPaginatedSiteQueryHandler(
-        ISiteRepository siteRepository,
+    public class GetPaginatedHaberQueryHandler(
+        IHaberRepository haberRepository,
         IRedisCacheService redis,
-        ILogger<GetPaginatedSiteQueryHandler> logger,
+        ILogger<GetPaginatedHaberQueryHandler> logger,
         IMapper mapper
-    ) : IRequestHandler<GetPaginatedSiteQuery, ServiceResult<PaginatedResult<SiteDto>>>
+    ) : IRequestHandler<GetPaginatedHaberQuery, ServiceResult<PaginatedResult<HaberDto>>>
     {
-        public async Task<ServiceResult<PaginatedResult<SiteDto>>> Handle(
-            GetPaginatedSiteQuery request,
+        public async Task<ServiceResult<PaginatedResult<HaberDto>>> Handle(
+            GetPaginatedHaberQuery request,
             CancellationToken cancellationToken)
         {
             // Query-specific cache key
             var cacheKey =
-                $"site:list:" +
+                $"haber:list:" +
+                $"{request.SiteId}:{request.DilId}:" +
                 $"p:{request.Page}:" +
                 $"ps:{request.PageSize}:" +
                 $"s:{request.Search}:" +
@@ -33,19 +34,20 @@ namespace Mikroservice.Site.Application.Features.SiteFeatures.GetPaginatedSite
 
             // Cache kontrolü
             var cachedResult =
-                await redis.GetAsync<PaginatedResult<SiteDto>>(cacheKey, cancellationToken);
+                await redis.GetAsync<PaginatedResult<HaberDto>>(cacheKey, cancellationToken);
 
             if (cachedResult is not null)
             {
-                logger.LogInformation("Site listesi cache'den getirildi");
+                logger.LogInformation("Haber listesi cache'den getirildi");
 
-                return ServiceResult<PaginatedResult<SiteDto>>
+                return ServiceResult<PaginatedResult<HaberDto>>
                     .SuccessAsOK(cachedResult);
             }
 
-            // Base query
-            IQueryable<Domain.Entities.Site> query = siteRepository
-                .GetAll();
+            // Base query - silinmemiş kayıtları getir
+            IQueryable<Domain.Entities.Haber> query = haberRepository
+                .GetAll()
+                .Where(x => !x.IsDeleted);
 
             // Search
             if (!string.IsNullOrWhiteSpace(request.Search))
@@ -53,30 +55,36 @@ namespace Mikroservice.Site.Application.Features.SiteFeatures.GetPaginatedSite
                 var search = request.Search.Trim().ToLower();
 
                 query = query.Where(x =>
-                    x.SiteAdi.ToLower().Contains(search) ||
-                    x.SiteUrl.ToLower().Contains(search) ||
-                    x.SiteEPosta.ToLower().Contains(search));
+                    x.Baslik.ToLower().Contains(search) ||
+                    x.KisaAciklama.ToLower().Contains(search) ||
+                    x.IcerikMetni.ToLower().Contains(search));
             }
 
             // Ordering
             query = (request.OrderBy?.ToLower(), request.OrderDir?.ToLower()) switch {
-                ("siteadi", "asc") =>
-                    query.OrderBy(x => x.SiteAdi),
+                ("baslik", "asc") =>
+                    query.OrderBy(x => x.Baslik),
 
-                ("siteadi", "desc") =>
-                    query.OrderByDescending(x => x.SiteAdi),
+                ("baslik", "desc") =>
+                    query.OrderByDescending(x => x.Baslik),
 
-                ("siteurl", "asc") =>
-                    query.OrderBy(x => x.SiteUrl),
+                ("yayimtarihi", "asc") =>
+                    query.OrderBy(x => x.YayimTarihi),
 
-                ("siteurl", "desc") =>
-                    query.OrderByDescending(x => x.SiteUrl),
+                ("yayimtarihi", "desc") =>
+                    query.OrderByDescending(x => x.YayimTarihi),
 
-                ("siteeposta", "asc") =>
-                    query.OrderBy(x => x.SiteEPosta),
+                ("baslamatarihi", "asc") =>
+                    query.OrderBy(x => x.BaslamaTarihi),
 
-                ("siteeposta", "desc") =>
-                    query.OrderByDescending(x => x.SiteEPosta),
+                ("baslamatarihi", "desc") =>
+                    query.OrderByDescending(x => x.BaslamaTarihi),
+
+                ("bitistarihi", "asc") =>
+                    query.OrderBy(x => x.BitisTarihi),
+
+                ("bitistarihi", "desc") =>
+                    query.OrderByDescending(x => x.BitisTarihi),
 
                 _ =>
                     query.OrderByDescending(x => x.Id)
@@ -95,11 +103,11 @@ namespace Mikroservice.Site.Application.Features.SiteFeatures.GetPaginatedSite
 
             // DTO projection
             var data = await query
-                .ProjectTo<SiteDto>(mapper.ConfigurationProvider)
+                .ProjectTo<HaberDto>(mapper.ConfigurationProvider)
                 .ToListAsync(cancellationToken);
 
             // Result
-            var result = new PaginatedResult<SiteDto> {
+            var result = new PaginatedResult<HaberDto> {
                 Data = data,
                 TotalCount = totalCount,
                 Page = request.Page,
@@ -114,11 +122,11 @@ namespace Mikroservice.Site.Application.Features.SiteFeatures.GetPaginatedSite
                 cancellationToken);
 
             logger.LogInformation(
-                "Site listesi DB'den getirildi. TotalCount: {TotalCount}, Page: {Page}",
+                "Haber listesi DB'den getirildi. TotalCount: {TotalCount}, Page: {Page}",
                 totalCount,
                 request.Page);
 
-            return ServiceResult<PaginatedResult<SiteDto>>
+            return ServiceResult<PaginatedResult<HaberDto>>
                 .SuccessAsOK(result);
         }
     }

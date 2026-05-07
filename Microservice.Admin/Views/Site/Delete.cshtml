@@ -1,51 +1,107 @@
 @model Microservice.Admin.ViewModels.Site.SiteDetailGetVm
 
 @{
-    ViewData["Title"] = "Delete";
+    ViewBag.pTitle = "Ana Sayfa";
+    ViewBag.Title = "Site Sil";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Delete</h1>
+<div class="row justify-content-center">
+    <div class="col-xxl-8">
+        <div class="card shadow-lg border-0">
+            <!-- Kırmızı uyarı başlığı -->
+            <div class="card-header bg-danger bg-opacity-10 border-bottom">
+                <div class="d-flex align-items-center">
+                    <div class="avatar-sm me-3">
+                        <div class="avatar-title bg-danger rounded-circle">
+                            <i class="mdi mdi-delete fs-5"></i>
+                        </div>
+                    </div>
+                    <div>
+                        <h5 class="card-title mb-1">Site Silme Onayı</h5>
+                        <p class="card-text text-muted mb-0">Bu işlem geri alınamaz!</p>
+                    </div>
+                </div>
+            </div>
 
-<h3>Are you sure you want to delete this?</h3>
-<div>
-    <h4>Microservice.Admin.ViewModels.Site.SiteGetVm</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.SiteAdi)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.SiteAdi)
-        </dd>
-    </dl>
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.SiteUrl)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.SiteUrl)
-        </dd>
-    </dl>
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.SiteEPosta)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.SiteEPosta)
-        </dd>
-    </dl>
-    <form asp-action="DeleteConfirmed" method="post">
-        @Html.AntiForgeryToken()
+            <div class="card-body p-4">
+                <!-- Uyarı mesajı -->
+                <div class="alert alert-danger d-flex align-items-center" role="alert">
+                    <i class="mdi mdi-alert-circle fs-4 me-2"></i>
+                    <div>
+                        <strong>Dikkat!</strong> "<strong>@Model.SiteAdi</strong>" sitesini silmek üzeresiniz.
+                        Bu işlem geri alınamaz ve tüm veriler kalıcı olarak silinecektir.
+                    </div>
+                </div>
 
-        <input type="hidden" asp-for="Id" />
+                <!-- Site Bilgileri (Sadece Okunabilir) -->
+                <h6 class="text-primary border-bottom pb-2 mb-3">
+                    <i class="mdi mdi-information-outline me-1"></i> Site Bilgileri
+                </h6>
 
-        <button type="submit" class="btn btn-danger">
-            Delete
-        </button>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label text-muted small">Site Adı</label>
+                            <div class="form-control-plaintext fw-semibold">@Model.SiteAdi</div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label text-muted small">Site Adı (İngilizce)</label>
+                            <div class="form-control-plaintext fw-semibold">@Model.SiteAdiEng</div>
+                        </div>
+                    </div>
+                </div>
 
-        <a asp-action="Index" class="btn btn-secondary">
-            Cancel
-        </a>
-    </form>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label text-muted small">Site URL</label>
+                            <div class="form-control-plaintext fw-semibold">
+                                <a href="@Model.SiteUrl" target="_blank" class="text-decoration-none">
+                                    @Model.SiteUrl <i class="mdi mdi-open-in-new small"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label text-muted small">Site Alan Adı</label>
+                            <div class="form-control-plaintext fw-semibold">@Model.SiteAlanAdi</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label text-muted small">E-Posta Adresi</label>
+                            <div class="form-control-plaintext fw-semibold">@Model.SiteEPosta</div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label text-muted small">SMTP Host</label>
+                            <div class="form-control-plaintext fw-semibold">@Model.SiteEPostaHost</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Form Actions -->
+                <div class="d-flex justify-content-between align-items-center pt-3 border-top">
+                    <a asp-action="Index" class="btn btn-outline-secondary">
+                        <i class="mdi mdi-arrow-left me-1"></i> İptal
+                    </a>
+                    <form asp-action="DeleteConfirmed" method="post" class="d-inline">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" asp-for="Id" />
+                        <button type="submit" class="btn btn-danger">
+                            <i class="mdi mdi-delete me-1"></i> Evet, Sil
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

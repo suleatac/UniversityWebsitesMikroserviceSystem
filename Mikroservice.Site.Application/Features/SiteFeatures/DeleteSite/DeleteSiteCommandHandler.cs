@@ -22,9 +22,10 @@ namespace Mikroservice.Site.Application.Features.SiteFeatures.DeleteSite
 
             await unitOfWork.SaveChangesAsync(cancellationToken);
 
-            await redisCache.RemoveByPatternAsync("site:paginated:*", cancellationToken);
-            await redisCache.RemoveAsync("site:list", cancellationToken);
-
+            // Cache invalidation
+            await redisCache.RemoveByPatternAsync(
+                "site:list:*",
+                cancellationToken);
             return ServiceResult.SuccessAsNoContent();
         }
     }

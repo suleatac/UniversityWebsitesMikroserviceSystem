@@ -1,4 +1,5 @@
-﻿using Microservice.Admin.ViewModels.Site;
+﻿using Microservice.Admin.ViewModels;
+using Microservice.Admin.ViewModels.Site;
 using Microsoft.AspNetCore.Mvc;
 using Refit;
 

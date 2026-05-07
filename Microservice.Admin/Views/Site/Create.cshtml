@@ -24,8 +24,9 @@
 
             <div class="card-body p-4">
                 <form asp-action="Create" class="needs-validation" novalidate>
-                    <div asp-validation-summary="ModelOnly" class="alert alert-danger d-none" role="alert">
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger d-none" role="alert" id="validationSummary">
                         <i class="mdi mdi-block-helper me-2"></i>
+                        <ul></ul>
                     </div>
 
                     <!-- Temel Bilgiler -->
@@ -151,11 +152,15 @@
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label asp-for="CreateSite.SiteEPostaSifre" class="form-label">
-                                        E-Posta Şifresi
+                                        E-Posta Şifresi 
                                     </label>
                                     <div class="input-group">
                                         <span class="input-group-text"><i class="mdi mdi-lock"></i></span>
-                                        <input asp-for="CreateSite.SiteEPostaSifre" type="password" class="form-control" placeholder="••••••••" />
+                                        <input asp-for="CreateSite.SiteEPostaSifre" class="form-control"
+                                               placeholder="Şifre giriniz" id="passwordInput" />
+                                        <span class="input-group-text" id="togglePassword" style="cursor: pointer;">
+                                            <i class="mdi mdi-eye-off" id="toggleIcon"></i>
+                                        </span>
                                     </div>
                                     <span asp-validation-for="CreateSite.SiteEPostaSifre" class="text-danger small"></span>
                                 </div>
@@ -212,10 +217,37 @@
     <script>
         // Validation summary gösterimi
         $(document).ready(function () {
-            var validationSummary = $('div[asp-validation-summary="ModelOnly"]');
-            if (validationSummary.find('li').length > 0) {
+
+
+            var validationSummary = $('#validationSummary');
+            if (validationSummary.find('li').length > 0 || validationSummary.find('span').length > 0) {
                 validationSummary.removeClass('d-none');
             }
+
+
+            // Password toggle
+            document.getElementById('togglePassword').addEventListener('click', function () {
+                var passwordInput = document.getElementById('passwordInput');
+                var toggleIcon = document.getElementById('toggleIcon');
+
+                if (passwordInput.type === 'password') {
+                    passwordInput.type = 'text';
+                    toggleIcon.classList.remove('mdi-eye-off');
+                    toggleIcon.classList.add('mdi-eye');
+                } else {
+                    passwordInput.type = 'password';
+                    toggleIcon.classList.remove('mdi-eye');
+                    toggleIcon.classList.add('mdi-eye-off');
+                }
+            });
+
+
+
+
+
+
+
+
         });
     </script>
 }

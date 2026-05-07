@@ -1,4 +1,4 @@
-﻿namespace Microservice.Admin.ViewModels.Site
+﻿namespace Microservice.Admin.ViewModels
 {
     public class PaginatedResult<T>
     {

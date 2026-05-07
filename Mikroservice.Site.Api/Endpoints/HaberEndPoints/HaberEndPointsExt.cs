@@ -22,6 +22,7 @@ namespace Mikroservice.Site.Api.Endpoints.HaberEndPoints
             group.DeleteHaberEndpointGroupItem();
             group.GetHaberlerEndpointGroupItem();
             group.GetHaberByIdEndpointGroupItem();
+            group.GetPaginatedHaberEndpointGroupItem();
             group.RequireAuthorization("Password");
         }
     }
