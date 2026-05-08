@@ -1,0 +1,81 @@
+﻿@model Microservice.Admin.ViewModels.YonetimDuyuru.YonetimDuyuruVm
+
+@{
+    ViewBag.pTitle = "Ana Sayfa";
+    ViewBag.Title = "Duyuru Sil";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row justify-content-center">
+    <div class="col-xxl-8">
+        <div class="card shadow-lg border-0">
+            <!-- Kırmızı uyarı başlığı -->
+            <div class="card-header bg-danger bg-opacity-10 border-bottom">
+                <div class="d-flex align-items-center">
+                    <div class="avatar-sm me-3">
+                        <div class="avatar-title bg-danger rounded-circle">
+                            <i class="mdi mdi-delete fs-5"></i>
+                        </div>
+                    </div>
+                    <div>
+                        <h5 class="card-title mb-1">Duyuru Silme Onayı</h5>
+                        <p class="card-text text-muted mb-0">Bu işlem geri alınamaz!</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-body p-4">
+                <!-- Uyarı mesajı -->
+                <div class="alert alert-danger d-flex align-items-center" role="alert">
+                    <i class="mdi mdi-alert-circle fs-4 me-2"></i>
+                    <div>
+                        <strong>Dikkat!</strong> "<strong>@Model.Baslik</strong>" başlıklı duyuruyu silmek üzeresiniz.
+                        Bu işlem geri alınamaz ve tüm veriler kalıcı olarak silinecektir.
+                    </div>
+                </div>
+
+                <!-- Duyuru Bilgileri (Sadece Okunabilir) -->
+                <h6 class="text-warning border-bottom pb-2 mb-3">
+                    <i class="mdi mdi-information-outline me-1"></i> Duyuru Bilgileri
+                </h6>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label text-muted small">Başlık</label>
+                            <div class="form-control-plaintext fw-semibold">@Model.Baslik</div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label text-muted small">Oluşturan</label>
+                            <div class="form-control-plaintext fw-semibold">@Model.Olusturan</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label text-muted small">İçerik</label>
+                    <div class="form-control-plaintext">@Model.Icerik</div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label text-muted small">Oluşturulma Tarihi</label>
+                    <div class="form-control-plaintext">@Model.OlusturulmaTarihi.ToString("dd.MM.yyyy HH:mm")</div>
+                </div>
+
+                <!-- Form Actions -->
+                <div class="d-flex justify-content-between align-items-center pt-3 border-top">
+                    <a asp-action="Index" class="btn btn-outline-secondary">
+                        <i class="mdi mdi-arrow-left me-1"></i> İptal
+                    </a>
+                    <form asp-action="DeleteConfirmed" method="post" class="d-inline">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" asp-for="Id" />
+                        <button type="submit" class="btn btn-danger">
+                            <i class="mdi mdi-delete me-1"></i> Evet, Sil
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,4 +1,5 @@
 ﻿using Microservice.Admin.Clients.YonetimDuyuruClients;
+using Microservice.Admin.Services.Interfaces;
 using Microservice.Admin.Services.ServiceResults;
 using Microservice.Admin.ViewModels;
 using Microservice.Admin.ViewModels.YonetimDuyuru;
@@ -6,7 +7,7 @@ using System.Text.Json;
 
 namespace Microservice.Admin.Services
 {
-    public class YonetimDuyuruService
+    public class YonetimDuyuruService: IYonetimDuyuruService
     {
         private readonly IYonetimDuyuruClientServices _yonetimDuyuruRefitService;
         private readonly ILogger<YonetimDuyuruService> _logger;
@@ -101,9 +102,9 @@ namespace Microservice.Admin.Services
         }
 
         // CREATE
-        public async Task<ServiceResult<object>> CreateYonetimDuyuruAsync(CreateYonetimDuyuruVm dto)
+        public async Task<ServiceResult<object>> CreateYonetimDuyuruAsync(YonetimDuyuruVm dto)
         {
-            _logger.LogInformation("Yeni yonetim duyurusu oluşturuluyor. Name: {Name}", dto.DuyuruBaslik);
+            _logger.LogInformation("Yeni yonetim duyurusu oluşturuluyor. Name: {Name}", dto.Baslik);
 
             var response = await _yonetimDuyuruRefitService.CreateYonetimDuyuruAsync(dto);
 

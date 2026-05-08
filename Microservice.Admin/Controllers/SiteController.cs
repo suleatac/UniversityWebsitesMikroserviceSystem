@@ -2,13 +2,10 @@
 
 namespace Microservice.Admin.Controllers
 {
-    using Microservice.Admin.Clients.SiteClients;
-    using Microservice.Admin.Services;
     using Microservice.Admin.ViewModels.Site;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Logging;
-    using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
     [Authorize]
     public class SiteController : Controller
@@ -32,8 +29,7 @@ namespace Microservice.Admin.Controllers
             _birimService = birimService;
         }
 
-        // LIST
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
             return View();
         }
