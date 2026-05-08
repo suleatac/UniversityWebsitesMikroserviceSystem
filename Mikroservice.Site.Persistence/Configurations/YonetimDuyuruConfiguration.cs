@@ -12,7 +12,7 @@ namespace Microservice.Site.Persistence.Configurations
             builder.Property(o => o.Baslik).HasMaxLength(200).IsRequired();
             builder.Property(o => o.Icerik).IsRequired();
             builder.Property(o => o.EklenmeTarihi).HasColumnType("timestamp without time zone");
-            builder.Property(o => o.Aktif).IsRequired();
+            builder.HasQueryFilter(b => !b.IsDeleted);
         }
     }
 }

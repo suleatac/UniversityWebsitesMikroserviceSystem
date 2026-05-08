@@ -28,9 +28,7 @@ namespace Mikroservice.Site.Application.Features.SiteFeatures.GetSite
                 return ServiceResult<List<SiteDto>>.SuccessAsOK(mappedCached);
             }
 
-            var data = siteRepository.GetAll()
-                .Where(x => !x.IsDeleted)
-                .ToList();
+            var data = siteRepository.GetAll().ToList();
 
       
             var mappedData = mapper.Map<List<SiteDto>>(data);

@@ -6,6 +6,6 @@
 
         public string Ad { get; init; } = default!;
 
-        public int Sira { get; init; }
+        public int Sira { get; set; }
     }
 }

@@ -1,6 +1,10 @@
 ﻿using Microservice.Shared;
+using Mikroservice.Site.Application.Features.YonetimDuyuruFeatures.CreateYonetimDuyuru;
 
 namespace Microservice.Site.Application.Features.YonetimDuyuruFeatures.CreateYonetimDuyuru
 {
-    public record CreateYonetimDuyuruCommand(string Baslik, string Icerik, DateTime EklenmeTarihi, bool Aktif) : IRequestByServiceResult;
+    public record CreateYonetimDuyuruCommand(
+        string Baslik,
+        string Icerik,
+        DateTime EklenmeTarihi) : IRequestByServiceResult<CreateYonetimDuyuruResponse>;
 }

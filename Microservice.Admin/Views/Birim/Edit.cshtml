@@ -1,45 +1,166 @@
-@model Microservice.Admin.ViewModels.Birim.UpdateBirimVm
+@model Microservice.Admin.ViewModels.Birim.BirimEditIndexVm
+@using Microservice.Admin.ViewModels.Birim
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewBag.pTitle = "Birimler";
+    ViewBag.Title = "Birim Düzenle";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Edit</h1>
+@section styles {
+    <link href="~/assets/libs/select2/css/select2.min.css" rel="stylesheet" />
+    <style>
+        .select2-container--default .select2-selection--single {
+            height: calc(1.5em + 0.9rem + 2px) !important;
+            border: 1px solid #ced4da !important;
+            border-radius: 0.3rem !important;
+            padding: 0.45rem 0.9rem !important;
+        }
+        .select2-container--default .select2-selection--single .select2-selection__rendered {
+            line-height: 1.5 !important;
+            padding-left: 0 !important;
+            color: #495057;
+        }
+        .select2-container--default .select2-selection--single .select2-selection__arrow {
+            height: calc(1.5em + 0.9rem + 2px) !important;
+        }
+        .select2-container--default .select2-selection--single .select2-selection__clear {
+            display: none !important;
+        }
+        .select2-container--default.select2-container--focus .select2-selection--single,
+        .select2-container--default.select2-container--open .select2-selection--single {
+            border-color: #80bdff !important;
+            box-shadow: 0 0 0 0.2rem rgba(0,123,255,0.25) !important;
+        }
+        .select2-container--default .select2-results__option--highlighted[aria-selected] {
+            background-color: #556ee6 !important;
+        }
+        .select2-dropdown {
+            border-color: #ced4da !important;
+        }
+    </style>
+}
 
-<h4>GetBirimDetailVm</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="Id" />
-            <div class="form-group">
-                <label asp-for="Ad" class="control-label"></label>
-                <input asp-for="Ad" class="form-control" />
-                <span asp-validation-for="Ad" class="text-danger"></span>
+<div class="row justify-content-center">
+    <div class="col-xxl-8">
+        <div class="card shadow-lg border-0">
+            <div class="card-header bg-primary bg-opacity-10 border-bottom">
+                <div class="d-flex align-items-center">
+                    <div class="avatar-sm me-3">
+                        <div class="avatar-title bg-primary rounded-circle">
+                            <i class="mdi mdi-office-building-edit fs-5"></i>
+                        </div>
+                    </div>
+                    <div>
+                        <h5 class="card-title mb-1">Birim Düzenle</h5>
+                        <p class="card-text text-muted mb-0">Mevcut birimi düzenlemek için formu güncelleyin</p>
+                    </div>
+                </div>
             </div>
-            <div class="form-group">
-                <label asp-for="Sira" class="control-label"></label>
-                <input asp-for="Sira" class="form-control" />
-                <span asp-validation-for="Sira" class="text-danger"></span>
+
+            <div class="card-body p-4">
+                <form asp-action="Edit" class="needs-validation" novalidate>
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger d-none" role="alert" id="validationSummary">
+                        <i class="mdi mdi-block-helper me-2"></i>
+                        <ul></ul>
+                    </div>
+                    <input type="hidden" asp-for="Birim.Id" />
+
+                    <!-- Temel Bilgiler -->
+                    <div class="mb-4">
+                        <h6 class="text-primary border-bottom pb-2">
+                            <i class="mdi mdi-information-outline me-1"></i> Temel Bilgiler
+                        </h6>
+
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="mb-3">
+                                    <label asp-for="Birim.Ad" class="form-label">
+                                        Birim Adı <span class="text-danger">*</span>
+                                    </label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="mdi mdi-label"></i></span>
+                                        <input asp-for="Birim.Ad" class="form-control" placeholder="Örn: Mühendislik Fakültesi" />
+                                    </div>
+                                    <span asp-validation-for="Birim.Ad" class="text-danger small"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <input type="hidden" asp-for="Birim.Sira" />
+                    </div>
+
+                    <!-- Hiyerarşi -->
+                    <div class="mb-4">
+                        <h6 class="text-primary border-bottom pb-2">
+                            <i class="mdi mdi-file-tree-outline me-1"></i> Hiyerarşi
+                        </h6>
+
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="mb-3">
+                                    <label asp-for="Birim.ParentId" class="form-label">
+                                        <i class="mdi mdi-account-tree me-1"></i> Üst Birim (Parent)
+                                    </label>
+                                    <select asp-for="Birim.ParentId" class="form-select select2"
+                                            asp-items="@(new SelectList(FlattenBirimler(Model.Birimler, Model.Birim.Id), "Id", "Ad", Model.Birim.ParentId))">
+                                        <option value="">Üst birim yok (Kök birim)</option>
+                                    </select>
+                                    <span asp-validation-for="Birim.ParentId" class="text-danger small"></span>
+                                    <small class="text-muted">Birim hiyerarşisindeki üst birimi seçin. Boş bırakılırsa kök birim olur.</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Form Actions -->
+                    <div class="d-flex justify-content-between align-items-center pt-3 border-top">
+                        <a asp-action="Index" class="btn btn-outline-secondary">
+                            <i class="mdi mdi-arrow-left me-1"></i> Listeye Dön
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="mdi mdi-content-save me-1"></i> Kaydet
+                        </button>
+                    </div>
+                </form>
             </div>
-            <div class="form-group">
-                <label asp-for="ParentId" class="control-label"></label>
-                <input asp-for="ParentId" class="form-control" />
-                <span asp-validation-for="ParentId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
-            </div>
-        </form>
+        </div>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
+@functions {
+    private List<dynamic> FlattenBirimler(List<GetBirimVm> birimler, int? excludeId = null, string prefix = "")
+    {
+        var result = new List<dynamic>();
+        foreach (var b in birimler.OrderBy(b => b.Sira))
+        {
+            // Düzenlenen birimi kendini parent olarak seçmesini engelle
+            if (excludeId.HasValue && b.Id == excludeId.Value) continue;
+
+            result.Add(new { Id = (int?)b.Id, Ad = string.IsNullOrEmpty(prefix) ? b.Ad : prefix + " └ " + b.Ad });
+            if (b.Children != null && b.Children.Any())
+            {
+                result.AddRange(FlattenBirimler(b.Children, excludeId, string.IsNullOrEmpty(prefix) ? b.Ad : prefix + " └ " + b.Ad));
+            }
+        }
+        return result;
+    }
+}
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script src="~/assets/libs/select2/js/select2.full.min.js"></script>
+    <script src="~/assets/libs/select2/js/i18n/tr.js"></script>
+    <script>
+        $(document).ready(function () {
+            var validationSummary = $('#validationSummary');
+            if (validationSummary.find('li').length > 0 || validationSummary.find('span').length > 0) {
+                validationSummary.removeClass('d-none');
+            }
+
+            $('.select2').select2({
+                language: 'tr',
+                width: '100%'
+            });
+        });
+    </script>
 }

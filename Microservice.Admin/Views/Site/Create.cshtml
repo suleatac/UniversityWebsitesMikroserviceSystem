@@ -5,6 +5,41 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
+@section styles {
+    <link href="~/assets/libs/select2/css/select2.min.css" rel="stylesheet" />
+    <style>
+        /* Select2 Bootstrap 5 uyumlu stil */
+        .select2-container--default .select2-selection--single {
+            height: calc(1.5em + 0.9rem + 2px) !important;
+            border: 1px solid #ced4da !important;
+            border-radius: 0.3rem !important;
+            padding: 0.45rem 0.9rem !important;
+        }
+        .select2-container--default .select2-selection--single .select2-selection__rendered {
+            line-height: 1.5 !important;
+            padding-left: 0 !important;
+            color: #495057;
+        }
+        .select2-container--default .select2-selection--single .select2-selection__arrow {
+            height: calc(1.5em + 0.9rem + 2px) !important;
+        }
+        .select2-container--default .select2-selection--single .select2-selection__clear {
+            display: none !important;
+        }
+        .select2-container--default.select2-container--focus .select2-selection--single,
+        .select2-container--default.select2-container--open .select2-selection--single {
+            border-color: #80bdff !important;
+            box-shadow: 0 0 0 0.2rem rgba(0,123,255,0.25) !important;
+        }
+        .select2-container--default .select2-results__option--highlighted[aria-selected] {
+            background-color: #556ee6 !important;
+        }
+        .select2-dropdown {
+            border-color: #ced4da !important;
+        }
+    </style>
+}
+
 <div class="row justify-content-center">
     <div class="col-xxl-10">
         <div class="card shadow-lg border-0">
@@ -100,30 +135,24 @@
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label asp-for="CreateSite.BirimId" class="form-label">
-                                        Birim <span class="text-danger">*</span>
+                                        <i class="mdi mdi-office-building me-1"></i> Birim <span class="text-danger">*</span>
                                     </label>
-                                    <div class="input-group">
-                                        <span class="input-group-text"><i class="mdi mdi-office-building"></i></span>
-                                        <select asp-for="CreateSite.BirimId" class="form-select"
-                                                asp-items="@(new SelectList(Model.Birimler, "Id", "Ad"))">
-                                            <option value="">Birim seçiniz...</option>
-                                        </select>
-                                    </div>
+                                    <select asp-for="CreateSite.BirimId" class="form-select select2"
+                                            asp-items="@(new SelectList(Model.Birimler, "Id", "Ad"))">
+                                   
+                                    </select>
                                     <span asp-validation-for="CreateSite.BirimId" class="text-danger small"></span>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label asp-for="CreateSite.TemplateId" class="form-label">
-                                        Template <span class="text-danger">*</span>
+                                        <i class="mdi mdi-palette me-1"></i> Template <span class="text-danger">*</span>
                                     </label>
-                                    <div class="input-group">
-                                        <span class="input-group-text"><i class="mdi mdi-palette"></i></span>
-                                        <select asp-for="CreateSite.TemplateId" class="form-select"
-                                                asp-items="@(new SelectList(Model.Templates, "Id", "TemplateAdi"))">
-                                            <option value="">Template seçiniz...</option>
-                                        </select>
-                                    </div>
+                                    <select asp-for="CreateSite.TemplateId" class="form-select select2"
+                                            asp-items="@(new SelectList(Model.Templates, "Id", "TemplateAdi"))">
+                         
+                                    </select>
                                     <span asp-validation-for="CreateSite.TemplateId" class="text-danger small"></span>
                                 </div>
                             </div>
@@ -214,6 +243,8 @@
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
+    <script src="~/assets/libs/select2/js/select2.full.min.js"></script>
+    <script src="~/assets/libs/select2/js/i18n/tr.js"></script>
     <script>
         // Validation summary gösterimi
         $(document).ready(function () {
@@ -224,6 +255,11 @@
                 validationSummary.removeClass('d-none');
             }
 
+            // Select2 başlatma
+            $('.select2').select2({
+                language: 'tr',
+                width: '100%'
+            });
 
             // Password toggle
             document.getElementById('togglePassword').addEventListener('click', function () {
@@ -240,8 +276,6 @@
                     toggleIcon.classList.add('mdi-eye-off');
                 }
             });
-
-
 
 
 

@@ -1,130 +1,207 @@
 @model Microservice.Admin.ViewModels.Haber.HaberDetailVm
 
 @{
-    ViewData["Title"] = "Details";
+    ViewBag.pTitle = "Haberler";
+    ViewBag.Title = "Haber Detayı";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Details</h1>
+<div class="row justify-content-center">
+    <div class="col-xxl-8">
+        <div class="card shadow-lg border-0">
+            <!-- Başlık -->
+            <div class="card-header bg-primary bg-opacity-10 border-bottom">
+                <div class="d-flex align-items-center">
+                    <div class="avatar-sm me-3">
+                        <div class="avatar-title bg-primary rounded-circle">
+                            <i class="mdi mdi-newspaper fs-5"></i>
+                        </div>
+                    </div>
+                    <div>
+                        <h5 class="card-title mb-1">Haber Detayı</h5>
+                        <p class="card-text text-muted mb-0">Haber bilgilerini görüntüleyin</p>
+                    </div>
+                </div>
 
-<div>
-    <h4>HaberDetailVm</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.SiteId)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.SiteId)
-        </dd>
-    </dl>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.DilId)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.DilId)
-        </dd>
-    </dl>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.HedefId)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.HedefId)
-        </dd>
-    </dl>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Baslik)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Baslik)
-        </dd>
-    </dl>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.KisaAciklama)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.KisaAciklama)
-        </dd>
-    </dl>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.IcerikMetni)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.IcerikMetni)
-        </dd>
-    </dl>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Link)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Link)
-        </dd>
-    </dl>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ResimUrl)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ResimUrl)
-        </dd>
-    </dl>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.GosterimSayisi)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.GosterimSayisi)
-        </dd>
-    </dl>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.YayimTarihi)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.YayimTarihi)
-        </dd>
-    </dl>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.EklemeTarihi)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.EklemeTarihi)
-        </dd>
-    </dl>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.BaslamaTarihi)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.BaslamaTarihi)
-        </dd>
-    </dl>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.BitisTarihi)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.BitisTarihi)
-        </dd>
-    </dl>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.SeoUrl)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.SeoUrl)
-        </dd>
-    </dl>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.SeoTitle)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.SeoTitle)
-        </dd>
-    </dl>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.SeoDescription)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.SeoDescription)
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+            </div>
+
+            <div class="card-body p-4">
+                <!-- Temel Bilgiler -->
+                <h6 class="text-primary border-bottom pb-2 mb-3">
+                    <i class="mdi mdi-information-outline me-1"></i> Temel Bilgiler
+                </h6>
+
+                <div class="row">
+                    <div class="col-md-8">
+                        <div class="mb-3">
+                            <label class="form-label text-muted small">Başlık</label>
+                            <div class="form-control-plaintext fw-semibold">@Model.Baslik</div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label class="form-label text-muted small">Gösterim Sayısı</label>
+                            <div class="form-control-plaintext fw-semibold">
+                                <span class="badge bg-info bg-opacity-10 text-info fs-6">@Model.GosterimSayisi</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="mb-3">
+                            <label class="form-label text-muted small">Kısa Açıklama</label>
+                            <div class="form-control-plaintext fw-semibold">@Model.KisaAciklama</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="mb-3">
+                            <label class="form-label text-muted small">İçerik Metni</label>
+                            <div class="form-control-plaintext fw-semibold" style="max-height: 200px; overflow-y: auto;">@Model.IcerikMetni</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label text-muted small">Link</label>
+                            <div class="form-control-plaintext fw-semibold">
+                                @if (!string.IsNullOrEmpty(Model.Link))
+                                {
+                                    <a href="@Model.Link" target="_blank" class="text-decoration-none">
+                                        @Model.Link <i class="mdi mdi-open-in-new small"></i>
+                                    </a>
+                                }
+                                else
+                                {
+                                    <span class="text-muted">—</span>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label text-muted small">Resim URL</label>
+                            <div class="form-control-plaintext fw-semibold">
+                                @if (!string.IsNullOrEmpty(Model.ResimUrl))
+                                {
+                                    <a href="@Model.ResimUrl" target="_blank" class="text-decoration-none">
+                                        @Model.ResimUrl <i class="mdi mdi-open-in-new small"></i>
+                                    </a>
+                                }
+                                else
+                                {
+                                    <span class="text-muted">—</span>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                @if (!string.IsNullOrEmpty(Model.ResimUrl))
+                {
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="mb-3">
+                                <label class="form-label text-muted small">Resim Önizleme</label>
+                                <div class="mt-1">
+                                    <img src="@Model.ResimUrl" alt="@Model.Baslik" class="img-thumbnail rounded" style="max-height: 200px; max-width: 100%;" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+
+                <!-- Tarih Bilgileri -->
+                <h6 class="text-primary border-bottom pb-2 mb-3 mt-4">
+                    <i class="mdi mdi-calendar-outline me-1"></i> Tarih Bilgileri
+                </h6>
+
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label class="form-label text-muted small">Yayım Tarihi</label>
+                            <div class="form-control-plaintext fw-semibold">@Model.YayimTarihi.ToString("dd.MM.yyyy HH:mm")</div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label class="form-label text-muted small">Ekleme Tarihi</label>
+                            <div class="form-control-plaintext fw-semibold">@Model.EklemeTarihi.ToString("dd.MM.yyyy HH:mm")</div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label class="form-label text-muted small">Hedef ID</label>
+                            <div class="form-control-plaintext fw-semibold">@(Model.HedefId.HasValue ? Model.HedefId.Value.ToString() : "—")</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label class="form-label text-muted small">Başlama Tarihi</label>
+                            <div class="form-control-plaintext fw-semibold">@(Model.BaslamaTarihi.HasValue ? Model.BaslamaTarihi.Value.ToString("dd.MM.yyyy HH:mm") : "—")</div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label class="form-label text-muted small">Bitiş Tarihi</label>
+                            <div class="form-control-plaintext fw-semibold">@(Model.BitisTarihi.HasValue ? Model.BitisTarihi.Value.ToString("dd.MM.yyyy HH:mm") : "—")</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SEO Bilgileri -->
+                <h6 class="text-primary border-bottom pb-2 mb-3 mt-4">
+                    <i class="mdi mdi-search-web me-1"></i> SEO Bilgileri
+                </h6>
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="mb-3">
+                            <label class="form-label text-muted small">SEO URL</label>
+                            <div class="form-control-plaintext fw-semibold">@(Model.SeoUrl ?? "—")</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label text-muted small">SEO Title</label>
+                            <div class="form-control-plaintext fw-semibold">@(Model.SeoTitle ?? "—")</div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label text-muted small">SEO Description</label>
+                            <div class="form-control-plaintext fw-semibold">@(Model.SeoDescription ?? "—")</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- İşlem Butonları -->
+                <div class="d-flex justify-content-between align-items-center pt-3 border-top">
+                    <a asp-action="Index" class="btn btn-outline-secondary">
+                        <i class="mdi mdi-arrow-left me-1"></i> Geri Dön
+                    </a>
+                    <div class="d-flex gap-2">
+                        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">
+                            <i class="mdi mdi-pencil me-1"></i> Düzenle
+                        </a>
+                        <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-outline-danger">
+                            <i class="mdi mdi-delete me-1"></i> Sil
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

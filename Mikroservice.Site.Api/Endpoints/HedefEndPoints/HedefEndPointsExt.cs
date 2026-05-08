@@ -10,7 +10,7 @@ namespace Mikroservice.Site.Api.Endpoints.HedefEndPoints
    ApiVersionSet apiVersionSet)
         {
             var group = app
-                .MapGroup("/api/v{version:apiVersion}/hedefler")
+                .MapGroup("/api/v{version:apiVersion}/hedefs")
                 .WithTags("Hedef")
                 .WithApiVersionSet(apiVersionSet)
                 .RequireAuthorization();

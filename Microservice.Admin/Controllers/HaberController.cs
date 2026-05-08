@@ -29,32 +29,15 @@ namespace Microservice.Admin.Controllers
             _logger = logger;
         }
 
-        // 🔹 LIST
-        public async Task<IActionResult> Index(int siteId=1, int dilId=1)
+        public IActionResult Index()
         {
-            _logger.LogInformation("Haber listesi getiriliyor. SiteId: {SiteId}, DilId: {DilId}", siteId, dilId);
-
-            var result = await _haberService.GetHabersAsync(siteId, dilId);
-
-            if (!result.IsSuccess)
-            {
-                _logger.LogError("Haber listesi alınamadı. Hata: {Error}", result.Fail?.Detail);
-
-                TempData["Error"] = result.Fail?.Detail ?? result.Fail?.Title ?? "Haber listesi alınamadı.";
-                return View("Error");
-            }
-
-            _logger.LogInformation("Haber listesi başarıyla getirildi. Count: {Count}", result.Data!.Count);
-
-            return View(result.Data);
+            return View();
         }
 
         // 🔹 PAGINATED LIST
         [HttpGet]
         public async Task<IActionResult> GetHabersForPagination
             (
-               int siteId,
-               int dilId,
                int page = 1,
                int pageSize = 2,
                string search = "",
@@ -62,6 +45,10 @@ namespace Microservice.Admin.Controllers
                string orderDir = "desc"
             )
         {
+            // Session'dan değerleri al, parametre olarak geldiyse onları kullan
+            var currentSiteId =  HttpContext.Session.GetInt32("CurrentSiteId") ?? 1;
+            var currentDilId =  HttpContext.Session.GetInt32("CurrentDilId") ?? 1;
+
             // Sütun indeksini isimlere çevir
             var columnName = orderColumn switch {
                 1 => "Baslik",
@@ -70,7 +57,7 @@ namespace Microservice.Admin.Controllers
                 _ => "Id"
             };
 
-            var result = await _haberService.GetHabersPaginatedAsync(siteId, dilId, page, pageSize, search, columnName, orderDir);
+            var result = await _haberService.GetHabersPaginatedAsync(currentSiteId, currentDilId, page, pageSize, search, columnName, orderDir);
 
             if (!result.IsSuccess)
             {
@@ -113,16 +100,23 @@ namespace Microservice.Admin.Controllers
         {
             _logger.LogInformation("Haber oluşturma sayfası açıldı.");
 
+            // Session'dan site ve dil seçimini al
+            var currentSiteId = HttpContext.Session.GetInt32("CurrentSiteId") ?? 1;
+            var currentDilId = HttpContext.Session.GetInt32("CurrentDilId") ?? 1;
+
             var siteler = await _siteService.GetSitesAsync();
             var diller = await _dilService.GetDilsAsync();
             var hedefler = await _hedefService.GetHedefsAsync();
 
             var viewModel = new HaberCreateIndexVm
             {
-                CreateHaber = new CreateHaberVm(),
-                Siteler = siteler.Data ?? new List<ViewModels.Site.SiteGetVm>(),
-                Diller = diller.Data ?? new List<ViewModels.Dil.GetDilVm>(),
-                Hedefler = hedefler.Data ?? new List<ViewModels.Hedef.GetHedefVm>()
+                CreateHaber = new CreateHaberVm
+                {
+                    SiteId = currentSiteId,
+                    DilId = currentDilId
+                },
+                Hedefler = hedefler.Data ?? new List<ViewModels.Hedef.GetHedefVm>(),
+
             };
 
             return View(viewModel);
@@ -138,12 +132,9 @@ namespace Microservice.Admin.Controllers
                 _logger.LogWarning("Create Haber - ModelState geçersiz.");
 
                 // Dropdown'ları yeniden yükle
+                var hedefler = await _hedefService.GetHedefsAsync();
                 var siteler = await _siteService.GetSitesAsync();
                 var diller = await _dilService.GetDilsAsync();
-                var hedefler = await _hedefService.GetHedefsAsync();
-
-                model.Siteler = siteler.Data ?? new List<ViewModels.Site.SiteGetVm>();
-                model.Diller = diller.Data ?? new List<ViewModels.Dil.GetDilVm>();
                 model.Hedefler = hedefler.Data ?? new List<ViewModels.Hedef.GetHedefVm>();
 
                 return View(model);
@@ -158,13 +149,11 @@ namespace Microservice.Admin.Controllers
                 ModelState.AddModelError("", result.Fail?.Detail ?? result.Fail?.Title ?? "Haber oluşturulamadı.");
 
                 // Dropdown'ları yeniden yükle
+                var hedefler = await _hedefService.GetHedefsAsync();
                 var siteler = await _siteService.GetSitesAsync();
                 var diller = await _dilService.GetDilsAsync();
-                var hedefler = await _hedefService.GetHedefsAsync();
-
-                model.Siteler = siteler.Data ?? new List<ViewModels.Site.SiteGetVm>();
-                model.Diller = diller.Data ?? new List<ViewModels.Dil.GetDilVm>();
                 model.Hedefler = hedefler.Data ?? new List<ViewModels.Hedef.GetHedefVm>();
+
 
                 return View(model);
             }

@@ -1,0 +1,110 @@
+@model Microservice.Admin.ViewModels.SiteSelection.SiteSelectionVm
+
+<!-- Site ve Dil Seçim Bölümü -->
+<div class="d-flex align-items-center gap-2">
+
+
+    <!-- Site Seç Dropdown -->
+    <div class="dropdown d-none d-lg-block">
+        <button type="button" class="btn btn-primary btn-sm fs-14 dropdown-toggle" id="siteDropdownBtn" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <i class="fas fa-globe me-1"></i> <span id="currentSiteName">@Model.CurrentSiteName</span>
+            <i class="mdi mdi-chevron-down align-middle"></i>
+        </button>
+        <div class="dropdown-menu dropdown-menu-start dropdown-menu-animated" aria-labelledby="siteDropdownBtn">
+            @foreach (var site in Model.Sites)
+            {
+                var isActive = site.Id == Model.CurrentSiteId;
+                var safeName = site.SiteAdi.Replace("'", "\\'");
+                <a href="javascript:void(0)" class="dropdown-item site-select-item @(isActive ? "active" : "")" data-site-id="@site.Id" onclick="selectSite(@site.Id, '@safeName')">
+                    <div class="dropdown-icon"><i class="fa fa-boxes"></i></div>
+                    <span class="dropdown-content">@site.SiteAdi</span>
+                </a>
+            }
+        </div>
+    </div>
+
+    <!-- Dil Seç Dropdown -->
+    <div class="dropdown d-none d-lg-block">
+        <button type="button" class="btn btn-outline-info btn-sm fs-14 dropdown-toggle" id="dilDropdownBtn" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <i class="fas fa-language me-1"></i> <span id="currentDilName">@Model.CurrentDilName</span>
+            <i class="mdi mdi-chevron-down align-middle"></i>
+        </button>
+        <div class="dropdown-menu dropdown-menu-start dropdown-menu-animated" aria-labelledby="dilDropdownBtn">
+            @foreach (var dil in Model.Diller)
+            {
+                var isActive = dil.Id == Model.CurrentDilId;
+                var safeName = dil.Ad.Replace("'", "\\'");
+                <a href="javascript:void(0)" class="dropdown-item dil-select-item @(isActive ? "active" : "")" data-dil-id="@dil.Id" onclick="selectDil(@dil.Id, '@safeName')">
+                    <div class="dropdown-icon"><i class="fas fa-font"></i></div>
+                    <span class="dropdown-content">@dil.Ad</span>
+                </a>
+            }
+        </div>
+    </div>
+</div>
+
+<script>
+    // Site seçimi - fetch API kullanıyor (jQuery bağımlılığı yok)
+    function selectSite(siteId, siteName) {
+        fetch('/SiteSelection/SetSite', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: 'siteId=' + encodeURIComponent(siteId)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // UI güncelle
+                document.getElementById('currentSiteName').textContent = siteName;
+                // Aktif sınıfını güncelle
+                document.querySelectorAll('.site-select-item').forEach(function(item) {
+                    item.classList.remove('active');
+                });
+                var activeItem = document.querySelector('.site-select-item[data-site-id="' + siteId + '"]');
+                if (activeItem) activeItem.classList.add('active');
+                // Sayfayı yenile ki veriler yeni siteId ile gelsin
+                location.reload();
+            } else {
+                console.error('Site seçimi başarısız:', data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Site seçimi hatası:', error);
+        });
+    }
+
+    // Dil seçimi - fetch API kullanıyor
+    function selectDil(dilId, dilName) {
+        fetch('/SiteSelection/SetDil', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: 'dilId=' + encodeURIComponent(dilId)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // UI güncelle
+                document.getElementById('currentDilName').textContent = dilName;
+                // Aktif sınıfını güncelle
+                document.querySelectorAll('.dil-select-item').forEach(function(item) {
+                    item.classList.remove('active');
+                });
+                var activeItem = document.querySelector('.dil-select-item[data-dil-id="' + dilId + '"]');
+                if (activeItem) activeItem.classList.add('active');
+                // Sayfayı yenile ki veriler yeni dilId ile gelsin
+                location.reload();
+            } else {
+                console.error('Dil seçimi başarısız:', data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Dil seçimi hatası:', error);
+        });
+    }
+
+  
+</script>

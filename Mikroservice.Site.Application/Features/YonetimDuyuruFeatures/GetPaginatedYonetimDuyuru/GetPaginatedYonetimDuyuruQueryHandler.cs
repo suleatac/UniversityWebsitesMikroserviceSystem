@@ -4,28 +4,33 @@ using MediatR;
 using Microservice.Shared;
 using Microservice.Shared.Services.RedisServiceItems;
 using Microservice.Site.Application.Contracts.IRepositories;
+using Microservice.Site.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Mikroservice.Site.Application.DTOs;
-using Mikroservice.Site.Application.DTOs.HaberDtos;
+using Mikroservice.Site.Application.DTOs.SiteDtos;
+using Mikroservice.Site.Application.DTOs.YonetimDuyuru;
+using Mikroservice.Site.Application.Features.SiteFeatures.GetPaginatedSite;
+using System;
+using System.Collections.Generic;
+using System.Text;
 
-namespace Mikroservice.Site.Application.Features.HaberFeatures.GetPaginatedHaber
+namespace Mikroservice.Site.Application.Features.YonetimDuyuruFeatures.GetPaginatedYonetimDuyuru
 {
-    public class GetPaginatedHaberQueryHandler(
-        IHaberRepository haberRepository,
+    public class GetPaginatedYonetimDuyuruQueryHandler(
+        IYonetimDuyuruRepository yonetimDuyuruRepository,
         IRedisCacheService redis,
-        ILogger<GetPaginatedHaberQueryHandler> logger,
+        ILogger<GetPaginatedYonetimDuyuruQueryHandler> logger,
         IMapper mapper
-    ) : IRequestHandler<GetPaginatedHaberQuery, ServiceResult<PaginatedResult<HaberDto>>>
+    ) : IRequestHandler<GetPaginatedYonetimDuyuruQuery, ServiceResult<PaginatedResult<YonetimDuyuruDto>>>
     {
-        public async Task<ServiceResult<PaginatedResult<HaberDto>>> Handle(
-            GetPaginatedHaberQuery request,
+        public async Task<ServiceResult<PaginatedResult<YonetimDuyuruDto>>> Handle(
+            GetPaginatedYonetimDuyuruQuery request,
             CancellationToken cancellationToken)
         {
             // Query-specific cache key
             var cacheKey =
-                $"haber:list:" +
-                $"{request.SiteId}:{request.DilId}:" +
+                $"yonetimduyuru:list:" +
                 $"p:{request.Page}:" +
                 $"ps:{request.PageSize}:" +
                 $"s:{request.Search}:" +
@@ -34,20 +39,18 @@ namespace Mikroservice.Site.Application.Features.HaberFeatures.GetPaginatedHaber
 
             // Cache kontrolü
             var cachedResult =
-                await redis.GetAsync<PaginatedResult<HaberDto>>(cacheKey, cancellationToken);
+                await redis.GetAsync<PaginatedResult<YonetimDuyuruDto>>(cacheKey, cancellationToken);
 
             if (cachedResult is not null)
             {
-                logger.LogInformation("Haber listesi cache'den getirildi");
+                logger.LogInformation("YonetimDuyuru listesi cache'den getirildi");
 
-                return ServiceResult<PaginatedResult<HaberDto>>
+                return ServiceResult<PaginatedResult<YonetimDuyuruDto>>
                     .SuccessAsOK(cachedResult);
             }
 
-            // Base query - silinmemiş kayıtları getir
-            IQueryable<Domain.Entities.Haber> query = haberRepository
-                .GetAll()
-                .Where(x => x.SiteId == request.SiteId&& x.DilId == request.DilId);
+            // Base query
+            IQueryable<YonetimDuyuru> query = yonetimDuyuruRepository.GetAll();
 
             // Search
             if (!string.IsNullOrWhiteSpace(request.Search))
@@ -56,8 +59,7 @@ namespace Mikroservice.Site.Application.Features.HaberFeatures.GetPaginatedHaber
 
                 query = query.Where(x =>
                     x.Baslik.ToLower().Contains(search) ||
-                    x.KisaAciklama.ToLower().Contains(search) ||
-                    x.IcerikMetni.ToLower().Contains(search));
+                    x.Icerik.ToLower().Contains(search) );
             }
 
             // Ordering
@@ -65,27 +67,8 @@ namespace Mikroservice.Site.Application.Features.HaberFeatures.GetPaginatedHaber
                 ("baslik", "asc") =>
                     query.OrderBy(x => x.Baslik),
 
-                ("baslik", "desc") =>
-                    query.OrderByDescending(x => x.Baslik),
-
-                ("yayimtarihi", "asc") =>
-                    query.OrderBy(x => x.YayimTarihi),
-
-                ("yayimtarihi", "desc") =>
-                    query.OrderByDescending(x => x.YayimTarihi),
-
-                ("baslamatarihi", "asc") =>
-                    query.OrderBy(x => x.BaslamaTarihi),
-
-                ("baslamatarihi", "desc") =>
-                    query.OrderByDescending(x => x.BaslamaTarihi),
-
-                ("bitistarihi", "asc") =>
-                    query.OrderBy(x => x.BitisTarihi),
-
-                ("bitistarihi", "desc") =>
-                    query.OrderByDescending(x => x.BitisTarihi),
-
+                ("icerik", "desc") =>
+                    query.OrderByDescending(x => x.Icerik),
                 _ =>
                     query.OrderByDescending(x => x.Id)
             };
@@ -103,11 +86,11 @@ namespace Mikroservice.Site.Application.Features.HaberFeatures.GetPaginatedHaber
 
             // DTO projection
             var data = await query
-                .ProjectTo<HaberDto>(mapper.ConfigurationProvider)
+                .ProjectTo<YonetimDuyuruDto>(mapper.ConfigurationProvider)
                 .ToListAsync(cancellationToken);
 
             // Result
-            var result = new PaginatedResult<HaberDto> {
+            var result = new PaginatedResult<YonetimDuyuruDto> {
                 Data = data,
                 TotalCount = totalCount,
                 Page = request.Page,
@@ -122,11 +105,11 @@ namespace Mikroservice.Site.Application.Features.HaberFeatures.GetPaginatedHaber
                 cancellationToken);
 
             logger.LogInformation(
-                "Haber listesi DB'den getirildi. TotalCount: {TotalCount}, Page: {Page}",
+                "YonetimDuyuru listesi DB'den getirildi. TotalCount: {TotalCount}, Page: {Page}",
                 totalCount,
                 request.Page);
 
-            return ServiceResult<PaginatedResult<HaberDto>>
+            return ServiceResult<PaginatedResult<YonetimDuyuruDto>>
                 .SuccessAsOK(result);
         }
     }

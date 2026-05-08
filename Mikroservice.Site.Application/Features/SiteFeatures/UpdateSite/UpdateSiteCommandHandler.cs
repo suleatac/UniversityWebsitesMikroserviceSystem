@@ -34,7 +34,7 @@ namespace Mikroservice.Site.Application.Features.SiteFeatures.UpdateSite
 
             // Cache invalidation
             await redisCache.RemoveByPatternAsync(
-                "site:list:*",
+                "site:*",
                 cancellationToken);
 
             return ServiceResult.SuccessAsNoContent();

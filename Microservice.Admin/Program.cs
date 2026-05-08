@@ -14,7 +14,7 @@ builder.Services.AddControllersWithViews();
 
 //Configuration Ayarları
 builder.Services.AddIdentityServerExtentions(builder.Configuration);
-builder.Services.AddMicroservicesConfiguration(builder.Configuration); 
+builder.Services.AddMicroservicesConfiguration(builder.Configuration);
 builder.Services.AddMinioExtentions(builder.Configuration);
 builder.Services.AddRedisExtentions(builder.Configuration);
 builder.Services.AddHttpContextAccessor();
@@ -30,6 +30,15 @@ builder.Services.AddServicesExtentions(builder.Configuration);
 //Client Extentions Ayarları
 builder.Services.AddClientExtentions(builder.Configuration);
 
+//Session Ayarları - Site ve Dil seçimi için
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(60);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+    options.Cookie.Name = "MikroserviceSiteSelection";
+});
 
 //Cookie Authentication Ayarları
 builder.Services.AddAuthentication(configureOption => {
@@ -86,6 +95,8 @@ if (!app.Environment.IsDevelopment())
 
 //app.UseHttpsRedirection();
 app.UseRouting();
+
+app.UseSession();
 
 app.UseAuthentication();
 app.UseAuthorization();

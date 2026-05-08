@@ -13,9 +13,11 @@ namespace Microservice.Admin.Controllers
         {
             _minioService = minioService;
         }
-        public async Task<IActionResult> Index(int siteId = 1, string? mode = null, string? type = null)
+        public async Task<IActionResult> Index( string? mode = null, string? type = null)
         {
-            ViewBag.SiteId = siteId;
+            // Session'dan değerleri al, parametre olarak geldiyse onları kullan
+            var currentSiteId = HttpContext.Session.GetInt32("CurrentSiteId") ?? 1;
+            ViewBag.SiteId = currentSiteId;
             ViewBag.Mode = mode;
             ViewBag.Type = type;
 

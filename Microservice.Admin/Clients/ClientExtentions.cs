@@ -4,6 +4,7 @@ using Microservice.Admin.Clients.HaberClients;
 using Microservice.Admin.Clients.HedefClients;
 using Microservice.Admin.Clients.SiteClients;
 using Microservice.Admin.Clients.TemplateClients;
+using Microservice.Admin.Clients.YonetimDuyuruClients;
 using Microservice.Admin.HttpHandlers;
 using Microservice.Admin.Settings;
 using Refit;
@@ -69,6 +70,16 @@ namespace Microservice.Admin.Clients
 
             //Haber Clients
             services.AddRefitClient<IHaberClientService>()
+           .ConfigureHttpClient(c => {
+
+               var microserviceOption = configuration.GetSection(MicroservicesSetting.SectionName).Get<MicroservicesSetting>();
+               c.BaseAddress = new Uri(microserviceOption!.Site.BaseUrl);
+           })
+           .AddHttpMessageHandler<AuthenticatedHttpClientHandler>()//bu usertoken için istek atarken kullanmak için
+           .AddHttpMessageHandler<ClientAuthenticatedHttpClientHandler>();//bu clientcredential için token alıp istek göndermek için
+           
+            //Yönetim Duyuru Clients
+            services.AddRefitClient<IYonetimDuyuruClientServices>()
            .ConfigureHttpClient(c => {
 
                var microserviceOption = configuration.GetSection(MicroservicesSetting.SectionName).Get<MicroservicesSetting>();

@@ -2,24 +2,24 @@
 {
     public class CreateHaberVm
     {
-        public int SiteId { get; init; }
-        public int DilId { get; init; }
-        public int? HedefId { get; init; }
+        public int SiteId { get; set; }
+        public int DilId { get; set; }
+        public int? HedefId { get; set; }
 
-        public string Baslik { get; init; } = default!;
-        public string KisaAciklama { get; init; } = default!;
-        public string IcerikMetni { get; init; } = default!;
+        public string Baslik { get; set; } = default!;
+        public string KisaAciklama { get; set; } = default!;
+        public string IcerikMetni { get; set; } = default!;
 
-        public string? Link { get; init; }
-        public string? ResimUrl { get; init; }
+        public string? Link { get; set; }
+        public string? ResimUrl { get; set; }
 
-        public DateTime YayimTarihi { get; init; }
-        public DateTime? BaslamaTarihi { get; init; }
-        public DateTime? BitisTarihi { get; init; }
+        public DateTime YayimTarihi { get; set; } = DateTime.Now;
+        public DateTime? BaslamaTarihi { get; set; }
+        public DateTime? BitisTarihi { get; set; }
 
         // SEO (opsiyonel ama önemli)
-        public string? SeoUrl { get; init; }
-        public string? SeoTitle { get; init; }
-        public string? SeoDescription { get; init; }
+        public string? SeoUrl { get; set; }
+        public string? SeoTitle { get; set; }
+        public string? SeoDescription { get; set; }
     }
 }

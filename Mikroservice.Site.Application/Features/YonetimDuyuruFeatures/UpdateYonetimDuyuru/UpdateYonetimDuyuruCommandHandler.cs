@@ -23,11 +23,10 @@ namespace Microservice.Site.Application.Features.YonetimDuyuruFeatures.UpdateYon
             yonetimDuyuru.Baslik = request.Baslik;
             yonetimDuyuru.Icerik = request.Icerik;
             yonetimDuyuru.EklenmeTarihi = request.EklenmeTarihi;
-            yonetimDuyuru.Aktif = request.Aktif;
             await unitOfWork.SaveChangesAsync();
 
-            var cacheKey = "list:yonetimDuyurulari";
-            await redisCacheService.RemoveAsync(cacheKey, cancellationToken);
+            var cacheKey = "yonetimduyuru:*";
+            await redisCacheService.RemoveByPatternAsync(cacheKey, cancellationToken);
 
             return ServiceResult.SuccessAsNoContent();
         }

@@ -17,7 +17,7 @@ namespace Microservice.Site.Application.Features.YonetimDuyuruFeatures.GetYoneti
         public async Task<ServiceResult<List<YonetimDuyuru>>> Handle(GetYonetimDuyurulariQuery request, CancellationToken cancellationToken)
         {
             // Önce cache'e bak
-            var cacheKey = "list:yonetimDuyurulari";
+            var cacheKey = "yonetimduyuru:list";
             var cached = await redisCacheService.GetListAsync<YonetimDuyuru>(cacheKey, cancellationToken);
             if (cached is not null)
             {

@@ -1,5 +1,6 @@
 ﻿using Asp.Versioning.Builder;
 using Microservice.Site.Api.Endpoints.YonetimDuyuruEndPoints.EndPoints;
+using Mikroservice.Site.Api.Endpoints.YonetimDuyuruEndPoints.EndPoints;
 
 namespace Microservice.Site.Api.Endpoints.YonetimDuyuruEndPoints
 {
@@ -12,6 +13,7 @@ namespace Microservice.Site.Api.Endpoints.YonetimDuyuruEndPoints
             group.UpdateYonetimDuyuruEndpointGroupItem();
             group.DeleteYonetimDuyuruEndpointGroupItem();
             group.GetYonetimDuyurulariEndpointGroupItem();
+            group.GetPaginatedYonetimDuyuruEndpointGroupItem();
             group.WithApiVersionSet(apiVersionSet);
             group.RequireAuthorization("Instructor");
         }

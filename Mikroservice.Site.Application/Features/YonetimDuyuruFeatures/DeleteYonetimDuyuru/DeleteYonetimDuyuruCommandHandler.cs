@@ -20,11 +20,11 @@ namespace Microservice.Site.Application.Features.YonetimDuyuruFeatures.DeleteYon
                 return ServiceResult.ErrorAsNotFound();
             }
 
-            yonetimDuyuruRepository.Delete(yonetimDuyuru);
+            yonetimDuyuru.IsDeleted = true;
+            await unitOfWork.SaveChangesAsync(cancellationToken);
 
-            await unitOfWork.SaveChangesAsync();
-            var cacheKey = "list:yonetimDuyurulari";
-            await redisCacheService.RemoveAsync(cacheKey, cancellationToken);
+            var cacheKey = "yonetimduyuru:*";
+            await redisCacheService.RemoveByPatternAsync(cacheKey, cancellationToken);
 
             return ServiceResult.SuccessAsNoContent();
         }

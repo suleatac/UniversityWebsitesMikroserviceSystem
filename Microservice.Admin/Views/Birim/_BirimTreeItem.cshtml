@@ -1,0 +1,29 @@
+@model Microservice.Admin.ViewModels.Birim.GetBirimVm
+
+<div class="tree-item" data-id="@Model.Id" data-sira="@Model.Sira" data-parent-id="@(Model.ParentId?.ToString() ?? "")">
+    <div class="tree-item-header">
+        <button type="button" class="tree-toggle @((Model.Children == null || !Model.Children.Any()) ? "leaf" : "")">
+            <i class="mdi mdi-chevron-down"></i>
+        </button>
+        <i class="mdi mdi-office-building-marker tree-icon"></i>
+        <span class="tree-name">@Model.Ad</span>
+@*         <span class="tree-sira">Sıra: @Model.Sira</span> *@
+        <div class="tree-actions">
+            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-outline-primary btn-sm" title="Düzenle">
+                <i class="mdi mdi-pencil"></i>
+            </a>
+            <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-outline-danger btn-sm btn-delete-birim" title="Sil">
+                <i class="mdi mdi-delete"></i>
+            </a>
+        </div>
+    </div>
+    <div class="tree-children @((Model.Children == null || !Model.Children.Any()) ? "empty" : "")">
+        @if (Model.Children != null && Model.Children.Any())
+        {
+            foreach (var child in Model.Children.OrderBy(c => c.Sira))
+            {
+                @await Html.PartialAsync("_BirimTreeItem", child)
+            }
+        }
+    </div>
+</div>
