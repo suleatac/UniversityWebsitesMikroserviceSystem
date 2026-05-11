@@ -14,7 +14,7 @@ namespace Mikroservice.Site.Application.Features.SiteOzellikleriFeatures.GetSite
     {
         public async Task<ServiceResult<SiteOzellikleri>> Handle(GetSiteOzellikleriQuery request, CancellationToken cancellationToken)
         {
-            var cacheKey = $"siteozellikleri:list:{request.SiteId}";
+            var cacheKey = $"siteozellikleri:{request.SiteId}";
 
             var cached = await redis.GetAsync<SiteOzellikleri>(cacheKey, cancellationToken);
 

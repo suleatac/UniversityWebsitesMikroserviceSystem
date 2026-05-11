@@ -1,19 +1,14 @@
-﻿using MassTransit;
-using MediatR;
+﻿using MediatR;
 using Microservice.Shared;
-using Microservice.Shared.Services.RabbitMqMasstransitServiceItems.Events.SiteEvents;
-using Microservice.Shared.Services.RabbitMqMasstransitServiceItems.Events.SiteOzellikleriEvents;
+using Microservice.Shared.Services.RedisServiceItems;
 using Microservice.Site.Application.Contracts.IRepositories;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Mikroservice.Site.Application.Features.SiteOzellikleriFeatures.UpdateSiteOzellikleri
 {
     public class UpdateSiteOzellikleriCommandHandler(
       ISiteOzellikleriRepository repository,
       IUnitOfWork unitOfWork,
-      IPublishEndpoint publishEndpoint
+      IRedisCacheService redisCache
   ) : IRequestHandler<UpdateSiteOzellikleriCommand, ServiceResult>
     {
         public async Task<ServiceResult> Handle(UpdateSiteOzellikleriCommand request, CancellationToken cancellationToken)
@@ -54,8 +49,8 @@ namespace Mikroservice.Site.Application.Features.SiteOzellikleriFeatures.UpdateS
 
             await unitOfWork.SaveChangesAsync(cancellationToken);
 
-            await publishEndpoint.Publish(new SiteOzellikleriChangedEvent(entity.SiteId), cancellationToken);
-
+            var key = $"siteozellikleri:{entity.SiteId}";
+            await redisCache.RemoveAsync(key, cancellationToken); 
             return ServiceResult.SuccessAsNoContent();
         }
     }

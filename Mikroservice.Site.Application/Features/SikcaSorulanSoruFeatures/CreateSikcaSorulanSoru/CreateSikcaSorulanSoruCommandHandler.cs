@@ -1,8 +1,6 @@
-using MassTransit;
 using MediatR;
 using Microservice.Shared;
-using Microservice.Shared.Services.RabbitMqMasstransitServiceItems.Events.SikcaSorulanSoruEvents;
-using Microservice.Shared.Services.RabbitMqMasstransitServiceItems.Events.SikcaSorulanSoruEvents.Microservice.Shared.Services.RabbitMqMasstransitServiceItems.Events.SikcaSorulanSoruEvents;
+using Microservice.Shared.Services.RedisServiceItems;
 using Microservice.Site.Application.Contracts.IRepositories;
 using Mikroservice.Site.Domain.Entities;
 
@@ -11,10 +9,10 @@ namespace Mikroservice.Site.Application.Features.SikcaSorulanSoruFeatures.Create
     public class CreateSikcaSorulanSoruCommandHandler(
            ISikcaSorulanSoruRepository soruRepository,
            IUnitOfWork unitOfWork,
-           IPublishEndpoint publishEndpoint
-       ) : IRequestHandler<CreateSikcaSorulanSoruCommand, ServiceResult>
+           IRedisCacheService redisCache
+       ) : IRequestHandler<CreateSikcaSorulanSoruCommand, ServiceResult<CreateSikcaSorulanSoruResponse>>
     {
-        public async Task<ServiceResult> Handle(CreateSikcaSorulanSoruCommand request, CancellationToken cancellationToken)
+        public async Task<ServiceResult<CreateSikcaSorulanSoruResponse>> Handle(CreateSikcaSorulanSoruCommand request, CancellationToken cancellationToken)
         {
             var entity = new SikcaSorulanSoru
             {
@@ -34,12 +32,13 @@ namespace Mikroservice.Site.Application.Features.SikcaSorulanSoruFeatures.Create
             await soruRepository.AddAsync(entity);
             await unitOfWork.SaveChangesAsync(cancellationToken);
 
-            // 🔥 Cache invalidation event
-            await publishEndpoint.Publish(
-                new SikcaSorulanSoruChangedEvent(request.SiteId, request.DilId),
-                cancellationToken);
+            // 🔥 Cache silme işlemi
+            var key = $"sikcasorulansoru:list:{request.SiteId}:*";
+            await redisCache.RemoveAsync(key, cancellationToken);
 
-            return ServiceResult.SuccessAsNoContent();
+            var response = new CreateSikcaSorulanSoruResponse(entity.Id);
+            return ServiceResult<CreateSikcaSorulanSoruResponse>
+            .SuccessAsCreated(response, $"/api/v1/sikcasorulansorular/{entity.Id}");
         }
     }
 }

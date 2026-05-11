@@ -1,18 +1,14 @@
-﻿using MassTransit;
-using MediatR;
+﻿using MediatR;
 using Microservice.Shared;
-using Microservice.Shared.Services.RabbitMqMasstransitServiceItems.Events.VideoEvents;
+using Microservice.Shared.Services.RedisServiceItems;
 using Microservice.Site.Application.Contracts.IRepositories;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Mikroservice.Site.Application.Features.VideoFeatures.UpdateVideo
 {
     public class UpdateVideoCommandHandler(
        IVideoRepository repository,
        IUnitOfWork unitOfWork,
-       IPublishEndpoint publishEndpoint
+       IRedisCacheService redisCache
    ) : IRequestHandler<UpdateVideoCommand, ServiceResult>
     {
         public async Task<ServiceResult> Handle(UpdateVideoCommand request, CancellationToken cancellationToken)
@@ -42,9 +38,8 @@ namespace Mikroservice.Site.Application.Features.VideoFeatures.UpdateVideo
 
             await unitOfWork.SaveChangesAsync(cancellationToken);
 
-            await publishEndpoint.Publish(
-                new VideoChangedEvent(entity.SiteId, entity.DilId),
-                cancellationToken);
+            var key = $"videos:list:{request.SiteId}:*";
+            await redisCache.RemoveByPatternAsync(key, cancellationToken);
 
             return ServiceResult.SuccessAsNoContent();
         }

@@ -1,0 +1,121 @@
+@model IEnumerable<Microservice.Admin.ViewModels.Etkinlik.GetEtkinlikVm>
+
+@{
+    ViewBag.pTitle = "Etkinlikler";
+    ViewBag.Title = "Etkinlik Yönetimi";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section styles {
+    <link href="~/assets/libs/datatables.net-bs5/css/dataTables.bootstrap5.min.css" rel="stylesheet" type="text/css" />
+    <link href="~/assets/libs/datatables.net-responsive-bs5/css/responsive.bootstrap5.min.css" rel="stylesheet" type="text/css" />
+    <link href="~/assets/libs/datatables.net-buttons-bs5/css/buttons.bootstrap5.min.css" rel="stylesheet" type="text/css" />
+    <style>
+        .page-header-card {
+            background: linear-gradient(135deg, #28a745 0%, #5cbf6e 100%);
+            border-radius: 12px; padding: 1.5rem; color: white; margin-bottom: 1.5rem;
+            box-shadow: 0 4px 12px rgba(40, 167, 69, 0.2);
+        }
+        .page-header-card h4 { font-weight: 600; margin-bottom: 0.25rem; }
+        .page-header-card .breadcrumb { background: transparent; padding: 0; margin: 0; }
+        .page-header-card .breadcrumb-item a { color: rgba(255,255,255,0.9); text-decoration: none; }
+        .page-header-card .breadcrumb-item a:hover { color: #ffffff; }
+        .page-header-card .breadcrumb-item.active { color: rgba(255,255,255,0.8); }
+        .btn-create {
+            background: linear-gradient(135deg, #28a745 0%, #5cbf6e 100%);
+            border: none; color: white; padding: 0.6rem 1.2rem; border-radius: 8px; font-weight: 500;
+            transition: all 0.2s ease;
+        }
+        .btn-create:hover { transform: translateY(-2px); box-shadow: 0 3px 10px rgba(40, 167, 69, 0.3); color: white; }
+        .table-card { border: none; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.06); }
+        .table-card .card-header {
+            background: linear-gradient(135deg, #fdfefe 0%, #f0fff0 100%);
+            border-bottom: 2px solid #28a745; border-radius: 12px 12px 0 0 !important; padding: 1rem 1.25rem;
+        }
+    </style>
+}
+
+<div class="page-header-card">
+    <div class="d-flex justify-content-between align-items-center">
+        <div>
+            <h4><i class="mdi mdi-calendar-check me-2"></i>Etkinlik Yönetimi</h4>
+            <p class="mb-0 opacity-75">Tüm etkinlikleri buradan yönetebilirsiniz</p>
+        </div>
+        <a asp-action="Create" class="btn btn-create">
+            <i class="mdi mdi-plus-circle me-1"></i> Yeni Etkinlik Ekle
+        </a>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card table-card">
+            <div class="card-header">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0"><i class="mdi mdi-table me-2 text-primary"></i>Etkinlik Listesi</h5>
+                    <span class="badge bg-success bg-opacity-10 text-success" id="tableBadge">Yükleniyor...</span>
+                </div>
+            </div>
+            <div class="card-body">
+                <table id="datatable-etkinlik" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                    <thead><tr></tr></thead>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <script src="~/assets/libs/datatables.net/js/jquery.dataTables.min.js"></script>
+    <script src="~/assets/libs/datatables.net-bs5/js/dataTables.bootstrap5.min.js"></script>
+    <script src="~/assets/libs/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
+    <script src="~/assets/libs/datatables.net-responsive-bs5/js/responsive.bootstrap5.min.js"></script>
+    <script src="~/assets/libs/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
+    <script src="~/assets/libs/datatables.net-buttons-bs5/js/buttons.bootstrap5.min.js"></script>
+    <script src="~/assets/libs/jszip/jszip.min.js"></script>
+    <script src="~/assets/libs/pdfmake/build/pdfmake.min.js"></script>
+    <script src="~/assets/libs/pdfmake/build/vfs_fonts.js"></script>
+    <script src="~/assets/libs/datatables.net-buttons/js/buttons.html5.min.js"></script>
+    <script src="~/assets/libs/datatables.net-buttons/js/buttons.print.min.js"></script>
+    <script src="~/assets/libs/datatables.net-buttons/js/buttons.colVis.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            var a = null;
+            $(".dataTables_length select").addClass("form-select form-select-sm");
+            if (document.getElementById("datatable-etkinlik")) {
+                a = $("#datatable-etkinlik").DataTable({
+                    dom: '<"row"<"col-sm-12 col-md-6"B><"col-sm-12 col-md-6"f>><"row"<"col-sm-12"tr>><"row"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>',
+                    fixedHeader: true, deferRender: true, filter: true, paging: true, pageLength: 10,
+                    order: [[0, 'desc']],
+                    buttons: [
+                        { extend: 'copy', text: '<i class="fas fa-copy"></i> Kopyala', className: 'btn btn-sm btn-warning', exportOptions: { columns: ':visible' } },
+                        { extend: 'excel', text: '<i class="fas fa-file-excel"></i> Excel', className: 'btn btn-sm btn-success', exportOptions: { columns: ':visible' } },
+                        { extend: 'pdf', text: '<i class="fas fa-file-pdf"></i> PDF', className: 'btn btn-sm btn-info', exportOptions: { columns: ':visible' } },
+                        { extend: 'colvis', text: '<i class="fas fa-columns"></i> Sütunlar', className: 'btn btn-sm btn-secondary' },
+                        { extend: 'pageLength', className: 'btn btn-sm btn-danger' }
+                    ],
+                    lengthMenu: [[10, 25, 50, -1], ['10 adet', '25 adet', '50 adet', 'Hepsi']],
+                    language: { url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/tr.json', paginate: { previous: "<i class='mdi mdi-chevron-left'>", next: "<i class='mdi mdi-chevron-right'>" }, info: "Toplam _TOTAL_ kayıttan _START_ - _END_ arası gösteriliyor", infoEmpty: "Gösterilecek kayıt bulunmamaktadır", infoFiltered: "(_MAX_ kayıt içinden filtrelendi)", search: "Ara:", zeroRecords: "Eşleşen kayıt bulunamadı" },
+                    drawCallback: function (settings) { $(".dataTables_paginate > .pagination").addClass("pagination"); var info = a.page.info(); $('#tableBadge').text(info.recordsTotal + ' Kayıt'); },
+                    processing: true, serverSide: true,
+                    ajax: {
+                        url: "/Etkinlik/GetEtkinliklerForPagination", type: "GET",
+                        data: function (d) { return { page: (d.start / d.length) + 1, pageSize: d.length, search: d.search.value, orderColumn: d.order[0].column, orderDir: d.order[0].dir }; }
+                    },
+                    columnDefs: [{ "targets": [0], "visible": false, "searchable": false }],
+                    columns: [
+                        { data: "id", name: "id", title: "ID", autoWidth: true },
+                        { data: "baslik", name: "baslik", title: "Başlık", autoWidth: true },
+                        { data: "kisaAciklama", name: "kisaAciklama", title: "Kısa Açıklama", autoWidth: true },
+                        { data: "yayimTarihi", name: "yayimTarihi", title: "Yayım Tarihi", autoWidth: true, render: function (data) { if (data) { var date = new Date(data); return date.toLocaleDateString('tr-TR'); } return '-'; } },
+                        { data: "baslamaTarihi", name: "baslamaTarihi", title: "Başlama", autoWidth: true, render: function (data) { if (data) { var date = new Date(data); return date.toLocaleDateString('tr-TR'); } return '-'; } },
+                        { data: "bitisTarihi", name: "bitisTarihi", title: "Bitiş", autoWidth: true, render: function (data) { if (data) { var date = new Date(data); return date.toLocaleDateString('tr-TR'); } return '-'; } },
+                        { "data": null, "render": function (data, type, row, meta) { return '<a class="btn btn-outline-primary btn-sm edit" title="Düzenle" href="/Etkinlik/Edit/' + data.id + '"><i class="fas fa-pencil-alt"></i></a> <a class="btn btn-outline-danger btn-sm delete" href="/Etkinlik/Delete/' + data.id + '" title="Sil"><i class="fas fa-trash-alt"></i></a>'; } }
+                    ]
+                });
+                a.buttons().container().appendTo("#datatable-etkinlik_wrapper .col-md-6:eq(0)");
+            }
+        });
+    </script>
+    <script src="~/assets/js/app.js"></script>
+}

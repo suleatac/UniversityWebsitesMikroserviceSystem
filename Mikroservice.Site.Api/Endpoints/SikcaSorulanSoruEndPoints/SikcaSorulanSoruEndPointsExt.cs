@@ -21,6 +21,7 @@ namespace Mikroservice.Site.Api.Endpoints.SikcaSorulanSoruEndPoints
             group.UpdateSikcaSorulanSoruEndpointGroupItem();
             group.DeleteSikcaSorulanSoruEndpointGroupItem();
             group.GetSikcaSorulanSorularEndpointGroupItem();
+            group.GetSikcaSorulanSoruByIdEndpointGroupItem();
             group.RequireAuthorization("Password");
         }
     }

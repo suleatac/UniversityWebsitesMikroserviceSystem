@@ -13,7 +13,7 @@ namespace Mikroservice.Site.Api.Endpoints.BannerEndPoints
                 .MapGroup("/api/v{version:apiVersion}/banners")
                 .WithTags("Banner")
                 .WithApiVersionSet(apiVersionSet)
-                .RequireAuthorization(); // 🔥 Keycloak ile uyumlu
+                .RequireAuthorization();
 
             group.MapToApiVersion(1.0);
 
@@ -21,6 +21,8 @@ namespace Mikroservice.Site.Api.Endpoints.BannerEndPoints
             group.UpdateBannerEndpointGroupItem();
             group.DeleteBannerEndpointGroupItem();
             group.GetBannersEndpointGroupItem();
+            group.GetBannerByIdEndpointGroupItem();
+            group.GetPaginatedBannerEndpointGroupItem();
             group.RequireAuthorization("Password");
         }
     }

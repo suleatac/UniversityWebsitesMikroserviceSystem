@@ -1,7 +1,6 @@
-﻿using MassTransit;
-using MediatR;
+﻿using MediatR;
 using Microservice.Shared;
-using Microservice.Shared.Services.RabbitMqMasstransitServiceItems.Events.BirimEvents;
+using Microservice.Shared.Services.RedisServiceItems;
 using Microservice.Site.Application.Contracts.IRepositories;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,7 +9,7 @@ namespace Mikroservice.Site.Application.Features.BirimFeatures.DeleteBirim
     public class DeleteBirimCommandHandler(
           IBirimRepository birimRepository,
           IUnitOfWork unitOfWork,
-          IPublishEndpoint publishEndpoint
+          IRedisCacheService redisCache
         )
         : IRequestHandler<DeleteBirimCommand, ServiceResult>
     {
@@ -25,7 +24,7 @@ namespace Mikroservice.Site.Application.Features.BirimFeatures.DeleteBirim
 
             await unitOfWork.SaveChangesAsync(cancellationToken);
 
-            await publishEndpoint.Publish(new BirimChangedEvent(), cancellationToken);
+            await redisCache.RemoveAsync("birim:list", cancellationToken);
 
             return ServiceResult.SuccessAsNoContent();
         }

@@ -1,7 +1,6 @@
-using MassTransit;
 using MediatR;
 using Microservice.Shared;
-using Microservice.Shared.Services.RabbitMqMasstransitServiceItems.Events.PopupEvents;
+using Microservice.Shared.Services.RedisServiceItems;
 using Microservice.Site.Application.Contracts.IRepositories;
 
 namespace Mikroservice.Site.Application.Features.PopupFeatures.UpdatePopup
@@ -9,7 +8,7 @@ namespace Mikroservice.Site.Application.Features.PopupFeatures.UpdatePopup
     public class UpdatePopupCommandHandler(
           IPopupRepository popupRepository,
           IUnitOfWork unitOfWork,
-          IPublishEndpoint publishEndpoint
+          IRedisCacheService redisCache
         )
         : IRequestHandler<UpdatePopupCommand, ServiceResult>
     {
@@ -41,9 +40,9 @@ namespace Mikroservice.Site.Application.Features.PopupFeatures.UpdatePopup
 
             await unitOfWork.SaveChangesAsync(cancellationToken);
 
-            //Cache temizleme işlemini yapabilsin diye bu event eklendi.
-            await publishEndpoint.Publish(new PopupChangedEvent(popup.SiteId, popup.DilId), cancellationToken);
-
+            //Cache temizleme işlemi.
+            var key = $"popup:list:{popup.SiteId}:*";
+            await redisCache.RemoveByPatternAsync(key, cancellationToken);
 
             return ServiceResult.SuccessAsNoContent();
         }

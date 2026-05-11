@@ -21,6 +21,8 @@ namespace Mikroservice.Site.Api.Endpoints.BilgiEndPoints
             group.UpdateBilgiEndpointGroupItem();
             group.DeleteBilgiEndpointGroupItem();
             group.GetBilgisEndpointGroupItem();
+            group.GetBilgiByIdEndpointGroupItem();
+            group.GetPaginatedBilgiEndpointGroupItem();
 
             group.RequireAuthorization("Password");
         }

@@ -1,0 +1,176 @@
+@model Microservice.Admin.ViewModels.SitePersonel.SitePersonelCreateIndexVm
+
+@{
+    ViewBag.pTitle = "Site Personelleri";
+    ViewBag.Title = "Yeni Personel";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row justify-content-center">
+    <div class="col-xxl-10">
+        <div class="card shadow-lg border-0">
+            <div class="card-header bg-primary bg-opacity-10 border-bottom">
+                <div class="d-flex align-items-center">
+                    <div class="avatar-sm me-3">
+                        <div class="avatar-title bg-primary rounded-circle">
+                            <i class="mdi mdi-account-plus fs-5"></i>
+                        </div>
+                    </div>
+                    <div>
+                        <h5 class="card-title mb-1">Personel Bilgileri</h5>
+                        <p class="card-text text-muted mb-0">Yeni bir personel oluşturmak için formu doldurun</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-body p-4">
+                <form asp-action="Create" id="sitePersonelCreateForm" class="needs-validation" novalidate>
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger d-none" role="alert" id="validationSummary">
+                        <i class="mdi mdi-block-helper me-2"></i><ul></ul>
+                    </div>
+
+                    <input type="hidden" asp-for="CreateSitePersonel.SiteId" />
+
+                    <!-- Temel Bilgiler -->
+                    <div class="mb-4">
+                        <h6 class="text-primary border-bottom pb-2">
+                            <i class="mdi mdi-information-outline me-1"></i> Temel Bilgiler
+                        </h6>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label asp-for="CreateSitePersonel.UnvanId" class="form-label">Unvan <span class="text-danger">*</span></label>
+                                    <select asp-for="CreateSitePersonel.UnvanId" class="form-select">
+                                        <option value="">-- Unvan Seçin --</option>
+                                        @foreach (var unvan in Model.Unvanlar)
+                                        {
+                                            <option value="@unvan.Id">@unvan.Ad</option>
+                                        }
+                                    </select>
+                                    <span asp-validation-for="CreateSitePersonel.UnvanId" class="text-danger small"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label asp-for="CreateSitePersonel.PersonelTipId" class="form-label">Personel Tip <span class="text-danger">*</span></label>
+                                    <select asp-for="CreateSitePersonel.PersonelTipId" class="form-select">
+                                        <option value="">-- Personel Tip Seçin --</option>
+                                        @foreach (var tip in Model.PersonelTipler)
+                                        {
+                                            <option value="@tip.Id">@tip.Ad</option>
+                                        }
+                                    </select>
+                                    <span asp-validation-for="CreateSitePersonel.PersonelTipId" class="text-danger small"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label asp-for="CreateSitePersonel.PersonelId" class="form-label">Personel ID <span class="text-danger">*</span></label>
+                                    <input asp-for="CreateSitePersonel.PersonelId" class="form-control" placeholder="Personel ID" />
+                                    <span asp-validation-for="CreateSitePersonel.PersonelId" class="text-danger small"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Hakkında ve Deneyim -->
+                    <div class="mb-4">
+                        <h6 class="text-primary border-bottom pb-2">
+                            <i class="mdi mdi-file-document-outline me-1"></i> Hakkında ve Deneyim
+                        </h6>
+                        <div class="mb-3">
+                            <label asp-for="CreateSitePersonel.Hakkinda" class="form-label">Hakkında <span class="text-danger">*</span></label>
+                            <textarea asp-for="CreateSitePersonel.Hakkinda" class="form-control" rows="5" placeholder="Personel hakkında bilgi giriniz..."></textarea>
+                            <span asp-validation-for="CreateSitePersonel.Hakkinda" class="text-danger small"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="CreateSitePersonel.DeneyimVeCalismalari" class="form-label">Deneyim ve Çalışmaları <span class="text-danger">*</span></label>
+                            <textarea asp-for="CreateSitePersonel.DeneyimVeCalismalari" class="form-control" rows="5" placeholder="Deneyim ve çalışmalarını giriniz..."></textarea>
+                            <span asp-validation-for="CreateSitePersonel.DeneyimVeCalismalari" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <!-- Medya ve Sosyal -->
+                    <div class="mb-4">
+                        <h6 class="text-primary border-bottom pb-2">
+                            <i class="mdi mdi-link-variant me-1"></i> Medya ve Sosyal Bağlantılar
+                        </h6>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label asp-for="CreateSitePersonel.ResimUrl" class="form-label">Resim URL <span class="text-danger">*</span></label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="mdi mdi-image"></i></span>
+                                        <input asp-for="CreateSitePersonel.ResimUrl" class="form-control" placeholder="Resim URL" />
+                                    </div>
+                                    <span asp-validation-for="CreateSitePersonel.ResimUrl" class="text-danger small"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label asp-for="CreateSitePersonel.IlgiAlanlari" class="form-label">İlgi Alanları <span class="text-danger">*</span></label>
+                                    <input asp-for="CreateSitePersonel.IlgiAlanlari" class="form-control" placeholder="İlgi alanları" />
+                                    <span asp-validation-for="CreateSitePersonel.IlgiAlanlari" class="text-danger small"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label asp-for="CreateSitePersonel.BlogAdress" class="form-label">Blog Adresi</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="mdi mdi-web"></i></span>
+                                        <input asp-for="CreateSitePersonel.BlogAdress" class="form-control" placeholder="https://..." />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label asp-for="CreateSitePersonel.TwitterAdress" class="form-label">Twitter</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="mdi mdi-twitter"></i></span>
+                                        <input asp-for="CreateSitePersonel.TwitterAdress" class="form-control" placeholder="https://twitter.com/..." />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label asp-for="CreateSitePersonel.FacebookAdress" class="form-label">Facebook</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="mdi mdi-facebook"></i></span>
+                                        <input asp-for="CreateSitePersonel.FacebookAdress" class="form-control" placeholder="https://facebook.com/..." />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label asp-for="CreateSitePersonel.InstagramAdress" class="form-label">Instagram</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="mdi mdi-instagram"></i></span>
+                                        <input asp-for="CreateSitePersonel.InstagramAdress" class="form-control" placeholder="https://instagram.com/..." />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label asp-for="CreateSitePersonel.GoogleplusAdress" class="form-label">Google Plus</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="mdi mdi-google-plus"></i></span>
+                                        <input asp-for="CreateSitePersonel.GoogleplusAdress" class="form-control" placeholder="https://plus.google.com/..." />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-end gap-2">
+                        <a asp-action="Index" class="btn btn-secondary"><i class="mdi mdi-arrow-left me-1"></i> İptal</a>
+                        <button type="submit" class="btn btn-primary"><i class="mdi mdi-check me-1"></i> Kaydet</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

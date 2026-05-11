@@ -25,7 +25,7 @@ namespace Mikroservice.Site.Application.Features.HaberFeatures.DeleteHaber
             await unitOfWork.SaveChangesAsync(cancellationToken);
 
             // Cache silme
-            var cacheKey = $"haber:list:{haber.SiteId}:{haber.DilId}:*";
+            var cacheKey = $"haber:list:{haber.SiteId}:*";
             await redisCache.RemoveByPatternAsync(
                 cacheKey,
                 cancellationToken);

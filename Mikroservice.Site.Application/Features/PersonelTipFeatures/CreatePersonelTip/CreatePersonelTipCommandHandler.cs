@@ -1,7 +1,6 @@
-using MassTransit;
 using MediatR;
 using Microservice.Shared;
-using Microservice.Shared.Services.RabbitMqMasstransitServiceItems.Events.PersonelTipEvents;
+using Microservice.Shared.Services.RedisServiceItems;
 using Microservice.Site.Application.Contracts.IRepositories;
 using Mikroservice.Site.Domain.Entities;
 
@@ -10,11 +9,11 @@ namespace Mikroservice.Site.Application.Features.PersonelTipFeatures.CreatePerso
     public class CreatePersonelTipCommandHandler(
           IPersonelTipRepository personelTipRepository,
           IUnitOfWork unitOfWork,
-          IPublishEndpoint publishEndpoint
+          IRedisCacheService redisCache
         )
-        : IRequestHandler<CreatePersonelTipCommand, ServiceResult>
+        : IRequestHandler<CreatePersonelTipCommand, ServiceResult<CreatePersonelTipResponse>>
     {
-        public async Task<ServiceResult> Handle(CreatePersonelTipCommand request, CancellationToken cancellationToken)
+        public async Task<ServiceResult<CreatePersonelTipResponse>> Handle(CreatePersonelTipCommand request, CancellationToken cancellationToken)
         {
             var newPersonelTip = new PersonelTip {
                 Ad = request.Ad
@@ -22,11 +21,13 @@ namespace Mikroservice.Site.Application.Features.PersonelTipFeatures.CreatePerso
             await personelTipRepository.AddAsync(newPersonelTip);
             await unitOfWork.SaveChangesAsync(cancellationToken);
 
-            //Cache temizleme işlemini yapabilsin diye bu event eklendi.
-            await publishEndpoint.Publish(new PersonelTipChangedEvent(), cancellationToken);
+            //Cache temizleme işlemi.
+            await redisCache.RemoveAsync("personelTip:list", cancellationToken);
 
 
-            return ServiceResult.SuccessAsNoContent();
+            var response = new CreatePersonelTipResponse(newPersonelTip.Id);
+            return ServiceResult<CreatePersonelTipResponse>
+            .SuccessAsCreated(response, $"/api/v1/personeltips/{newPersonelTip.Id}");
         }
     }
 }

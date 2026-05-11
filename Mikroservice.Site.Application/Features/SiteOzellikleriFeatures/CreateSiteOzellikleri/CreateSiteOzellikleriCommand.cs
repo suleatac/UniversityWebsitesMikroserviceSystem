@@ -1,8 +1,9 @@
 using Microservice.Shared;
+using Mikroservice.Site.Application.Features.PopupFeatures.CreatePopup;
 
 namespace Mikroservice.Site.Application.Features.SiteOzellikleriFeatures.CreateSiteOzellikleri
 {
-    public record CreateSiteOzellikleriCommand : IRequestByServiceResult
+    public record CreateSiteOzellikleriCommand : IRequestByServiceResult<CreateSiteOzellikleriResponse>
     {
         public int SiteId { get; init; }
 

@@ -1,8 +1,9 @@
 ﻿using Microservice.Shared;
+using Mikroservice.Site.Application.Features.BannerFeatures.CreateBanner;
 
 namespace Mikroservice.Site.Application.Features.DuyuruFeatures.CreateDuyuru
 {
-    public record CreateDuyuruCommand : IRequestByServiceResult
+    public record CreateDuyuruCommand : IRequestByServiceResult<CreateDuyuruResponse>
     {
         public int SiteId { get; init; }
         public int DilId { get; init; }

@@ -1,7 +1,6 @@
-﻿using MassTransit;
-using MediatR;
+﻿using MediatR;
 using Microservice.Shared;
-using Microservice.Shared.Services.RabbitMqMasstransitServiceItems.Events.BannerEvents;
+using Microservice.Shared.Services.RedisServiceItems;
 using Microservice.Site.Application.Contracts.IRepositories;
 
 namespace Mikroservice.Site.Application.Features.BannerFeatures.DeleteBanner
@@ -9,7 +8,7 @@ namespace Mikroservice.Site.Application.Features.BannerFeatures.DeleteBanner
     public class DeleteBannerCommandHandler(
           IBannerRepository bannerRepository,
           IUnitOfWork unitOfWork,
-          IPublishEndpoint publishEndpoint
+          IRedisCacheService redisCache
         )
         : IRequestHandler<DeleteBannerCommand, ServiceResult>
     {
@@ -25,8 +24,9 @@ namespace Mikroservice.Site.Application.Features.BannerFeatures.DeleteBanner
             bannerRepository.Update(banner);
             await unitOfWork.SaveChangesAsync(cancellationToken);
 
-            //Cache temizleme işlemini yapabilsin diye bu event eklendi.
-            await publishEndpoint.Publish(new BannerDeletedEvent(banner.SiteId, banner.DilId), cancellationToken);
+            //Cache temizleme işlemi.
+            var cacheKey = $"banners:list:{banner.SiteId}:*";
+            await redisCache.RemoveByPatternAsync(cacheKey, cancellationToken);
 
             return ServiceResult.SuccessAsNoContent();
         }

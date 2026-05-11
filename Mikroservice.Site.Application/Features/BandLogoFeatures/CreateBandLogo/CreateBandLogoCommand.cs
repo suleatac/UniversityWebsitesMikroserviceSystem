@@ -2,7 +2,7 @@
 
 namespace Mikroservice.Site.Application.Features.BandLogoFeatures.CreateBandLogo
 {
-    public record CreateBandLogoCommand : IRequestByServiceResult
+    public record CreateBandLogoCommand : IRequestByServiceResult<CreateBandLogoResponse>
     {
         public int SiteId { get; init; }
         public int DilId { get; init; }

@@ -2,7 +2,7 @@ using Microservice.Shared;
 
 namespace Mikroservice.Site.Application.Features.SikcaSorulanSoruFeatures.CreateSikcaSorulanSoru
 {
-    public record CreateSikcaSorulanSoruCommand : IRequestByServiceResult
+    public record CreateSikcaSorulanSoruCommand : IRequestByServiceResult<CreateSikcaSorulanSoruResponse>
     {
         public int SiteId { get; init; }
 

@@ -1,15 +1,15 @@
-﻿using MassTransit;
-using MediatR;
+﻿using MediatR;
 using Microservice.Shared;
-using Microservice.Shared.Services.RabbitMqMasstransitServiceItems.Events.BilgiEvents;
+using Microservice.Shared.Services.RedisServiceItems;
 using Microservice.Site.Application.Contracts.IRepositories;
+using Mikroservice.Site.Domain.Entities;
 
 namespace Mikroservice.Site.Application.Features.BilgiFeatures.DeleteBilgi
 {
     public class DeleteBilgiCommandHandler(
           IBilgiRepository bilgiRepository,
           IUnitOfWork unitOfWork,
-          IPublishEndpoint publishEndpoint
+          IRedisCacheService redisCache
         )
         : IRequestHandler<DeleteBilgiCommand, ServiceResult>
     {
@@ -25,8 +25,9 @@ namespace Mikroservice.Site.Application.Features.BilgiFeatures.DeleteBilgi
             bilgiRepository.Update(bilgi);
             await unitOfWork.SaveChangesAsync(cancellationToken);
 
-            //Cache temizleme işlemini yapabilsin diye bu event eklendi.
-            await publishEndpoint.Publish(new BilgiDeletedEvent(bilgi.SiteId, bilgi.DilId), cancellationToken);
+            //Cache temizleme işlemi.
+            var cacheKey = $"bilgis:list:{bilgi.SiteId}:*";
+            await redisCache.RemoveByPatternAsync(cacheKey, cancellationToken);
 
             return ServiceResult.SuccessAsNoContent();
         }

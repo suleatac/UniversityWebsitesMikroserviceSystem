@@ -1,7 +1,6 @@
-﻿using MassTransit;
-using MediatR;
+﻿using MediatR;
 using Microservice.Shared;
-using Microservice.Shared.Services.RabbitMqMasstransitServiceItems.Events.TemplateEvents;
+using Microservice.Shared.Services.RedisServiceItems;
 using Microservice.Site.Application.Contracts.IRepositories;
 
 namespace Mikroservice.Site.Application.Features.TemplateFeatures.CreateTemplate
@@ -9,7 +8,7 @@ namespace Mikroservice.Site.Application.Features.TemplateFeatures.CreateTemplate
     public class CreateTemplateCommandHandler(
      ITemplateRepository templateRepository,
      IUnitOfWork unitOfWork,
-     IPublishEndpoint publishEndpoint
+     IRedisCacheService redisCache
  ) : IRequestHandler<CreateTemplateCommand, ServiceResult<CreateTemplateResponse>>
     {
         public async Task<ServiceResult<CreateTemplateResponse>> Handle(CreateTemplateCommand request, CancellationToken cancellationToken)
@@ -25,7 +24,9 @@ namespace Mikroservice.Site.Application.Features.TemplateFeatures.CreateTemplate
             await unitOfWork.SaveChangesAsync(cancellationToken);
 
 
-            await publishEndpoint.Publish(new TemplateChangedEvent(), cancellationToken);
+       
+
+            await redisCache.RemoveAsync("template:list", cancellationToken);
 
             var response = new CreateTemplateResponse(template.Id);
             return ServiceResult<CreateTemplateResponse>

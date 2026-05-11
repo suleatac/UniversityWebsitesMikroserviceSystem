@@ -1,7 +1,6 @@
-﻿using MassTransit;
-using MediatR;
+﻿using MediatR;
 using Microservice.Shared;
-using Microservice.Shared.Services.RabbitMqMasstransitServiceItems.Events.YoneticiSiteEvents;
+using Microservice.Shared.Services.RedisServiceItems;
 using Microservice.Site.Application.Contracts.IRepositories;
 
 namespace Mikroservice.Site.Application.Features.YoneticiSiteFeatures.DeleteYoneticiSite
@@ -9,7 +8,7 @@ namespace Mikroservice.Site.Application.Features.YoneticiSiteFeatures.DeleteYone
     public class DeleteYoneticiSiteCommandHandler(
     IYoneticiSiteRepository repository,
     IUnitOfWork unitOfWork,
-    IPublishEndpoint publishEndpoint
+    IRedisCacheService redisCache
 ) : IRequestHandler<DeleteYoneticiSiteCommand, ServiceResult>
     {
         public async Task<ServiceResult> Handle(DeleteYoneticiSiteCommand request, CancellationToken cancellationToken)
@@ -23,9 +22,8 @@ namespace Mikroservice.Site.Application.Features.YoneticiSiteFeatures.DeleteYone
 
             await unitOfWork.SaveChangesAsync(cancellationToken);
 
-            await publishEndpoint.Publish(
-                new YoneticiSiteChangedEvent(entity.SiteId),
-                cancellationToken);
+            var key = "yoneticiSite:list:*";
+            await redisCache.RemoveByPatternAsync(key, cancellationToken);
 
             return ServiceResult.SuccessAsNoContent();
         }

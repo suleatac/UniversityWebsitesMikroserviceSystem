@@ -1,7 +1,6 @@
-using MassTransit;
 using MediatR;
 using Microservice.Shared;
-using Microservice.Shared.Services.RabbitMqMasstransitServiceItems.Events.SikcaSorulanSoruKategoriEvents;
+using Microservice.Shared.Services.RedisServiceItems;
 using Microservice.Site.Application.Contracts.IRepositories;
 using Mikroservice.Site.Domain.Entities;
 
@@ -10,10 +9,10 @@ namespace Mikroservice.Site.Application.Features.SikcaSorulanSoruKategoriFeature
     public class CreateSikcaSorulanSoruKategoriCommandHandler(
          ISikcaSorulanSoruKategoriRepository kategoriRepository,
          IUnitOfWork unitOfWork,
-         IPublishEndpoint publishEndpoint
-     ) : IRequestHandler<CreateSikcaSorulanSoruKategoriCommand, ServiceResult>
+         IRedisCacheService redisCache
+     ) : IRequestHandler<CreateSikcaSorulanSoruKategoriCommand, ServiceResult<CreateSikcaSorulanSoruKategoriResponse>>
     {
-        public async Task<ServiceResult> Handle(CreateSikcaSorulanSoruKategoriCommand request, CancellationToken cancellationToken)
+        public async Task<ServiceResult<CreateSikcaSorulanSoruKategoriResponse>> Handle(CreateSikcaSorulanSoruKategoriCommand request, CancellationToken cancellationToken)
         {
             var entity = new SikcaSorulanSoruKategori
             {
@@ -26,11 +25,12 @@ namespace Mikroservice.Site.Application.Features.SikcaSorulanSoruKategoriFeature
             await unitOfWork.SaveChangesAsync(cancellationToken);
 
             // 🔥 Cache invalidation event
-            await publishEndpoint.Publish(
-                new SikcaSorulanSoruKategoriChangedEvent(),
-                cancellationToken);
+            var key = $"sikcaSorulanSoruKategori:list";
+            await redisCache.RemoveAsync(key, cancellationToken);
 
-            return ServiceResult.SuccessAsNoContent();
+
+            var response = new CreateSikcaSorulanSoruKategoriResponse(entity.Id);
+            return ServiceResult<CreateSikcaSorulanSoruKategoriResponse>.SuccessAsCreated(response, $"/api/v1/sikcasorulansorukategoriler/{entity.Id}");
         }
     }
 }

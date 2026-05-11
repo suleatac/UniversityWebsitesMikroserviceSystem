@@ -21,6 +21,8 @@ namespace Mikroservice.Site.Api.Endpoints.VideoEndPoints
             group.UpdateVideoEndpointGroupItem();
             group.DeleteVideoEndpointGroupItem();
             group.GetVideosEndpointGroupItem();
+            group.GetVideoByIdEndpointGroupItem();
+            group.GetPaginatedVideoEndpointGroupItem();
             group.RequireAuthorization("Password");
         }
     }

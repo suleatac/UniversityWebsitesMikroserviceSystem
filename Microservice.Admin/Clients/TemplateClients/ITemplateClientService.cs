@@ -14,6 +14,9 @@ namespace Microservice.Admin.Clients.TemplateClients
         [Post("/api/v1/templates")]
         Task<ApiResponse<object>> CreateTemplateAsync(CreateTemplateVm dto);
 
+        [Put("/api/v1/templates")]
+        Task<ApiResponse<object>> UpdateTemplateAsync(UpdateTemplateVm dto);
+
         [Delete("/api/v1/templates/{id}")]
         Task<ApiResponse<object>> DeleteTemplateAsync(int id);
     }

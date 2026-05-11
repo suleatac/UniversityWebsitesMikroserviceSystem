@@ -17,7 +17,7 @@ namespace Mikroservice.Site.Application.Features.YoneticiSiteFeatures.GetYonetic
             GetYoneticiSitesQuery request,
             CancellationToken cancellationToken)
         {
-            var cacheKey = $"yoneticiSite:list:{request.SiteId}";
+            var cacheKey = "yoneticiSite:list";
 
             var cached = await redis.GetListAsync<YoneticiSite>(cacheKey, cancellationToken);
 

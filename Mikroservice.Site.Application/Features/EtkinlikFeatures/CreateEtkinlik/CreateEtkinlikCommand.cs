@@ -2,7 +2,7 @@
 
 namespace Mikroservice.Site.Application.Features.EtkinlikFeatures.CreateEtkinlik
 {
-    public record CreateEtkinlikCommand : IRequestByServiceResult
+    public record CreateEtkinlikCommand : IRequestByServiceResult<CreateEtkinlikResponse>
     {
         public int SiteId { get; init; }
         public int DilId { get; init; }

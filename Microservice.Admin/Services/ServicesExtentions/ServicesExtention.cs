@@ -22,6 +22,15 @@ namespace Microservice.Admin.Services.ServicesExtentions
             services.AddScoped<IYonetimDuyuruService, YonetimDuyuruService>();
             services.AddScoped<IUnvanService, UnvanService>();
             services.AddScoped<IMenuService, MenuService>();
+            services.AddScoped<IPersonelTipService, PersonelTipService>();
+            services.AddScoped<IDuyuruService, DuyuruService>();
+            services.AddScoped<IEtkinlikService, EtkinlikService>();
+            services.AddScoped<IVideoService, VideoService>();
+            services.AddScoped<ISikcaSorulanSoruService, SikcaSorulanSoruService>();
+            services.AddScoped<ISikcaSorulanSoruKategoriService, SikcaSorulanSoruKategoriService>();
+            services.AddScoped<ISitePersonelService, SitePersonelService>();
+            services.AddScoped<IBilgiService, BilgiService>();
+            services.AddScoped<IBannerService, BannerService>();
             return services;
         }
     }

@@ -1,11 +1,8 @@
 ﻿using Microservice.Shared;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Mikroservice.Site.Application.Features.SitePersonelFeatures.CreateSitePersonel
 {
-    public record CreateSitePersonelCommand : IRequestByServiceResult
+    public record CreateSitePersonelCommand : IRequestByServiceResult<CreateSitePersonelResponse>
     {
         public int SiteId { get; init; }
         public int PersonelId { get; init; }

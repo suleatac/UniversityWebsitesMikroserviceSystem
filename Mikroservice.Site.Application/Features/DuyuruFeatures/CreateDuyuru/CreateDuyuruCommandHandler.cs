@@ -1,20 +1,20 @@
-﻿using MassTransit;
-using MediatR;
+﻿using MediatR;
 using Microservice.Shared;
-using Microservice.Shared.Services.RabbitMqMasstransitServiceItems.Events.DuyuruEvents;
+using Microservice.Shared.Services.RedisServiceItems;
 using Microservice.Site.Application.Contracts.IRepositories;
 using Mikroservice.Site.Domain.Entities;
+using System.Reflection;
 
 namespace Mikroservice.Site.Application.Features.DuyuruFeatures.CreateDuyuru
 {
     public class CreateDuyuruCommandHandler(
           IDuyuruRepository duyuruRepository,
           IUnitOfWork unitOfWork,
-          IPublishEndpoint publishEndpoint
+          IRedisCacheService redisCache
         )
-        : IRequestHandler<CreateDuyuruCommand, ServiceResult>
+        : IRequestHandler<CreateDuyuruCommand, ServiceResult<CreateDuyuruResponse>>
     {
-        public async Task<ServiceResult> Handle(CreateDuyuruCommand request, CancellationToken cancellationToken)
+        public async Task<ServiceResult<CreateDuyuruResponse>> Handle(CreateDuyuruCommand request, CancellationToken cancellationToken)
         {
             var newDuyuru = new Duyuru {
                 Baslik = request.Baslik,
@@ -40,11 +40,14 @@ namespace Mikroservice.Site.Application.Features.DuyuruFeatures.CreateDuyuru
             await duyuruRepository.AddAsync(newDuyuru);
             await unitOfWork.SaveChangesAsync(cancellationToken);
 
-            //Cache temizleme işlemini yapabilsin diye bu event eklendi.
-            await publishEndpoint.Publish(new DuyuruCreatedEvent(newDuyuru.SiteId, newDuyuru.DilId), cancellationToken);
 
+            //Cache temizleme işlemi.
+            var cacheKey = $"duyurus:list:{newDuyuru.SiteId}:*";
+            await redisCache.RemoveByPatternAsync(cacheKey, cancellationToken);
 
-            return ServiceResult.SuccessAsNoContent();
+            var response = new CreateDuyuruResponse(newDuyuru.Id);
+            return ServiceResult<CreateDuyuruResponse>
+            .SuccessAsCreated(response, $"/api/v1/duyurus/{newDuyuru.Id}");
         }
     }
 }

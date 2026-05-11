@@ -8,7 +8,7 @@ namespace Mikroservice.Site.Application.Features.SiteFeatures.CreateSite
     public class CreateSiteCommandHandler(
      ISiteRepository siteRepository,
      IUnitOfWork unitOfWork,
-      IRedisCacheService redisCache
+     IRedisCacheService redisCache
  ) : IRequestHandler<CreateSiteCommand, ServiceResult<CreateSiteResponse>>
     {
         public async Task<ServiceResult<CreateSiteResponse>> Handle(CreateSiteCommand request, CancellationToken cancellationToken)
@@ -34,10 +34,10 @@ namespace Mikroservice.Site.Application.Features.SiteFeatures.CreateSite
             await unitOfWork.SaveChangesAsync(cancellationToken);
 
             // Cache invalidation
-            await redisCache.RemoveAsync(
-                "unvans:list",
-                cancellationToken);
-   
+            await redisCache.RemoveByPatternAsync(
+              "site:*",
+              cancellationToken);
+
 
             var response = new CreateSiteResponse(site.Id);
             return ServiceResult<CreateSiteResponse>

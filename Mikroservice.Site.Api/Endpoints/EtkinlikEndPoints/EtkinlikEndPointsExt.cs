@@ -21,6 +21,8 @@ namespace Mikroservice.Site.Api.Endpoints.EtkinlikEndPoints
             group.UpdateEtkinlikEndpointGroupItem();
             group.DeleteEtkinlikEndpointGroupItem();
             group.GetEtkinliklerEndpointGroupItem();
+            group.GetEtkinlikByIdEndpointGroupItem();
+            group.GetPaginatedEtkinlikEndpointGroupItem();
 
             group.RequireAuthorization("Password");
         }

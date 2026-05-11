@@ -1,7 +1,6 @@
-﻿using MassTransit;
-using MediatR;
+﻿using MediatR;
 using Microservice.Shared;
-using Microservice.Shared.Services.RabbitMqMasstransitServiceItems.Events.BandLogoEvents;
+using Microservice.Shared.Services.RedisServiceItems;
 using Microservice.Site.Application.Contracts.IRepositories;
 
 namespace Mikroservice.Site.Application.Features.BandLogoFeatures.UpdateBandLogo
@@ -9,7 +8,7 @@ namespace Mikroservice.Site.Application.Features.BandLogoFeatures.UpdateBandLogo
     public class UpdateBandLogoCommandHandler(
           IBandLogoRepository bandLogoRepository,
           IUnitOfWork unitOfWork,
-          IPublishEndpoint publishEndpoint
+          IRedisCacheService redisCache
         )
         : IRequestHandler<UpdateBandLogoCommand, ServiceResult>
     {
@@ -28,9 +27,9 @@ namespace Mikroservice.Site.Application.Features.BandLogoFeatures.UpdateBandLogo
             bandLogo.DilId = request.DilId;
             await unitOfWork.SaveChangesAsync(cancellationToken);
 
-            //Cache temizleme işlemini yapabilsin diye bu event eklendi.
-            await publishEndpoint.Publish(new BandLogoUpdatedEvent(request.SiteId, request.DilId), cancellationToken);
-
+            //Cache temizleme işlemi.
+            var cacheKey = $"bandlogos:list:{bandLogo.SiteId}:*";
+            await redisCache.RemoveByPatternAsync(cacheKey, cancellationToken);
 
             return ServiceResult.SuccessAsNoContent();
         }

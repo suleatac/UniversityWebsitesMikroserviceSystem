@@ -1,0 +1,94 @@
+@model Microservice.Admin.ViewModels.Duyuru.DuyuruDetailVm
+
+@{
+    ViewBag.pTitle = "Duyurular";
+    ViewBag.Title = "Duyuru Sil";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row justify-content-center">
+    <div class="col-xxl-8">
+        <div class="card shadow-lg border-0">
+            <div class="card-header bg-danger bg-opacity-10 border-bottom">
+                <div class="d-flex align-items-center">
+                    <div class="avatar-sm me-3">
+                        <div class="avatar-title bg-danger rounded-circle">
+                            <i class="mdi mdi-delete fs-5"></i>
+                        </div>
+                    </div>
+                    <div>
+                        <h5 class="card-title mb-1">Duyuru Silme Onayı</h5>
+                        <p class="card-text text-muted mb-0">Bu işlem geri alınamaz!</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-body p-4">
+                <div class="alert alert-danger d-flex align-items-center" role="alert">
+                    <i class="mdi mdi-alert-circle fs-4 me-2"></i>
+                    <div>
+                        <strong>Dikkat!</strong> "<strong>@Model.Baslik</strong>" duyurusunu silmek üzeresiniz.
+                        Bu işlem geri alınamaz ve tüm veriler kalıcı olarak silinecektir.
+                    </div>
+                </div>
+
+                <h6 class="text-primary border-bottom pb-2 mb-3">
+                    <i class="mdi mdi-information-outline me-1"></i> Temel Bilgiler
+                </h6>
+
+                <div class="row">
+                    <div class="col-md-8">
+                        <div class="mb-3">
+                            <label class="form-label text-muted small">Başlık</label>
+                            <div class="form-control-plaintext fw-semibold">@Model.Baslik</div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label class="form-label text-muted small">Gösterim Sayısı</label>
+                            <div class="form-control-plaintext fw-semibold">@Model.GosterimSayisi</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="mb-3">
+                            <label class="form-label text-muted small">Kısa Açıklama</label>
+                            <div class="form-control-plaintext fw-semibold">@Model.KisaAciklama</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label text-muted small">Yayım Tarihi</label>
+                            <div class="form-control-plaintext fw-semibold">@Model.YayimTarihi.ToString("dd.MM.yyyy HH:mm")</div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label text-muted small">Eklenme Tarihi</label>
+                            <div class="form-control-plaintext fw-semibold">@Model.EklemeTarihi.ToString("dd.MM.yyyy HH:mm")</div>
+                        </div>
+                    </div>
+                </div>
+
+                <form asp-action="DeleteConfirmed" method="post">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" asp-for="Id" />
+
+                    <div class="d-flex justify-content-end gap-2">
+                        <a asp-action="Index" class="btn btn-secondary">
+                            <i class="mdi mdi-arrow-left me-1"></i> İptal
+                        </a>
+                        <button type="submit" class="btn btn-danger">
+                            <i class="mdi mdi-delete me-1"></i> Sil
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

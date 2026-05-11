@@ -1,7 +1,6 @@
-﻿using MassTransit;
-using MediatR;
+﻿using MediatR;
 using Microservice.Shared;
-using Microservice.Shared.Services.RabbitMqMasstransitServiceItems.Events.BirimEvents;
+using Microservice.Shared.Services.RedisServiceItems;
 using Microservice.Site.Application.Contracts.IRepositories;
 
 namespace Mikroservice.Site.Application.Features.BirimFeatures.UpdateBirim
@@ -9,7 +8,7 @@ namespace Mikroservice.Site.Application.Features.BirimFeatures.UpdateBirim
     public class UpdateBirimCommandHandler(
           IBirimRepository birimRepository,
           IUnitOfWork unitOfWork,
-          IPublishEndpoint publishEndpoint
+          IRedisCacheService redisCache
         )
         : IRequestHandler<UpdateBirimCommand, ServiceResult>
     {
@@ -28,8 +27,8 @@ namespace Mikroservice.Site.Application.Features.BirimFeatures.UpdateBirim
        
             await unitOfWork.SaveChangesAsync(cancellationToken);
 
-            //Cache temizleme işlemini yapabilsin diye bu event eklendi.
-            await publishEndpoint.Publish(new BirimChangedEvent(), cancellationToken);
+            //Cache temizleme işlemi.
+            await redisCache.RemoveAsync("birim:list", cancellationToken);
 
 
             return ServiceResult.SuccessAsNoContent();

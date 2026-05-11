@@ -1,7 +1,6 @@
-﻿using MassTransit;
-using MediatR;
+﻿using MediatR;
 using Microservice.Shared;
-using Microservice.Shared.Services.RabbitMqMasstransitServiceItems.Events.EtkinlikEvents;
+using Microservice.Shared.Services.RedisServiceItems;
 using Microservice.Site.Application.Contracts.IRepositories;
 using Mikroservice.Site.Domain.Entities;
 
@@ -10,11 +9,11 @@ namespace Mikroservice.Site.Application.Features.EtkinlikFeatures.CreateEtkinlik
     public class CreateEtkinlikCommandHandler(
           IEtkinlikRepository etkinlikRepository,
           IUnitOfWork unitOfWork,
-          IPublishEndpoint publishEndpoint
+          IRedisCacheService redisCache
         )
-        : IRequestHandler<CreateEtkinlikCommand, ServiceResult>
+        : IRequestHandler<CreateEtkinlikCommand, ServiceResult<CreateEtkinlikResponse>>
     {
-        public async Task<ServiceResult> Handle(CreateEtkinlikCommand request, CancellationToken cancellationToken)
+        public async Task<ServiceResult<CreateEtkinlikResponse>> Handle(CreateEtkinlikCommand request, CancellationToken cancellationToken)
         {
             var newEtkinlik = new Etkinlik {
                 Baslik = request.Baslik,
@@ -40,11 +39,13 @@ namespace Mikroservice.Site.Application.Features.EtkinlikFeatures.CreateEtkinlik
             await etkinlikRepository.AddAsync(newEtkinlik);
             await unitOfWork.SaveChangesAsync(cancellationToken);
 
-            //Cache temizleme işlemini yapabilsin diye bu event eklendi.
-            await publishEndpoint.Publish(new EtkinlikCreatedEvent(newEtkinlik.SiteId, newEtkinlik.DilId), cancellationToken);
+            //Cache temizleme işlemi.
+            var cacheKey = $"etkinliks:list:{newEtkinlik.SiteId}:*";
+            await redisCache.RemoveByPatternAsync(cacheKey, cancellationToken);
 
-
-            return ServiceResult.SuccessAsNoContent();
+            var response = new CreateEtkinlikResponse(newEtkinlik.Id);
+            return ServiceResult<CreateEtkinlikResponse>
+            .SuccessAsCreated(response, $"/api/v1/etkinliks/{newEtkinlik.Id}");
         }
     }
 }

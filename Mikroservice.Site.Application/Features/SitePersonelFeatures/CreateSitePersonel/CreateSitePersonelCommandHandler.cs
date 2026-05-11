@@ -1,22 +1,18 @@
-﻿using MassTransit;
-using MediatR;
+﻿using MediatR;
 using Microservice.Shared;
-using Microservice.Shared.Services.RabbitMqMasstransitServiceItems.Events.SitePersonelEvents;
+using Microservice.Shared.Services.RedisServiceItems;
 using Microservice.Site.Application.Contracts.IRepositories;
 using Mikroservice.Site.Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Mikroservice.Site.Application.Features.SitePersonelFeatures.CreateSitePersonel
 {
     public class CreateSitePersonelCommandHandler(
        ISitePersonelRepository repository,
        IUnitOfWork unitOfWork,
-       IPublishEndpoint publishEndpoint
-   ) : IRequestHandler<CreateSitePersonelCommand, ServiceResult>
+       IRedisCacheService redisCache
+   ) : IRequestHandler<CreateSitePersonelCommand, ServiceResult<CreateSitePersonelResponse>>
     {
-        public async Task<ServiceResult> Handle(CreateSitePersonelCommand request, CancellationToken cancellationToken)
+        public async Task<ServiceResult<CreateSitePersonelResponse>> Handle(CreateSitePersonelCommand request, CancellationToken cancellationToken)
         {
             var entity = new SitePersonel
             {
@@ -42,11 +38,12 @@ namespace Mikroservice.Site.Application.Features.SitePersonelFeatures.CreateSite
             await repository.AddAsync(entity);
             await unitOfWork.SaveChangesAsync(cancellationToken);
 
-            await publishEndpoint.Publish(
-                new SitePersonelChangedEvent(request.SiteId),
-                cancellationToken);
+            var key = $"sitepersonel:list:{request.SiteId}";
+            await redisCache.RemoveAsync(key, cancellationToken);
 
-            return ServiceResult.SuccessAsNoContent();
+            var response = new CreateSitePersonelResponse(entity.Id);
+            return ServiceResult<CreateSitePersonelResponse>
+            .SuccessAsCreated(response, $"/api/v1/sitepersonels/{entity.Id}");
         }
     }
 }

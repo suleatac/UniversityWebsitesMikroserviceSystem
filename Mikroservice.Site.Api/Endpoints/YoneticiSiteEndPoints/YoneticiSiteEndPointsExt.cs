@@ -21,6 +21,7 @@ namespace Mikroservice.Site.Api.Endpoints.YoneticiSiteEndPoints
             group.UpdateYoneticiSiteEndpointGroupItem();
             group.DeleteYoneticiSiteEndpointGroupItem();
             group.GetYoneticiSitesEndpointGroupItem();
+            group.GetYoneticiSiteByIdEndpointGroupItem();
             group.RequireAuthorization("Password");
         }
     }

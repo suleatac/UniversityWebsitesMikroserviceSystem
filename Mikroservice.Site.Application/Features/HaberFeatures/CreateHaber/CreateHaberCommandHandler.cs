@@ -38,11 +38,9 @@ namespace Mikroservice.Site.Application.Features.HaberFeatures.CreateHaber
             await haberRepository.AddAsync(newHaber);
             await unitOfWork.SaveChangesAsync(cancellationToken);
 
-            //Cache temizleme işlemini yapabilsin diye bu event eklendi.
-            var cacheKey = $"haber:list:{newHaber.SiteId}:{newHaber.DilId}:*";
-            await redisCache.RemoveByPatternAsync(
-                cacheKey,
-                cancellationToken);
+            //Cache temizleme işlemi.
+            var cacheKey = $"haber:list:{newHaber.SiteId}:*";
+            await redisCache.RemoveByPatternAsync(cacheKey,cancellationToken);
 
 
             var response = new CreateHaberResponse(newHaber.Id);

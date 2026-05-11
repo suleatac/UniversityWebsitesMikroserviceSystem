@@ -21,6 +21,8 @@ namespace Mikroservice.Site.Api.Endpoints.DuyuruEndPoints
             group.UpdateDuyuruEndpointGroupItem();
             group.DeleteDuyuruEndpointGroupItem();
             group.GetDuyurularEndpointGroupItem();
+            group.GetDuyuruByIdEndpointGroupItem();
+            group.GetPaginatedDuyuruEndpointGroupItem();
             group.RequireAuthorization("Password");
         }
     }

@@ -2,6 +2,7 @@ using MassTransit;
 using MediatR;
 using Microservice.Shared;
 using Microservice.Shared.Services.RabbitMqMasstransitServiceItems.Events.SiteOzellikleriEvents;
+using Microservice.Shared.Services.RedisServiceItems;
 using Microservice.Site.Application.Contracts.IRepositories;
 using Mikroservice.Site.Domain.Entities;
 
@@ -10,16 +11,16 @@ namespace Mikroservice.Site.Application.Features.SiteOzellikleriFeatures.CreateS
     public class CreateSiteOzellikleriCommandHandler(
      ISiteOzellikleriRepository repository,
      IUnitOfWork unitOfWork,
-     IPublishEndpoint publishEndpoint
- ) : IRequestHandler<CreateSiteOzellikleriCommand, ServiceResult>
+     IRedisCacheService redisCache
+ ) : IRequestHandler<CreateSiteOzellikleriCommand, ServiceResult<CreateSiteOzellikleriResponse>>
     {
-        public async Task<ServiceResult> Handle(CreateSiteOzellikleriCommand request, CancellationToken cancellationToken)
+        public async Task<ServiceResult<CreateSiteOzellikleriResponse>> Handle(CreateSiteOzellikleriCommand request, CancellationToken cancellationToken)
         {
             // 🔥 1-1 kontrol
             var exists = await repository.AnyBySiteIdAsync(request.SiteId, cancellationToken);
 
             if (exists)
-                return ServiceResult.Error("Bu site için özellik zaten tanımlı.",System.Net.HttpStatusCode.Conflict);
+                return ServiceResult<CreateSiteOzellikleriResponse>.Error("Bu site için özellik zaten tanımlı.",System.Net.HttpStatusCode.Conflict);
 
             var entity = new SiteOzellikleri
             {
@@ -58,9 +59,15 @@ namespace Mikroservice.Site.Application.Features.SiteOzellikleriFeatures.CreateS
             await repository.AddAsync(entity);
             await unitOfWork.SaveChangesAsync(cancellationToken);
 
-            await publishEndpoint.Publish(new SiteOzellikleriChangedEvent(entity.SiteId), cancellationToken);
+         
+            var key = $"siteozellikleri:{entity.SiteId}";
+            await redisCache.RemoveAsync(key, cancellationToken);
 
-            return ServiceResult.SuccessAsNoContent();
+
+
+            var response = new CreateSiteOzellikleriResponse(entity.Id);
+            return ServiceResult<CreateSiteOzellikleriResponse>
+            .SuccessAsCreated(response, $"/api/v1/site-ozellikleri/{entity.Id}");
         }
     }
 }

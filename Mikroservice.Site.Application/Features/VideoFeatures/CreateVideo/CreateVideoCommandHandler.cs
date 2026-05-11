@@ -1,22 +1,18 @@
-﻿using MassTransit;
-using MediatR;
+﻿using MediatR;
 using Microservice.Shared;
-using Microservice.Shared.Services.RabbitMqMasstransitServiceItems.Events.VideoEvents;
+using Microservice.Shared.Services.RedisServiceItems;
 using Microservice.Site.Application.Contracts.IRepositories;
 using Mikroservice.Site.Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Mikroservice.Site.Application.Features.VideoFeatures.CreateVideo
 {
     public class CreateVideoCommandHandler(
      IVideoRepository repository,
      IUnitOfWork unitOfWork,
-     IPublishEndpoint publishEndpoint
- ) : IRequestHandler<CreateVideoCommand, ServiceResult>
+     IRedisCacheService redisCache
+ ) : IRequestHandler<CreateVideoCommand, ServiceResult<CreateVideoResponse>>
     {
-        public async Task<ServiceResult> Handle(CreateVideoCommand request, CancellationToken cancellationToken)
+        public async Task<ServiceResult<CreateVideoResponse>> Handle(CreateVideoCommand request, CancellationToken cancellationToken)
         {
             var entity = new Video
             {
@@ -50,11 +46,14 @@ namespace Mikroservice.Site.Application.Features.VideoFeatures.CreateVideo
             await repository.AddAsync(entity);
             await unitOfWork.SaveChangesAsync(cancellationToken);
 
-            await publishEndpoint.Publish(
-                new VideoChangedEvent(request.SiteId, request.DilId),
-                cancellationToken);
+   
 
-            return ServiceResult.SuccessAsNoContent();
+            var key = $"videos:list:{request.SiteId}:*";
+            await redisCache.RemoveByPatternAsync(key, cancellationToken);
+
+            var response = new CreateVideoResponse(entity.Id);
+            return ServiceResult<CreateVideoResponse>
+            .SuccessAsCreated(response, $"/api/v1/videos/{entity.Id}");
         }
     }
 }

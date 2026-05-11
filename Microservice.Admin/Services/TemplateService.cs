@@ -1,7 +1,6 @@
 ﻿using Microservice.Admin.Clients.TemplateClients;
 using Microservice.Admin.Services.Interfaces;
 using Microservice.Admin.Services.ServiceResults;
-using Microservice.Admin.ViewModels.Site;
 using Microservice.Admin.ViewModels.Template;
 using System.Text.Json;
 
@@ -18,7 +17,6 @@ namespace Microservice.Admin.Services
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        // 🔹 GET ALL
         public async Task<ServiceResult<List<GetTemplateVm>>> GetTemplatesAsync()
         {
             _logger.LogInformation("Template listesi getiriliyor.");
@@ -38,16 +36,15 @@ namespace Microservice.Admin.Services
                     problemDetails?.Detail
                 );
 
-
                 return ServiceResult<List<GetTemplateVm>>.Error(
-                problemDetails?.Detail ?? problemDetails?.Title ?? "Template listesi alınamadı.");
+                    problemDetails?.Detail ?? problemDetails?.Title ?? "Template listesi alınamadı.");
             }
 
             _logger.LogInformation("Template listesi başarıyla alındı. Count: {Count}", response.Content?.Count);
 
             return ServiceResult<List<GetTemplateVm>>.Success(response.Content!);
         }
-        // GET BY ID
+
         public async Task<ServiceResult<GetTemplateVm>> GetTemplateByIdAsync(int id)
         {
             _logger.LogInformation("Template getiriliyor. Id: {Id}", id);
@@ -67,15 +64,13 @@ namespace Microservice.Admin.Services
                     problemDetails?.Detail
                 );
 
-                return ServiceResult<GetTemplateVm>
-                    .Error(problemDetails?.Detail ?? problemDetails?.Title ?? "Template alınamadı");
-
+                return ServiceResult<GetTemplateVm>.Error(
+                    problemDetails?.Detail ?? problemDetails?.Title ?? "Template alınamadı");
             }
 
             return ServiceResult<GetTemplateVm>.Success(response.Content!);
         }
 
-        // 🔹 CREATE
         public async Task<ServiceResult<bool>> CreateTemplateAsync(CreateTemplateVm dto)
         {
             _logger.LogInformation("Yeni template oluşturuluyor. Ad: {Name}", dto.TemplateAdi);
@@ -95,19 +90,43 @@ namespace Microservice.Admin.Services
                     problemDetails?.Detail
                 );
 
-
                 return ServiceResult<bool>.Error(
-                problemDetails?.Detail ?? problemDetails?.Title ?? "Template oluşturulamadı.");
-
-
+                    problemDetails?.Detail ?? problemDetails?.Title ?? "Template oluşturulamadı.");
             }
 
-            _logger.LogInformation("Template oluşturuldu. Id: {Id}", response);
+            _logger.LogInformation("Template oluşturuldu.");
 
             return ServiceResult<bool>.Success(true);
         }
 
-        // 🔹 DELETE
+        public async Task<ServiceResult<bool>> UpdateTemplateAsync(UpdateTemplateVm dto)
+        {
+            _logger.LogInformation("Template güncelleniyor. Id: {Id}", dto.Id);
+
+            var response = await _templateClientService.UpdateTemplateAsync(dto);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var problemDetails = response.Error != null
+                  ? JsonSerializer.Deserialize<Microsoft.AspNetCore.Mvc.ProblemDetails>(response.Error.Content!)
+                  : null;
+
+                _logger.LogError(
+                    "API Error -> StatusCode: {StatusCode}, Title: {Title}, Detail: {Detail}",
+                    response.StatusCode,
+                    problemDetails?.Title,
+                    problemDetails?.Detail
+                );
+
+                return ServiceResult<bool>.Error(
+                    problemDetails?.Detail ?? problemDetails?.Title ?? "Template güncellenemedi.");
+            }
+
+            _logger.LogInformation("Template güncellendi. Id: {Id}", dto.Id);
+
+            return ServiceResult<bool>.Success(true);
+        }
+
         public async Task<ServiceResult<bool>> DeleteTemplateAsync(int id)
         {
             _logger.LogWarning("Template siliniyor. Id: {Id}", id);
@@ -127,14 +146,12 @@ namespace Microservice.Admin.Services
                     problemDetails?.Detail
                 );
 
-                return ServiceResult<bool>
-                    .Error(problemDetails?.Detail ?? problemDetails?.Title ?? $"Template silinemedi. Id: {id}");
-
+                return ServiceResult<bool>.Error(
+                    problemDetails?.Detail ?? problemDetails?.Title ?? $"Template silinemedi. Id: {id}");
             }
 
             _logger.LogInformation("Template silindi. Id: {Id}", id);
             return ServiceResult<bool>.Success(true);
         }
-
     }
 }

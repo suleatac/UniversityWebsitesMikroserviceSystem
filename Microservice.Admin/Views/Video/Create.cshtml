@@ -1,0 +1,80 @@
+@model Microservice.Admin.ViewModels.Video.VideoCreateIndexVm
+
+@{
+    ViewBag.pTitle = "Videolar";
+    ViewBag.Title = "Yeni Video";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row justify-content-center">
+    <div class="col-xxl-10">
+        <div class="card shadow-lg border-0">
+            <div class="card-header bg-danger bg-opacity-10 border-bottom">
+                <div class="d-flex align-items-center">
+                    <div class="avatar-sm me-3"><div class="avatar-title bg-danger rounded-circle"><i class="mdi mdi-video-plus fs-5"></i></div></div>
+                    <div><h5 class="card-title mb-1">Video Bilgileri</h5><p class="card-text text-muted mb-0">Yeni bir video oluşturmak için formu doldurun</p></div>
+                </div>
+            </div>
+            <div class="card-body p-4">
+                <form asp-action="Create" id="videoCreateForm" class="needs-validation" novalidate>
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger d-none" role="alert"><i class="mdi mdi-block-helper me-2"></i><ul></ul></div>
+                    <input type="hidden" asp-for="CreateVideo.SiteId" />
+                    <input type="hidden" asp-for="CreateVideo.DilId" />
+
+                    <div class="mb-4">
+                        <h6 class="text-primary border-bottom pb-2"><i class="mdi mdi-information-outline me-1"></i> Temel Bilgiler</h6>
+                        <div class="row">
+                            <div class="col-md-8">
+                                <div class="mb-3"><label asp-for="CreateVideo.Baslik" class="form-label">Başlık <span class="text-danger">*</span></label><div class="input-group"><span class="input-group-text"><i class="mdi mdi-format-title"></i></span><input asp-for="CreateVideo.Baslik" class="form-control" placeholder="Video başlığını giriniz" /></div><span asp-validation-for="CreateVideo.Baslik" class="text-danger small"></span></div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3"><label asp-for="CreateVideo.KisaAciklama" class="form-label">Kısa Açıklama <span class="text-danger">*</span></label><div class="input-group"><span class="input-group-text"><i class="mdi mdi-text-short"></i></span><input asp-for="CreateVideo.KisaAciklama" class="form-control" placeholder="Kısa açıklama" /></div><span asp-validation-for="CreateVideo.KisaAciklama" class="text-danger small"></span></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <h6 class="text-primary border-bottom pb-2"><i class="mdi mdi-video me-1"></i> Video ve İçerik</h6>
+                        <div class="mb-3"><label asp-for="CreateVideo.VideoUrl" class="form-label">Video URL <span class="text-danger">*</span></label><div class="input-group"><span class="input-group-text"><i class="mdi mdi-link-variant"></i></span><input asp-for="CreateVideo.VideoUrl" class="form-control" placeholder="https://www.youtube.com/watch?v=..." /></div><span asp-validation-for="CreateVideo.VideoUrl" class="text-danger small"></span></div>
+                        <div class="mb-3"><label asp-for="CreateVideo.IcerikMetni" class="form-label">İçerik Metni</label><textarea asp-for="CreateVideo.IcerikMetni" id="IcerikMetniEditor" class="form-control" rows="8" placeholder="Video içeriğini giriniz..."></textarea><span asp-validation-for="CreateVideo.IcerikMetni" class="text-danger small"></span></div>
+                        <div class="row">
+                            <div class="col-md-6"><div class="mb-3"><label asp-for="CreateVideo.Link" class="form-label">Link</label><div class="input-group"><span class="input-group-text"><i class="mdi mdi-link"></i></span><input asp-for="CreateVideo.Link" class="form-control" placeholder="https://..." /></div></div></div>
+                            <div class="col-md-6"><div class="mb-3"><label asp-for="CreateVideo.ResimUrl" class="form-label">Resim URL</label><div class="input-group"><span class="input-group-text"><i class="mdi mdi-image"></i></span><input asp-for="CreateVideo.ResimUrl" class="form-control" placeholder="Resim URL" /></div></div></div>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <h6 class="text-primary border-bottom pb-2"><i class="mdi mdi-calendar me-1"></i> Tarih ve Hedef</h6>
+                        <div class="row">
+                            <div class="col-md-3"><div class="mb-3"><label asp-for="CreateVideo.YayimTarihi" class="form-label">Yayım Tarihi</label><input asp-for="CreateVideo.YayimTarihi" class="form-control" type="datetime-local" /></div></div>
+                            <div class="col-md-3"><div class="mb-3"><label asp-for="CreateVideo.BaslamaTarihi" class="form-label">Başlama Tarihi</label><input asp-for="CreateVideo.BaslamaTarihi" class="form-control" type="datetime-local" /></div></div>
+                            <div class="col-md-3"><div class="mb-3"><label asp-for="CreateVideo.BitisTarihi" class="form-label">Bitiş Tarihi</label><input asp-for="CreateVideo.BitisTarihi" class="form-control" type="datetime-local" /></div></div>
+                            <div class="col-md-3">
+                                <div class="mb-3"><label asp-for="CreateVideo.HedefId" class="form-label">Hedef</label>
+                                    <select asp-for="CreateVideo.HedefId" class="form-select">
+                                        <option value="">-- Hedef Seçin --</option>
+                                        @foreach (var hedef in Model.Hedefler) { <option value="@hedef.Id">@hedef.Aciklama</option> }
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <h6 class="text-primary border-bottom pb-2"><i class="mdi mdi-magnify me-1"></i> SEO Bilgileri</h6>
+                        <div class="row">
+                            <div class="col-md-4"><div class="mb-3"><label asp-for="CreateVideo.SeoUrl" class="form-label">SEO URL</label><input asp-for="CreateVideo.SeoUrl" class="form-control" placeholder="seo-url" /></div></div>
+                            <div class="col-md-4"><div class="mb-3"><label asp-for="CreateVideo.SeoTitle" class="form-label">SEO Title</label><input asp-for="CreateVideo.SeoTitle" class="form-control" placeholder="SEO başlık" /></div></div>
+                            <div class="col-md-4"><div class="mb-3"><label asp-for="CreateVideo.SeoDescription" class="form-label">SEO Description</label><input asp-for="CreateVideo.SeoDescription" class="form-control" placeholder="SEO açıklama" /></div></div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-end gap-2">
+                        <a asp-action="Index" class="btn btn-secondary"><i class="mdi mdi-arrow-left me-1"></i> İptal</a>
+                        <button type="submit" class="btn btn-danger"><i class="mdi mdi-check me-1"></i> Kaydet</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

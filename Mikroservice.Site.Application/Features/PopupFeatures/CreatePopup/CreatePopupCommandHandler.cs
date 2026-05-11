@@ -1,7 +1,6 @@
-using MassTransit;
 using MediatR;
 using Microservice.Shared;
-using Microservice.Shared.Services.RabbitMqMasstransitServiceItems.Events.PopupEvents;
+using Microservice.Shared.Services.RedisServiceItems;
 using Microservice.Site.Application.Contracts.IRepositories;
 using Mikroservice.Site.Domain.Entities;
 
@@ -10,11 +9,11 @@ namespace Mikroservice.Site.Application.Features.PopupFeatures.CreatePopup
     public class CreatePopupCommandHandler(
           IPopupRepository popupRepository,
           IUnitOfWork unitOfWork,
-          IPublishEndpoint publishEndpoint
+          IRedisCacheService redisCache
         )
-        : IRequestHandler<CreatePopupCommand, ServiceResult>
+        : IRequestHandler<CreatePopupCommand, ServiceResult<CreatePopupResponse>>
     {
-        public async Task<ServiceResult> Handle(CreatePopupCommand request, CancellationToken cancellationToken)
+        public async Task<ServiceResult<CreatePopupResponse>> Handle(CreatePopupCommand request, CancellationToken cancellationToken)
         {
             var newPopup = new Popup {
                 Baslik = request.Baslik,
@@ -40,11 +39,13 @@ namespace Mikroservice.Site.Application.Features.PopupFeatures.CreatePopup
             await popupRepository.AddAsync(newPopup);
             await unitOfWork.SaveChangesAsync(cancellationToken);
 
-            //Cache temizleme işlemini yapabilsin diye bu event eklendi.
-            await publishEndpoint.Publish(new PopupChangedEvent(request.SiteId,request.DilId), cancellationToken);
+            //Cache temizleme işlemi.
+            var key = $"popup:list:{newPopup.SiteId}:*";
+            await redisCache.RemoveByPatternAsync(key, cancellationToken);
 
-
-            return ServiceResult.SuccessAsNoContent();
+            var response = new CreatePopupResponse(newPopup.Id);
+            return ServiceResult<CreatePopupResponse>
+            .SuccessAsCreated(response, $"/api/v1/popups/{newPopup.Id}");
         }
     }
 }

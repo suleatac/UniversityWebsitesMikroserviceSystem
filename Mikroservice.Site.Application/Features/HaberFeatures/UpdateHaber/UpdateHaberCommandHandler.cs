@@ -37,7 +37,7 @@ namespace Mikroservice.Site.Application.Features.HaberFeatures.UpdateHaber
             await unitOfWork.SaveChangesAsync(cancellationToken);
 
             //Cache temizleme işlemini yapabilsin diye bu event eklendi.
-            var cacheKey = $"haber:list:{haber.SiteId}:{haber.DilId}:*";
+            var cacheKey = $"haber:list:{haber.SiteId}:*";
             await redisCache.RemoveByPatternAsync(
                 cacheKey,
                 cancellationToken);

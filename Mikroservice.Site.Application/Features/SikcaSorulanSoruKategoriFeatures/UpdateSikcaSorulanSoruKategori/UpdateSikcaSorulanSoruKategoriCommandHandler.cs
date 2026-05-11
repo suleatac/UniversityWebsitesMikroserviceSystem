@@ -1,7 +1,6 @@
-using MassTransit;
 using MediatR;
 using Microservice.Shared;
-using Microservice.Shared.Services.RabbitMqMasstransitServiceItems.Events.SikcaSorulanSoruKategoriEvents;
+using Microservice.Shared.Services.RedisServiceItems;
 using Microservice.Site.Application.Contracts.IRepositories;
 
 namespace Mikroservice.Site.Application.Features.SikcaSorulanSoruKategoriFeatures.UpdateSikcaSorulanSoruKategori
@@ -9,7 +8,7 @@ namespace Mikroservice.Site.Application.Features.SikcaSorulanSoruKategoriFeature
     public class UpdateSikcaSorulanSoruKategoriCommandHandler(
      ISikcaSorulanSoruKategoriRepository kategoriRepository,
      IUnitOfWork unitOfWork,
-     IPublishEndpoint publishEndpoint
+     IRedisCacheService redisCache
  ) : IRequestHandler<UpdateSikcaSorulanSoruKategoriCommand, ServiceResult>
     {
         public async Task<ServiceResult> Handle(UpdateSikcaSorulanSoruKategoriCommand request, CancellationToken cancellationToken)
@@ -24,8 +23,9 @@ namespace Mikroservice.Site.Application.Features.SikcaSorulanSoruKategoriFeature
 
             await unitOfWork.SaveChangesAsync(cancellationToken);
 
-            // 🔥 Cache invalidation
-            await publishEndpoint.Publish(new SikcaSorulanSoruKategoriChangedEvent(), cancellationToken);
+            // 🔥 Cache invalidation event
+            var key = $"sikcaSorulanSoruKategori:list";
+            await redisCache.RemoveAsync(key, cancellationToken);
 
             return ServiceResult.SuccessAsNoContent();
         }

@@ -1,0 +1,57 @@
+@model Microservice.Admin.ViewModels.PersonelTip.PersonelTipVm
+
+@{
+    ViewBag.pTitle = "Personel Tipleri";
+    ViewBag.Title = "Personel Tipi Düzenle";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row justify-content-center">
+    <div class="col-xxl-6">
+        <div class="card shadow-lg border-0">
+            <div class="card-header bg-warning bg-opacity-10 border-bottom">
+                <div class="d-flex align-items-center">
+                    <div class="avatar-sm me-3">
+                        <div class="avatar-title bg-warning rounded-circle">
+                            <i class="mdi mdi-pencil-outline fs-5"></i>
+                        </div>
+                    </div>
+                    <div>
+                        <h5 class="card-title mb-1">Personel Tipi Düzenle</h5>
+                        <p class="card-text text-muted mb-0">ID: <strong>@Model.Id</strong></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-body p-4">
+                <form asp-action="Edit" method="post" class="needs-validation" novalidate>
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger d-none" role="alert" id="validationSummary">
+                        <i class="mdi mdi-block-helper me-2"></i><ul></ul>
+                    </div>
+
+                    <input type="hidden" asp-for="Id" />
+
+                    <div class="mb-3">
+                        <label asp-for="Ad" class="form-label">
+                            Personel Tip Adı <span class="text-danger">*</span>
+                        </label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="mdi mdi-account-group"></i></span>
+                            <input asp-for="Ad" class="form-control" placeholder="Personel tip adını giriniz" />
+                        </div>
+                        <span asp-validation-for="Ad" class="text-danger small"></span>
+                    </div>
+
+                    <div class="d-flex justify-content-end gap-2">
+                        <a asp-action="Index" class="btn btn-secondary">
+                            <i class="mdi mdi-arrow-left me-1"></i> İptal
+                        </a>
+                        <button type="submit" class="btn btn-warning">
+                            <i class="mdi mdi-check me-1"></i> Güncelle
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

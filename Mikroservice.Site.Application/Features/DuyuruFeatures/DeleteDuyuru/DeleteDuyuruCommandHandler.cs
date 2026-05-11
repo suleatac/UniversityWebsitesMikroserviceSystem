@@ -1,7 +1,6 @@
-﻿using MassTransit;
-using MediatR;
+﻿using MediatR;
 using Microservice.Shared;
-using Microservice.Shared.Services.RabbitMqMasstransitServiceItems.Events.DuyuruEvents;
+using Microservice.Shared.Services.RedisServiceItems;
 using Microservice.Site.Application.Contracts.IRepositories;
 
 namespace Mikroservice.Site.Application.Features.DuyuruFeatures.DeleteDuyuru
@@ -9,7 +8,7 @@ namespace Mikroservice.Site.Application.Features.DuyuruFeatures.DeleteDuyuru
     public class DeleteDuyuruCommandHandler(
           IDuyuruRepository duyuruRepository,
           IUnitOfWork unitOfWork,
-          IPublishEndpoint publishEndpoint
+          IRedisCacheService redisCache
         )
         : IRequestHandler<DeleteDuyuruCommand, ServiceResult>
     {
@@ -25,8 +24,9 @@ namespace Mikroservice.Site.Application.Features.DuyuruFeatures.DeleteDuyuru
             duyuruRepository.Update(duyuru);
             await unitOfWork.SaveChangesAsync(cancellationToken);
 
-            //Cache temizleme işlemini yapabilsin diye bu event eklendi.
-            await publishEndpoint.Publish(new DuyuruDeletedEvent(duyuru.SiteId, duyuru.DilId), cancellationToken);
+            //Cache temizleme işlemi.
+            var cacheKey = $"duyurus:list:{duyuru.SiteId}:*";
+            await redisCache.RemoveByPatternAsync(cacheKey, cancellationToken);
 
             return ServiceResult.SuccessAsNoContent();
         }

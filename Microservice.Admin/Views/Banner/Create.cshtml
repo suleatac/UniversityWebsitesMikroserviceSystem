@@ -1,0 +1,182 @@
+@model Microservice.Admin.ViewModels.Banner.BannerCreateIndexVm
+
+@{
+    ViewBag.pTitle = "Bannerlar";
+    ViewBag.Title = "Yeni Banner";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row justify-content-center">
+    <div class="col-xxl-10">
+        <div class="card shadow-lg border-0">
+            <div class="card-header bg-primary bg-opacity-10 border-bottom">
+                <div class="d-flex align-items-center">
+                    <div class="avatar-sm me-3">
+                        <div class="avatar-title bg-primary rounded-circle">
+                            <i class="mdi mdi-image-multiple fs-5"></i>
+                        </div>
+                    </div>
+                    <div>
+                        <h5 class="card-title mb-1">Banner Bilgileri</h5>
+                        <p class="card-text text-muted mb-0">Yeni bir banner oluşturmak için formu doldurun</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-body p-4">
+                <form asp-action="Create" id="bannerCreateForm" class="needs-validation" novalidate>
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger d-none" role="alert" id="validationSummary">
+                        <i class="mdi mdi-block-helper me-2"></i><ul></ul>
+                    </div>
+
+                    <input type="hidden" asp-for="CreateBanner.SiteId" />
+                    <input type="hidden" asp-for="CreateBanner.DilId" />
+
+                    <!-- Temel Bilgiler -->
+                    <div class="mb-4">
+                        <h6 class="text-primary border-bottom pb-2">
+                            <i class="mdi mdi-information-outline me-1"></i> Temel Bilgiler
+                        </h6>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label asp-for="CreateBanner.Baslik" class="form-label">Başlık <span class="text-danger">*</span></label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="mdi mdi-format-title"></i></span>
+                                        <input asp-for="CreateBanner.Baslik" class="form-control" placeholder="Banner başlığını giriniz" />
+                                    </div>
+                                    <span asp-validation-for="CreateBanner.Baslik" class="text-danger small"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="mb-3">
+                                    <label asp-for="CreateBanner.KisaAciklama" class="form-label">Kısa Açıklama <span class="text-danger">*</span></label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="mdi mdi-text-short"></i></span>
+                                        <input asp-for="CreateBanner.KisaAciklama" class="form-control" placeholder="Kısa açıklama" />
+                                    </div>
+                                    <span asp-validation-for="CreateBanner.KisaAciklama" class="text-danger small"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="mb-3">
+                                    <label asp-for="CreateBanner.Sira" class="form-label">Sıra</label>
+                                    <input asp-for="CreateBanner.Sira" class="form-control" type="number" placeholder="0" />
+                                    <span asp-validation-for="CreateBanner.Sira" class="text-danger small"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- İçerik ve Medya -->
+                    <div class="mb-4">
+                        <h6 class="text-primary border-bottom pb-2">
+                            <i class="mdi mdi-file-document-outline me-1"></i> İçerik ve Medya
+                        </h6>
+                        <div class="mb-3">
+                            <label asp-for="CreateBanner.IcerikMetni" class="form-label">İçerik Metni <span class="text-danger">*</span></label>
+                            <textarea asp-for="CreateBanner.IcerikMetni" id="IcerikMetniEditor" class="form-control" rows="10" placeholder="Banner içeriğini giriniz..."></textarea>
+                            <span asp-validation-for="CreateBanner.IcerikMetni" class="text-danger small"></span>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label asp-for="CreateBanner.Link" class="form-label">Link</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="mdi mdi-link"></i></span>
+                                        <input asp-for="CreateBanner.Link" class="form-control" placeholder="https://..." />
+                                    </div>
+                                    <span asp-validation-for="CreateBanner.Link" class="text-danger small"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label asp-for="CreateBanner.ResimUrl" class="form-label">Resim URL</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="mdi mdi-image"></i></span>
+                                        <input asp-for="CreateBanner.ResimUrl" class="form-control" placeholder="Resim URL" />
+                                    </div>
+                                    <span asp-validation-for="CreateBanner.ResimUrl" class="text-danger small"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tarih ve Hedef -->
+                    <div class="mb-4">
+                        <h6 class="text-primary border-bottom pb-2">
+                            <i class="mdi mdi-calendar me-1"></i> Tarih ve Hedef
+                        </h6>
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="mb-3">
+                                    <label asp-for="CreateBanner.YayimTarihi" class="form-label">Yayım Tarihi</label>
+                                    <input asp-for="CreateBanner.YayimTarihi" class="form-control" type="datetime-local" />
+                                    <span asp-validation-for="CreateBanner.YayimTarihi" class="text-danger small"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="mb-3">
+                                    <label asp-for="CreateBanner.BaslamaTarihi" class="form-label">Başlama Tarihi</label>
+                                    <input asp-for="CreateBanner.BaslamaTarihi" class="form-control" type="datetime-local" />
+                                    <span asp-validation-for="CreateBanner.BaslamaTarihi" class="text-danger small"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="mb-3">
+                                    <label asp-for="CreateBanner.BitisTarihi" class="form-label">Bitiş Tarihi</label>
+                                    <input asp-for="CreateBanner.BitisTarihi" class="form-control" type="datetime-local" />
+                                    <span asp-validation-for="CreateBanner.BitisTarihi" class="text-danger small"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="mb-3">
+                                    <label asp-for="CreateBanner.HedefId" class="form-label">Hedef</label>
+                                    <select asp-for="CreateBanner.HedefId" class="form-select">
+                                        <option value="">-- Hedef Seçin --</option>
+                                        @foreach (var hedef in Model.Hedefler)
+                                        {
+                                            <option value="@hedef.Id">@hedef.Aciklama</option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SEO -->
+                    <div class="mb-4">
+                        <h6 class="text-primary border-bottom pb-2">
+                            <i class="mdi mdi-magnify me-1"></i> SEO Bilgileri
+                        </h6>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label asp-for="CreateBanner.SeoUrl" class="form-label">SEO URL</label>
+                                    <input asp-for="CreateBanner.SeoUrl" class="form-control" placeholder="seo-url" />
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label asp-for="CreateBanner.SeoTitle" class="form-label">SEO Title</label>
+                                    <input asp-for="CreateBanner.SeoTitle" class="form-control" placeholder="SEO başlık" />
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label asp-for="CreateBanner.SeoDescription" class="form-label">SEO Description</label>
+                                    <input asp-for="CreateBanner.SeoDescription" class="form-control" placeholder="SEO açıklama" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-end gap-2">
+                        <a asp-action="Index" class="btn btn-secondary"><i class="mdi mdi-arrow-left me-1"></i> İptal</a>
+                        <button type="submit" class="btn btn-primary"><i class="mdi mdi-check me-1"></i> Kaydet</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

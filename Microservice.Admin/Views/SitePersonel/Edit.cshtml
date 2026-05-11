@@ -1,0 +1,169 @@
+@model Microservice.Admin.ViewModels.SitePersonel.SitePersonelDetailVm
+
+@{
+    ViewBag.pTitle = "Site Personelleri";
+    ViewBag.Title = "Personel Düzenle";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row justify-content-center">
+    <div class="col-xxl-10">
+        <div class="card shadow-lg border-0">
+            <div class="card-header bg-warning bg-opacity-10 border-bottom">
+                <div class="d-flex align-items-center">
+                    <div class="avatar-sm me-3">
+                        <div class="avatar-title bg-warning rounded-circle">
+                            <i class="mdi mdi-pencil-outline fs-5"></i>
+                        </div>
+                    </div>
+                    <div>
+                        <h5 class="card-title mb-1">Personel Düzenle</h5>
+                        <p class="card-text text-muted mb-0">Personel ID: <strong>@Model.Id</strong></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-body p-4">
+                <form asp-action="Edit" id="sitePersonelEditForm" class="needs-validation" novalidate>
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger d-none" role="alert" id="validationSummary">
+                        <i class="mdi mdi-block-helper me-2"></i><ul></ul>
+                    </div>
+
+                    <input type="hidden" asp-for="Id" />
+                    <input type="hidden" asp-for="SiteId" />
+
+                    <!-- Temel Bilgiler -->
+                    <div class="mb-4">
+                        <h6 class="text-primary border-bottom pb-2">
+                            <i class="mdi mdi-information-outline me-1"></i> Temel Bilgiler
+                        </h6>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label asp-for="UnvanId" class="form-label">Unvan <span class="text-danger">*</span></label>
+                                    <select asp-for="UnvanId" class="form-select">
+                                        <option value="">-- Unvan Seçin --</option>
+                                    </select>
+                                    <span asp-validation-for="UnvanId" class="text-danger small"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label asp-for="PersonelTipId" class="form-label">Personel Tip <span class="text-danger">*</span></label>
+                                    <select asp-for="PersonelTipId" class="form-select">
+                                        <option value="">-- Personel Tip Seçin --</option>
+                                    </select>
+                                    <span asp-validation-for="PersonelTipId" class="text-danger small"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label asp-for="PersonelId" class="form-label">Personel ID <span class="text-danger">*</span></label>
+                                    <input asp-for="PersonelId" class="form-control" placeholder="Personel ID" />
+                                    <span asp-validation-for="PersonelId" class="text-danger small"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Hakkında ve Deneyim -->
+                    <div class="mb-4">
+                        <h6 class="text-primary border-bottom pb-2">
+                            <i class="mdi mdi-file-document-outline me-1"></i> Hakkında ve Deneyim
+                        </h6>
+                        <div class="mb-3">
+                            <label asp-for="Hakkinda" class="form-label">Hakkında <span class="text-danger">*</span></label>
+                            <textarea asp-for="Hakkinda" class="form-control" rows="5" placeholder="Personel hakkında bilgi giriniz..."></textarea>
+                            <span asp-validation-for="Hakkinda" class="text-danger small"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="DeneyimVeCalismalari" class="form-label">Deneyim ve Çalışmaları <span class="text-danger">*</span></label>
+                            <textarea asp-for="DeneyimVeCalismalari" class="form-control" rows="5" placeholder="Deneyim ve çalışmalarını giriniz..."></textarea>
+                            <span asp-validation-for="DeneyimVeCalismalari" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <!-- Medya ve Sosyal -->
+                    <div class="mb-4">
+                        <h6 class="text-primary border-bottom pb-2">
+                            <i class="mdi mdi-link-variant me-1"></i> Medya ve Sosyal Bağlantılar
+                        </h6>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label asp-for="ResimUrl" class="form-label">Resim URL <span class="text-danger">*</span></label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="mdi mdi-image"></i></span>
+                                        <input asp-for="ResimUrl" class="form-control" placeholder="Resim URL" />
+                                    </div>
+                                    <span asp-validation-for="ResimUrl" class="text-danger small"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label asp-for="IlgiAlanlari" class="form-label">İlgi Alanları <span class="text-danger">*</span></label>
+                                    <input asp-for="IlgiAlanlari" class="form-control" placeholder="İlgi alanları" />
+                                    <span asp-validation-for="IlgiAlanlari" class="text-danger small"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label asp-for="BlogAdress" class="form-label">Blog Adresi</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="mdi mdi-web"></i></span>
+                                        <input asp-for="BlogAdress" class="form-control" placeholder="https://..." />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label asp-for="TwitterAdress" class="form-label">Twitter</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="mdi mdi-twitter"></i></span>
+                                        <input asp-for="TwitterAdress" class="form-control" placeholder="https://twitter.com/..." />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label asp-for="FacebookAdress" class="form-label">Facebook</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="mdi mdi-facebook"></i></span>
+                                        <input asp-for="FacebookAdress" class="form-control" placeholder="https://facebook.com/..." />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label asp-for="InstagramAdress" class="form-label">Instagram</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="mdi mdi-instagram"></i></span>
+                                        <input asp-for="InstagramAdress" class="form-control" placeholder="https://instagram.com/..." />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label asp-for="GoogleplusAdress" class="form-label">Google Plus</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="mdi mdi-google-plus"></i></span>
+                                        <input asp-for="GoogleplusAdress" class="form-control" placeholder="https://plus.google.com/..." />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-end gap-2">
+                        <a asp-action="Index" class="btn btn-secondary"><i class="mdi mdi-arrow-left me-1"></i> İptal</a>
+                        <button type="submit" class="btn btn-warning"><i class="mdi mdi-check me-1"></i> Güncelle</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

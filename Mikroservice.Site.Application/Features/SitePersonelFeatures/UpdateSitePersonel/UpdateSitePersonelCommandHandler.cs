@@ -1,18 +1,14 @@
-﻿using MassTransit;
-using MediatR;
+﻿using MediatR;
 using Microservice.Shared;
-using Microservice.Shared.Services.RabbitMqMasstransitServiceItems.Events.SitePersonelEvents;
+using Microservice.Shared.Services.RedisServiceItems;
 using Microservice.Site.Application.Contracts.IRepositories;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Mikroservice.Site.Application.Features.SitePersonelFeatures.UpdateSitePersonel
 {
     public class UpdateSitePersonelCommandHandler(
        ISitePersonelRepository repository,
        IUnitOfWork unitOfWork,
-       IPublishEndpoint publishEndpoint
+       IRedisCacheService redisCache
    ) : IRequestHandler<UpdateSitePersonelCommand, ServiceResult>
     {
         public async Task<ServiceResult> Handle(UpdateSitePersonelCommand request, CancellationToken cancellationToken)
@@ -39,9 +35,8 @@ namespace Mikroservice.Site.Application.Features.SitePersonelFeatures.UpdateSite
 
             await unitOfWork.SaveChangesAsync(cancellationToken);
 
-            await publishEndpoint.Publish(
-                new SitePersonelChangedEvent(entity.SiteId),
-                cancellationToken);
+            var key = $"sitepersonel:list:{request.SiteId}";
+            await redisCache.RemoveAsync(key, cancellationToken);
 
             return ServiceResult.SuccessAsNoContent();
         }

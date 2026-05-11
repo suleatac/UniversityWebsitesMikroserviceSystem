@@ -1,42 +1,115 @@
 ﻿@model IEnumerable<Microservice.Admin.ViewModels.Template.GetTemplateVm>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewBag.pTitle = "Templateler";
+    ViewBag.Title = "Template Yönetimi";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Index</h1>
+@section styles {
+    <style>
+        .page-header-card {
+            background: linear-gradient(135deg, #6c757d 0%, #868e96 100%);
+            border-radius: 12px; padding: 1.5rem; color: white; margin-bottom: 1.5rem;
+            box-shadow: 0 4px 12px rgba(108, 117, 125, 0.2);
+        }
+        .page-header-card h4 { font-weight: 600; margin-bottom: 0.25rem; }
+        .page-header-card .breadcrumb { background: transparent; padding: 0; margin: 0; }
+        .page-header-card .breadcrumb-item a { color: rgba(255,255,255,0.9); text-decoration: none; }
+        .page-header-card .breadcrumb-item a:hover { color: #ffffff; }
+        .page-header-card .breadcrumb-item.active { color: rgba(255,255,255,0.8); }
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Id)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.TemplateAdi)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Id)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.TemplateAdi)
-            </td>
-            <td>
-                    @Html.ActionLink("Edit", "Edit", new { id = item.Id })|
-                    @Html.ActionLink("Details", "Details", new { id = item.Id }) |
-                    @Html.ActionLink("Delete", "Delete", new { id = item.Id })
-            </td>
-        </tr>
+        .btn-create {
+            background: linear-gradient(135deg, #6c757d 0%, #868e96 100%);
+            border: none; color: white; padding: 0.6rem 1.2rem; border-radius: 8px; font-weight: 500;
+            transition: all 0.2s ease;
+        }
+        .btn-create:hover { transform: translateY(-2px); box-shadow: 0 3px 10px rgba(108, 117, 125, 0.3); color: white; }
+
+        .table-card { border: none; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.06); }
+        .table-card .card-header {
+            background: linear-gradient(135deg, #fdfefe 0%, #f4f5f7 100%);
+            border-bottom: 2px solid #6c757d; border-radius: 12px 12px 0 0 !important; padding: 1rem 1.25rem;
+        }
+    </style>
 }
-    </tbody>
-</table>
+
+<!-- Page Header -->
+<div class="page-header-card">
+    <div class="d-flex justify-content-between align-items-center">
+        <div>
+            <h4><i class="mdi mdi-file-code me-2"></i>Template Yönetimi</h4>
+            <p class="mb-0 opacity-75">Tüm templateleri buradan yönetebilirsiniz</p>
+        </div>
+        <a asp-action="Create" class="btn btn-create">
+            <i class="mdi mdi-plus-circle me-1"></i> Yeni Template Ekle
+        </a>
+    </div>
+</div>
+
+<!-- Table -->
+<div class="row">
+    <div class="col-12">
+        <div class="card table-card">
+            <div class="card-header">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0">
+                        <i class="mdi mdi-table me-2 text-primary"></i>Template Listesi
+                    </h5>
+                    <span class="badge bg-primary bg-opacity-10 text-primary">@Model.Count() Kayıt</span>
+                </div>
+            </div>
+            <div class="card-body">
+                @if (TempData["Success"] != null)
+                {
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        <i class="mdi mdi-check-circle me-2"></i>@TempData["Success"]
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                }
+                @if (TempData["Error"] != null)
+                {
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <i class="mdi mdi-alert-circle me-2"></i>@TempData["Error"]
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                }
+
+                <div class="table-responsive">
+                    <table class="table table-striped table-bordered">
+                        <thead>
+                            <tr>
+                                <th width="60">ID</th>
+                                <th>Template Adı</th>
+                                <th>Template Türü</th>
+                                <th>Folder Name</th>
+                                <th>Layout Path</th>
+                                <th width="150">İşlemler</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>@item.Id</td>
+                                    <td>@item.TemplateAdi</td>
+                                    <td>@item.TemplateTuru</td>
+                                    <td>@item.FolderName</td>
+                                    <td>@item.LayoutPath</td>
+                                    <td>
+                                        <a class="btn btn-outline-primary btn-sm" asp-action="Edit" asp-route-id="@item.Id" title="Düzenle">
+                                            <i class="fas fa-pencil-alt"></i>
+                                        </a>
+                                        <a class="btn btn-outline-danger btn-sm" asp-action="Delete" asp-route-id="@item.Id" title="Sil">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

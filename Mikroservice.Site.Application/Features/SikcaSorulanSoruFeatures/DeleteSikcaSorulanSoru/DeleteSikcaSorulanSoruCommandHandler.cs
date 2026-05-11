@@ -1,8 +1,6 @@
-using MassTransit;
 using MediatR;
 using Microservice.Shared;
-using Microservice.Shared.Services.RabbitMqMasstransitServiceItems.Events.SikcaSorulanSoruEvents;
-using Microservice.Shared.Services.RabbitMqMasstransitServiceItems.Events.SikcaSorulanSoruEvents.Microservice.Shared.Services.RabbitMqMasstransitServiceItems.Events.SikcaSorulanSoruEvents;
+using Microservice.Shared.Services.RedisServiceItems;
 using Microservice.Site.Application.Contracts.IRepositories;
 
 namespace Mikroservice.Site.Application.Features.SikcaSorulanSoruFeatures.DeleteSikcaSorulanSoru
@@ -10,7 +8,7 @@ namespace Mikroservice.Site.Application.Features.SikcaSorulanSoruFeatures.Delete
     public class DeleteSikcaSorulanSoruCommandHandler(
           ISikcaSorulanSoruRepository sikcaSorulanSoruRepository,
           IUnitOfWork unitOfWork,
-          IPublishEndpoint publishEndpoint
+          IRedisCacheService redisCache
         )
         : IRequestHandler<DeleteSikcaSorulanSoruCommand, ServiceResult>
     {
@@ -26,8 +24,9 @@ namespace Mikroservice.Site.Application.Features.SikcaSorulanSoruFeatures.Delete
             sikcaSorulanSoruRepository.Update(sikcaSorulanSoru);
             await unitOfWork.SaveChangesAsync(cancellationToken);
 
-            //Cache temizleme işlemini yapabilsin diye bu event eklendi.
-            await publishEndpoint.Publish(new SikcaSorulanSoruChangedEvent(sikcaSorulanSoru.SiteId, sikcaSorulanSoru.DilId), cancellationToken);
+            // 🔥 Cache silme işlemi
+            var key = $"sikcasorulansoru:list:{sikcaSorulanSoru.SiteId}:*";
+            await redisCache.RemoveAsync(key, cancellationToken);
 
             return ServiceResult.SuccessAsNoContent();
         }

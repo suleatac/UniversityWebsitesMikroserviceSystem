@@ -1,7 +1,7 @@
 ﻿using Microservice.Shared.Extentions;
 using MediatR;
 using Mikroservice.Site.Application.Features.MenuFeatures.GetMenus;
-using Mikroservice.Site.Application.DTOs;
+using Mikroservice.Site.Application.DTOs.MenuDtos;
 
 namespace Mikroservice.Site.Api.Endpoints.MenuEndPoints.EndPoints
 {

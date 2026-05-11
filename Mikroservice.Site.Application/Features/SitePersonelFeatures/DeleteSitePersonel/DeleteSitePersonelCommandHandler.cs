@@ -1,7 +1,6 @@
-﻿using MassTransit;
-using MediatR;
+﻿using MediatR;
 using Microservice.Shared;
-using Microservice.Shared.Services.RabbitMqMasstransitServiceItems.Events.SitePersonelEvents;
+using Microservice.Shared.Services.RedisServiceItems;
 using Microservice.Site.Application.Contracts.IRepositories;
 
 namespace Mikroservice.Site.Application.Features.SitePersonelFeatures.DeleteSitePersonel
@@ -9,7 +8,7 @@ namespace Mikroservice.Site.Application.Features.SitePersonelFeatures.DeleteSite
     public class DeleteSitePersonelCommandHandler(
       ISitePersonelRepository repository,
       IUnitOfWork unitOfWork,
-      IPublishEndpoint publishEndpoint
+      IRedisCacheService redisCache
   ) : IRequestHandler<DeleteSitePersonelCommand, ServiceResult>
     {
         public async Task<ServiceResult> Handle(DeleteSitePersonelCommand request, CancellationToken cancellationToken)
@@ -23,9 +22,8 @@ namespace Mikroservice.Site.Application.Features.SitePersonelFeatures.DeleteSite
 
             await unitOfWork.SaveChangesAsync(cancellationToken);
 
-            await publishEndpoint.Publish(
-                new SitePersonelChangedEvent(entity.SiteId),
-                cancellationToken);
+            var key = $"sitepersonel:list:{entity.SiteId}";
+            await redisCache.RemoveAsync(key, cancellationToken);
 
             return ServiceResult.SuccessAsNoContent();
         }

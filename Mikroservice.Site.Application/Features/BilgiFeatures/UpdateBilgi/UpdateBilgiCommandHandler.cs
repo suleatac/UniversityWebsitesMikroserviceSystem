@@ -3,14 +3,17 @@ using MediatR;
 using Microservice.Shared;
 using Microservice.Shared.Services.RabbitMqMasstransitServiceItems.Events;
 using Microservice.Shared.Services.RabbitMqMasstransitServiceItems.Events.BilgiEvents;
+using Microservice.Shared.Services.RedisServiceItems;
 using Microservice.Site.Application.Contracts.IRepositories;
+using Microsoft.Extensions.Caching.StackExchangeRedis;
+using Mikroservice.Site.Domain.Entities;
 
 namespace Mikroservice.Site.Application.Features.BilgiFeatures.UpdateBilgi
 {
     public class UpdateBilgiCommandHandler(
           IBilgiRepository bilgiRepository,
           IUnitOfWork unitOfWork,
-          IPublishEndpoint publishEndpoint
+          IRedisCacheService redisCache
         )
         : IRequestHandler<UpdateBilgiCommand, ServiceResult>
     {
@@ -38,9 +41,9 @@ namespace Mikroservice.Site.Application.Features.BilgiFeatures.UpdateBilgi
             bilgi.HedefId = request.HedefId;
             await unitOfWork.SaveChangesAsync(cancellationToken);
 
-            //Cache temizleme işlemini yapabilsin diye bu event eklendi.
-            await publishEndpoint.Publish(new BilgiUpdatedEvent(bilgi.SiteId, bilgi.DilId), cancellationToken);
-
+            //Cache temizleme işlemi.
+            var cacheKey = $"bilgis:list:{bilgi.SiteId}:*";
+            await redisCache.RemoveByPatternAsync(cacheKey, cancellationToken);
 
             return ServiceResult.SuccessAsNoContent();
         }

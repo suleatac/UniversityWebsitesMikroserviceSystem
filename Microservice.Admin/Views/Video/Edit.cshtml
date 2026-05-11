@@ -1,0 +1,79 @@
+@model Microservice.Admin.ViewModels.Video.VideoDetailVm
+
+@{
+    ViewBag.pTitle = "Videolar";
+    ViewBag.Title = "Video Düzenle";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row justify-content-center">
+    <div class="col-xxl-10">
+        <div class="card shadow-lg border-0">
+            <div class="card-header bg-warning bg-opacity-10 border-bottom">
+                <div class="d-flex align-items-center">
+                    <div class="avatar-sm me-3"><div class="avatar-title bg-warning rounded-circle"><i class="mdi mdi-pencil-outline fs-5"></i></div></div>
+                    <div><h5 class="card-title mb-1">Video Düzenle</h5><p class="card-text text-muted mb-0">ID: <strong>@Model.Id</strong> | <span class="text-primary">@Model.Baslik</span></p></div>
+                </div>
+            </div>
+            <div class="card-body p-4">
+                <form asp-action="Edit" id="videoEditForm" class="needs-validation" novalidate>
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger d-none" role="alert"><i class="mdi mdi-block-helper me-2"></i><ul></ul></div>
+                    <input type="hidden" asp-for="Id" />
+                    <input type="hidden" asp-for="SiteId" />
+                    <input type="hidden" asp-for="DilId" />
+                    <input type="hidden" asp-for="EklemeTarihi" />
+                    <input type="hidden" asp-for="GosterimSayisi" />
+
+                    <div class="mb-4">
+                        <div class="alert alert-info d-flex align-items-center" role="alert">
+                            <i class="mdi mdi-information-outline me-2 fs-5"></i>
+                            <div><strong>Eklenme Tarihi:</strong> @Model.EklemeTarihi.ToString("dd.MM.yyyy HH:mm") &nbsp;|&nbsp; <strong>Gösterim:</strong> @Model.GosterimSayisi</div>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <h6 class="text-primary border-bottom pb-2"><i class="mdi mdi-information-outline me-1"></i> Temel Bilgiler</h6>
+                        <div class="row">
+                            <div class="col-md-8"><div class="mb-3"><label asp-for="Baslik" class="form-label">Başlık <span class="text-danger">*</span></label><div class="input-group"><span class="input-group-text"><i class="mdi mdi-format-title"></i></span><input asp-for="Baslik" class="form-control" /></div><span asp-validation-for="Baslik" class="text-danger small"></span></div></div>
+                            <div class="col-md-4"><div class="mb-3"><label asp-for="KisaAciklama" class="form-label">Kısa Açıklama <span class="text-danger">*</span></label><div class="input-group"><span class="input-group-text"><i class="mdi mdi-text-short"></i></span><input asp-for="KisaAciklama" class="form-control" /></div><span asp-validation-for="KisaAciklama" class="text-danger small"></span></div></div>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <h6 class="text-primary border-bottom pb-2"><i class="mdi mdi-video me-1"></i> Video ve İçerik</h6>
+                        <div class="mb-3"><label asp-for="VideoUrl" class="form-label">Video URL <span class="text-danger">*</span></label><div class="input-group"><span class="input-group-text"><i class="mdi mdi-link-variant"></i></span><input asp-for="VideoUrl" class="form-control" /></div><span asp-validation-for="VideoUrl" class="text-danger small"></span></div>
+                        <div class="mb-3"><label asp-for="IcerikMetni" class="form-label">İçerik Metni</label><textarea asp-for="IcerikMetni" id="IcerikMetniEditor" class="form-control" rows="8"></textarea><span asp-validation-for="IcerikMetni" class="text-danger small"></span></div>
+                        <div class="row">
+                            <div class="col-md-6"><div class="mb-3"><label asp-for="Link" class="form-label">Link</label><div class="input-group"><span class="input-group-text"><i class="mdi mdi-link"></i></span><input asp-for="Link" class="form-control" /></div></div></div>
+                            <div class="col-md-6"><div class="mb-3"><label asp-for="ResimUrl" class="form-label">Resim URL</label><div class="input-group"><span class="input-group-text"><i class="mdi mdi-image"></i></span><input asp-for="ResimUrl" class="form-control" /></div></div></div>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <h6 class="text-primary border-bottom pb-2"><i class="mdi mdi-calendar me-1"></i> Tarih ve Hedef</h6>
+                        <div class="row">
+                            <div class="col-md-3"><div class="mb-3"><label asp-for="YayimTarihi" class="form-label">Yayım Tarihi</label><input asp-for="YayimTarihi" class="form-control" type="datetime-local" /></div></div>
+                            <div class="col-md-3"><div class="mb-3"><label asp-for="BaslamaTarihi" class="form-label">Başlama Tarihi</label><input asp-for="BaslamaTarihi" class="form-control" type="datetime-local" /></div></div>
+                            <div class="col-md-3"><div class="mb-3"><label asp-for="BitisTarihi" class="form-label">Bitiş Tarihi</label><input asp-for="BitisTarihi" class="form-control" type="datetime-local" /></div></div>
+                            <div class="col-md-3"><div class="mb-3"><label asp-for="HedefId" class="form-label">Hedef</label><select asp-for="HedefId" class="form-select"><option value="">-- Hedef Seçin --</option></select></div></div>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <h6 class="text-primary border-bottom pb-2"><i class="mdi mdi-magnify me-1"></i> SEO Bilgileri</h6>
+                        <div class="row">
+                            <div class="col-md-4"><div class="mb-3"><label asp-for="SeoUrl" class="form-label">SEO URL</label><input asp-for="SeoUrl" class="form-control" /></div></div>
+                            <div class="col-md-4"><div class="mb-3"><label asp-for="SeoTitle" class="form-label">SEO Title</label><input asp-for="SeoTitle" class="form-control" /></div></div>
+                            <div class="col-md-4"><div class="mb-3"><label asp-for="SeoDescription" class="form-label">SEO Description</label><input asp-for="SeoDescription" class="form-control" /></div></div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-end gap-2">
+                        <a asp-action="Index" class="btn btn-secondary"><i class="mdi mdi-arrow-left me-1"></i> İptal</a>
+                        <button type="submit" class="btn btn-warning"><i class="mdi mdi-check me-1"></i> Güncelle</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

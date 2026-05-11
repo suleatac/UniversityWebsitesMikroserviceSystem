@@ -21,6 +21,7 @@ namespace Mikroservice.Site.Api.Endpoints.PersonelTipEndPoints
             group.UpdatePersonelTipEndpointGroupItem();
             group.DeletePersonelTipEndpointGroupItem();
             group.GetPersonelTiplerEndpointGroupItem();
+            group.GetPersonelTipByIdEndpointGroupItem();
             group.RequireAuthorization("Password");
         }
     }

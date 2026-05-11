@@ -21,6 +21,8 @@ namespace Mikroservice.Site.Api.Endpoints.PopupEndPoints
             group.UpdatePopupEndpointGroupItem();
             group.DeletePopupEndpointGroupItem();
             group.GetPopupsEndpointGroupItem();
+            group.GetPopupByIdEndpointGroupItem();
+            group.GetPaginatedPopupEndpointGroupItem();
             group.RequireAuthorization("Password");
         }
     }

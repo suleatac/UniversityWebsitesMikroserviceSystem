@@ -1,18 +1,14 @@
-using MassTransit;
 using MediatR;
 using Microservice.Shared;
-using Microservice.Shared.Services.RabbitMqMasstransitServiceItems.Events.BandLogoEvents;
-using Microservice.Shared.Services.RabbitMqMasstransitServiceItems.Events.PersonelTipEvents;
+using Microservice.Shared.Services.RedisServiceItems;
 using Microservice.Site.Application.Contracts.IRepositories;
-using Mikroservice.Site.Application.Features.BandLogoFeatures.UpdateBandLogo;
-using Mikroservice.Site.Domain.Entities;
 
 namespace Mikroservice.Site.Application.Features.PersonelTipFeatures.UpdatePersonelTip
 {
     public class UpdatePersonelTipCommandHandler(
           IPersonelTipRepository personelTipRepository,
           IUnitOfWork unitOfWork,
-          IPublishEndpoint publishEndpoint
+          IRedisCacheService redisCache
         )
         : IRequestHandler<UpdatePersonelTipCommand, ServiceResult>
     {
@@ -27,8 +23,8 @@ namespace Mikroservice.Site.Application.Features.PersonelTipFeatures.UpdatePerso
             personelTip.Ad = request.Ad;
             await unitOfWork.SaveChangesAsync(cancellationToken);
 
-            //Cache temizleme işlemini yapabilsin diye bu event eklendi.
-            await publishEndpoint.Publish(new PersonelTipChangedEvent(), cancellationToken);
+            //Cache temizleme işlemi.
+            await redisCache.RemoveAsync("personelTip:list", cancellationToken);
 
 
             return ServiceResult.SuccessAsNoContent();
