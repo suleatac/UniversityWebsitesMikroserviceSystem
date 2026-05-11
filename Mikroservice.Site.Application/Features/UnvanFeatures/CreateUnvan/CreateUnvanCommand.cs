@@ -2,7 +2,7 @@
 
 namespace Mikroservice.Site.Application.Features.UnvanFeatures.CreateUnvan
 {
-    public record CreateUnvanCommand : IRequestByServiceResult
+    public record CreateUnvanCommand : IRequestByServiceResult<CreateUnvanResponse>
     {
         public int TipId { get; init; }
 
@@ -11,5 +11,6 @@ namespace Mikroservice.Site.Application.Features.UnvanFeatures.CreateUnvan
         public string KisaAd { get; init; } = default!;
 
         public int Sira { get; init; }
+        public int? ParentId { get; init; }
     }
 }

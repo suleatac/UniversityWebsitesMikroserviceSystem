@@ -12,7 +12,7 @@ namespace Mikroservice.Site.Api.Endpoints.UnvanEndPoints.EndPoints
             group.MapGet("/", async (
                 IMediator mediator) =>
             {
-                var result = await mediator.Send(new GetUnvansQuery());
+                var result = await mediator.Send(new GetUnvanQuery());
                 return result.ToGenericResult();
             })
             .WithName("GetUnvanlar")

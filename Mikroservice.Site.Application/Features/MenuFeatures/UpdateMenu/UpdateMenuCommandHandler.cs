@@ -2,6 +2,7 @@
 using MediatR;
 using Microservice.Shared;
 using Microservice.Shared.Services.RabbitMqMasstransitServiceItems.Events.MenuEvents;
+using Microservice.Shared.Services.RedisServiceItems;
 using Microservice.Site.Application.Contracts.IRepositories;
 using System;
 using System.Collections.Generic;
@@ -13,7 +14,7 @@ namespace Mikroservice.Site.Application.Features.MenuFeatures.UpdateMenu
     public class UpdateMenuCommandHandler(
      IMenuRepository menuRepository,
      IUnitOfWork unitOfWork,
-     IPublishEndpoint publishEndpoint
+     IRedisCacheService redisCache
  ) : IRequestHandler<UpdateMenuCommand, ServiceResult>
     {
         public async Task<ServiceResult> Handle(UpdateMenuCommand request, CancellationToken cancellationToken)
@@ -53,9 +54,8 @@ namespace Mikroservice.Site.Application.Features.MenuFeatures.UpdateMenu
             await unitOfWork.SaveChangesAsync(cancellationToken);
 
             // 🔥 Event (cache invalidation)
-            await publishEndpoint.Publish(
-                new MenuChangedEvent(menu.SiteId, menu.DilId),
-                cancellationToken);
+            var key = $"menus:list:{menu.SiteId}:{menu.DilId}";
+            await redisCache.RemoveAsync(key, cancellationToken);
 
             return ServiceResult.SuccessAsNoContent();
         }

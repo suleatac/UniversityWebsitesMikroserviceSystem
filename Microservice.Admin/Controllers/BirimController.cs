@@ -2,8 +2,6 @@
 using Microservice.Admin.ViewModels.Birim;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 
 namespace Microservice.Admin.Controllers
 {

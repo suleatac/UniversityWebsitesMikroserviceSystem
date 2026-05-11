@@ -20,6 +20,8 @@ namespace Microservice.Admin.Services.ServicesExtentions
             services.AddScoped<IHedefService, HedefService>();
             services.AddScoped<IHaberService, HaberService>();
             services.AddScoped<IYonetimDuyuruService, YonetimDuyuruService>();
+            services.AddScoped<IUnvanService, UnvanService>();
+            services.AddScoped<IMenuService, MenuService>();
             return services;
         }
     }

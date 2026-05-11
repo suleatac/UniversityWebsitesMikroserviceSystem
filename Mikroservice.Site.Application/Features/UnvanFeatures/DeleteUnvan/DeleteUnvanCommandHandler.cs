@@ -1,11 +1,7 @@
-﻿using MassTransit;
-using MediatR;
+﻿using MediatR;
 using Microservice.Shared;
-using Microservice.Shared.Services.RabbitMqMasstransitServiceItems.Events.UnvanEvents;
+using Microservice.Shared.Services.RedisServiceItems;
 using Microservice.Site.Application.Contracts.IRepositories;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Mikroservice.Site.Application.Features.UnvanFeatures.DeleteUnvan
 {
@@ -13,7 +9,7 @@ namespace Mikroservice.Site.Application.Features.UnvanFeatures.DeleteUnvan
         IUnvanRepository repository,
         ISitePersonelRepository sitePersonelRepository,
         IUnitOfWork unitOfWork,
-        IPublishEndpoint publishEndpoint
+        IRedisCacheService redisCache
     ) : IRequestHandler<DeleteUnvanCommand, ServiceResult>
     {
         public async Task<ServiceResult> Handle(DeleteUnvanCommand request, CancellationToken cancellationToken)
@@ -33,7 +29,10 @@ namespace Mikroservice.Site.Application.Features.UnvanFeatures.DeleteUnvan
 
             await unitOfWork.SaveChangesAsync(cancellationToken);
 
-            await publishEndpoint.Publish(new UnvanChangedEvent(), cancellationToken);
+            // Cache invalidation
+            await redisCache.RemoveAsync(
+                "unvan:list",
+                cancellationToken);
 
             return ServiceResult.SuccessAsNoContent();
         }

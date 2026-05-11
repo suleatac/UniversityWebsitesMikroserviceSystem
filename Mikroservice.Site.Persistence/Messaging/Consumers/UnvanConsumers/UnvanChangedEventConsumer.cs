@@ -18,7 +18,6 @@ namespace Mikroservice.Site.Persistence.Messaging.Consumers.UnvanConsumers
             var message = context.Message;
 
             var key = $"unvans:list";
-
             await _cache.RemoveAsync(key, context.CancellationToken);
         }
     }

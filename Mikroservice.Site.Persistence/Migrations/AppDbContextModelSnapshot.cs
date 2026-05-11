@@ -51,9 +51,6 @@ namespace Mikroservice.Site.Persistence.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<bool>("Aktif")
-                        .HasColumnType("boolean");
-
                     b.Property<string>("Baslik")
                         .IsRequired()
                         .HasMaxLength(200)
@@ -65,6 +62,9 @@ namespace Mikroservice.Site.Persistence.Migrations
                     b.Property<string>("Icerik")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
 
                     b.HasKey("Id");
 

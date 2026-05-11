@@ -1,0 +1,170 @@
+@model Microservice.Admin.ViewModels.User.UserUpdateVm
+
+@{
+    ViewBag.pTitle = "Ana Sayfa";
+    ViewBag.Title = "Kullanıcı Düzenle";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section styles {
+    <style>
+        .page-header-card {
+            background: linear-gradient(135deg, #6f42c1 0%, #d63384 100%);
+            border-radius: 12px;
+            padding: 1.5rem;
+            color: white;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 4px 12px rgba(111, 66, 193, 0.2);
+        }
+
+            .page-header-card h4 {
+                font-weight: 600;
+                margin-bottom: 0.25rem;
+            }
+
+            .page-header-card .breadcrumb {
+                background: transparent;
+                padding: 0;
+                margin: 0;
+            }
+
+                .page-header-card .breadcrumb-item a {
+                    color: rgba(255, 255, 255, 0.9);
+                    text-decoration: none;
+                }
+
+                    .page-header-card .breadcrumb-item a:hover {
+                        color: #ffffff;
+                    }
+
+                .page-header-card .breadcrumb-item.active {
+                    color: rgba(255, 255, 255, 0.8);
+                }
+        .validation-summary-valid {
+            display: none !important;
+        }
+    </style>
+}
+
+<!-- Page Header -->
+<div class="page-header-card">
+    <div class="d-flex align-items-center">
+        <div>
+            <h4><i class="mdi mdi-account-edit me-2"></i>Kullanıcı Düzenle</h4>
+            <p class="mb-0 opacity-75">Kullanıcı bilgilerini güncelleyin</p>
+        </div>
+    </div>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-xxl-8">
+        <div class="card shadow-lg border-0">
+            <div class="card-header bg-warning bg-opacity-10 border-bottom">
+                <div class="d-flex align-items-center">
+                    <div class="avatar-sm me-3">
+                        <div class="avatar-title bg-warning rounded-circle">
+                            <i class="mdi mdi-account-edit fs-5"></i>
+                        </div>
+                    </div>
+                    <div>
+                        <h5 class="card-title mb-1">Kullanıcı Bilgilerini Düzenle</h5>
+                        <p class="card-text text-muted mb-0">ID: <code>@Model.Id</code></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-body p-4">
+                <form asp-action="Edit" class="needs-validation" novalidate>
+                    <input type="hidden" asp-for="Id" />
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert">
+                        <i class="mdi mdi-block-helper me-2"></i>
+                    </div>
+
+                    <!-- Kullanıcı Bilgileri -->
+                    <div class="mb-4">
+                        <h6 class="text-primary border-bottom pb-2">
+                            <i class="mdi mdi-information-outline me-1"></i> Temel Bilgiler
+                        </h6>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label asp-for="FirstName" class="form-label">
+                                        Ad <span class="text-danger">*</span>
+                                    </label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="mdi mdi-card-account-details"></i></span>
+                                        <input asp-for="FirstName" class="form-control" placeholder="Ad girin" />
+                                    </div>
+                                    <span asp-validation-for="FirstName" class="text-danger small"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label asp-for="LastName" class="form-label">
+                                        Soyad <span class="text-danger">*</span>
+                                    </label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="mdi mdi-card-account-details"></i></span>
+                                        <input asp-for="LastName" class="form-control" placeholder="Soyad girin" />
+                                    </div>
+                                    <span asp-validation-for="LastName" class="text-danger small"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label asp-for="Email" class="form-label">
+                                        E-Posta <span class="text-danger">*</span>
+                                    </label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="mdi mdi-email"></i></span>
+                                        <input asp-for="Email" class="form-control" placeholder="ornek@email.com" />
+                                    </div>
+                                    <span asp-validation-for="Email" class="text-danger small"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label asp-for="Enabled" class="form-label">
+                                        Durum
+                                    </label>
+                                    <div class="form-check form-switch form-switch-lg mt-2">
+                                        <input asp-for="Enabled" class="form-check-input" type="checkbox" role="switch" />
+                                        <label asp-for="Enabled" class="form-check-label ms-2">
+                                            @(Model.Enabled ? "Aktif" : "Pasif")
+                                        </label>
+                                    </div>
+                                    <span asp-validation-for="Enabled" class="text-danger small"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Form Actions -->
+                    <div class="d-flex justify-content-between align-items-center pt-3 border-top">
+                        <a asp-action="Index" class="btn btn-outline-secondary">
+                            <i class="mdi mdi-arrow-left me-1"></i> İptal
+                        </a>
+                        <button type="submit" class="btn btn-warning">
+                            <i class="mdi mdi-content-save me-1"></i> Güncelle
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <script>
+        // Enabled checkbox toggle label
+        document.getElementById('Enabled').addEventListener('change', function () {
+            var label = this.parentElement.querySelector('.form-check-label');
+            label.textContent = this.checked ? 'Aktif' : 'Pasif';
+        });
+
+    </script>
+}

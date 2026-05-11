@@ -5,6 +5,5 @@ namespace Microservice.Site.Application.Features.YonetimDuyuruFeatures.CreateYon
 {
     public record CreateYonetimDuyuruCommand(
         string Baslik,
-        string Icerik,
-        DateTime EklenmeTarihi) : IRequestByServiceResult<CreateYonetimDuyuruResponse>;
+        string Icerik) : IRequestByServiceResult<CreateYonetimDuyuruResponse>;
 }

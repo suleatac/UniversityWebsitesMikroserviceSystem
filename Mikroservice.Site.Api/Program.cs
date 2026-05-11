@@ -85,12 +85,12 @@ builder.Services.AddVersioningExt();
 var app = builder.Build();
 
 //Çalıştığında otomatik migration yapması için
-using (var scope = app.Services.CreateScope())
-{
-    var serviceProvider = scope.ServiceProvider;
-    var dbContext = serviceProvider.GetRequiredService<AppDbContext>();
-    await dbContext.Database.MigrateAsync();
-}
+//using (var scope = app.Services.CreateScope())
+//{
+//    var serviceProvider = scope.ServiceProvider;
+//    var dbContext = serviceProvider.GetRequiredService<AppDbContext>();
+//    await dbContext.Database.MigrateAsync();
+//}
 
 
 //Authentication ve Authorization middleware'leri eklendi

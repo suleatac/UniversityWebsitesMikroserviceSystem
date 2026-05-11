@@ -66,6 +66,9 @@ namespace Mikroservice.Site.Application.Features.MenuFeatures.GetMenus
                 .OrderBy(x => x.Sira)
                 .Select(x => new MenuDto {
                     Id = x.Id,
+                    SiteId = x.SiteId,
+                    DilId = x.DilId,
+                    HedefId = x.HedefId,
                     Ad = x.Ad,
                     Link = x.Link,
                     IconUrl = x.IconUrl,

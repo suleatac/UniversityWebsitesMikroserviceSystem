@@ -2,18 +2,13 @@
 using Microservice.Admin.Services.Interfaces;
 using Microservice.Admin.Services.ServiceResults;
 using Microservice.Admin.Settings;
+using Microservice.Admin.ViewModels;
 using Microservice.Admin.ViewModels.User;
 
 namespace Microservice.Admin.Services
 {
 
-    public record UserCreateRequest(string Username,
-       bool Enabled,
-       string FirstName,
-       string LastName,
-       string Email,
-       int PersonId, // yeni alan
-       List<Credential> Credentials);
+
 
     public record Credential(
         string Type,
@@ -22,12 +17,14 @@ namespace Microservice.Admin.Services
         );
 
     public record KeycloakErrorResponse(string ErrorMessage);
-    public class UserService: IUserService
+
+    public class UserService : IUserService
     {
         private readonly IdentitySetting _settings;
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly ILogger<UserService> _logger;
         private readonly ITokenService _tokenService;
+
         public UserService(
             IdentitySetting settings,
             IHttpClientFactory httpClientFactory,
@@ -59,21 +56,178 @@ namespace Microservice.Admin.Services
             return await HandleErrorResponse(response);
         }
 
-
-
-        private static UserCreateRequest CreateUserRequest(UserAddVm model)
+        private static KeycloakUserCreateRequest CreateUserRequest(UserAddVm model)
         {
-            return new(
-                model.UserName!,
-                true,
-                model.FirstName!,
-                model.LastName!,
-                model.Email!,
-                model.PersonId,
-                new List<Credential>
-                {
-                new("password", model.Password!, false)
-                });
+
+
+            var keycloakRequestModel = new KeycloakUserCreateRequest{
+                Username = model.UserName,
+                Enabled = model.Enabled,
+                FirstName = model.FirstName,
+                LastName = model.LastName,
+                Email = model.Email,
+                Attributes = new Dictionary<string, string[]>
+   {
+                   { "personId", new[] { model.PersonId.ToString() } }
+                 },
+                Credentials = new List<KeycloakCredential>
+   {
+                      new()
+                       {
+                         Type = "password",
+                         Value = model.Password,
+                         Temporary = false
+                        }
+                 }
+            };
+
+            return keycloakRequestModel;
+        }
+
+        // Kullanıcı silme
+        public async Task<ServiceResult> DeleteAccount(string userId)
+        {
+            var tokenResult = await _tokenService.GetAdminTokenAsync();
+            if (tokenResult.IsFail)
+                return tokenResult;
+
+            var client = _httpClientFactory.CreateClient();
+            client.SetBearerToken(tokenResult.Data!.AccessToken!);
+
+            var deleteUrl = $"{_settings.AdminUserAddress}/{userId}";
+            var response = await client.DeleteAsync(deleteUrl);
+
+            if (response.IsSuccessStatusCode)
+                return ServiceResult.Success();
+
+            return await HandleErrorResponse(response);
+        }
+
+        // Kullanıcı güncelleme
+        public async Task<ServiceResult> UpdateAccount(string userId, UserUpdateVm model)
+        {
+            var tokenResult = await _tokenService.GetAdminTokenAsync();
+            if (tokenResult.IsFail)
+                return tokenResult;
+
+            var client = _httpClientFactory.CreateClient();
+            client.SetBearerToken(tokenResult.Data!.AccessToken!);
+
+            var updateUrl = $"{_settings.AdminUserAddress}/{userId}";
+            var request = new
+            {
+                firstName = model.FirstName,
+                lastName = model.LastName,
+                email = model.Email,
+                enabled = model.Enabled
+            };
+
+            var response = await client.PutAsJsonAsync(updateUrl, request);
+
+            if (response.IsSuccessStatusCode)
+                return ServiceResult.Success();
+
+            return await HandleErrorResponse(response);
+        }
+
+        // Kullanıcı listeleme
+        public async Task<ServiceResult<List<UserListVm>>> GetUsersAsync()
+        {
+            var tokenResult = await _tokenService.GetAdminTokenAsync();
+            if (tokenResult.IsFail)
+                return ServiceResult<List<UserListVm>>.Error(tokenResult.Fail.Detail);
+
+            var client = _httpClientFactory.CreateClient();
+            client.SetBearerToken(tokenResult.Data!.AccessToken!);
+
+            var response = await client.GetAsync(_settings.AdminUserAddress);
+
+            if (!response.IsSuccessStatusCode)
+                return ServiceResult<List<UserListVm>>.Error("Kullanıcılar alınamadı");
+
+            var users = await response.Content.ReadFromJsonAsync<List<UserListVm>>();
+            return ServiceResult<List<UserListVm>>.Success(users!);
+        }
+
+        // Kullanıcı Id bilgisine göre alma
+        public async Task<ServiceResult<UserListVm>> GetUserByIdAsync(string userId)
+        {
+            var tokenResult = await _tokenService.GetAdminTokenAsync();
+            if (tokenResult.IsFail)
+                return ServiceResult<UserListVm>.Error(tokenResult.Fail.Detail);
+
+            var client = _httpClientFactory.CreateClient();
+            client.SetBearerToken(tokenResult.Data!.AccessToken!);
+
+            var url = $"{_settings.AdminUserAddress}/{userId}";
+            var response = await client.GetAsync(url);
+
+            if (!response.IsSuccessStatusCode)
+                return ServiceResult<UserListVm>.Error("Kullanıcı bulunamadı");
+
+            var user = await response.Content.ReadFromJsonAsync<UserListVm>();
+            return ServiceResult<UserListVm>.Success(user!);
+        }
+
+        // Sayfalama ile kullanıcı alma
+        public async Task<ServiceResult<PaginatedResult<UserListVm>>> GetUsersPaginatedAsync(
+            int page, int pageSize, string search, string orderBy, string orderDir)
+        {
+            var tokenResult = await _tokenService.GetAdminTokenAsync();
+            if (tokenResult.IsFail)
+                return ServiceResult<PaginatedResult<UserListVm>>.Error(tokenResult.Fail.Detail);
+
+            var client = _httpClientFactory.CreateClient();
+            client.SetBearerToken(tokenResult.Data!.AccessToken!);
+
+            // Keycloak toplam kullanıcı sayısını al
+            var countUrl = $"{_settings.AdminUserAddress}/count";
+            var countResponse = await client.GetAsync(countUrl);
+            int totalCount = 0;
+
+            if (countResponse.IsSuccessStatusCode)
+            {
+                var countContent = await countResponse.Content.ReadAsStringAsync();
+                int.TryParse(countContent, out totalCount);
+            }
+
+            // Sayfalama parametreleri ile kullanıcıları al
+            int first = (page - 1) * pageSize;
+            var url = $"{_settings.AdminUserAddress}?first={first}&max={pageSize}";
+
+            if (!string.IsNullOrWhiteSpace(search))
+                url += $"&search={Uri.EscapeDataString(search)}";
+
+            var response = await client.GetAsync(url);
+
+            if (!response.IsSuccessStatusCode)
+                return ServiceResult<PaginatedResult<UserListVm>>.Error("Kullanıcılar alınamadı");
+
+            var users = await response.Content.ReadFromJsonAsync<List<UserListVm>>() ?? new List<UserListVm>();
+
+            // İstemci tarafı sıralama
+            users = (orderBy?.ToLower(), orderDir?.ToLower()) switch
+            {
+                ("username", "asc") => users.OrderBy(x => x.UserName).ToList(),
+                ("username", "desc") => users.OrderByDescending(x => x.UserName).ToList(),
+                ("firstname", "asc") => users.OrderBy(x => x.FirstName).ToList(),
+                ("firstname", "desc") => users.OrderByDescending(x => x.FirstName).ToList(),
+                ("lastname", "asc") => users.OrderBy(x => x.LastName).ToList(),
+                ("lastname", "desc") => users.OrderByDescending(x => x.LastName).ToList(),
+                ("email", "asc") => users.OrderBy(x => x.Email).ToList(),
+                ("email", "desc") => users.OrderByDescending(x => x.Email).ToList(),
+                _ => users.OrderByDescending(x => x.UserName).ToList()
+            };
+
+            var paginated = new PaginatedResult<UserListVm>
+            {
+                Data = users,
+                TotalCount = totalCount,
+                Page = page,
+                PageSize = pageSize
+            };
+
+            return ServiceResult<PaginatedResult<UserListVm>>.Success(paginated);
         }
 
         private async Task<ServiceResult> HandleErrorResponse(HttpResponseMessage response)
@@ -88,7 +242,7 @@ namespace Microservice.Admin.Services
                 var error = await response.Content.ReadFromJsonAsync<KeycloakErrorResponse>();
 
                 return ServiceResult.Error(
-                    "Kullanıcı oluşturulamadı",
+                    "Kullanıcı işlemi başarısız",
                     error?.ErrorMessage ?? content);
             }
             catch

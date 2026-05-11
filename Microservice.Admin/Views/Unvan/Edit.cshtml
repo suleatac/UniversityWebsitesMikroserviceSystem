@@ -1,0 +1,193 @@
+@model Microservice.Admin.ViewModels.Unvan.UnvanIndexVm
+@using Microservice.Admin.ViewModels.Unvan
+
+@{
+    ViewBag.pTitle = "Unvanlar";
+    ViewBag.Title = "Unvan Düzenle";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section styles {
+    <link href="~/assets/libs/select2/css/select2.min.css" rel="stylesheet" />
+    <style>
+        .select2-container--default .select2-selection--single {
+            height: calc(1.5em + 0.9rem + 2px) !important;
+            border: 1px solid #ced4da !important;
+            border-radius: 0.3rem !important;
+            padding: 0.45rem 0.9rem !important;
+        }
+        .select2-container--default .select2-selection--single .select2-selection__rendered {
+            line-height: 1.5 !important;
+            padding-left: 0 !important;
+            color: #495057;
+        }
+        .select2-container--default .select2-selection--single .select2-selection__arrow {
+            height: calc(1.5em + 0.9rem + 2px) !important;
+        }
+        .select2-container--default .select2-selection--single .select2-selection__clear {
+            display: none !important;
+        }
+        .select2-container--default.select2-container--focus .select2-selection--single,
+        .select2-container--default.select2-container--open .select2-selection--single {
+            border-color: #80bdff !important;
+            box-shadow: 0 0 0 0.2rem rgba(0,123,255,0.25) !important;
+        }
+        .select2-container--default .select2-results__option--highlighted[aria-selected] {
+            background-color: #556ee6 !important;
+        }
+        .select2-dropdown {
+            border-color: #ced4da !important;
+        }
+    </style>
+}
+
+<div class="row justify-content-center">
+    <div class="col-xxl-8">
+        <div class="card shadow-lg border-0">
+            <div class="card-header bg-primary bg-opacity-10 border-bottom">
+                <div class="d-flex align-items-center">
+                    <div class="avatar-sm me-3">
+                        <div class="avatar-title bg-primary rounded-circle">
+                            <i class="mdi mdi-badge-account-edit fs-5"></i>
+                        </div>
+                    </div>
+                    <div>
+                        <h5 class="card-title mb-1">Unvan Düzenle</h5>
+                        <p class="card-text text-muted mb-0">Mevcut unvanı düzenlemek için formu güncelleyin</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-body p-4">
+                <form asp-action="Edit" class="needs-validation" novalidate>
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger d-none" role="alert" id="validationSummary">
+                        <i class="mdi mdi-block-helper me-2"></i>
+                        <ul></ul>
+                    </div>
+                    <input type="hidden" asp-for="Unvan.Id" />
+
+                    <!-- Temel Bilgiler -->
+                    <div class="mb-4">
+                        <h6 class="text-primary border-bottom pb-2">
+                            <i class="mdi mdi-information-outline me-1"></i> Temel Bilgiler
+                        </h6>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label asp-for="Unvan.Ad" class="form-label">
+                                        Unvan Adı <span class="text-danger">*</span>
+                                    </label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="mdi mdi-label"></i></span>
+                                        <input asp-for="Unvan.Ad" class="form-control" placeholder="Örn: Profesör" />
+                                    </div>
+                                    <span asp-validation-for="Unvan.Ad" class="text-danger small"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label asp-for="Unvan.KisaAd" class="form-label">
+                                        Kısa Ad <span class="text-danger">*</span>
+                                    </label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="mdi mdi-label-outline"></i></span>
+                                        <input asp-for="Unvan.KisaAd" class="form-control" placeholder="Örn: Prof." />
+                                    </div>
+                                    <span asp-validation-for="Unvan.KisaAd" class="text-danger small"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label asp-for="Unvan.TipId" class="form-label">
+                                        Tip Id <span class="text-danger">*</span>
+                                    </label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="mdi mdi-tag"></i></span>
+                                        <input asp-for="Unvan.TipId" class="form-control" placeholder="Tip Id" />
+                                    </div>
+                                    <span asp-validation-for="Unvan.TipId" class="text-danger small"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <input type="hidden" asp-for="Unvan.Sira" />
+                    </div>
+
+                    <!-- Hiyerarşi -->
+                    <div class="mb-4">
+                        <h6 class="text-primary border-bottom pb-2">
+                            <i class="mdi mdi-file-tree-outline me-1"></i> Hiyerarşi
+                        </h6>
+
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="mb-3">
+                                    <label asp-for="Unvan.ParentId" class="form-label">
+                                        <i class="mdi mdi-account-tree me-1"></i> Üst Unvan (Parent)
+                                    </label>
+                                    <select asp-for="Unvan.ParentId" class="form-select select2"
+                                            asp-items="@(new SelectList(FlattenUnvanlar(Model.Unvanlar, Model.Unvan.Id), "Id", "Ad", Model.Unvan.ParentId))">
+                                        <option value="">Üst unvan yok (Kök unvan)</option>
+                                    </select>
+                                    <span asp-validation-for="Unvan.ParentId" class="text-danger small"></span>
+                                    <small class="text-muted">Unvan hiyerarşisindeki üst unvanı seçin. Boş bırakılırsa kök unvan olur.</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Form Actions -->
+                    <div class="d-flex justify-content-between align-items-center pt-3 border-top">
+                        <a asp-action="Index" class="btn btn-outline-secondary">
+                            <i class="mdi mdi-arrow-left me-1"></i> Listeye Dön
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="mdi mdi-content-save me-1"></i> Kaydet
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@functions {
+    private List<dynamic> FlattenUnvanlar(List<GetUnvanVm> unvanlar, int? excludeId = null, string prefix = "")
+    {
+        var result = new List<dynamic>();
+        foreach (var u in unvanlar.OrderBy(u => u.Sira))
+        {
+            // Düzenlenen unvanı kendini parent olarak seçmesini engelle
+            if (excludeId.HasValue && u.Id == excludeId.Value) continue;
+
+            result.Add(new { Id = (int?)u.Id, Ad = string.IsNullOrEmpty(prefix) ? u.Ad : prefix + " └ " + u.Ad });
+            if (u.Children != null && u.Children.Any())
+            {
+                result.AddRange(FlattenUnvanlar(u.Children, excludeId, string.IsNullOrEmpty(prefix) ? u.Ad : prefix + " └ " + u.Ad));
+            }
+        }
+        return result;
+    }
+}
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script src="~/assets/libs/select2/js/select2.full.min.js"></script>
+    <script src="~/assets/libs/select2/js/i18n/tr.js"></script>
+    <script>
+        $(document).ready(function () {
+            var validationSummary = $('#validationSummary');
+            if (validationSummary.find('li').length > 0 || validationSummary.find('span').length > 0) {
+                validationSummary.removeClass('d-none');
+            }
+
+            $('.select2').select2({
+                language: 'tr',
+                width: '100%'
+            });
+        });
+    </script>
+}

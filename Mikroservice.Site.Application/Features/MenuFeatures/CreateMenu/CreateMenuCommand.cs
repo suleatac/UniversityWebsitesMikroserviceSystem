@@ -2,7 +2,7 @@
 
 namespace Mikroservice.Site.Application.Features.MenuFeatures.CreateMenu
 {
-    public record CreateMenuCommand : IRequestByServiceResult
+    public record CreateMenuCommand : IRequestByServiceResult<CreateMenuResponse>
     {
         public int SiteId { get; init; }
 

@@ -1,7 +1,6 @@
-﻿using MassTransit;
-using MediatR;
+﻿using MediatR;
 using Microservice.Shared;
-using Microservice.Shared.Services.RabbitMqMasstransitServiceItems.Events.MenuEvents;
+using Microservice.Shared.Services.RedisServiceItems;
 using Microservice.Site.Application.Contracts.IRepositories;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,7 +9,7 @@ namespace Mikroservice.Site.Application.Features.MenuFeatures.DeleteMenu
     public class DeleteMenuCommandHandler(
          IMenuRepository menuRepository,
          IUnitOfWork unitOfWork,
-         IPublishEndpoint publishEndpoint
+         IRedisCacheService redisCache
      ) : IRequestHandler<DeleteMenuCommand, ServiceResult>
     {
         public async Task<ServiceResult> Handle(DeleteMenuCommand request, CancellationToken cancellationToken)
@@ -28,9 +27,8 @@ namespace Mikroservice.Site.Application.Features.MenuFeatures.DeleteMenu
             await unitOfWork.SaveChangesAsync(cancellationToken);
 
             // 🔥 Cache invalidation
-            await publishEndpoint.Publish(
-                new MenuChangedEvent(menu.SiteId, menu.DilId),
-                cancellationToken);
+            var key = $"menus:list:{menu.SiteId}:{menu.DilId}";
+            await redisCache.RemoveAsync(key, cancellationToken);
 
             return ServiceResult.SuccessAsNoContent();
         }

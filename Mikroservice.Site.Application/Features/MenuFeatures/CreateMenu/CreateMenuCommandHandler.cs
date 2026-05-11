@@ -1,22 +1,19 @@
-﻿using MassTransit;
-using MediatR;
+﻿using MediatR;
 using Microservice.Shared;
-using Microservice.Shared.Services.RabbitMqMasstransitServiceItems.Events.MenuEvents;
+using Microservice.Shared.Services.RedisServiceItems;
 using Microservice.Site.Application.Contracts.IRepositories;
+using Mikroservice.Site.Application.Features.SiteFeatures.CreateSite;
 using Mikroservice.Site.Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Mikroservice.Site.Application.Features.MenuFeatures.CreateMenu
 {
     public class CreateMenuCommandHandler(
         IMenuRepository menuRepository,
         IUnitOfWork unitOfWork,
-        IPublishEndpoint publishEndpoint
-    ) : IRequestHandler<CreateMenuCommand, ServiceResult>
+        IRedisCacheService redisCache
+    ) : IRequestHandler<CreateMenuCommand, ServiceResult<CreateMenuResponse>>
     {
-        public async Task<ServiceResult> Handle(CreateMenuCommand request, CancellationToken cancellationToken)
+        public async Task<ServiceResult<CreateMenuResponse>> Handle(CreateMenuCommand request, CancellationToken cancellationToken)
         {
          
 
@@ -34,17 +31,22 @@ namespace Mikroservice.Site.Application.Features.MenuFeatures.CreateMenu
                 MegaMenu = request.MegaMenu,
                 ParentId = request.ParentId,
 
-                OlusturulmaTarihi = DateTime.UtcNow,
+                OlusturulmaTarihi = DateTime.Now,
                 IsDeleted = false
             };
 
             await menuRepository.AddAsync(menu);
             await unitOfWork.SaveChangesAsync(cancellationToken);
 
-            // 🔥 Event (cache temizleme için)
-            await publishEndpoint.Publish(new MenuChangedEvent(menu.SiteId, menu.DilId),cancellationToken);
+            // 🔥 cache temizleme işlemi
+           
 
-            return ServiceResult.SuccessAsNoContent();
+            var key = $"menus:list:{menu.SiteId}:{menu.DilId}";
+            await redisCache.RemoveAsync(key, cancellationToken);
+
+            var response = new CreateMenuResponse(menu.Id);
+            return ServiceResult<CreateMenuResponse>
+            .SuccessAsCreated(response, $"/api/v1/menus/{menu.Id}");
         }
     }
 }

@@ -34,9 +34,10 @@ namespace Mikroservice.Site.Application.Features.SiteFeatures.CreateSite
             await unitOfWork.SaveChangesAsync(cancellationToken);
 
             // Cache invalidation
-            await redisCache.RemoveByPatternAsync(
-                "site:*",
+            await redisCache.RemoveAsync(
+                "unvans:list",
                 cancellationToken);
+   
 
             var response = new CreateSiteResponse(site.Id);
             return ServiceResult<CreateSiteResponse>

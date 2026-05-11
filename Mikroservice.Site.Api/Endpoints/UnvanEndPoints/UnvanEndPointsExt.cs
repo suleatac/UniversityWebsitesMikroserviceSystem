@@ -10,7 +10,7 @@ namespace Mikroservice.Site.Api.Endpoints.UnvanEndPoints
             ApiVersionSet apiVersionSet)
         {
             var group = app
-                .MapGroup("/api/v{version:apiVersion}/unvanlar")
+                .MapGroup("/api/v{version:apiVersion}/unvans")
                 .WithTags("Unvan")
                 .WithApiVersionSet(apiVersionSet)
                 .RequireAuthorization();
@@ -21,6 +21,7 @@ namespace Mikroservice.Site.Api.Endpoints.UnvanEndPoints
             group.UpdateUnvanEndpointGroupItem();
             group.DeleteUnvanEndpointGroupItem();
             group.GetUnvanlarEndpointGroupItem();
+            group.GetUnvanByIdEndpointGroupItem();
             group.RequireAuthorization("Password");
         }
     }

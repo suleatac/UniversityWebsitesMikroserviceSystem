@@ -21,6 +21,7 @@ namespace Mikroservice.Site.Api.Endpoints.MenuEndPoints
             group.UpdateMenuEndpointGroupItem();
             group.DeleteMenuEndpointGroupItem();
             group.GetMenusEndpointGroupItem();
+            group.GetMenuByIdEndpointGroupItem();
             group.RequireAuthorization("Password");
         }
     }

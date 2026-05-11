@@ -17,14 +17,13 @@ namespace Mikroservice.Site.Application.Features.UnvanFeatures.CreateUnvan
                 .NotEmpty()
                 .MaximumLength(50);
 
-            RuleFor(x => x.Sira)
-                .GreaterThanOrEqualTo(0);
-
             // 🔥 duplicate kontrol
             RuleFor(x => x.Ad)
                 .MustAsync(async (ad, cancellationToken) =>
                     !await repository.AnyByAdAsync(ad, cancellationToken))
                 .WithMessage("Bu ünvan zaten mevcut.");
+
+
         }
     }
 }

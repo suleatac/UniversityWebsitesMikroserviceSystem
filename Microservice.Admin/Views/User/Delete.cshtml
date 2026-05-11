@@ -1,0 +1,159 @@
+@model Microservice.Admin.ViewModels.User.UserListVm
+
+@{
+    ViewBag.pTitle = "Ana Sayfa";
+    ViewBag.Title = "Kullanıcı Sil";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section styles {
+    <style>
+        .page-header-card {
+            background: linear-gradient(135deg, #6f42c1 0%, #d63384 100%);
+            border-radius: 12px;
+            padding: 1.5rem;
+            color: white;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 4px 12px rgba(111, 66, 193, 0.2);
+        }
+
+            .page-header-card h4 {
+                font-weight: 600;
+                margin-bottom: 0.25rem;
+            }
+
+            .page-header-card .breadcrumb {
+                background: transparent;
+                padding: 0;
+                margin: 0;
+            }
+
+                .page-header-card .breadcrumb-item a {
+                    color: rgba(255, 255, 255, 0.9);
+                    text-decoration: none;
+                }
+
+                    .page-header-card .breadcrumb-item a:hover {
+                        color: #ffffff;
+                    }
+
+                .page-header-card .breadcrumb-item.active {
+                    color: rgba(255, 255, 255, 0.8);
+                }
+    </style>
+}
+
+<!-- Page Header -->
+<div class="page-header-card">
+    <div class="d-flex align-items-center">
+        <div>
+            <h4><i class="mdi mdi-account-remove me-2"></i>Kullanıcı Silme Onayı</h4>
+            <p class="mb-0 opacity-75">Bu işlem geri alınamaz!</p>
+        </div>
+    </div>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-xxl-8">
+        <div class="card shadow-lg border-0">
+            <!-- Kırmızı uyarı başlığı -->
+            <div class="card-header bg-danger bg-opacity-10 border-bottom">
+                <div class="d-flex align-items-center">
+                    <div class="avatar-sm me-3">
+                        <div class="avatar-title bg-danger rounded-circle">
+                            <i class="mdi mdi-delete fs-5"></i>
+                        </div>
+                    </div>
+                    <div>
+                        <h5 class="card-title mb-1">Kullanıcı Silme Onayı</h5>
+                        <p class="card-text text-muted mb-0">Bu işlem geri alınamaz!</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-body p-4">
+                <!-- Uyarı mesajı -->
+                <div class="alert alert-danger d-flex align-items-center" role="alert">
+                    <i class="mdi mdi-alert-circle fs-4 me-2"></i>
+                    <div>
+                        <strong>Dikkat!</strong> "<strong>@Model.UserName</strong>" kullanıcısını silmek üzeresiniz.
+                        Bu işlem geri alınamaz ve kullanıcıya ait tüm veriler kalıcı olarak silinecektir.
+                    </div>
+                </div>
+
+                <!-- Kullanıcı Bilgileri (Sadece Okunabilir) -->
+                <h6 class="text-primary border-bottom pb-2 mb-3">
+                    <i class="mdi mdi-information-outline me-1"></i> Kullanıcı Bilgileri
+                </h6>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label text-muted small">Kullanıcı Adı</label>
+                            <div class="form-control-plaintext fw-semibold">@Model.UserName</div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label text-muted small">E-Posta</label>
+                            <div class="form-control-plaintext fw-semibold">@Model.Email</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label text-muted small">Ad</label>
+                            <div class="form-control-plaintext fw-semibold">@Model.FirstName</div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label text-muted small">Soyad</label>
+                            <div class="form-control-plaintext fw-semibold">@Model.LastName</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label text-muted small">Durum</label>
+                            <div class="form-control-plaintext fw-semibold">
+                                @if (Model.Enabled)
+                                {
+                                    <span class="badge bg-success"><i class="mdi mdi-check-circle me-1"></i>Aktif</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-danger"><i class="mdi mdi-close-circle me-1"></i>Pasif</span>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label text-muted small">Kullanıcı ID</label>
+                            <div class="form-control-plaintext fw-semibold"><code>@Model.Id</code></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Form Actions -->
+                <div class="d-flex justify-content-between align-items-center pt-3 border-top">
+                    <a asp-action="Index" class="btn btn-outline-secondary">
+                        <i class="mdi mdi-arrow-left me-1"></i> İptal
+                    </a>
+                    <form asp-action="DeleteConfirmed" method="post" class="d-inline">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="id" value="@Model.Id" />
+                        <button type="submit" class="btn btn-danger">
+                            <i class="mdi mdi-delete me-1"></i> Evet, Sil
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

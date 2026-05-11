@@ -2,36 +2,41 @@
 using MediatR;
 using Microservice.Shared;
 using Microservice.Shared.Services.RabbitMqMasstransitServiceItems.Events.UnvanEvents;
+using Microservice.Shared.Services.RedisServiceItems;
 using Microservice.Site.Application.Contracts.IRepositories;
+using Microsoft.Extensions.Caching.StackExchangeRedis;
 using Mikroservice.Site.Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Mikroservice.Site.Application.Features.UnvanFeatures.CreateUnvan
 {
     public class CreateUnvanCommandHandler(
      IUnvanRepository repository,
      IUnitOfWork unitOfWork,
-     IPublishEndpoint publishEndpoint
- ) : IRequestHandler<CreateUnvanCommand, ServiceResult>
+     IRedisCacheService redisCache
+ ) : IRequestHandler<CreateUnvanCommand, ServiceResult<CreateUnvanResponse>>
     {
-        public async Task<ServiceResult> Handle(CreateUnvanCommand request, CancellationToken cancellationToken)
+        public async Task<ServiceResult<CreateUnvanResponse>> Handle(CreateUnvanCommand request, CancellationToken cancellationToken)
         {
             var entity = new Unvan
             {
                 TipId = request.TipId,
                 Ad = request.Ad,
                 KisaAd = request.KisaAd,
-                Sira = request.Sira
+                Sira = request.Sira,
+                ParentId = request.ParentId,
             };
 
             await repository.AddAsync(entity);
             await unitOfWork.SaveChangesAsync(cancellationToken);
 
-            await publishEndpoint.Publish(new UnvanChangedEvent(), cancellationToken);
+            // Cache invalidation
+            await redisCache.RemoveAsync(
+                "unvan:list",
+                cancellationToken);
 
-            return ServiceResult.SuccessAsNoContent();
+            var response = new CreateUnvanResponse(entity.Id);
+            return ServiceResult<CreateUnvanResponse>
+            .SuccessAsCreated(response, $"/api/v1/unvans/{entity.Id}");
         }
     }
 }

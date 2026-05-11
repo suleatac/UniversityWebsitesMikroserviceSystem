@@ -9,7 +9,7 @@ namespace Mikroservice.Site.Api.Endpoints.YonetimDuyuruEndPoints.EndPoints
     public static class GetPaginatedYonetimDuyuruEndPoint
     {
         
-    {
+    
         public static RouteGroupBuilder GetPaginatedYonetimDuyuruEndpointGroupItem(this RouteGroupBuilder group)
         {
             group.MapGet("/paginated", async 
@@ -31,4 +31,4 @@ namespace Mikroservice.Site.Api.Endpoints.YonetimDuyuruEndPoints.EndPoints
         }
     }
 }
-}
+

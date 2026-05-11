@@ -79,8 +79,6 @@
                         <tr>
                             <th>ID</th>
                             <th>Başlık</th>
-                            <th>İçerik</th>
-                            <th>Oluşturulma Tarihi</th>
                             <th>İşlemler</th>
                         </tr>
                     </thead>
@@ -142,7 +140,7 @@
         processing: true,
         serverSide: true,
         ajax: {
-        url: "/YonetimDuyuru/GetDuyurularForPagination",
+        url: "/YonetimDuyuru/GetYonetimDuyuruForPagination",
         type: "GET",
         data: function (d) {
         return {
@@ -157,8 +155,6 @@
         columns: [
         { data: "id", name: "id", title: "ID" },
         { data: "baslik", name: "baslik", title: "Başlık" },
-        { data: "icerik", name: "icerik", title: "İçerik" },
-        { data: "olusturulmaTarihi", name: "olusturulmaTarihi", title: "Oluşturulma Tarihi" },
         {
         data: null, render: function (data, type, row, meta) {
         return '<a class="btn btn-outline-primary btn-sm edit" title="Düzenle" href="/YonetimDuyuru/Edit/' + data.id + '"><i class="fas fa-pencil-alt"></i></a> ' +

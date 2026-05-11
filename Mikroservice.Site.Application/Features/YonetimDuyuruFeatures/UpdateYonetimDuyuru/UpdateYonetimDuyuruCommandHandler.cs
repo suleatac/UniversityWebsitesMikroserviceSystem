@@ -22,7 +22,6 @@ namespace Microservice.Site.Application.Features.YonetimDuyuruFeatures.UpdateYon
 
             yonetimDuyuru.Baslik = request.Baslik;
             yonetimDuyuru.Icerik = request.Icerik;
-            yonetimDuyuru.EklenmeTarihi = request.EklenmeTarihi;
             await unitOfWork.SaveChangesAsync();
 
             var cacheKey = "yonetimduyuru:*";

@@ -22,7 +22,7 @@ namespace Microservice.Site.Application.Features.YonetimDuyuruFeatures.CreateYon
             var newYonetimDuyuru = new YonetimDuyuru {
                 Baslik = request.Baslik,
                 Icerik = request.Icerik,
-                EklenmeTarihi = request.EklenmeTarihi
+                EklenmeTarihi = DateTime.Now,
             };
             await yonetimDuyuruRepository.AddAsync(newYonetimDuyuru);
             await unitOfWork.SaveChangesAsync();

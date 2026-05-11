@@ -12,5 +12,6 @@ namespace Mikroservice.Site.Application.Features.UnvanFeatures.UpdateUnvan
         public string KisaAd { get; init; } = default!;
 
         public int Sira { get; init; }
+        public int? ParentId { get; init; }
     }
 }

@@ -1,4 +1,4 @@
-﻿@model Microservice.Admin.ViewModels.YonetimDuyuru.YonetimDuyuruCreateVm
+﻿@model Microservice.Admin.ViewModels.YonetimDuyuru.YonetimDuyuruVm
 
 @{
     ViewBag.pTitle = "Ana Sayfa";
@@ -9,26 +9,46 @@
 @section styles {
     <link href="~/assets/libs/select2/css/select2.min.css" rel="stylesheet" />
     <style>
+        /* Select2 Bootstrap 5 uyumlu stil */
         .select2-container--default .select2-selection--single {
             height: calc(1.5em + 0.9rem + 2px) !important;
             border: 1px solid #ced4da !important;
             border-radius: 0.3rem !important;
             padding: 0.45rem 0.9rem !important;
         }
+        .select2-container--default .select2-selection--single .select2-selection__rendered {
+            line-height: 1.5 !important;
+            padding-left: 0 !important;
+            color: #495057;
+        }
+        .select2-container--default .select2-selection--single .select2-selection__arrow {
+            height: calc(1.5em + 0.9rem + 2px) !important;
+        }
+        .select2-container--default .select2-selection--single .select2-selection__clear {
+            display: none !important;
+        }
+        .select2-container--default.select2-container--focus .select2-selection--single,
+        .select2-container--default.select2-container--open .select2-selection--single {
+            border-color: #80bdff !important;
+            box-shadow: 0 0 0 0.2rem rgba(0,123,255,0.25) !important;
+        }
+        .select2-container--default .select2-results__option--highlighted[aria-selected] {
+            background-color: #556ee6 !important;
+        }
+        .select2-dropdown {
+            border-color: #ced4da !important;
+        }
 
-            .select2-container--default .select2-selection--single .select2-selection__rendered {
-                line-height: 1.5 !important;
-                color: #495057;
-            }
-
-            .select2-container--default .select2-selection--single .select2-selection__arrow {
-                height: calc(1.5em + 0.9rem + 2px) !important;
-            }
+        /* Textarea enhanced style */
+        textarea.form-control:focus {
+            box-shadow: 0 0 0 0.2rem rgba(255, 193, 7, 0.25);
+            border-color: #ffc107;
+        }
     </style>
 }
 
 <div class="row justify-content-center">
-    <div class="col-xxl-8">
+    <div class="col-xxl-10">
         <div class="card shadow-lg border-0">
             <div class="card-header bg-warning bg-opacity-10 border-bottom">
                 <div class="d-flex align-items-center">
@@ -51,10 +71,12 @@
                         <ul></ul>
                     </div>
 
+                    <!-- Temel Bilgiler -->
                     <div class="mb-4">
                         <h6 class="text-warning border-bottom pb-2">
                             <i class="mdi mdi-information-outline me-1"></i> Temel Bilgiler
                         </h6>
+
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="mb-3">
@@ -68,33 +90,30 @@
                                     <span asp-validation-for="Baslik" class="text-danger small"></span>
                                 </div>
                             </div>
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label asp-for="Olusturan" class="form-label">
-                                        Oluşturan Kişi
-                                    </label>
-                                    <div class="input-group">
-                                        <span class="input-group-text"><i class="mdi mdi-account"></i></span>
-                                        <input asp-for="Olusturan" class="form-control" placeholder="Oluşturan kişi" />
-                                    </div>
-                                    <span asp-validation-for="Olusturan" class="text-danger small"></span>
-                                </div>
-                            </div>
                         </div>
+
                         <div class="mb-3">
                             <label asp-for="Icerik" class="form-label">
                                 İçerik <span class="text-danger">*</span>
                             </label>
-                            <textarea asp-for="Icerik" class="form-control" rows="5" placeholder="Duyuru içeriğini girin"></textarea>
+                            <div class="input-group">
+                                <span class="input-group-text align-items-start" style="border-radius: 0.3rem 0 0 0.3rem;">
+                                    <i class="mdi mdi-text-box-outline"></i>
+                                </span>
+                                <textarea asp-for="Icerik" class="form-control" rows="6" placeholder="Duyuru içeriğini girin" style="border-top-left-radius: 0; border-bottom-left-radius: 0;"></textarea>
+                            </div>
                             <span asp-validation-for="Icerik" class="text-danger small"></span>
                         </div>
                     </div>
 
-                    <div class="d-flex justify-content-end">
+                    <!-- Form Actions -->
+                    <div class="d-flex justify-content-between align-items-center pt-3 border-top">
+                        <a asp-action="Index" class="btn btn-outline-secondary">
+                            <i class="mdi mdi-arrow-left me-1"></i> Listeye Dön
+                        </a>
                         <button type="submit" class="btn btn-warning">
                             <i class="mdi mdi-content-save me-1"></i> Kaydet
                         </button>
-                        <a asp-action="Index" class="btn btn-light ms-2">İptal</a>
                     </div>
                 </form>
             </div>
@@ -102,11 +121,25 @@
     </div>
 </div>
 
-@section scripts {
-    <script src="~/assets/libs/select2/js/select2.min.js"></script>
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script src="~/assets/libs/select2/js/select2.full.min.js"></script>
+    <script src="~/assets/libs/select2/js/i18n/tr.js"></script>
     <script>
-        $(function () {
-        $('.select2').select2();
+        $(document).ready(function () {
+            // Validation summary gösterimi
+            var validationSummary = $('#validationSummary');
+            if (validationSummary.find('li').length > 0 || validationSummary.find('span').length > 0) {
+                validationSummary.removeClass('d-none');
+            }
+
+            // Select2 başlatma
+            $('.select2').select2({
+                language: 'tr',
+                width: '100%'
+            });
         });
     </script>
 }

@@ -1,7 +1,7 @@
 ﻿using Microservice.Shared;
-using Microservice.Site.Domain.Entities;
+using Mikroservice.Site.Application.DTOs.YonetimDuyuru;
 
 namespace Microservice.Site.Application.Features.YonetimDuyuruFeatures.GetYonetimDuyurulari
 {
-    public class GetYonetimDuyurulariQuery : IRequestByServiceResult<List<YonetimDuyuru>>;
+    public class GetYonetimDuyurulariQuery : IRequestByServiceResult<List<YonetimDuyuruDto>>;
 }
