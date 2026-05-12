@@ -99,5 +99,21 @@ namespace Microservice.Admin.Services
             _logger.LogInformation("YoneticiSite silindi. Id: {Id}", id);
             return ServiceResult<object>.Success(true);
         }
+
+        public async Task<ServiceResult<List<YoneticiSiteDetailVm>>> GetYoneticiSitesByKeycloakUserIdAsync(string keycloakUserId)
+        {
+            _logger.LogInformation("KeycloakUserId ile YoneticiSite listesi çekiliyor. KeycloakUserId: {KeycloakUserId}", keycloakUserId);
+            var response = await _yoneticiSiteClient.GetYoneticiSitesByKeycloakUserIdAsync(keycloakUserId);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var problemDetails = response.Error != null
+                    ? JsonSerializer.Deserialize<Microsoft.AspNetCore.Mvc.ProblemDetails>(response.Error.Content!) : null;
+                _logger.LogError("API Error -> StatusCode: {StatusCode}, Title: {Title}, Detail: {Detail}", response.StatusCode, problemDetails?.Title, problemDetails?.Detail);
+                return ServiceResult<List<YoneticiSiteDetailVm>>.Error(problemDetails?.Detail ?? problemDetails?.Title ?? "YoneticiSite listesi alınamadı");
+            }
+
+            return ServiceResult<List<YoneticiSiteDetailVm>>.Success(response.Content!);
+        }
     }
 }

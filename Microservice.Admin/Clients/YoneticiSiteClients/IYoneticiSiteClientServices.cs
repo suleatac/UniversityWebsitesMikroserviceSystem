@@ -11,6 +11,9 @@ namespace Microservice.Admin.Clients.YoneticiSiteClients
         [Get("/api/v1/yonetici-siteler/{id}")]
         Task<ApiResponse<YoneticiSiteDetailVm>> GetYoneticiSiteByIdAsync(int id);
 
+        [Get("/api/v1/yonetici-siteler/by-keycloak-user/{keycloakUserId}")]
+        Task<ApiResponse<List<YoneticiSiteDetailVm>>> GetYoneticiSitesByKeycloakUserIdAsync(string keycloakUserId);
+
         [Post("/api/v1/yonetici-siteler")]
         Task<ApiResponse<object>> CreateYoneticiSiteAsync([Body] YoneticiSiteVm dto);
 

@@ -35,6 +35,22 @@
     </style>
 }
 
+@if (TempData["Warning"] != null)
+{
+    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+        <i class="mdi mdi-alert-circle me-2"></i>@TempData["Warning"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="mdi mdi-check-circle me-2"></i>@TempData["Success"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
 <div class="page-header-card">
     <div class="d-flex justify-content-between align-items-center">
         <div>
@@ -105,7 +121,7 @@
                     columnDefs: [{ "targets": [0], "visible": false, "searchable": false }],
                     columns: [
                         { data: "id", name: "id", title: "ID", autoWidth: true },
-                        { data: "personelId", name: "personelId", title: "Personel Id", autoWidth: true },
+                        { data: "keycloakUserId", name: "keycloakUserId", title: "Keycloak User Id", autoWidth: true },
                         { data: "yoneticiTipiId", name: "yoneticiTipiId", title: "Yönetici Tipi Id", autoWidth: true },
                         { "data": null, "render": function (data, type, row, meta) { return '<a class="btn btn-outline-primary btn-sm edit" title="Düzenle" href="/YoneticiSite/Edit/' + data.id + '"><i class="fas fa-pencil-alt"></i></a> <a class="btn btn-outline-danger btn-sm delete" href="/YoneticiSite/Delete/' + data.id + '" title="Sil"><i class="fas fa-trash-alt"></i></a>'; } }
                     ]

@@ -1,4 +1,5 @@
 ﻿using Microservice.Admin.Services.Interfaces;
+using Microservice.Admin.ViewModels.TumPersonel;
 using Microservice.Admin.ViewModels.User;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -9,11 +10,19 @@ namespace Microservice.Admin.Controllers
     public class UserController : Controller
     {
         private readonly IUserService _userService;
+        private readonly ITumPersonelService _tumPersonelService;
+        private readonly IKeycloakRoleService _keycloakRoleService;
         private readonly ILogger<UserController> _logger;
 
-        public UserController(IUserService userService, ILogger<UserController> logger)
+        public UserController(
+            IUserService userService,
+            ITumPersonelService tumPersonelService,
+            IKeycloakRoleService keycloakRoleService,
+            ILogger<UserController> logger)
         {
             _userService = userService;
+            _tumPersonelService = tumPersonelService;
+            _keycloakRoleService = keycloakRoleService;
             _logger = logger;
         }
 
@@ -58,25 +67,56 @@ namespace Microservice.Admin.Controllers
 
         // CREATE - GET
         [HttpGet]
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            return View();
+            var personelResult = await _tumPersonelService.GetTumPersonelsAsync();
+            var rolesResult = await _keycloakRoleService.GetRealmRolesAsync();
+
+            var model = new UserCreateIndexVm
+            {
+                UserAdd = UserAddVm.Empty,
+                TumPersoneller = personelResult.IsSuccess ? personelResult.Data ?? new List<GetPersonelVm>() : new List<GetPersonelVm>(),
+                AvailableRoles = rolesResult.IsSuccess ? rolesResult.Data ?? new List<UserRole.KeycloakRoleVm>() : new List<UserRole.KeycloakRoleVm>()
+            };
+            return View(model);
         }
 
         // CREATE - POST
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(UserAddVm model)
+        public async Task<IActionResult> Create(UserCreateIndexVm model)
         {
             if (!ModelState.IsValid)
+            {
+                var personelResult = await _tumPersonelService.GetTumPersonelsAsync();
+                var rolesResult = await _keycloakRoleService.GetRealmRolesAsync();
+                model.TumPersoneller = personelResult.IsSuccess ? personelResult.Data ?? new List<GetPersonelVm>() : new List<GetPersonelVm>();
+                model.AvailableRoles = rolesResult.IsSuccess ? rolesResult.Data ?? new List<UserRole.KeycloakRoleVm>() : new List<UserRole.KeycloakRoleVm>();
                 return View(model);
+            }
 
-            var result = await _userService.CreateAccount(model);
+            var result = await _userService.CreateAccount(model.UserAdd);
 
             if (!result.IsSuccess)
             {
                 ModelState.AddModelError("", result.Fail?.Detail ?? "Kullanıcı eklenemedi");
+                var personelResult = await _tumPersonelService.GetTumPersonelsAsync();
+                var rolesResult = await _keycloakRoleService.GetRealmRolesAsync();
+                model.TumPersoneller = personelResult.IsSuccess ? personelResult.Data ?? new List<GetPersonelVm>() : new List<GetPersonelVm>();
+                model.AvailableRoles = rolesResult.IsSuccess ? rolesResult.Data ?? new List<UserRole.KeycloakRoleVm>() : new List<UserRole.KeycloakRoleVm>();
                 return View(model);
+            }
+
+            // Kullanıcı oluşturulduktan sonra seçilen rolleri ata
+            var userId = result.Data;
+            if (!string.IsNullOrEmpty(userId) && model.UserAdd.SelectedRoles != null && model.UserAdd.SelectedRoles.Any())
+            {
+                var roleResult = await _keycloakRoleService.AssignRolesToUserAsync(userId, model.UserAdd.SelectedRoles.ToList());
+                if (!roleResult.IsSuccess)
+                {
+                    _logger.LogWarning("Kullanıcı oluşturuldu ancak roller atanamadı. UserId: {UserId}, Hata: {Error}", userId, roleResult.Fail?.Detail);
+                    TempData["Warning"] = "Kullanıcı oluşturuldu ancak bazı roller atanamadı: " + (roleResult.Fail?.Detail ?? "Bilinmeyen hata");
+                }
             }
 
             return RedirectToAction(nameof(Index));
@@ -90,13 +130,25 @@ namespace Microservice.Admin.Controllers
             if (!result.IsSuccess)
                 return NotFound();
 
+            // Kullanıcının mevcut rollerini al
+            var assignedRolesResult = await _keycloakRoleService.GetUserRolesAsync(id);
+            var allRolesResult = await _keycloakRoleService.GetRealmRolesAsync();
+
+            var assignedRoles = assignedRolesResult.IsSuccess ? assignedRolesResult.Data ?? new List<UserRole.KeycloakRoleVm>() : new List<UserRole.KeycloakRoleVm>();
+            var allRoles = allRolesResult.IsSuccess ? allRolesResult.Data ?? new List<UserRole.KeycloakRoleVm>() : new List<UserRole.KeycloakRoleVm>();
+
             var updateModel = new UserUpdateVm
             {
                 Id = result.Data!.Id,
                 FirstName = result.Data.FirstName,
                 LastName = result.Data.LastName,
                 Email = result.Data.Email,
-                Enabled = result.Data.Enabled
+                Enabled = result.Data.Enabled,
+                SelectedRoles = assignedRoles.Select(r => r.Name).ToList(),
+                AvailableRoles = allRoles
+                    .Where(r => !assignedRoles.Any(ar => ar.Id == r.Id))
+                    .ToList(),
+                AssignedRoles = assignedRoles
             };
 
             return View(updateModel);
@@ -108,14 +160,59 @@ namespace Microservice.Admin.Controllers
         public async Task<IActionResult> Edit(UserUpdateVm model)
         {
             if (!ModelState.IsValid)
+            {
+                // Reload roles for the view
+                var assignedRolesResult = await _keycloakRoleService.GetUserRolesAsync(model.Id);
+                var allRolesResult = await _keycloakRoleService.GetRealmRolesAsync();
+                var assignedRoles = assignedRolesResult.IsSuccess ? assignedRolesResult.Data ?? new List<UserRole.KeycloakRoleVm>() : new List<UserRole.KeycloakRoleVm>();
+                var allRoles = allRolesResult.IsSuccess ? allRolesResult.Data ?? new List<UserRole.KeycloakRoleVm>() : new List<UserRole.KeycloakRoleVm>();
+                model.AvailableRoles = allRoles.Where(r => !assignedRoles.Any(ar => ar.Id == r.Id)).ToList();
+                model.AssignedRoles = assignedRoles;
                 return View(model);
+            }
 
+            // Kullanıcı bilgilerini güncelle
             var result = await _userService.UpdateAccount(model.Id, model);
 
             if (!result.IsSuccess)
             {
                 ModelState.AddModelError("", result.Fail?.Detail ?? "Kullanıcı güncellenemedi");
+                var assignedRolesResult = await _keycloakRoleService.GetUserRolesAsync(model.Id);
+                var allRolesResult = await _keycloakRoleService.GetRealmRolesAsync();
+                var assignedRoles = assignedRolesResult.IsSuccess ? assignedRolesResult.Data ?? new List<UserRole.KeycloakRoleVm>() : new List<UserRole.KeycloakRoleVm>();
+                var allRoles = allRolesResult.IsSuccess ? allRolesResult.Data ?? new List<UserRole.KeycloakRoleVm>() : new List<UserRole.KeycloakRoleVm>();
+                model.AvailableRoles = allRoles.Where(r => !assignedRoles.Any(ar => ar.Id == r.Id)).ToList();
+                model.AssignedRoles = assignedRoles;
                 return View(model);
+            }
+
+            // Roller güncelle: eski rolleri al, farkı hesapla ve ekle/kaldır
+            var currentRolesResult = await _keycloakRoleService.GetUserRolesAsync(model.Id);
+            var currentRoleNames = currentRolesResult.IsSuccess
+                ? currentRolesResult.Data?.Select(r => r.Name).ToList() ?? new List<string>()
+                : new List<string>();
+
+            var selectedRoles = model.SelectedRoles ?? new List<string>();
+
+            var rolesToAdd = selectedRoles.Except(currentRoleNames, StringComparer.OrdinalIgnoreCase).ToList();
+            var rolesToRemove = currentRoleNames.Except(selectedRoles, StringComparer.OrdinalIgnoreCase).ToList();
+
+            if (rolesToAdd.Any())
+            {
+                var addResult = await _keycloakRoleService.AssignRolesToUserAsync(model.Id, rolesToAdd);
+                if (!addResult.IsSuccess)
+                {
+                    _logger.LogWarning("Bazı roller atanamadı. UserId: {UserId}, Hata: {Error}", model.Id, addResult.Fail?.Detail);
+                }
+            }
+
+            if (rolesToRemove.Any())
+            {
+                var removeResult = await _keycloakRoleService.RemoveRolesFromUserAsync(model.Id, rolesToRemove);
+                if (!removeResult.IsSuccess)
+                {
+                    _logger.LogWarning("Bazı roller kaldırılamadı. UserId: {UserId}, Hata: {Error}", model.Id, removeResult.Fail?.Detail);
+                }
             }
 
             return RedirectToAction(nameof(Index));

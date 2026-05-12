@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
+using Microservice.Admin.ViewModels.UserRole;
 
 namespace Microservice.Admin.ViewModels.User
 {
@@ -8,7 +9,7 @@ namespace Microservice.Admin.ViewModels.User
         [JsonPropertyName("username")]
         [Display(Name = "User Name")]
         [Required(ErrorMessage = "UserName is required")]
-        public string? UserName { get; init; }
+        public string? Username { get; init; }
 
         [JsonPropertyName("enabled")]
         public bool Enabled { get; init; } = true;
@@ -44,28 +45,33 @@ namespace Microservice.Admin.ViewModels.User
         [DataType(DataType.Password)]
         public string? PasswordConfirm { get; init; }
 
+        [Display(Name = "Roller")]
+        public List<string> SelectedRoles { get; init; } = new();
+
         public static UserAddVm Empty => new() {
-            UserName = string.Empty,
+            Username = string.Empty,
             Enabled = true,
             FirstName = string.Empty,
             LastName = string.Empty,
             Email = string.Empty,
             PersonId = 0,
             Password = string.Empty,
-            PasswordConfirm = string.Empty
+            PasswordConfirm = string.Empty,
+            SelectedRoles = new List<string>()
         };
 
         public static UserAddVm GetExampleModel()
         {
             return new UserAddVm {
-                UserName = "suleatac",
+                Username = "suleatac",
                 Enabled = true,
                 FirstName = "Şule",
                 LastName = "ATAÇ",
                 Email = "suleatac@gmail.com",
                 PersonId = 12345,
                 Password = "123456789**",
-                PasswordConfirm = "123456789**"
+                PasswordConfirm = "123456789**",
+                SelectedRoles = new List<string>()
             };
         }
     }

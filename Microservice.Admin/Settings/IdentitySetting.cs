@@ -6,6 +6,7 @@
         public required string AdminUserAddress { get; set; }
         public required string Address { get; set; }
         public required string BaseAddress { get; set; }
+        public required string RealmName { get; set; }
         public required IdentitySettingItems Admin { get; set; } = null!;
         public required IdentitySettingItems WebAdmin { get; set; } = null!;
     }

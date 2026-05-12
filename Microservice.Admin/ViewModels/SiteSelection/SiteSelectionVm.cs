@@ -11,5 +11,7 @@ namespace Microservice.Admin.ViewModels.SiteSelection
         public int CurrentDilId { get; set; } = 1;
         public string CurrentSiteName { get; set; } = "Site Seç";
         public string CurrentDilName { get; set; } = "Türkçe";
+        public bool IsAdmin { get; set; }
+        public List<int> AuthorizedSiteIds { get; set; } = new();
     }
 }

@@ -12,17 +12,36 @@
             <div class="card-header bg-warning bg-opacity-10 border-bottom">
                 <div class="d-flex align-items-center">
                     <div class="avatar-sm me-3"><div class="avatar-title bg-warning rounded-circle"><i class="mdi mdi-pencil-outline fs-5"></i></div></div>
-                    <div><h5 class="card-title mb-1">Yönetici Site Düzenle</h5><p class="card-text text-muted mb-0">ID: <strong>@Model.EditYoneticiSite.Id</strong> | <span class="text-primary">@Model.EditYoneticiSite.PersonelId</span></p></div>
+                    <div><h5 class="card-title mb-1">Yönetici Site Düzenle</h5><p class="card-text text-muted mb-0">ID: <strong>@Model.EditYoneticiSite.Id</strong> | <span class="text-primary">@Model.EditYoneticiSite.KeycloakUserId</span></p></div>
                 </div>
             </div>
             <div class="card-body p-4">
                 <form asp-action="Edit" id="EditYoneticiSiteEditForm" class="needs-validation" novalidate>
                     <div asp-validation-summary="ModelOnly" class="alert alert-danger d-none" role="alert"><i class="mdi mdi-block-helper me-2"></i><ul></ul></div>
                     <input type="hidden" asp-for="EditYoneticiSite.Id" />
-                    <input type="hidden" asp-for="EditYoneticiSite.PersonelId" />
 
                     <div class="mb-4">
                         <h6 class="text-primary border-bottom pb-2"><i class="mdi mdi-information-outline me-1"></i> Temel Bilgiler</h6>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="mb-3">
+                                    <label asp-for="EditYoneticiSite.KeycloakUserId" class="form-label">Keycloak Kullanıcı Seç</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="mdi mdi-account-key"></i></span>
+                                        <select asp-for="EditYoneticiSite.KeycloakUserId" class="form-select" id="keycloakUserSelect">
+                                            <option value="">-- Kullanıcı Seçin (Opsiyonel) --</option>
+                                            @foreach (var user in Model.Users)
+                                            {
+                                                var isSelected = user.Id == Model.EditYoneticiSite.KeycloakUserId;
+                                                <option value="@user.Id" selected="@(isSelected)">@user.UserName - @user.FirstName @user.LastName (@user.Email)</option>
+                                            }
+                                        </select>
+                                    </div>
+                                    <small class="text-muted">Keycloak kullanıcı seçimi opsiyoneldir.</small>
+                                    <span asp-validation-for="EditYoneticiSite.KeycloakUserId" class="text-danger small"></span>
+                                </div>
+                            </div>
+                        </div>
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="mb-3">

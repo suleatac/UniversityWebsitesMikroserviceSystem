@@ -12,8 +12,8 @@ namespace Mikroservice.Site.Application.Features.YoneticiSiteFeatures.UpdateYone
             RuleFor(x => x.YoneticiTipiId)
                 .GreaterThan(0);
 
-            RuleFor(x => x.PersonelId)
-                .GreaterThan(0);
+            RuleFor(x => x.KeycloakUserId)
+           .NotEmpty();
         }
     }
 }

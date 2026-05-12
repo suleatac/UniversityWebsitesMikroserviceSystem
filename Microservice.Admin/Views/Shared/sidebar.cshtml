@@ -1,4 +1,7 @@
-﻿<!-- ========== Left Sidebar Start ========== -->
+﻿@using Microservice.Admin.Services.Interfaces
+@inject ICurrentUserService CurrentUserService
+
+<!-- ========== Left Sidebar Start ========== -->
 <div class="sidebar-left">
 
     <div data-simplebar class="h-100">
@@ -14,66 +17,76 @@
                     </a>
                 </li>
 
-                <li class="menu-title">Admin Yetkili İşlemler</li>
+                @if (CurrentUserService.IsAdmin)
+                {
+                    <li class="menu-title">Admin Yetkili İşlemler</li>
 
-                <li>
-                    <a href="/Site/Index" >
-                        <i class="fa fa-palette"></i>
-                        <span>Site Ekleme</span>
-                    </a>
-                 
-                </li>
+                    <li>
+                        <a href="/Site/Index" >
+                            <i class="fa fa-palette"></i>
+                            <span>Site Ekleme</span>
+                        </a>
+                    
+                    </li>
 
-                <li>
-                    <a href="/Birim/Index" >
-                        <i class="fa fa-adjust"></i>
-                        <span>Birim Yönetimi</span>
-                    </a>
-                </li>
+                    <li>
+                        <a href="/Birim/Index" >
+                            <i class="fa fa-adjust"></i>
+                            <span>Birim Yönetimi</span>
+                        </a>
+                    </li>
 
-                <li>
-                    <a href="/YonetimDuyuru/Index" >
-                        <i class="fa fa-icons"></i>
-                        <span>Yönetim Duyuru</span>
-                    </a>
-                </li>
+                    <li>
+                        <a href="/YonetimDuyuru/Index" >
+                            <i class="fa fa-icons"></i>
+                            <span>Yönetim Duyuru</span>
+                        </a>
+                    </li>
 
-                <li>
-                    <a href="/Unvan/Index" >
-                        <i class="fa fa-window-restore"></i>
-                        <span>Unvan Yönetimi</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="/PersonelTip/Index">
-                        <i class="fa fa-window-restore"></i>
-                        <span>Personel Tip Yönetimi</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="/User/Index" >
-                        <i class="fa fa-shapes"></i>
-                        <span>Kullanıcı Yönetimi</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="/YoneticiSite/Index">
-                        <i class="fa fa-shapes"></i>
-                        <span>Yönetici Site Yönetimi</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="/Template/Index">
-                        <i class="fa fa-shapes"></i>
-                        <span>Template Yönetimi</span>
-                    </a>
-                </li>
+                    <li>
+                        <a href="/Unvan/Index" >
+                            <i class="fa fa-window-restore"></i>
+                            <span>Unvan Yönetimi</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/PersonelTip/Index">
+                            <i class="fa fa-window-restore"></i>
+                            <span>Personel Tip Yönetimi</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/User/Index" >
+                            <i class="fa fa-shapes"></i>
+                            <span>Kullanıcı Yönetimi</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/YoneticiSite/Index">
+                            <i class="fa fa-shapes"></i>
+                            <span>Yönetici Site Yönetimi</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/UserRole/Index">
+                            <i class="fa fa-shield-alt"></i>
+                            <span>Rol Yönetimi</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/Template/Index">
+                            <i class="fa fa-shapes"></i>
+                            <span>Template Yönetimi</span>
+                        </a>
+                    </li>
+                }
+
                 <li class="menu-title">SİTE GENEL İŞLEMLERİ</li>
 
                 <li>
                     <a href="/SiteOzellikleri/Index" >
                         <i class="fa fa-chart-pie align-middle"></i> Site Genel Bilgiler</a>
-            
+             
                 </li>
 
                 <li>
@@ -98,12 +111,12 @@
                 </li>
                 <li>
                     <a href="/Bilgi/Index" ><i class="fa fa-fill-drip"></i> <span>Bilgi Sayfası Yönetimi</span></a>
-            
+             
                 </li>
 
                 <li>
                     <a href="/Duyuru/Index" ><i class="fa fa-pencil-ruler"></i> <span>Duyuru Yönetimi</span></a>
-                 
+                  
                 </li>
               
                 <li><a href="/Etkinlik/Index"><i class="fa fa-th-list"></i> <span>Etkinlik Yönetimi</span></a></li>

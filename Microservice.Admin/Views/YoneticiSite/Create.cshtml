@@ -25,21 +25,27 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="mb-3">
-                                    <label asp-for="YoneticiSite.PersonelId" class="form-label">Personel Seç <span class="text-danger">*</span></label>
+                                    <label asp-for="YoneticiSite.KeycloakUserId" class="form-label">Keycloak Kullanıcı Seç <span class="text-danger">*</span></label>
                                     <div class="input-group">
-                                        <span class="input-group-text"><i class="mdi mdi-account-tie"></i></span>
-                                        <select asp-for="YoneticiSite.PersonelId" class="form-select">
-                                            <option value="">-- Personel Seçin --</option>
-                                            @foreach (var personel in Model.TumPersoneller)
+                                        <span class="input-group-text"><i class="mdi mdi-account-key"></i></span>
+                                        <select asp-for="YoneticiSite.KeycloakUserId" class="form-select" id="keycloakUserSelect">
+                                            <option value="">-- Kullanıcı Seçin (Opsiyonel) --</option>
+                                            @foreach (var user in Model.Users)
                                             {
-                                                <option value="@personel.Id">@personel.Adi @personel.Soyadi</option>
+                                                <option value="@user.Id">@user.UserName - @user.FirstName @user.LastName (@user.Email)</option>
                                             }
                                         </select>
                                     </div>
-                                    <span asp-validation-for="YoneticiSite.PersonelId" class="text-danger small"></span>
+                                    <div id="adminRoleWarning" class="alert alert-warning mt-2 d-none" role="alert">
+                                        <i class="mdi mdi-alert-circle me-1"></i>
+                                        <strong>Dikkat!</strong> Bu kullanıcı <span class="badge bg-danger">Admin</span> rolüne sahip. Admin rolündeki kullanıcılar tüm sitelere zaten erişebilir, site ataması gerekli değildir.
+                                    </div>
+                                    <small class="text-muted">Keycloak kullanıcı seçimi opsiyoneldir. Personel seçimi ile birlikte kullanılabilir.</small>
+                                    <span asp-validation-for="YoneticiSite.KeycloakUserId" class="text-danger small"></span>
                                 </div>
                             </div>
                         </div>
+                 
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="mb-3">
@@ -86,3 +92,31 @@
         </div>
     </div>
 </div>
+
+@section scripts {
+    <script>
+        document.getElementById('keycloakUserSelect').addEventListener('change', function() {
+            var userId = this.value;
+            var warningDiv = document.getElementById('adminRoleWarning');
+
+            if (!userId) {
+                warningDiv.classList.add('d-none');
+                return;
+            }
+
+            fetch('/UserRole/IsUserAdmin?userId=' + encodeURIComponent(userId))
+                .then(response => response.json())
+                .then(data => {
+                    if (data.isAdmin) {
+                        warningDiv.classList.remove('d-none');
+                    } else {
+                        warningDiv.classList.add('d-none');
+                    }
+                })
+                .catch(error => {
+                    console.error('Admin rol kontrolü sırasında hata oluştu:', error);
+                    warningDiv.classList.add('d-none');
+                });
+        });
+    </script>
+}

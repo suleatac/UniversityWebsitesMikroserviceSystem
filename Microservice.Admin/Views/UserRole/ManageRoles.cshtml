@@ -1,0 +1,291 @@
+@model Microservice.Admin.ViewModels.UserRole.UserRoleManageVm
+
+@{
+    ViewBag.pTitle = "Rol Yönetimi";
+    ViewBag.Title = "Kullanıcı Rol Yönetimi";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section styles {
+    <style>
+        .page-header-card {
+            background: linear-gradient(135deg, #0d6efd 0%, #6610f2 100%);
+            border-radius: 12px;
+            padding: 1.5rem;
+            color: white;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 4px 12px rgba(13, 110, 253, 0.2);
+        }
+
+            .page-header-card h4 {
+                font-weight: 600;
+                margin-bottom: 0.25rem;
+            }
+
+        .role-card {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+            margin-bottom: 1.5rem;
+        }
+
+            .role-card .card-header {
+                border-radius: 12px 12px 0 0 !important;
+                padding: 1rem 1.25rem;
+                font-weight: 600;
+            }
+
+        .role-card-assigned .card-header {
+            background: linear-gradient(135deg, #d1e7dd 0%, #badbcc 100%);
+            border-bottom: 2px solid #198754;
+            color: #0f5132;
+        }
+
+        .role-card-available .card-header {
+            background: linear-gradient(135deg, #cfe2ff 0%, #b6d4fe 100%);
+            border-bottom: 2px solid #0d6efd;
+            color: #084298;
+        }
+
+        .role-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            margin: 0.25rem;
+            transition: all 0.2s ease;
+        }
+
+        .role-badge-assigned {
+            background-color: #198754;
+            color: white;
+        }
+
+            .role-badge-assigned:hover {
+                background-color: #157347;
+                transform: translateY(-1px);
+                box-shadow: 0 2px 8px rgba(25, 135, 84, 0.3);
+            }
+
+        .role-badge-available {
+            background-color: #0d6efd;
+            color: white;
+        }
+
+            .role-badge-available:hover {
+                background-color: #0b5ed7;
+                transform: translateY(-1px);
+                box-shadow: 0 2px 8px rgba(13, 110, 253, 0.3);
+            }
+
+        .role-badge-admin {
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+            color: white;
+            font-weight: 700;
+        }
+
+            .role-badge-admin:hover {
+                background: linear-gradient(135deg, #c82333 0%, #a71d2a 100%);
+                box-shadow: 0 2px 8px rgba(220, 53, 69, 0.3);
+            }
+
+        .user-info-card {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 12px;
+            padding: 1.25rem;
+            margin-bottom: 1.5rem;
+            border-left: 4px solid #0d6efd;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 2rem;
+            color: #6c757d;
+        }
+
+            .empty-state i {
+                font-size: 2.5rem;
+                margin-bottom: 0.5rem;
+            }
+
+        .btn-remove-role {
+            background: transparent;
+            border: none;
+            color: rgba(255,255,255,0.8);
+            cursor: pointer;
+            padding: 0;
+            margin-left: 0.5rem;
+            font-size: 1rem;
+            transition: color 0.2s;
+        }
+
+            .btn-remove-role:hover {
+                color: white;
+            }
+    </style>
+}
+
+<!-- Page Header -->
+<div class="page-header-card">
+    <div class="d-flex justify-content-between align-items-center">
+        <div>
+            <h4><i class="mdi mdi-shield-account me-2"></i>Kullanıcı Rol Yönetimi</h4>
+            <p class="mb-0 opacity-75">Keycloak realm rollerini yönetin</p>
+        </div>
+        <a href="/UserRole/Index" class="btn btn-light">
+            <i class="mdi mdi-arrow-left me-1"></i> Geri Dön
+        </a>
+    </div>
+</div>
+
+<!-- Alert Messages -->
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="mdi mdi-check-circle me-2"></i>@TempData["Success"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <i class="mdi mdi-alert-circle me-2"></i>@TempData["Error"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+<!-- User Info -->
+<div class="user-info-card">
+    <div class="row align-items-center">
+        <div class="col-auto">
+            <div class="avatar-md bg-primary bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center">
+                <i class="mdi mdi-account fs-4 text-primary"></i>
+            </div>
+        </div>
+        <div class="col">
+            <h5 class="mb-0">@Model.User.FirstName @Model.User.LastName</h5>
+            <p class="text-muted mb-0">
+                <span class="me-3"><i class="mdi mdi-account-outline me-1"></i>@Model.User.UserName</span>
+                <span class="me-3"><i class="mdi mdi-email-outline me-1"></i>@Model.User.Email</span>
+                @if (Model.User.Enabled)
+                {
+                    <span class="badge bg-success"><i class="mdi mdi-check-circle me-1"></i>Aktif</span>
+                }
+                else
+                {
+                    <span class="badge bg-danger"><i class="mdi mdi-close-circle me-1"></i>Pasif</span>
+                }
+            </p>
+        </div>
+        <div class="col-auto">
+            <small class="text-muted">ID: @Model.User.Id</small>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Assigned Roles -->
+    <div class="col-md-6">
+        <div class="card role-card role-card-assigned">
+            <div class="card-header">
+                <i class="mdi mdi-check-decagram me-2"></i>Atanmış Roller (@Model.AssignedRoles.Count)
+            </div>
+            <div class="card-body">
+                @if (Model.AssignedRoles.Any())
+                {
+                    @foreach (var role in Model.AssignedRoles)
+                    {
+                        var isAdminRole = string.Equals(role.Name, "Admin", StringComparison.OrdinalIgnoreCase);
+                        <div class="d-inline-flex align-items-center">
+                            @if (isAdminRole)
+                            {
+                                <span class="role-badge role-badge-admin">
+                                    <i class="mdi mdi-shield-crown me-1"></i>@role.Name
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="role-badge role-badge-assigned">
+                                    <i class="mdi mdi-check-circle me-1"></i>@role.Name
+                                </span>
+                            }
+
+                            <form asp-action="RemoveRole" method="post" style="display:inline;">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="userId" value="@Model.User.Id" />
+                                <input type="hidden" name="roleName" value="@role.Name" />
+                                <button type="submit" class="btn-remove-role btn btn-danger" title="Rolü Kaldır"
+                                        onclick="return confirm('@role.Name rolünü kaldırmak istediğinize emin misiniz?')">
+                                    <i class="mdi mdi-close-circle  "></i>
+                                </button>
+                            </form>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div class="empty-state">
+                        <i class="mdi mdi-account-off d-block"></i>
+                        <p class="mb-0">Bu kullanıcının atanmış rolü bulunmamaktadır.</p>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- Available Roles -->
+    <div class="col-md-6">
+        <div class="card role-card role-card-available">
+            <div class="card-header">
+                <i class="mdi mdi-plus-circle me-2"></i>Kullanılabilir Roller (@Model.AvailableRoles.Count)
+            </div>
+            <div class="card-body">
+                @if (Model.AvailableRoles.Any())
+                {
+                    @foreach (var role in Model.AvailableRoles)
+                    {
+                        var isAdminRole = string.Equals(role.Name, "Admin", StringComparison.OrdinalIgnoreCase);
+                        <div class="d-inline-flex align-items-center">
+                            @if (isAdminRole)
+                            {
+                                <span class="role-badge role-badge-admin">
+                                    <i class="mdi mdi-shield-crown me-1"></i>@role.Name
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="role-badge role-badge-available">
+                                    <i class="mdi mdi-plus-circle me-1"></i>@role.Name
+                                </span>
+                            }
+
+                            <form asp-action="AssignRole" method="post" style="display:inline;">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="userId" value="@Model.User.Id" />
+                                <input type="hidden" name="roleName" value="@role.Name" />
+                                <button type="submit" class="btn-remove-role text-primary" title="Rolü Ata"
+                                        onclick="return confirm('@role.Name rolünü atamak istediğinize emin misiniz?')">
+                                    <i class="mdi mdi-plus-circle"></i>
+                                </button>
+                            </form>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div class="empty-state">
+                        <i class="mdi mdi-check-all d-block"></i>
+                        <p class="mb-0">Tüm roller zaten atanmış durumda.</p>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <script src="~/assets/js/app.js"></script>
+}

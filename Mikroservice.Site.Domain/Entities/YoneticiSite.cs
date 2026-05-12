@@ -6,7 +6,7 @@ namespace Mikroservice.Site.Domain.Entities
     {
         public int Id { get; set; }
 
-        public int PersonelId { get; set; } = default!; // 🔥 NEW
+        public string KeycloakUserId { get; set; } = default!;
 
         public int SiteId { get; set; }
 

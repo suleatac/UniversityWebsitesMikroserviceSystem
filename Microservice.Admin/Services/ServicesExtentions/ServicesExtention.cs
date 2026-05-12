@@ -33,6 +33,7 @@ namespace Microservice.Admin.Services.ServicesExtentions
             services.AddScoped<IBannerService, BannerService>();
             services.AddScoped<IYoneticiTipiService, YoneticiTipiService>();
             services.AddScoped<IYoneticiSiteService, YoneticiSiteService>();
+            services.AddScoped<IKeycloakRoleService, KeycloakRoleService>();
             services.AddScoped<IPopupService, PopupService>();
             services.AddScoped<ISiteOzellikleriService, SiteOzellikleriService>();
             services.AddScoped<ITumPersonelService, TumPersonelService>();

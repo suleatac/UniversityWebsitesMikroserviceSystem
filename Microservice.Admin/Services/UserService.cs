@@ -37,11 +37,11 @@ namespace Microservice.Admin.Services
             _tokenService = tokenService;
         }
 
-        public async Task<ServiceResult> CreateAccount(UserAddVm model)
+        public async Task<ServiceResult<string>> CreateAccount(UserAddVm model)
         {
             var tokenResult = await _tokenService.GetAdminTokenAsync();
             if (tokenResult.IsFail)
-                return tokenResult;
+                return ServiceResult<string>.Error(tokenResult.Fail.Detail);
 
             var client = _httpClientFactory.CreateClient();
             client.SetBearerToken(tokenResult.Data!.AccessToken!);
@@ -51,9 +51,74 @@ namespace Microservice.Admin.Services
             var response = await client.PostAsJsonAsync(_settings.AdminUserAddress, request);
 
             if (response.IsSuccessStatusCode)
-                return ServiceResult.Success();
+            {
+                // Keycloak returns the created user's ID in the Location header
+                // Location format: .../users/{userId}
+                var location = response.Headers.Location;
+                if (location != null)
+                {
+                    var userId = location.Segments.Last().Trim('/');
+                    return ServiceResult<string>.Success(userId);
+                }
 
-            return await HandleErrorResponse(response);
+                // Fallback: if Location header is not available, search by username
+                var searchResult = await GetUserByUsernameAsync(model.Username!);
+                if (searchResult.IsSuccess && searchResult.Data != null)
+                {
+                    return ServiceResult<string>.Success(searchResult.Data.Id);
+                }
+
+                return ServiceResult<string>.Error("Kullanıcı oluşturuldu ancak ID alınamadı");
+            }
+
+            return await HandleCreateErrorResponse(response);
+        }
+
+        private async Task<ServiceResult<UserListVm>> GetUserByUsernameAsync(string username)
+        {
+            var tokenResult = await _tokenService.GetAdminTokenAsync();
+            if (tokenResult.IsFail)
+                return ServiceResult<UserListVm>.Error(tokenResult.Fail.Detail);
+
+            var client = _httpClientFactory.CreateClient();
+            client.SetBearerToken(tokenResult.Data!.AccessToken!);
+
+            var url = $"{_settings.AdminUserAddress}?username={Uri.EscapeDataString(username)}";
+            var response = await client.GetAsync(url);
+
+            if (!response.IsSuccessStatusCode)
+                return ServiceResult<UserListVm>.Error("Kullanıcı aranamadı");
+
+            var users = await response.Content.ReadFromJsonAsync<List<UserListVm>>();
+            var user = users?.FirstOrDefault(u =>
+                string.Equals(u.UserName, username, StringComparison.OrdinalIgnoreCase));
+
+            return user != null
+                ? ServiceResult<UserListVm>.Success(user)
+                : ServiceResult<UserListVm>.Error("Kullanıcı bulunamadı");
+        }
+
+        private async Task<ServiceResult<string>> HandleCreateErrorResponse(HttpResponseMessage response)
+        {
+            var content = await response.Content.ReadAsStringAsync();
+
+            _logger.LogError("Keycloak Error: {StatusCode} - {Content}",
+                response.StatusCode, content);
+
+            try
+            {
+                var error = await response.Content.ReadFromJsonAsync<KeycloakErrorResponse>();
+
+                return ServiceResult<string>.Error(
+                    "Kullanıcı işlemi başarısız",
+                    error?.ErrorMessage ?? content);
+            }
+            catch
+            {
+                return ServiceResult<string>.Error(
+                    "Beklenmeyen hata",
+                    content);
+            }
         }
 
         private static KeycloakUserCreateRequest CreateUserRequest(UserAddVm model)
@@ -61,7 +126,7 @@ namespace Microservice.Admin.Services
 
 
             var keycloakRequestModel = new KeycloakUserCreateRequest{
-                Username = model.UserName,
+                Username = model.Username,
                 Enabled = model.Enabled,
                 FirstName = model.FirstName,
                 LastName = model.LastName,

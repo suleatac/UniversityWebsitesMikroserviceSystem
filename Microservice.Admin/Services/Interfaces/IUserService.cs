@@ -6,7 +6,7 @@ namespace Microservice.Admin.Services.Interfaces
 {
     public interface IUserService
     {
-        Task<ServiceResult> CreateAccount(UserAddVm model);
+        Task<ServiceResult<string>> CreateAccount(UserAddVm model);
         Task<ServiceResult> DeleteAccount(string userId);
         Task<ServiceResult> UpdateAccount(string userId, UserUpdateVm model);
         Task<ServiceResult<List<UserListVm>>> GetUsersAsync();

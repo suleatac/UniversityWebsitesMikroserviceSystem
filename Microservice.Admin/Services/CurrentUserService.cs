@@ -34,6 +34,22 @@ namespace Microservice.Admin.Services
             }
         }
 
+        public string KeycloakUserId
+        {
+            get
+            {
+                if (!IsAuthenticated)
+                    throw new Exception("User is not authenticated");
+
+                var sub = User?.FindFirst("sub")?.Value;
+
+                if (string.IsNullOrEmpty(sub))
+                    throw new Exception("KeycloakUserId (sub claim) not found");
+
+                return sub;
+            }
+        }
+
         public string Username
         {
             get
@@ -47,7 +63,6 @@ namespace Microservice.Admin.Services
 
         public List<string> Roles
         {
-            //http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name
             get
             {
                 if (!IsAuthenticated)
@@ -58,6 +73,17 @@ namespace Microservice.Admin.Services
                     .Select(x => x.Value)
                     .ToList()
                     ?? new List<string>();
+            }
+        }
+
+        public bool IsAdmin
+        {
+            get
+            {
+                if (!IsAuthenticated)
+                    return false;
+
+                return Roles.Contains("Admin", StringComparer.OrdinalIgnoreCase);
             }
         }
     }

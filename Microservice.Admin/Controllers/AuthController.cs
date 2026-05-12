@@ -9,8 +9,8 @@ namespace Microservice.Admin.Controllers
     public class AuthController : Controller
     {
         private readonly IAuthService authService;
-        public AuthController(IAuthService authService) 
-        { 
+        public AuthController(IAuthService authService)
+        {
             this.authService = authService;
         }
         public IActionResult Index()
@@ -19,6 +19,11 @@ namespace Microservice.Admin.Controllers
         }
         public IActionResult SignIn()
         {
+            // Yetkisi olmayan kullanıcı logout edildikten sonra gelen uyarı mesajını göster
+            if (TempData["Warning"] != null)
+            {
+                ModelState.AddModelError(string.Empty, TempData["Warning"]!.ToString()!);
+            }
             return View();
         }
         [HttpPost]

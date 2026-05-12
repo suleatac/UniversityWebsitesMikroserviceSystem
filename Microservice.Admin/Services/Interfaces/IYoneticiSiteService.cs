@@ -10,5 +10,6 @@ namespace Microservice.Admin.Services.Interfaces
         Task<ServiceResult<object>> CreateYoneticiSiteAsync(YoneticiSiteVm dto);
         Task<ServiceResult<object>> UpdateYoneticiSiteAsync(YoneticiSiteDetailVm dto);
         Task<ServiceResult<object>> DeleteYoneticiSiteAsync(int id);
+        Task<ServiceResult<List<YoneticiSiteDetailVm>>> GetYoneticiSitesByKeycloakUserIdAsync(string keycloakUserId);
     }
 }

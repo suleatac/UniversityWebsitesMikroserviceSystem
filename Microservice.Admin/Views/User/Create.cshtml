@@ -1,4 +1,4 @@
-@model Microservice.Admin.ViewModels.User.UserAddVm
+@model Microservice.Admin.ViewModels.User.UserCreateIndexVm
 
 @{
     ViewBag.pTitle = "Ana Sayfa";
@@ -43,6 +43,20 @@
         .validation-summary-valid {
             display: none !important;
         }
+        .role-checkbox-list {
+            max-height: 200px;
+            overflow-y: auto;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 0.75rem;
+        }
+        .role-checkbox-item {
+            padding: 0.35rem 0;
+        }
+        .role-checkbox-item label {
+            cursor: pointer;
+            user-select: none;
+        }
     </style>
 }
 
@@ -79,6 +93,35 @@
                         <i class="mdi mdi-block-helper me-2"></i>
                     </div>
 
+                    <!-- Personel Seçimi -->
+                    <div class="mb-4">
+                        <h6 class="text-primary border-bottom pb-2">
+                            <i class="mdi mdi-account-search me-1"></i> Personel Seçimi
+                        </h6>
+
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="mb-3">
+                                    <label asp-for="UserAdd.PersonId" class="form-label">
+                                        Personel Seç <span class="text-danger">*</span>
+                                    </label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="mdi mdi-account-tie"></i></span>
+                                        <select asp-for="UserAdd.PersonId" class="form-select" id="personelSelect">
+                                            <option value="">-- Personel Seçin --</option>
+                                            @foreach (var personel in Model.TumPersoneller)
+                                            {
+                                                <option value="@personel.Id" data-firstname="@personel.Adi" data-lastname="@personel.Soyadi" data-email="@personel.Eposta">@personel.Adi @personel.Soyadi</option>
+                                            }
+                                        </select>
+                                    </div>
+                                    <span asp-validation-for="UserAdd.PersonId" class="text-danger small"></span>
+                                    <small class="text-muted">Personel seçildiğinde ad, soyad ve e-posta alanları otomatik doldurulur.</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- Kullanıcı Bilgileri -->
                     <div class="mb-4">
                         <h6 class="text-primary border-bottom pb-2">
@@ -88,26 +131,26 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="mb-3">
-                                    <label asp-for="UserName" class="form-label">
+                                    <label asp-for="UserAdd.Username" class="form-label">
                                         Kullanıcı Adı <span class="text-danger">*</span>
                                     </label>
                                     <div class="input-group">
                                         <span class="input-group-text"><i class="mdi mdi-account"></i></span>
-                                        <input asp-for="UserName" class="form-control" placeholder="Kullanıcı adı girin" />
+                                        <input asp-for="UserAdd.Username" class="form-control" placeholder="Kullanıcı adı girin" id="usernameInput" />
                                     </div>
-                                    <span asp-validation-for="UserName" class="text-danger small"></span>
+                                    <span asp-validation-for="UserAdd.Username" class="text-danger small"></span>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="mb-3">
-                                    <label asp-for="Email" class="form-label">
+                                    <label asp-for="UserAdd.Email" class="form-label">
                                         E-Posta <span class="text-danger">*</span>
                                     </label>
                                     <div class="input-group">
                                         <span class="input-group-text"><i class="mdi mdi-email"></i></span>
-                                        <input asp-for="Email" class="form-control" placeholder="ornek@email.com" />
+                                        <input asp-for="UserAdd.Email" class="form-control" placeholder="ornek@email.com" id="emailInput" />
                                     </div>
-                                    <span asp-validation-for="Email" class="text-danger small"></span>
+                                    <span asp-validation-for="UserAdd.Email" class="text-danger small"></span>
                                 </div>
                             </div>
                         </div>
@@ -115,78 +158,115 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="mb-3">
-                                    <label asp-for="FirstName" class="form-label">
+                                    <label asp-for="UserAdd.FirstName" class="form-label">
                                         Ad <span class="text-danger">*</span>
                                     </label>
                                     <div class="input-group">
                                         <span class="input-group-text"><i class="mdi mdi-card-account-details"></i></span>
-                                        <input asp-for="FirstName" class="form-control" placeholder="Ad girin" />
+                                        <input asp-for="UserAdd.FirstName" class="form-control" placeholder="Ad girin" id="firstNameInput" />
                                     </div>
-                                    <span asp-validation-for="FirstName" class="text-danger small"></span>
+                                    <span asp-validation-for="UserAdd.FirstName" class="text-danger small"></span>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="mb-3">
-                                    <label asp-for="LastName" class="form-label">
+                                    <label asp-for="UserAdd.LastName" class="form-label">
                                         Soyad <span class="text-danger">*</span>
                                     </label>
                                     <div class="input-group">
                                         <span class="input-group-text"><i class="mdi mdi-card-account-details"></i></span>
-                                        <input asp-for="LastName" class="form-control" placeholder="Soyad girin" />
+                                        <input asp-for="UserAdd.LastName" class="form-control" placeholder="Soyad girin" id="lastNameInput" />
                                     </div>
-                                    <span asp-validation-for="LastName" class="text-danger small"></span>
+                                    <span asp-validation-for="UserAdd.LastName" class="text-danger small"></span>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Personel ve Şifre -->
+                    <!-- Şifre -->
                     <div class="mb-4">
                         <h6 class="text-primary border-bottom pb-2">
-                            <i class="mdi mdi-lock-outline me-1"></i> Personel ve Şifre
+                            <i class="mdi mdi-lock-outline me-1"></i> Şifre
                         </h6>
 
                         <div class="row">
-                            <div class="col-md-4">
+                            <div class="col-md-6">
                                 <div class="mb-3">
-                                    <label asp-for="PersonId" class="form-label">
-                                        Personel ID <span class="text-danger">*</span>
-                                    </label>
-                                    <div class="input-group">
-                                        <span class="input-group-text"><i class="mdi mdi-identifier"></i></span>
-                                        <input asp-for="PersonId" class="form-control" placeholder="Personel ID" />
-                                    </div>
-                                    <span asp-validation-for="PersonId" class="text-danger small"></span>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="mb-3">
-                                    <label asp-for="Password" class="form-label">
+                                    <label asp-for="UserAdd.Password" class="form-label">
                                         Şifre <span class="text-danger">*</span>
                                     </label>
                                     <div class="input-group">
                                         <span class="input-group-text"><i class="mdi mdi-lock"></i></span>
-                                        <input asp-for="Password" class="form-control" type="password" placeholder="Şifre girin" id="passwordInput" />
+                                        <input asp-for="UserAdd.Password" class="form-control" type="password" placeholder="Şifre girin" id="passwordInput" />
                                         <span class="input-group-text" id="togglePassword" style="cursor: pointer;">
                                             <i class="mdi mdi-eye-off" id="toggleIcon"></i>
                                         </span>
                                     </div>
-                                    <span asp-validation-for="Password" class="text-danger small"></span>
+                                    <span asp-validation-for="UserAdd.Password" class="text-danger small"></span>
                                 </div>
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-md-6">
                                 <div class="mb-3">
-                                    <label asp-for="PasswordConfirm" class="form-label">
+                                    <label asp-for="UserAdd.PasswordConfirm" class="form-label">
                                         Şifre Tekrar <span class="text-danger">*</span>
                                     </label>
                                     <div class="input-group">
                                         <span class="input-group-text"><i class="mdi mdi-lock-check"></i></span>
-                                        <input asp-for="PasswordConfirm" class="form-control" type="password" placeholder="Şifre tekrar" id="passwordConfirmInput" />
+                                        <input asp-for="UserAdd.PasswordConfirm" class="form-control" type="password" placeholder="Şifre tekrar" id="passwordConfirmInput" />
                                         <span class="input-group-text" id="togglePasswordConfirm" style="cursor: pointer;">
                                             <i class="mdi mdi-eye-off" id="toggleIconConfirm"></i>
                                         </span>
                                     </div>
-                                    <span asp-validation-for="PasswordConfirm" class="text-danger small"></span>
+                                    <span asp-validation-for="UserAdd.PasswordConfirm" class="text-danger small"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Rol Seçimi -->
+                    <div class="mb-4">
+                        <h6 class="text-primary border-bottom pb-2">
+                            <i class="mdi mdi-shield-account me-1"></i> Rol Ataması
+                        </h6>
+
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="mb-3">
+                                    <label class="form-label">
+                                        <i class="mdi mdi-shield-key-outline me-1"></i> Kullanıcı Rolleri
+                                    </label>
+                                    <p class="text-muted small mb-2">Kullanıcıya atamak istediğiniz rolleri seçin. Seçim yapmazsanız kullanıcı herhangi bir role sahip olmaz.</p>
+                                    @if (Model.AvailableRoles != null && Model.AvailableRoles.Any())
+                                    {
+                                        <div class="role-checkbox-list">
+                                            @for (int i = 0; i < Model.AvailableRoles.Count; i++)
+                                            {
+                                                <div class="role-checkbox-item">
+                                                    <div class="form-check">
+                                                        <input type="checkbox"
+                                                               name="UserAdd.SelectedRoles"
+                                                               value="@Model.AvailableRoles[i].Name"
+                                                               class="form-check-input"
+                                                               id="role_@i" />
+                                                        <label class="form-check-label" for="role_@i">
+                                                            <span class="badge bg-info me-1"><i class="mdi mdi-shield"></i></span>
+                                                            @Model.AvailableRoles[i].Name
+                                                            @if (!string.IsNullOrEmpty(Model.AvailableRoles[i].Description))
+                                                            {
+                                                                <small class="text-muted ms-1">- @Model.AvailableRoles[i].Description</small>
+                                                            }
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            }
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div class="alert alert-light">
+                                            <i class="mdi mdi-information me-1"></i> Kullanılabilir rol bulunamadı.
+                                        </div>
+                                    }
                                 </div>
                             </div>
                         </div>
@@ -209,6 +289,27 @@
 
 @section scripts {
     <script>
+        // Personel seçildiğinde ad, soyad ve e-posta alanlarını otomatik doldur
+        document.getElementById('personelSelect').addEventListener('change', function() {
+            var selectedOption = this.options[this.selectedIndex];
+            if (selectedOption.value) {
+                var username = selectedOption.text.toLowerCase().replace(/\s+/g, '.');
+                var firstName = selectedOption.getAttribute('data-firstname') || '';
+                var lastName = selectedOption.getAttribute('data-lastname') || '';
+                var email = selectedOption.getAttribute('data-email') || '';
+
+                document.getElementById('usernameInput').value = username;
+                document.getElementById('firstNameInput').value = firstName;
+                document.getElementById('lastNameInput').value = lastName;
+                document.getElementById('emailInput').value = email;
+            } else {
+                document.getElementById('usernameInput').value = '';
+                document.getElementById('firstNameInput').value = '';
+                document.getElementById('lastNameInput').value = '';
+                document.getElementById('emailInput').value = '';
+            }
+        });
+
         // Şifre göster/gizle
         document.getElementById('togglePassword').addEventListener('click', function () {
             var passwordInput = document.getElementById('passwordInput');
@@ -237,6 +338,5 @@
                 icon.classList.add('mdi-eye-off');
             }
         });
-
     </script>
 }

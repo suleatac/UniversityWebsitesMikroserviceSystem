@@ -10,19 +10,18 @@ namespace Mikroservice.Site.Application.Features.YoneticiSiteFeatures.CreateYone
      IYoneticiSiteRepository repository,
      IUnitOfWork unitOfWork,
      IRedisCacheService redisCache
- ) : IRequestHandler<CreateYoneticiSiteCommand, ServiceResult<YoneticiSiteResponse>>
+  ) : IRequestHandler<CreateYoneticiSiteCommand, ServiceResult<YoneticiSiteResponse>>
     {
         public async Task<ServiceResult<YoneticiSiteResponse>> Handle(CreateYoneticiSiteCommand request, CancellationToken cancellationToken)
         {
-            var exists = await repository.AnyWithPersonelIdSiteIdYoneticiTipiIdAsync(request.PersonelId,request.SiteId,request.YoneticiTipiId,
-                cancellationToken);
+            var exists = await repository.AnyWithKeycloakUserIdSiteIdYoneticiTipiIdAsync(request.KeycloakUserId, request.SiteId, request.YoneticiTipiId, cancellationToken);
 
             if (exists)
                 return ServiceResult<YoneticiSiteResponse>.Error("Bu kullanıcı zaten bu role sahip.", System.Net.HttpStatusCode.BadRequest);
 
             var entity = new YoneticiSite
             {
-                PersonelId = request.PersonelId,
+                KeycloakUserId = request.KeycloakUserId,
                 SiteId = request.SiteId,
                 YoneticiTipiId = request.YoneticiTipiId,
                 IsDeleted = false

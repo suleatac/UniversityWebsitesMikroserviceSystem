@@ -7,9 +7,8 @@ namespace Mikroservice.Site.Application.Features.YoneticiSiteFeatures.CreateYone
     {
         public CreateYoneticiSiteCommandValidation()
         {
-            RuleFor(x => x.PersonelId)
-                .NotEmpty()
-                .GreaterThan(0);
+            RuleFor(x => x.KeycloakUserId)
+                .NotEmpty();
 
             RuleFor(x => x.SiteId)
                 .GreaterThan(0);

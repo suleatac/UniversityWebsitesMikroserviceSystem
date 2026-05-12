@@ -4,7 +4,7 @@ namespace Mikroservice.Site.Application.Features.YoneticiSiteFeatures.CreateYone
 {
     public record CreateYoneticiSiteCommand : IRequestByServiceResult<YoneticiSiteResponse>
     {
-        public int PersonelId { get; init; } = default!;
+        public string KeycloakUserId { get; init; } = default!;
 
         public int SiteId { get; init; }
 

@@ -29,6 +29,7 @@ namespace Mikroservice.Site.Application.Features.YoneticiSiteFeatures.UpdateYone
 
             entity.YoneticiTipiId = request.YoneticiTipiId;
             entity.SiteId = request.SiteId;
+            entity.KeycloakUserId = request.KeycloakUserId;
             await unitOfWork.SaveChangesAsync(cancellationToken);
 
             var key = "yoneticiSite:*";
