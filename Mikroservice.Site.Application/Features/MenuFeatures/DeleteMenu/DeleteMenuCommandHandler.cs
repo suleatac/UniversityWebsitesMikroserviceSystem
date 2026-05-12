@@ -30,7 +30,7 @@ namespace Mikroservice.Site.Application.Features.MenuFeatures.DeleteMenu
             var key = $"menus:list:{menu.SiteId}:{menu.DilId}";
             await redisCache.RemoveAsync(key, cancellationToken);
 
-            return ServiceResult.SuccessAsNoContent();
+            return ServiceResult.Success();
         }
 
         private async Task SoftDeleteRecursive(int menuId)

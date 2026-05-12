@@ -34,7 +34,7 @@ namespace Mikroservice.Site.Application.Features.UnvanFeatures.DeleteUnvan
                 "unvan:list",
                 cancellationToken);
 
-            return ServiceResult.SuccessAsNoContent();
+            return ServiceResult.Success();
         }
     }
 }

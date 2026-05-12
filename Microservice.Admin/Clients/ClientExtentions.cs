@@ -7,7 +7,9 @@ using Microservice.Admin.Clients.EtkinlikClients;
 using Microservice.Admin.Clients.HaberClients;
 using Microservice.Admin.Clients.HedefClients;
 using Microservice.Admin.Clients.PersonelTipClients;
+using Microservice.Admin.Clients.PopupClients;
 using Microservice.Admin.Clients.SiteClients;
+using Microservice.Admin.Clients.SiteOzellikleriClients;
 using Microservice.Admin.Clients.SitePersonelClients;
 using Microservice.Admin.Clients.SikcaSorulanSoruClients;
 using Microservice.Admin.Clients.SikcaSorulanSoruKategoriClients;
@@ -15,10 +17,13 @@ using Microservice.Admin.Clients.TemplateClients;
 using Microservice.Admin.Clients.MenuClients;
 using Microservice.Admin.Clients.UnvanClients;
 using Microservice.Admin.Clients.VideoClients;
+using Microservice.Admin.Clients.YoneticiSiteClients;
+using Microservice.Admin.Clients.YoneticiTipiClients;
 using Microservice.Admin.Clients.YonetimDuyuruClients;
 using Microservice.Admin.HttpHandlers;
 using Microservice.Admin.Settings;
 using Refit;
+using Microservice.Admin.Clients.TumPersonelClients;
 
 namespace Microservice.Admin.Clients
 {
@@ -209,8 +214,60 @@ namespace Microservice.Admin.Clients
          .AddHttpMessageHandler<AuthenticatedHttpClientHandler>()//bu usertoken için istek atarken kullanmak için
          .AddHttpMessageHandler<ClientAuthenticatedHttpClientHandler>();//bu clientcredential için token alıp istek göndermek için
 
+           //Popup Clients
+           services.AddRefitClient<IPopupClientServices>()
+          .ConfigureHttpClient(c => {
 
-           return services;
+              var microserviceOption = configuration.GetSection(MicroservicesSetting.SectionName).Get<MicroservicesSetting>();
+              c.BaseAddress = new Uri(microserviceOption!.Site.BaseUrl);
+          })
+          .AddHttpMessageHandler<AuthenticatedHttpClientHandler>()//bu usertoken için istek atarken kullanmak için
+          .AddHttpMessageHandler<ClientAuthenticatedHttpClientHandler>();//bu clientcredential için token alıp istek göndermek için
+
+           //SiteOzellikleri Clients
+           services.AddRefitClient<ISiteOzellikleriClientServices>()
+          .ConfigureHttpClient(c => {
+
+              var microserviceOption = configuration.GetSection(MicroservicesSetting.SectionName).Get<MicroservicesSetting>();
+              c.BaseAddress = new Uri(microserviceOption!.Site.BaseUrl);
+          })
+          .AddHttpMessageHandler<AuthenticatedHttpClientHandler>()//bu usertoken için istek atarken kullanmak için
+          .AddHttpMessageHandler<ClientAuthenticatedHttpClientHandler>();//bu clientcredential için token alıp istek göndermek için
+
+           //YoneticiSite Clients
+           services.AddRefitClient<IYoneticiSiteClientServices>()
+          .ConfigureHttpClient(c => {
+
+              var microserviceOption = configuration.GetSection(MicroservicesSetting.SectionName).Get<MicroservicesSetting>();
+              c.BaseAddress = new Uri(microserviceOption!.Site.BaseUrl);
+          })
+          .AddHttpMessageHandler<AuthenticatedHttpClientHandler>()//bu usertoken için istek atarken kullanmak için
+          .AddHttpMessageHandler<ClientAuthenticatedHttpClientHandler>();//bu clientcredential için token alıp istek göndermek için
+
+           //YoneticiTipi Clients
+           services.AddRefitClient<IYoneticiTipiClientServices>()
+          .ConfigureHttpClient(c => {
+
+              var microserviceOption = configuration.GetSection(MicroservicesSetting.SectionName).Get<MicroservicesSetting>();
+              c.BaseAddress = new Uri(microserviceOption!.Site.BaseUrl);
+          })
+          .AddHttpMessageHandler<AuthenticatedHttpClientHandler>()//bu usertoken için istek atarken kullanmak için
+          .AddHttpMessageHandler<ClientAuthenticatedHttpClientHandler>();//bu clientcredential için token alıp istek göndermek için
+
+
+            //TümPersonel Clients
+            services.AddRefitClient<ITumPersonelClientService>()
+           .ConfigureHttpClient(c => {
+
+               var microserviceOption = configuration.GetSection(MicroservicesSetting.SectionName).Get<MicroservicesSetting>();
+               c.BaseAddress = new Uri(microserviceOption!.Personel.BaseUrl);
+           })
+           .AddHttpMessageHandler<AuthenticatedHttpClientHandler>()//bu usertoken için istek atarken kullanmak için
+           .AddHttpMessageHandler<ClientAuthenticatedHttpClientHandler>();//bu clientcredential için token alıp istek göndermek için
+
+
+
+            return services;
         }
     }
 }

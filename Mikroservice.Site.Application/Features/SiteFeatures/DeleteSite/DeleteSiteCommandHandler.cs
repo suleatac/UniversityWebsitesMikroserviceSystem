@@ -26,7 +26,7 @@ namespace Mikroservice.Site.Application.Features.SiteFeatures.DeleteSite
             await redisCache.RemoveByPatternAsync(
                 "site:*",
                 cancellationToken);
-            return ServiceResult.SuccessAsNoContent();
+            return ServiceResult.Success();
         }
     }
 }

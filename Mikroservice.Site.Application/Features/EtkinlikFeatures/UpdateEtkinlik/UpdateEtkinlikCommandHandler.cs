@@ -39,8 +39,7 @@ namespace Mikroservice.Site.Application.Features.EtkinlikFeatures.UpdateEtkinlik
             //Cache temizleme işlemi.
             var cacheKey = $"etkinliks:list:{etkinlik.SiteId}:*";
             await redisCache.RemoveByPatternAsync(cacheKey, cancellationToken);
-
-            return ServiceResult.SuccessAsNoContent();
+            return ServiceResult.Success();
         }
     }
 }

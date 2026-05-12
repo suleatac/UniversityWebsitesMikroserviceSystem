@@ -31,7 +31,7 @@ namespace Microservice.Site.Application.Features.YoneticiTipiFeatures.UpdateYone
             var cacheKey = "list:yoneticiTipleri";
             await redisCacheService.RemoveAsync(cacheKey, cancellationToken);
 
-            return ServiceResult.SuccessAsNoContent();
+            return ServiceResult.Success();
         }
     }
 }

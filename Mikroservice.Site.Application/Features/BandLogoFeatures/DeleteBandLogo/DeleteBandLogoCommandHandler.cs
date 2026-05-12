@@ -30,7 +30,7 @@ namespace Mikroservice.Site.Application.Features.BandLogoFeatures.DeleteBandLogo
             await redisCache.RemoveByPatternAsync(cacheKey, cancellationToken);
 
 
-            return ServiceResult.SuccessAsNoContent();
+            return ServiceResult.Success();
         }
     }
 }

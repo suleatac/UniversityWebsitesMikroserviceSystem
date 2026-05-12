@@ -25,7 +25,7 @@ namespace Mikroservice.Site.Application.Features.SitePersonelFeatures.DeleteSite
             var key = $"sitepersonel:list:{entity.SiteId}";
             await redisCache.RemoveAsync(key, cancellationToken);
 
-            return ServiceResult.SuccessAsNoContent();
+            return ServiceResult.Success();
         }
     }
 }

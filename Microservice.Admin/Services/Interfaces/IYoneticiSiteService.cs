@@ -5,9 +5,9 @@ namespace Microservice.Admin.Services.Interfaces
 {
     public interface IYoneticiSiteService
     {
-        Task<ServiceResult<List<GetYoneticiSiteVm>>> GetYoneticiSitesAsync(int siteId);
+        Task<ServiceResult<List<YoneticiSiteDetailVm>>> GetYoneticiSitesAsync();
         Task<ServiceResult<YoneticiSiteDetailVm>> GetYoneticiSiteByIdAsync(int id);
-        Task<ServiceResult<object>> CreateYoneticiSiteAsync(CreateYoneticiSiteVm dto);
+        Task<ServiceResult<object>> CreateYoneticiSiteAsync(YoneticiSiteVm dto);
         Task<ServiceResult<object>> UpdateYoneticiSiteAsync(YoneticiSiteDetailVm dto);
         Task<ServiceResult<object>> DeleteYoneticiSiteAsync(int id);
     }

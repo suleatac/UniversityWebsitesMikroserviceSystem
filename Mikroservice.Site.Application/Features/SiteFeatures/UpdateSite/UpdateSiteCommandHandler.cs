@@ -37,7 +37,7 @@ namespace Mikroservice.Site.Application.Features.SiteFeatures.UpdateSite
                 "site:*",
                 cancellationToken);
 
-            return ServiceResult.SuccessAsNoContent();
+           return ServiceResult.Success();
         }
     }
 }

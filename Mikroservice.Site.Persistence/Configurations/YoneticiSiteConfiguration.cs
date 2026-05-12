@@ -11,10 +11,9 @@ namespace Mikroservice.Site.Persistence.Configurations
             // 🔥 Primary Key
             builder.HasKey(x => x.Id);
 
-            // 🔐 Keycloak User Id
-            builder.Property(x => x.KeycloakUserId)
-                .IsRequired()
-                .HasMaxLength(100);
+            // 🔐 Personel Id
+            builder.Property(x => x.PersonelId)
+                .IsRequired();
 
             // 🔗 Site ilişkisi
             builder.HasOne(x => x.Site)
@@ -32,7 +31,7 @@ namespace Mikroservice.Site.Persistence.Configurations
             builder.Property(x => x.IsDeleted)
                 .HasDefaultValue(false);
             builder.HasQueryFilter(b => !b.IsDeleted);
-            builder.HasIndex(x => new { x.SiteId, x.KeycloakUserId });
+            builder.HasIndex(x => new { x.SiteId, x.PersonelId });
         }
     }
 }

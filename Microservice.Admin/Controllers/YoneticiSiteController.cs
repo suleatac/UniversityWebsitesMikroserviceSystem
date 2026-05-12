@@ -1,4 +1,6 @@
 using Microservice.Admin.Services.Interfaces;
+using Microservice.Admin.ViewModels.Site;
+using Microservice.Admin.ViewModels.TumPersonel;
 using Microservice.Admin.ViewModels.YoneticiSite;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -10,15 +12,21 @@ namespace Microservice.Admin.Controllers
     {
         private readonly IYoneticiSiteService _yoneticiSiteService;
         private readonly IYoneticiTipiService _yoneticiTipiService;
+        private readonly ISiteService _siteService;
+        private readonly ITumPersonelService _tumPersonelService;
         private readonly ILogger<YoneticiSiteController> _logger;
 
         public YoneticiSiteController(
             IYoneticiSiteService yoneticiSiteService,
             IYoneticiTipiService yoneticiTipiService,
+            ITumPersonelService tumPersonelService,
+            ISiteService siteService,
             ILogger<YoneticiSiteController> logger)
         {
             _yoneticiSiteService = yoneticiSiteService;
             _yoneticiTipiService = yoneticiTipiService;
+            _tumPersonelService = tumPersonelService;
+            _siteService = siteService;
             _logger = logger;
         }
 
@@ -40,7 +48,7 @@ namespace Microservice.Admin.Controllers
                 _ => "Id"
             };
 
-            var result = await _yoneticiSiteService.GetYoneticiSitesAsync(currentSiteId);
+            var result = await _yoneticiSiteService.GetYoneticiSitesAsync();
 
             if (!result.IsSuccess)
             {
@@ -48,25 +56,24 @@ namespace Microservice.Admin.Controllers
                 return BadRequest(new { error = result.Fail?.Detail });
             }
 
-            var data = result.Data ?? new List<GetYoneticiSiteVm>();
+            var data = result.Data ?? new List<YoneticiSiteDetailVm>();
 
             // Client-side pagination since the API returns all items
             var filteredData = string.IsNullOrEmpty(search)
                 ? data
-                : data.Where(x => x.KeycloakUserId.Contains(search, StringComparison.OrdinalIgnoreCase) ||
-                                  x.YoneticiTipiAdi.Contains(search, StringComparison.OrdinalIgnoreCase)).ToList();
+                : data.Where(x => x.PersonelId.ToString().Contains(search, StringComparison.OrdinalIgnoreCase) ).ToList();
 
             var orderedData = orderDir.ToLower() == "asc"
                 ? columnName switch
                 {
-                    "KeycloakUserId" => filteredData.OrderBy(x => x.KeycloakUserId).ToList(),
-                    "YoneticiTipiAdi" => filteredData.OrderBy(x => x.YoneticiTipiAdi).ToList(),
+                    "PersonelId" => filteredData.OrderBy(x => x.PersonelId).ToList(),
+                    
                     _ => filteredData.OrderBy(x => x.Id).ToList()
                 }
                 : columnName switch
                 {
-                    "KeycloakUserId" => filteredData.OrderByDescending(x => x.KeycloakUserId).ToList(),
-                    "YoneticiTipiAdi" => filteredData.OrderByDescending(x => x.YoneticiTipiAdi).ToList(),
+                    "PersonelId" => filteredData.OrderByDescending(x => x.PersonelId).ToList(),
+                    
                     _ => filteredData.OrderByDescending(x => x.Id).ToList()
                 };
 
@@ -88,11 +95,15 @@ namespace Microservice.Admin.Controllers
 
             var currentSiteId = HttpContext.Session.GetInt32("CurrentSiteId") ?? 1;
             var yoneticiTipleri = await _yoneticiTipiService.GetYoneticiTipleriAsync();
+            var tumPersoneller = await _tumPersonelService.GetTumPersonelsAsync();
+            var tumSiteler = await _siteService.GetSitesAsync();
 
-            var viewModel = new YoneticiSiteCreateIndexVm
+            var viewModel = new YoneticiSiteIndexVm
             {
-                CreateYoneticiSite = new CreateYoneticiSiteVm { SiteId = currentSiteId },
+                TumPersoneller=tumPersoneller.Data ?? new List<GetPersonelVm>(),
+                YoneticiSite = new YoneticiSiteVm { SiteId = currentSiteId },
                 YoneticiTipleri = yoneticiTipleri.Data ?? new List<ViewModels.YoneticiTipi.GetYoneticiTipiVm>(),
+                TumSiteler = tumSiteler.Data ?? new List<SiteGetVm>()
             };
 
             return View(viewModel);
@@ -100,24 +111,39 @@ namespace Microservice.Admin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(YoneticiSiteCreateIndexVm model)
+        public async Task<IActionResult> Create(YoneticiSiteIndexVm model)
         {
             if (!ModelState.IsValid)
             {
                 _logger.LogWarning("Create YoneticiSite - ModelState geçersiz.");
+            
                 var yoneticiTipleri = await _yoneticiTipiService.GetYoneticiTipleriAsync();
+                var tumPersoneller = await _tumPersonelService.GetTumPersonelsAsync();
+                var tumSiteler = await _siteService.GetSitesAsync();
+
                 model.YoneticiTipleri = yoneticiTipleri.Data ?? new List<ViewModels.YoneticiTipi.GetYoneticiTipiVm>();
+                model.TumPersoneller = tumPersoneller.Data ?? new List<GetPersonelVm>();
+                model.TumSiteler = tumSiteler.Data ?? new List<SiteGetVm>();
+
                 return View(model);
             }
 
-            var result = await _yoneticiSiteService.CreateYoneticiSiteAsync(model.CreateYoneticiSite);
+            var result = await _yoneticiSiteService.CreateYoneticiSiteAsync(model.YoneticiSite);
 
             if (!result.IsSuccess)
             {
                 _logger.LogError("YoneticiSite oluşturulamadı. Hata: {Error}", result.Fail?.Detail);
                 ModelState.AddModelError("", result.Fail?.Detail ?? result.Fail?.Title ?? "YoneticiSite oluşturulamadı.");
+               
                 var yoneticiTipleri = await _yoneticiTipiService.GetYoneticiTipleriAsync();
+                var tumPersoneller = await _tumPersonelService.GetTumPersonelsAsync();
+                var tumSiteler = await _siteService.GetSitesAsync();
+
                 model.YoneticiTipleri = yoneticiTipleri.Data ?? new List<ViewModels.YoneticiTipi.GetYoneticiTipiVm>();
+                model.TumPersoneller = tumPersoneller.Data ?? new List<GetPersonelVm>();
+                model.TumSiteler = tumSiteler.Data ?? new List<SiteGetVm>();
+
+
                 return View(model);
             }
 
@@ -132,7 +158,10 @@ namespace Microservice.Admin.Controllers
             _logger.LogInformation("YoneticiSite düzenleme sayfası açıldı. Id: {Id}", id);
 
             var result = await _yoneticiSiteService.GetYoneticiSiteByIdAsync(id);
+
             var yoneticiTipleri = await _yoneticiTipiService.GetYoneticiTipleriAsync();
+            var tumPersoneller = await _tumPersonelService.GetTumPersonelsAsync();
+            var tumSiteler = await _siteService.GetSitesAsync();
 
             if (!result.IsSuccess || result.Data == null)
             {
@@ -143,7 +172,9 @@ namespace Microservice.Admin.Controllers
 
             var viewModel = new YoneticiSiteEditIndexVm
             {
-                YoneticiSite = result.Data,
+                TumPersoneller = tumPersoneller.Data ?? new List<GetPersonelVm>(),
+                TumSiteler = tumSiteler.Data ?? new List<SiteGetVm>(),
+                EditYoneticiSite = result.Data,
                 YoneticiTipleri = yoneticiTipleri.Data ?? new List<ViewModels.YoneticiTipi.GetYoneticiTipiVm>(),
             };
 
@@ -157,23 +188,40 @@ namespace Microservice.Admin.Controllers
             if (!ModelState.IsValid)
             {
                 _logger.LogWarning("Update YoneticiSite - ModelState geçersiz.");
+               
+
                 var yoneticiTipleri = await _yoneticiTipiService.GetYoneticiTipleriAsync();
+                var tumPersoneller = await _tumPersonelService.GetTumPersonelsAsync();
+                var tumSiteler = await _siteService.GetSitesAsync();
+
                 model.YoneticiTipleri = yoneticiTipleri.Data ?? new List<ViewModels.YoneticiTipi.GetYoneticiTipiVm>();
+                model.TumPersoneller = tumPersoneller.Data ?? new List<GetPersonelVm>();
+                model.TumSiteler = tumSiteler.Data ?? new List<SiteGetVm>();
+
                 return View(model);
             }
 
-            var result = await _yoneticiSiteService.UpdateYoneticiSiteAsync(model.YoneticiSite);
+            var result = await _yoneticiSiteService.UpdateYoneticiSiteAsync(model.EditYoneticiSite);
 
             if (!result.IsSuccess)
             {
-                _logger.LogError("YoneticiSite güncellenemedi. Id: {Id}, Hata: {Error}", model.YoneticiSite.Id, result.Fail?.Detail);
+                _logger.LogError("YoneticiSite güncellenemedi. Id: {Id}, Hata: {Error}", model.EditYoneticiSite.Id, result.Fail?.Detail);
                 ModelState.AddModelError("", result.Fail?.Detail ?? result.Fail?.Title ?? "Güncelleme başarısız");
+
+
                 var yoneticiTipleri = await _yoneticiTipiService.GetYoneticiTipleriAsync();
+                var tumPersoneller = await _tumPersonelService.GetTumPersonelsAsync();
+                var tumSiteler = await _siteService.GetSitesAsync();
+
+
                 model.YoneticiTipleri = yoneticiTipleri.Data ?? new List<ViewModels.YoneticiTipi.GetYoneticiTipiVm>();
+                model.TumPersoneller = tumPersoneller.Data ?? new List<GetPersonelVm>();
+                model.TumSiteler = tumSiteler.Data ?? new List<SiteGetVm>();
+
                 return View(model);
             }
 
-            _logger.LogInformation("YoneticiSite güncellendi. Id: {Id}", model.YoneticiSite.Id);
+            _logger.LogInformation("YoneticiSite güncellendi. Id: {Id}", model.EditYoneticiSite.Id);
             TempData["Success"] = "Yönetici Site başarıyla güncellendi.";
             return RedirectToAction(nameof(Index));
         }

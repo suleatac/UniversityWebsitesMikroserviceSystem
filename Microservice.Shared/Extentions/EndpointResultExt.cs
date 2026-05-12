@@ -31,6 +31,8 @@ namespace Microservice.Shared.Extentions
         public static IResult ToGenericResult(this ServiceResult result)
         {
             return result.StatusCode switch {
+                HttpStatusCode.OK => Results.Ok(result),
+
                 HttpStatusCode.NoContent => Results.NoContent(),
 
                 HttpStatusCode.BadRequest => Results.BadRequest(result.Fail),

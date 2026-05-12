@@ -40,7 +40,7 @@ namespace Mikroservice.Site.Application.Features.DuyuruFeatures.UpdateDuyuru
             var cacheKey = $"duyurus:list:{duyuru.SiteId}:*";
             await redisCache.RemoveByPatternAsync(cacheKey, cancellationToken);
 
-            return ServiceResult.SuccessAsNoContent();
+            return ServiceResult.Success();
         }
     }
 }

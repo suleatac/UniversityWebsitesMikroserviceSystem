@@ -25,7 +25,7 @@ namespace Mikroservice.Site.Application.Features.VideoFeatures.DeleteVideo
             var key = $"videos:list:{entity.SiteId}:*";
             await redisCache.RemoveByPatternAsync(key, cancellationToken);
 
-            return ServiceResult.SuccessAsNoContent();
+            return ServiceResult.Success();
         }
     }
 }

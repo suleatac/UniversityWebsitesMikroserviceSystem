@@ -29,7 +29,7 @@ namespace Mikroservice.Site.Application.Features.BilgiFeatures.DeleteBilgi
             var cacheKey = $"bilgis:list:{bilgi.SiteId}:*";
             await redisCache.RemoveByPatternAsync(cacheKey, cancellationToken);
 
-            return ServiceResult.SuccessAsNoContent();
+            return ServiceResult.Success();
         }
     }
 }

@@ -31,7 +31,7 @@ namespace Mikroservice.Site.Application.Features.BandLogoFeatures.UpdateBandLogo
             var cacheKey = $"bandlogos:list:{bandLogo.SiteId}:*";
             await redisCache.RemoveByPatternAsync(cacheKey, cancellationToken);
 
-            return ServiceResult.SuccessAsNoContent();
+            return ServiceResult.Success();
         }
     }
 }

@@ -48,9 +48,6 @@ namespace Microservice.Shared
             };
 
         }
-
-
-
         public static ServiceResult ErrorFromProblemDetails(ApiException exception)
         {
             if (string.IsNullOrEmpty(exception.Content))
@@ -87,7 +84,6 @@ namespace Microservice.Shared
 
 
         }
-
         public static ServiceResult Error(ProblemDetails? problemdetails, HttpStatusCode status)
         {
 

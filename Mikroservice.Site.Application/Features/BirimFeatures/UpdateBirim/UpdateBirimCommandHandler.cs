@@ -31,7 +31,7 @@ namespace Mikroservice.Site.Application.Features.BirimFeatures.UpdateBirim
             await redisCache.RemoveAsync("birim:list", cancellationToken);
 
 
-            return ServiceResult.SuccessAsNoContent();
+            return ServiceResult.Success();
         }
     }
 }

@@ -27,7 +27,7 @@ namespace Mikroservice.Site.Application.Features.SikcaSorulanSoruKategoriFeature
             var key = $"sikcaSorulanSoruKategori:list";
             await redisCache.RemoveAsync(key, cancellationToken);
 
-            return ServiceResult.SuccessAsNoContent();
+            return ServiceResult.Success();
         }
     }
 }

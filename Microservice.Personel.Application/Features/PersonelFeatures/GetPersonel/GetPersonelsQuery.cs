@@ -1,10 +1,7 @@
-﻿using MediatR;
+﻿using Microservice.Personel.Application.Contracts.DTOs;
 using Microservice.Shared;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Microservice.Personel.Application.Features.PersonelFeatures.GetPersonel
 {
-    public record GetPersonelsQuery : IRequestByServiceResult<List<Domain.Entities.Personel>>;
+    public record GetPersonelsQuery : IRequestByServiceResult<List<PersonelDto>>;
 }

@@ -28,7 +28,7 @@ namespace Mikroservice.Site.Application.Features.PopupFeatures.DeletePopup
             var key = $"popup:list:{popup.SiteId}:*";
             await redisCache.RemoveByPatternAsync(key, cancellationToken);
 
-            return ServiceResult.SuccessAsNoContent();
+            return ServiceResult.Success();
         }
     }
 }

@@ -6,13 +6,13 @@ namespace Microservice.Admin.Clients.YoneticiSiteClients
     public interface IYoneticiSiteClientServices
     {
         [Get("/api/v1/yonetici-siteler")]
-        Task<ApiResponse<List<GetYoneticiSiteVm>>> GetYoneticiSitesAsync(int siteId);
+        Task<ApiResponse<List<YoneticiSiteDetailVm>>> GetYoneticiSitesAsync();
 
         [Get("/api/v1/yonetici-siteler/{id}")]
         Task<ApiResponse<YoneticiSiteDetailVm>> GetYoneticiSiteByIdAsync(int id);
 
         [Post("/api/v1/yonetici-siteler")]
-        Task<ApiResponse<object>> CreateYoneticiSiteAsync([Body] CreateYoneticiSiteVm dto);
+        Task<ApiResponse<object>> CreateYoneticiSiteAsync([Body] YoneticiSiteVm dto);
 
         [Put("/api/v1/yonetici-siteler/{id}")]
         Task<ApiResponse<object>> UpdateYoneticiSiteAsync(int id, [Body] YoneticiSiteDetailVm dto);

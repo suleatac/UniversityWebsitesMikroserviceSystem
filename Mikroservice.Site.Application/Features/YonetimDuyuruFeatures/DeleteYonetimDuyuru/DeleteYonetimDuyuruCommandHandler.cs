@@ -26,7 +26,7 @@ namespace Microservice.Site.Application.Features.YonetimDuyuruFeatures.DeleteYon
             var cacheKey = "yonetimduyuru:*";
             await redisCacheService.RemoveByPatternAsync(cacheKey, cancellationToken);
 
-            return ServiceResult.SuccessAsNoContent();
+            return ServiceResult.Success();
         }
     }
 }

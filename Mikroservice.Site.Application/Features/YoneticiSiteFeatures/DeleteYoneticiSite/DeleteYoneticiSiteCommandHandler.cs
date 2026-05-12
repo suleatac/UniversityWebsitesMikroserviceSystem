@@ -22,10 +22,10 @@ namespace Mikroservice.Site.Application.Features.YoneticiSiteFeatures.DeleteYone
 
             await unitOfWork.SaveChangesAsync(cancellationToken);
 
-            var key = "yoneticiSite:list:*";
+            var key = "yoneticiSite:*";
             await redisCache.RemoveByPatternAsync(key, cancellationToken);
 
-            return ServiceResult.SuccessAsNoContent();
+            return ServiceResult.Success();
         }
     }
 }

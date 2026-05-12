@@ -57,7 +57,7 @@ namespace Mikroservice.Site.Application.Features.MenuFeatures.UpdateMenu
             var key = $"menus:list:{menu.SiteId}:{menu.DilId}";
             await redisCache.RemoveAsync(key, cancellationToken);
 
-            return ServiceResult.SuccessAsNoContent();
+            return ServiceResult.Success();
         }
     }
 }

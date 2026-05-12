@@ -28,7 +28,7 @@ namespace Mikroservice.Site.Application.Features.PersonelTipFeatures.DeletePerso
             await redisCache.RemoveAsync("personelTip:list", cancellationToken);
 
 
-            return ServiceResult.SuccessAsNoContent();
+            return ServiceResult.Success();
         }
     }
 }

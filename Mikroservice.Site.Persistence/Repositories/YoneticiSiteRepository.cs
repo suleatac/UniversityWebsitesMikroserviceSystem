@@ -17,10 +17,10 @@ namespace Microservice.Site.Persistence.Repositories
         {
             return await _appDbContext.Set<YoneticiSite>().AnyAsync(cancellationToken);
         }
-        public async Task<bool> AnyWithKeycloakUserIdSiteIdYoneticiTipiIdAsync(string keycloakUserId, int siteId, int yoneticiTipiId,CancellationToken cancellationToken = default)
+        public async Task<bool> AnyWithPersonelIdSiteIdYoneticiTipiIdAsync(int personelId, int siteId, int yoneticiTipiId,CancellationToken cancellationToken = default)
         {
             return await _appDbContext.Set<YoneticiSite>().AnyAsync(x =>
-                x.KeycloakUserId == keycloakUserId &&
+                x.PersonelId == personelId &&
                 x.SiteId == siteId &&
                 x.YoneticiTipiId == yoneticiTipiId, cancellationToken);
         }

@@ -38,7 +38,7 @@ namespace Mikroservice.Site.Application.Features.SitePersonelFeatures.UpdateSite
             var key = $"sitepersonel:list:{request.SiteId}";
             await redisCache.RemoveAsync(key, cancellationToken);
 
-            return ServiceResult.SuccessAsNoContent();
+            return ServiceResult.Success();
         }
     }
 }

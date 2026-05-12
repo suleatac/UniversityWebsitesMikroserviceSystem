@@ -42,7 +42,7 @@ namespace Mikroservice.Site.Application.Features.HaberFeatures.UpdateHaber
                 cacheKey,
                 cancellationToken);
 
-            return ServiceResult.SuccessAsNoContent();
+            return ServiceResult.Success();
         }
     }
 }

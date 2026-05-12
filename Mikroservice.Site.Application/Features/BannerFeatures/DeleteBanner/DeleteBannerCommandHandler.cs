@@ -28,7 +28,7 @@ namespace Mikroservice.Site.Application.Features.BannerFeatures.DeleteBanner
             var cacheKey = $"banners:list:{banner.SiteId}:*";
             await redisCache.RemoveByPatternAsync(cacheKey, cancellationToken);
 
-            return ServiceResult.SuccessAsNoContent();
+            return ServiceResult.Success();
         }
     }
 }

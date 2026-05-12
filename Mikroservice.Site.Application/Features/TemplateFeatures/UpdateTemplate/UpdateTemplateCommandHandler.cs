@@ -30,7 +30,7 @@ namespace Mikroservice.Site.Application.Features.TemplateFeatures.UpdateTemplate
             //Cache temizleme işlemi.
             await redisCache.RemoveAsync("template:list", cancellationToken);
 
-            return ServiceResult.SuccessAsNoContent();
+            return ServiceResult.Success();
         }
     }
 }

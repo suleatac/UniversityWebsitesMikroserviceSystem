@@ -44,7 +44,7 @@ namespace Mikroservice.Site.Application.Features.PopupFeatures.UpdatePopup
             var key = $"popup:list:{popup.SiteId}:*";
             await redisCache.RemoveByPatternAsync(key, cancellationToken);
 
-            return ServiceResult.SuccessAsNoContent();
+            return ServiceResult.Success();
         }
     }
 }

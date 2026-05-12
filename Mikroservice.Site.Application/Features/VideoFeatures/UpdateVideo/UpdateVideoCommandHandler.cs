@@ -41,7 +41,7 @@ namespace Mikroservice.Site.Application.Features.VideoFeatures.UpdateVideo
             var key = $"videos:list:{request.SiteId}:*";
             await redisCache.RemoveByPatternAsync(key, cancellationToken);
 
-            return ServiceResult.SuccessAsNoContent();
+            return ServiceResult.Success();
         }
     }
 }

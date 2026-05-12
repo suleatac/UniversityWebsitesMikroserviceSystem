@@ -26,7 +26,7 @@ namespace Mikroservice.Site.Application.Features.BirimFeatures.DeleteBirim
 
             await redisCache.RemoveAsync("birim:list", cancellationToken);
 
-            return ServiceResult.SuccessAsNoContent();
+            return ServiceResult.Success();
         }
         private async Task SoftDeleteTree(int parentId)
         {

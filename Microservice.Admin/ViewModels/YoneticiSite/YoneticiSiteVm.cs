@@ -2,10 +2,11 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Microservice.Admin.ViewModels.YoneticiSite
 {
-    public class CreateYoneticiSiteVm
+    public class YoneticiSiteVm
     {
-        [Required(ErrorMessage = "Keycloak UserId zorunludur")]
-        public string KeycloakUserId { get; set; } = default!;
+
+        [Required(ErrorMessage = "PersonelId zorunludur")]
+        public int PersonelId { get; set; } = default!;
 
         [Required(ErrorMessage = "SiteId zorunludur")]
         public int SiteId { get; set; }

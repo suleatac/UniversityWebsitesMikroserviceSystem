@@ -29,8 +29,8 @@ namespace Mikroservice.Site.Application.Features.HaberFeatures.DeleteHaber
             await redisCache.RemoveByPatternAsync(
                 cacheKey,
                 cancellationToken);
-         
-            return ServiceResult.SuccessAsNoContent();
+
+            return ServiceResult.Success();
         }
     }
 }

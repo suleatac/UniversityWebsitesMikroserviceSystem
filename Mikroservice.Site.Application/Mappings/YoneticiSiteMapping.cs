@@ -8,10 +8,10 @@ namespace Mikroservice.Site.Application.Mappings
     {
         public YoneticiSiteMapping()
         {
-            CreateMap<YoneticiSite, YoneticiSiteDto>()
-                .ForMember(dest => dest.YoneticiTipiAdi, opt => opt.MapFrom(src => src.YoneticiTipi != null ? src.YoneticiTipi.TipAdi : string.Empty));
-            CreateMap<YoneticiSite, YoneticiSiteDetailDto>()
-                .ForMember(dest => dest.YoneticiTipiAdi, opt => opt.MapFrom(src => src.YoneticiTipi != null ? src.YoneticiTipi.TipAdi : string.Empty));
+            CreateMap<YoneticiSite, YoneticiSiteDto>();
+
+            CreateMap<YoneticiSite, YoneticiSiteDetailDto>();
+                
         }
     }
 }

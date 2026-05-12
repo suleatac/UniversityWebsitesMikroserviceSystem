@@ -50,8 +50,8 @@ namespace Mikroservice.Site.Application.Features.SiteOzellikleriFeatures.UpdateS
             await unitOfWork.SaveChangesAsync(cancellationToken);
 
             var key = $"siteozellikleri:{entity.SiteId}";
-            await redisCache.RemoveAsync(key, cancellationToken); 
-            return ServiceResult.SuccessAsNoContent();
+            await redisCache.RemoveAsync(key, cancellationToken);
+            return ServiceResult.Success();
         }
     }
 }

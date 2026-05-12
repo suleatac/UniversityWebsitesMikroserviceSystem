@@ -28,7 +28,7 @@ namespace Mikroservice.Site.Application.Features.TemplateFeatures.DeleteTemplate
             await redisCache.RemoveAsync("template:list", cancellationToken);
 
 
-            return ServiceResult.SuccessAsNoContent();
+            return ServiceResult.Success();
         }
     }
 }

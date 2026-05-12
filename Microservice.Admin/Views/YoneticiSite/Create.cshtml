@@ -1,4 +1,4 @@
-@model Microservice.Admin.ViewModels.YoneticiSite.YoneticiSiteCreateIndexVm
+@model Microservice.Admin.ViewModels.YoneticiSite.YoneticiSiteIndexVm
 
 @{
     ViewBag.pTitle = "Yönetici Siteler";
@@ -18,27 +18,35 @@
             <div class="card-body p-4">
                 <form asp-action="Create" id="yoneticiSiteCreateForm" class="needs-validation" novalidate>
                     <div asp-validation-summary="ModelOnly" class="alert alert-danger d-none" role="alert"><i class="mdi mdi-block-helper me-2"></i><ul></ul></div>
-                    <input type="hidden" asp-for="CreateYoneticiSite.SiteId" />
 
+             
                     <div class="mb-4">
                         <h6 class="text-primary border-bottom pb-2"><i class="mdi mdi-information-outline me-1"></i> Temel Bilgiler</h6>
                         <div class="row">
-                            <div class="col-md-6">
+                            <div class="col-md-12">
                                 <div class="mb-3">
-                                    <label asp-for="CreateYoneticiSite.KeycloakUserId" class="form-label">Keycloak UserId <span class="text-danger">*</span></label>
-                                    <div class="input-group">
-                                        <span class="input-group-text"><i class="mdi mdi-key-variant"></i></span>
-                                        <input asp-for="CreateYoneticiSite.KeycloakUserId" class="form-control" placeholder="Keycloak kullanıcı ID'sini giriniz" />
-                                    </div>
-                                    <span asp-validation-for="CreateYoneticiSite.KeycloakUserId" class="text-danger small"></span>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label asp-for="CreateYoneticiSite.YoneticiTipiId" class="form-label">Yönetici Tipi <span class="text-danger">*</span></label>
+                                    <label asp-for="YoneticiSite.PersonelId" class="form-label">Personel Seç <span class="text-danger">*</span></label>
                                     <div class="input-group">
                                         <span class="input-group-text"><i class="mdi mdi-account-tie"></i></span>
-                                        <select asp-for="CreateYoneticiSite.YoneticiTipiId" class="form-select">
+                                        <select asp-for="YoneticiSite.PersonelId" class="form-select">
+                                            <option value="">-- Personel Seçin --</option>
+                                            @foreach (var personel in Model.TumPersoneller)
+                                            {
+                                                <option value="@personel.Id">@personel.Adi @personel.Soyadi</option>
+                                            }
+                                        </select>
+                                    </div>
+                                    <span asp-validation-for="YoneticiSite.PersonelId" class="text-danger small"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label asp-for="YoneticiSite.YoneticiTipiId" class="form-label">Yönetici Tipi <span class="text-danger">*</span></label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="mdi mdi-account-tie"></i></span>
+                                        <select asp-for="YoneticiSite.YoneticiTipiId" class="form-select">
                                             <option value="">-- Yönetici Tipi Seçin --</option>
                                             @foreach (var tip in Model.YoneticiTipleri)
                                             {
@@ -46,12 +54,29 @@
                                             }
                                         </select>
                                     </div>
-                                    <span asp-validation-for="CreateYoneticiSite.YoneticiTipiId" class="text-danger small"></span>
+                                    <span asp-validation-for="YoneticiSite.YoneticiTipiId" class="text-danger small"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label asp-for="YoneticiSite.SiteId" class="form-label">Yetkili Olacağı Siteyi Seçin <span class="text-danger">*</span></label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="mdi mdi-home-city"></i></span>
+                                        <select asp-for="YoneticiSite.SiteId" class="form-select">
+                                            <option value="">-- Site Seçin --</option>
+                                            @foreach (var site in Model.TumSiteler)
+                                            {
+                                                <option value="@site.Id">@site.SiteAdi</option>
+                                            }
+                                        </select>
+                                    </div>
+                                    <span asp-validation-for="YoneticiSite.SiteId" class="text-danger small"></span>
                                 </div>
                             </div>
                         </div>
                     </div>
 
+               
                     <div class="d-flex justify-content-end gap-2">
                         <a asp-action="Index" class="btn btn-secondary"><i class="mdi mdi-arrow-left me-1"></i> İptal</a>
                         <button type="submit" class="btn btn-primary"><i class="mdi mdi-check me-1"></i> Kaydet</button>

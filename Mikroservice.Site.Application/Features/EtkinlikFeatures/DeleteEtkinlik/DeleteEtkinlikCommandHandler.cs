@@ -28,7 +28,7 @@ namespace Mikroservice.Site.Application.Features.EtkinlikFeatures.DeleteEtkinlik
             var cacheKey = $"etkinliks:list:{etkinlik.SiteId}:*";
             await redisCache.RemoveByPatternAsync(cacheKey, cancellationToken);
 
-            return ServiceResult.SuccessAsNoContent();
+            return ServiceResult.Success();
         }
     }
 }

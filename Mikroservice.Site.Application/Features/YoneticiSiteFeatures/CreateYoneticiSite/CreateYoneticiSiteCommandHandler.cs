@@ -14,7 +14,7 @@ namespace Mikroservice.Site.Application.Features.YoneticiSiteFeatures.CreateYone
     {
         public async Task<ServiceResult<YoneticiSiteResponse>> Handle(CreateYoneticiSiteCommand request, CancellationToken cancellationToken)
         {
-            var exists = await repository.AnyWithKeycloakUserIdSiteIdYoneticiTipiIdAsync(request.KeycloakUserId,request.SiteId,request.YoneticiTipiId,
+            var exists = await repository.AnyWithPersonelIdSiteIdYoneticiTipiIdAsync(request.PersonelId,request.SiteId,request.YoneticiTipiId,
                 cancellationToken);
 
             if (exists)
@@ -22,7 +22,7 @@ namespace Mikroservice.Site.Application.Features.YoneticiSiteFeatures.CreateYone
 
             var entity = new YoneticiSite
             {
-                KeycloakUserId = request.KeycloakUserId,
+                PersonelId = request.PersonelId,
                 SiteId = request.SiteId,
                 YoneticiTipiId = request.YoneticiTipiId,
                 IsDeleted = false
@@ -32,7 +32,7 @@ namespace Mikroservice.Site.Application.Features.YoneticiSiteFeatures.CreateYone
             await unitOfWork.SaveChangesAsync(cancellationToken);
 
 
-            var key = "yoneticiSite:list:*";
+            var key = "yoneticiSite:*";
             await redisCache.RemoveByPatternAsync(key, cancellationToken);
 
             var response = new YoneticiSiteResponse(entity.Id);
