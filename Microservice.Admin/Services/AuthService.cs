@@ -24,9 +24,11 @@ namespace Microservice.Admin.Services
             var userClaims = tokenService.ExtractClaims(tokenResponse.Data!.AccessToken!);
             var filteredClaims = userClaims
                .Where(c =>
+                       c.Type == "sub" ||
                        c.Type == ClaimTypes.Name ||
                        c.Type == ClaimTypes.NameIdentifier ||
-                           c.Type == ClaimTypes.Role)
+                       c.Type == ClaimTypes.Role
+                       )
                .ToList();
             var authenticationProperties = tokenService.CreateAuthenticationProperties(tokenResponse.Data!);
 

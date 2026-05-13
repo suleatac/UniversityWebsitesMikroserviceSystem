@@ -2,8 +2,8 @@ using AutoMapper;
 using MediatR;
 using Microservice.Shared;
 using Microservice.Site.Application.Contracts.IRepositories;
-using Microsoft.Extensions.Logging;
 using Mikroservice.Site.Application.DTOs.PopupDtos;
+using Microsoft.Extensions.Logging;
 using System.Net;
 
 namespace Mikroservice.Site.Application.Features.PopupFeatures.GetPopupById
@@ -17,8 +17,7 @@ namespace Mikroservice.Site.Application.Features.PopupFeatures.GetPopupById
         public async Task<ServiceResult<PopupDetailDto>> Handle(GetPopupByIdQuery request, CancellationToken cancellationToken)
         {
             var entity = await popupRepository.GetByIdAsync(request.Id);
-
-            if (entity is null || entity.IsDeleted)
+            if (entity is null)
             {
                 logger.LogWarning("Popup bulunamadı. Id: {Id}", request.Id);
                 return ServiceResult<PopupDetailDto>.Error("Popup bulunamadı", HttpStatusCode.NotFound);

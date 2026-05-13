@@ -35,7 +35,12 @@ namespace Mikroservice.Site.Persistence.Configurations
             builder.HasOne(s => s.SiteOzellikleri)
                    .WithOne(so => so.Site)
                    .HasForeignKey<SiteOzellikleri>(so => so.SiteId)
-                   .OnDelete(DeleteBehavior.Cascade); 
+                   .OnDelete(DeleteBehavior.Cascade);
+
+            builder.HasOne(s => s.Popup)
+                   .WithOne(p => p.Site)
+                   .HasForeignKey<Popup>(p => p.SiteId)
+                   .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

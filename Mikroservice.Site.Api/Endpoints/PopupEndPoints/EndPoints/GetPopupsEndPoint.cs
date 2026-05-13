@@ -11,16 +11,16 @@ namespace Mikroservice.Site.Api.Endpoints.PopupEndPoints.EndPoints
         {
             group.MapGet("/", async (
                 int siteId,
-                int dilId,
                 IMediator mediator) =>
             {
-                var result = await mediator.Send(new GetPopupQuery(siteId, dilId));
+                var result = await mediator.Send(new GetPopupQuery(siteId));
                 return result.ToGenericResult();
             })
-            .WithName("GetPopups")
+            .WithName("GetPopupBySiteId")
             .MapToApiVersion(1.0)
-            .Produces<List<Popup>>(StatusCodes.Status200OK)
+            .Produces<Popup>(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status400BadRequest)
+            .Produces(StatusCodes.Status404NotFound)
             .Produces(StatusCodes.Status500InternalServerError);
 
             return group;

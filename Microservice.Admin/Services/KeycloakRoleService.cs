@@ -2,7 +2,7 @@ using Duende.IdentityModel.Client;
 using Microservice.Admin.Services.Interfaces;
 using Microservice.Admin.Services.ServiceResults;
 using Microservice.Admin.Settings;
-using Microservice.Admin.ViewModels.UserRole;
+using Microservice.Admin.ViewModels.User;
 using System.Text.Json;
 
 namespace Microservice.Admin.Services

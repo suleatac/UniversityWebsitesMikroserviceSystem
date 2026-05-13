@@ -23,11 +23,7 @@ namespace Mikroservice.Site.Persistence.Configurations
                 .HasForeignKey(x => x.SiteId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            // 🔗 YoneticiTipi (role per site)
-            builder.HasOne(x => x.YoneticiTipi)
-                .WithMany()
-                .HasForeignKey(x => x.YoneticiTipiId)
-                .OnDelete(DeleteBehavior.Restrict);
+     
 
             // 🧠 Soft delete index (opsiyonel ama önerilir)
             builder.Property(x => x.IsDeleted)

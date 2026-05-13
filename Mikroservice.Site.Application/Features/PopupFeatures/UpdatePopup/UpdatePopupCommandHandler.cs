@@ -32,8 +32,6 @@ namespace Mikroservice.Site.Application.Features.PopupFeatures.UpdatePopup
             popup.SeoTitle = request.SeoTitle;
             popup.SeoDescription = request.SeoDescription;
             popup.SiteId = request.SiteId;
-            popup.DilId = request.DilId;
-            popup.HedefId = request.HedefId;
             popup.TamEkranMi = request.TamEkranMi;
             popup.GosterimSuresiSaniye = request.GosterimSuresiSaniye;
             popup.CookieIleTekrarGosterme = request.CookieIleTekrarGosterme;
@@ -41,8 +39,10 @@ namespace Mikroservice.Site.Application.Features.PopupFeatures.UpdatePopup
             await unitOfWork.SaveChangesAsync(cancellationToken);
 
             //Cache temizleme işlemi.
-            var key = $"popup:list:{popup.SiteId}:*";
-            await redisCache.RemoveByPatternAsync(key, cancellationToken);
+            var key = $"popup:site:{popup.SiteId}";
+            await redisCache.RemoveAsync(key, cancellationToken);
+            var listKey = $"popup:list:{popup.SiteId}:*";
+            await redisCache.RemoveByPatternAsync(listKey, cancellationToken);
 
             return ServiceResult.Success();
         }

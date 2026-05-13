@@ -1,4 +1,4 @@
-@model Microservice.Admin.ViewModels.Popup.PopupCreateIndexVm
+@model Microservice.Admin.ViewModels.Popup.CreatePopupVm
 
 @{
     ViewBag.pTitle = "Popuplar";
@@ -18,27 +18,26 @@
             <div class="card-body p-4">
                 <form asp-action="Create" id="popupCreateForm" class="needs-validation" novalidate>
                     <div asp-validation-summary="ModelOnly" class="alert alert-danger d-none" role="alert"><i class="mdi mdi-block-helper me-2"></i><ul></ul></div>
-                    <input type="hidden" asp-for="CreatePopup.SiteId" />
-                    <input type="hidden" asp-for="CreatePopup.DilId" />
+                    <input type="hidden" asp-for="SiteId" />
 
                     <div class="mb-4">
                         <h6 class="text-primary border-bottom pb-2"><i class="mdi mdi-information-outline me-1"></i> Temel Bilgiler</h6>
                         <div class="row">
                             <div class="col-md-8">
-                                <div class="mb-3"><label asp-for="CreatePopup.Baslik" class="form-label">Başlık <span class="text-danger">*</span></label><div class="input-group"><span class="input-group-text"><i class="mdi mdi-format-title"></i></span><input asp-for="CreatePopup.Baslik" class="form-control" placeholder="Popup başlığını giriniz" /></div><span asp-validation-for="CreatePopup.Baslik" class="text-danger small"></span></div>
+                                <div class="mb-3"><label asp-for="Baslik" class="form-label">Başlık <span class="text-danger">*</span></label><div class="input-group"><span class="input-group-text"><i class="mdi mdi-format-title"></i></span><input asp-for="Baslik" class="form-control" placeholder="Popup başlığını giriniz" /></div><span asp-validation-for="Baslik" class="text-danger small"></span></div>
                             </div>
                             <div class="col-md-4">
-                                <div class="mb-3"><label asp-for="CreatePopup.KisaAciklama" class="form-label">Kısa Açıklama <span class="text-danger">*</span></label><div class="input-group"><span class="input-group-text"><i class="mdi mdi-text-short"></i></span><input asp-for="CreatePopup.KisaAciklama" class="form-control" placeholder="Kısa açıklama" /></div><span asp-validation-for="CreatePopup.KisaAciklama" class="text-danger small"></span></div>
+                                <div class="mb-3"><label asp-for="KisaAciklama" class="form-label">Kısa Açıklama <span class="text-danger">*</span></label><div class="input-group"><span class="input-group-text"><i class="mdi mdi-text-short"></i></span><input asp-for="KisaAciklama" class="form-control" placeholder="Kısa açıklama" /></div><span asp-validation-for="KisaAciklama" class="text-danger small"></span></div>
                             </div>
                         </div>
                     </div>
 
                     <div class="mb-4">
                         <h6 class="text-primary border-bottom pb-2"><i class="mdi mdi-window-popup me-1"></i> Popup İçerik</h6>
-                        <div class="mb-3"><label asp-for="CreatePopup.IcerikMetni" class="form-label">İçerik Metni</label><textarea asp-for="CreatePopup.IcerikMetni" id="IcerikMetniEditor" class="form-control" rows="8" placeholder="Popup içeriğini giriniz..."></textarea><span asp-validation-for="CreatePopup.IcerikMetni" class="text-danger small"></span></div>
+                        <div class="mb-3"><label asp-for="IcerikMetni" class="form-label">İçerik Metni</label><textarea asp-for="IcerikMetni" id="IcerikMetniEditor" class="form-control" rows="8" placeholder="Popup içeriğini giriniz..."></textarea><span asp-validation-for="IcerikMetni" class="text-danger small"></span></div>
                         <div class="row">
-                            <div class="col-md-6"><div class="mb-3"><label asp-for="CreatePopup.Link" class="form-label">Link</label><div class="input-group"><span class="input-group-text"><i class="mdi mdi-link"></i></span><input asp-for="CreatePopup.Link" class="form-control" placeholder="https://..." /></div></div></div>
-                            <div class="col-md-6"><div class="mb-3"><label asp-for="CreatePopup.ResimUrl" class="form-label">Resim URL</label><div class="input-group"><span class="input-group-text"><i class="mdi mdi-image"></i></span><input asp-for="CreatePopup.ResimUrl" class="form-control" placeholder="Resim URL" /></div></div></div>
+                            <div class="col-md-6"><div class="mb-3"><label asp-for="Link" class="form-label">Link</label><div class="input-group"><span class="input-group-text"><i class="mdi mdi-link"></i></span><input asp-for="Link" class="form-control" placeholder="https://..." /></div></div></div>
+                            <div class="col-md-6"><div class="mb-3"><label asp-for="ResimUrl" class="form-label">Resim URL</label><div class="input-group"><span class="input-group-text"><i class="mdi mdi-image"></i></span><input asp-for="ResimUrl" class="form-control" placeholder="Resim URL" /></div></div></div>
                         </div>
                     </div>
 
@@ -47,22 +46,22 @@
                         <div class="row">
                             <div class="col-md-4">
                                 <div class="mb-3">
-                                    <label asp-for="CreatePopup.TamEkranMi" class="form-label">Tam Ekran</label>
+                                    <label asp-for="TamEkranMi" class="form-label">Tam Ekran</label>
                                     <div class="form-check form-switch form-switch-lg">
-                                        <input asp-for="CreatePopup.TamEkranMi" class="form-check-input" type="checkbox" />
-                                        <label class="form-check-label" for="CreatePopup_TamEkranMi">Tam Ekran Gösterim</label>
+                                        <input asp-for="TamEkranMi" class="form-check-input" type="checkbox" />
+                                        <label class="form-check-label" for="TamEkranMi">Tam Ekran Gösterim</label>
                                     </div>
                                 </div>
                             </div>
                             <div class="col-md-4">
-                                <div class="mb-3"><label asp-for="CreatePopup.GosterimSuresiSaniye" class="form-label">Gösterim Süresi (sn)</label><div class="input-group"><span class="input-group-text"><i class="mdi mdi-timer"></i></span><input asp-for="CreatePopup.GosterimSuresiSaniye" class="form-control" type="number" min="0" placeholder="Saniye" /></div><span asp-validation-for="CreatePopup.GosterimSuresiSaniye" class="text-danger small"></span></div>
+                                <div class="mb-3"><label asp-for="GosterimSuresiSaniye" class="form-label">Gösterim Süresi (sn)</label><div class="input-group"><span class="input-group-text"><i class="mdi mdi-timer"></i></span><input asp-for="GosterimSuresiSaniye" class="form-control" type="number" min="0" placeholder="Saniye" /></div><span asp-validation-for="GosterimSuresiSaniye" class="text-danger small"></span></div>
                             </div>
                             <div class="col-md-4">
                                 <div class="mb-3">
-                                    <label asp-for="CreatePopup.CookieIleTekrarGosterme" class="form-label">Cookie ile Tekrar Gösterme</label>
+                                    <label asp-for="CookieIleTekrarGosterme" class="form-label">Cookie ile Tekrar Gösterme</label>
                                     <div class="form-check form-switch form-switch-lg">
-                                        <input asp-for="CreatePopup.CookieIleTekrarGosterme" class="form-check-input" type="checkbox" />
-                                        <label class="form-check-label" for="CreatePopup_CookieIleTekrarGosterme">Cookie Kontrolü</label>
+                                        <input asp-for="CookieIleTekrarGosterme" class="form-check-input" type="checkbox" />
+                                        <label class="form-check-label" for="CookieIleTekrarGosterme">Cookie Kontrolü</label>
                                     </div>
                                 </div>
                             </div>
@@ -70,28 +69,20 @@
                     </div>
 
                     <div class="mb-4">
-                        <h6 class="text-primary border-bottom pb-2"><i class="mdi mdi-calendar me-1"></i> Tarih ve Hedef</h6>
+                        <h6 class="text-primary border-bottom pb-2"><i class="mdi mdi-calendar me-1"></i> Tarih Bilgileri</h6>
                         <div class="row">
-                            <div class="col-md-3"><div class="mb-3"><label asp-for="CreatePopup.YayimTarihi" class="form-label">Yayım Tarihi</label><input asp-for="CreatePopup.YayimTarihi" class="form-control" type="datetime-local" /></div></div>
-                            <div class="col-md-3"><div class="mb-3"><label asp-for="CreatePopup.BaslamaTarihi" class="form-label">Başlama Tarihi</label><input asp-for="CreatePopup.BaslamaTarihi" class="form-control" type="datetime-local" /></div></div>
-                            <div class="col-md-3"><div class="mb-3"><label asp-for="CreatePopup.BitisTarihi" class="form-label">Bitiş Tarihi</label><input asp-for="CreatePopup.BitisTarihi" class="form-control" type="datetime-local" /></div></div>
-                            <div class="col-md-3">
-                                <div class="mb-3"><label asp-for="CreatePopup.HedefId" class="form-label">Hedef</label>
-                                    <select asp-for="CreatePopup.HedefId" class="form-select">
-                                        <option value="">-- Hedef Seçin --</option>
-                                        @foreach (var hedef in Model.Hedefler) { <option value="@hedef.Id">@hedef.Aciklama</option> }
-                                    </select>
-                                </div>
-                            </div>
+                            <div class="col-md-4"><div class="mb-3"><label asp-for="YayimTarihi" class="form-label">Yayım Tarihi</label><input asp-for="YayimTarihi" class="form-control" type="datetime-local" /></div></div>
+                            <div class="col-md-4"><div class="mb-3"><label asp-for="BaslamaTarihi" class="form-label">Başlama Tarihi</label><input asp-for="BaslamaTarihi" class="form-control" type="datetime-local" /></div></div>
+                            <div class="col-md-4"><div class="mb-3"><label asp-for="BitisTarihi" class="form-label">Bitiş Tarihi</label><input asp-for="BitisTarihi" class="form-control" type="datetime-local" /></div></div>
                         </div>
                     </div>
 
                     <div class="mb-4">
                         <h6 class="text-primary border-bottom pb-2"><i class="mdi mdi-magnify me-1"></i> SEO Bilgileri</h6>
                         <div class="row">
-                            <div class="col-md-4"><div class="mb-3"><label asp-for="CreatePopup.SeoUrl" class="form-label">SEO URL</label><input asp-for="CreatePopup.SeoUrl" class="form-control" placeholder="seo-url" /></div></div>
-                            <div class="col-md-4"><div class="mb-3"><label asp-for="CreatePopup.SeoTitle" class="form-label">SEO Title</label><input asp-for="CreatePopup.SeoTitle" class="form-control" placeholder="SEO başlık" /></div></div>
-                            <div class="col-md-4"><div class="mb-3"><label asp-for="CreatePopup.SeoDescription" class="form-label">SEO Description</label><input asp-for="CreatePopup.SeoDescription" class="form-control" placeholder="SEO açıklama" /></div></div>
+                            <div class="col-md-4"><div class="mb-3"><label asp-for="SeoUrl" class="form-label">SEO URL</label><input asp-for="SeoUrl" class="form-control" placeholder="seo-url" /></div></div>
+                            <div class="col-md-4"><div class="mb-3"><label asp-for="SeoTitle" class="form-label">SEO Title</label><input asp-for="SeoTitle" class="form-control" placeholder="SEO başlık" /></div></div>
+                            <div class="col-md-4"><div class="mb-3"><label asp-for="SeoDescription" class="form-label">SEO Description</label><input asp-for="SeoDescription" class="form-control" placeholder="SEO açıklama" /></div></div>
                         </div>
                     </div>
 

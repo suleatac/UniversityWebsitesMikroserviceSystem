@@ -9,14 +9,6 @@ namespace Mikroservice.Site.Application.Features.PopupFeatures.CreatePopup
             RuleFor(x => x.SiteId)
                   .GreaterThan(0).WithMessage("SiteId 0'dan büyük olmalıdır.");
 
-            RuleFor(x => x.DilId)
-                .GreaterThan(0).WithMessage("DilId 0'dan büyük olmalıdır.");
-
-            RuleFor(x => x.HedefId)
-                .GreaterThan(0)
-                .When(x => x.HedefId.HasValue)
-                .WithMessage("HedefId 0'dan büyük olmalıdır.");
-
             RuleFor(x => x.Baslik)
                 .NotEmpty().WithMessage("Başlık boş olamaz.")
                 .MaximumLength(200).WithMessage("Başlık en fazla 200 karakter olabilir.");

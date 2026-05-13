@@ -26,5 +26,6 @@
         public ICollection<BandLogo> BandLogos { get; set; } = new List<BandLogo>();
         public ICollection<MediaFile> MediaFiles { get; set; } = new List<MediaFile>();
         public ICollection<SikcaSorulanSoru> SikcaSorulanSorus { get; set; } = new List<SikcaSorulanSoru>();
+        public Popup? Popup { get; set; }
     }
 }

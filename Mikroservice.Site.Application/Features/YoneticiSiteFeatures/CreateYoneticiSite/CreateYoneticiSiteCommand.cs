@@ -7,7 +7,5 @@ namespace Mikroservice.Site.Application.Features.YoneticiSiteFeatures.CreateYone
         public string KeycloakUserId { get; init; } = default!;
 
         public int SiteId { get; init; }
-
-        public int YoneticiTipiId { get; init; }
     }
 }

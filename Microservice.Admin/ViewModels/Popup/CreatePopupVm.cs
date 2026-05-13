@@ -5,8 +5,6 @@ namespace Microservice.Admin.ViewModels.Popup
     public class CreatePopupVm
     {
         public int SiteId { get; set; }
-        public int DilId { get; set; }
-        public int? HedefId { get; set; }
 
         [Required(ErrorMessage = "Başlık zorunludur")]
         public string Baslik { get; set; } = default!;

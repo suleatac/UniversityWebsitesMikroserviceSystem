@@ -27,7 +27,6 @@ namespace Mikroservice.Site.Application.Features.YoneticiSiteFeatures.UpdateYone
                 return ServiceResult<UpdateYoneticiSiteResponse>.Error("Site bulunamadı", HttpStatusCode.NotFound);
             }
 
-            entity.YoneticiTipiId = request.YoneticiTipiId;
             entity.SiteId = request.SiteId;
             entity.KeycloakUserId = request.KeycloakUserId;
             await unitOfWork.SaveChangesAsync(cancellationToken);

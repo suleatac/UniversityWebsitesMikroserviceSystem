@@ -6,7 +6,6 @@ namespace Mikroservice.Site.Application.Features.YoneticiSiteFeatures.UpdateYone
     {
         public int Id { get; init; }
         public int SiteId { get; init; }
-        public int YoneticiTipiId { get; init; }
         public string KeycloakUserId { get; init; } = default!;
     }
 }

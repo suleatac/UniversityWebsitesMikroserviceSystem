@@ -22,8 +22,10 @@
              
                     <div class="mb-4">
                         <h6 class="text-primary border-bottom pb-2"><i class="mdi mdi-information-outline me-1"></i> Temel Bilgiler</h6>
+                      
+                 
                         <div class="row">
-                            <div class="col-md-12">
+                            <div class="col-md-6">
                                 <div class="mb-3">
                                     <label asp-for="YoneticiSite.KeycloakUserId" class="form-label">Keycloak Kullanıcı Seç <span class="text-danger">*</span></label>
                                     <div class="input-group">
@@ -42,25 +44,6 @@
                                     </div>
                                     <small class="text-muted">Keycloak kullanıcı seçimi opsiyoneldir. Personel seçimi ile birlikte kullanılabilir.</small>
                                     <span asp-validation-for="YoneticiSite.KeycloakUserId" class="text-danger small"></span>
-                                </div>
-                            </div>
-                        </div>
-                 
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label asp-for="YoneticiSite.YoneticiTipiId" class="form-label">Yönetici Tipi <span class="text-danger">*</span></label>
-                                    <div class="input-group">
-                                        <span class="input-group-text"><i class="mdi mdi-account-tie"></i></span>
-                                        <select asp-for="YoneticiSite.YoneticiTipiId" class="form-select">
-                                            <option value="">-- Yönetici Tipi Seçin --</option>
-                                            @foreach (var tip in Model.YoneticiTipleri)
-                                            {
-                                                <option value="@tip.Id">@tip.TipAdi</option>
-                                            }
-                                        </select>
-                                    </div>
-                                    <span asp-validation-for="YoneticiSite.YoneticiTipiId" class="text-danger small"></span>
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -94,29 +77,5 @@
 </div>
 
 @section scripts {
-    <script>
-        document.getElementById('keycloakUserSelect').addEventListener('change', function() {
-            var userId = this.value;
-            var warningDiv = document.getElementById('adminRoleWarning');
-
-            if (!userId) {
-                warningDiv.classList.add('d-none');
-                return;
-            }
-
-            fetch('/UserRole/IsUserAdmin?userId=' + encodeURIComponent(userId))
-                .then(response => response.json())
-                .then(data => {
-                    if (data.isAdmin) {
-                        warningDiv.classList.remove('d-none');
-                    } else {
-                        warningDiv.classList.add('d-none');
-                    }
-                })
-                .catch(error => {
-                    console.error('Admin rol kontrolü sırasında hata oluştu:', error);
-                    warningDiv.classList.add('d-none');
-                });
-        });
-    </script>
+    
 }

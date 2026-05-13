@@ -31,7 +31,6 @@ namespace Microservice.Site.Persistence
         public DbSet<Unvan> Unvanlar { get; set; }
         public DbSet<Video> Videolar { get; set; }
         public DbSet<YoneticiSite> YoneticiSiteler { get; set; }
-        public DbSet<YoneticiTipi> YoneticiTipleri { get; set; }
         public DbSet<YonetimDuyuru> YonetimDuyurular { get; set; }
 
 

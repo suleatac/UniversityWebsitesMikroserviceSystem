@@ -13,8 +13,6 @@ namespace Mikroservice.Site.Application.Features.YoneticiSiteFeatures.CreateYone
             RuleFor(x => x.SiteId)
                 .GreaterThan(0);
 
-            RuleFor(x => x.YoneticiTipiId)
-                .GreaterThan(0);
         }
     }
 }

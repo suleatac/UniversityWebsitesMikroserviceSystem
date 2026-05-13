@@ -2,9 +2,8 @@ using MediatR;
 using Microservice.Shared;
 using Microservice.Shared.Services.RedisServiceItems;
 using Microservice.Site.Application.Contracts.IRepositories;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using Mikroservice.Site.Domain.Entities;
+using Microsoft.Extensions.Logging;
 
 namespace Mikroservice.Site.Application.Features.PopupFeatures.GetPopup
 {
@@ -13,38 +12,33 @@ namespace Mikroservice.Site.Application.Features.PopupFeatures.GetPopup
           IRedisCacheService redisCacheService,
           ILogger<GetPopupQueryHandler> logger
         )
-        : IRequestHandler<GetPopupQuery, ServiceResult<List<Popup>>>
+        : IRequestHandler<GetPopupQuery, ServiceResult<Popup>>
     {
-        public async Task<ServiceResult<List<Popup>>> Handle(GetPopupQuery request, CancellationToken cancellationToken)
+        public async Task<ServiceResult<Popup>> Handle(GetPopupQuery request, CancellationToken cancellationToken)
         {
-            // Önce cache'e bak
-            var cacheKey = $"popup:list:{request.SiteId}:{request.DilId}";
-            var cached = await redisCacheService.GetListAsync<Popup>(cacheKey, cancellationToken);
+            var cacheKey = $"popup:site:{request.SiteId}";
+            var cached = await redisCacheService.GetAsync<Popup>(cacheKey, cancellationToken);
             if (cached is not null)
             {
-                //Örnek Loglama
                 logger.LogInformation(
-                "Popup cache'den alındı. SiteId:{siteId}, DilId:{dilId}, Count:{count}",
-                request.SiteId,
-                request.DilId,
-                cached.Count);
-                return ServiceResult<List<Popup>>.SuccessAsOK(cached);
+                "Popup cache'den alındı. SiteId:{siteId}",
+                request.SiteId);
+                return ServiceResult<Popup>.SuccessAsOK(cached);
             }
 
+            var popup = await popupRepository.GetBySiteIdAsync(request.SiteId);
+            if (popup is null)
+            {
+                logger.LogWarning("Popup bulunamadı. SiteId: {SiteId}", request.SiteId);
+                return ServiceResult<Popup>.Error("Popup bulunamadı", System.Net.HttpStatusCode.NotFound);
+            }
 
-            // Yoksa veritabanından çek
-            var data = await popupRepository.GetAll().Where(b => b.SiteId == request.SiteId && b.DilId == request.DilId).ToListAsync(cancellationToken);
+            await redisCacheService.SetAsync(cacheKey, popup, cancellationToken: cancellationToken);
 
-            // Cache'e yaz
-            await redisCacheService.SetListAsync(cacheKey, data, TimeSpan.FromHours(24), cancellationToken);
-
-            //Örnek Loglama
             logger.LogInformation(
-                "Popup verisi veritabanından alındı. SiteId:{siteId}, DilId:{dilId}, Count:{count}",
-                request.SiteId,
-                request.DilId,
-                data.Count);
-            return ServiceResult<List<Popup>>.SuccessAsOK(data);
+                "Popup verisi veritabanından alındı. SiteId:{siteId}",
+                request.SiteId);
+            return ServiceResult<Popup>.SuccessAsOK(popup);
         }
     }
 }

@@ -7,7 +7,6 @@
         Bilgi = 3,
         Etkinlik = 4,
         Video = 5,
-        Banner = 6,
-        Popup = 7
+        Banner = 6
     }
 }

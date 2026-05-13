@@ -1,4 +1,4 @@
-namespace Microservice.Admin.ViewModels.UserRole
+namespace Microservice.Admin.ViewModels.User
 {
     public class KeycloakRoleVm
     {

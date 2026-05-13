@@ -1,6 +1,7 @@
 using Microservice.Admin.Clients;
 using Microservice.Admin.Configurations;
 using Microservice.Admin.HttpHandlers;
+using Microservice.Admin.Middleware;
 using Microservice.Admin.Services.ServicesExtentions;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Localization;
@@ -100,6 +101,9 @@ app.UseSession();
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+// Admin kullanıcılar için site seçimi zorunlu middleware
+app.UseMiddleware<SiteSelectionMiddleware>();
 
 app.MapStaticAssets();
 

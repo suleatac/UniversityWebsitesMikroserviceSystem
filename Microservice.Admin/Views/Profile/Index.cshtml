@@ -1,0 +1,144 @@
+@model Microservice.Admin.ViewModels.Profile.ProfileVm
+
+@{
+    ViewBag.pTitle = "Profil";
+    ViewBag.Title = "Profilim";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section styles {
+    <style>
+        .profile-header-card {
+            background: linear-gradient(135deg, #6f42c1 0%, #9b59b6 100%);
+            border-radius: 12px; padding: 2rem; color: white; margin-bottom: 1.5rem;
+            box-shadow: 0 4px 12px rgba(111, 66, 193, 0.2);
+        }
+        .profile-header-card h4 { font-weight: 600; margin-bottom: 0.25rem; }
+        .profile-avatar {
+            width: 100px; height: 100px; border-radius: 50%; border: 4px solid white;
+            object-fit: cover; box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+        .profile-avatar-placeholder {
+            width: 100px; height: 100px; border-radius: 50%; border: 4px solid white;
+            background: rgba(255,255,255,0.3); display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+        .property-card {
+            border: none; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+            margin-bottom: 1rem;
+        }
+        .property-card .card-header {
+            background: linear-gradient(135deg, #fdfefe 0%, #f3e8ff 100%);
+            border-bottom: 2px solid #6f42c1; border-radius: 12px 12px 0 0 !important; padding: 1rem 1.25rem;
+        }
+        .property-label { font-size: 0.8rem; color: #6c757d; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.25rem; }
+        .property-value { font-weight: 600; color: #212529; word-break: break-all; }
+        .property-value.empty { color: #adb5bd; font-style: italic; font-weight: 400; }
+    </style>
+}
+
+<div class="profile-header-card">
+    <div class="d-flex align-items-center">
+        <div class="me-4">
+            @if (!string.IsNullOrEmpty(Model?.ProfileImageUrl))
+            {
+                <img src="@Model.ProfileImageUrl" alt="Profil Resmi" class="profile-avatar" />
+            }
+            else
+            {
+                <div class="profile-avatar-placeholder">
+                    <i class="fas fa-user fa-3x text-white"></i>
+                </div>
+            }
+        </div>
+        <div class="flex-grow-1">
+            <h4><i class="mdi mdi-account-circle me-2"></i>@(Model != null ? $"{Model.FirstName} {Model.LastName}" : "Kullanıcı")</h4>
+            <p class="mb-1 opacity-75">@@@(Model?.UserName ?? "-")</p>
+            <p class="mb-0 opacity-75"><i class="mdi mdi-email-outline me-1"></i>@(Model?.Email ?? "-")</p>
+        </div>
+        <div>
+            <a asp-action="Edit" class="btn btn-warning">
+                <i class="mdi mdi-pencil me-1"></i> Düzenle
+            </a>
+        </div>
+    </div>
+</div>
+
+@if (Model != null && !string.IsNullOrEmpty(Model.Id))
+{
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="card property-card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0"><i class="mdi mdi-account me-2 text-primary"></i>Kişisel Bilgiler</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <div class="property-label">Kullanıcı Adı</div>
+                            <div class="property-value">@Model.UserName</div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="property-label">E-posta</div>
+                            <div class="property-value @(string.IsNullOrEmpty(Model.Email) ? "empty" : "")">@(string.IsNullOrEmpty(Model.Email) ? "Belirtilmemiş" : Model.Email)</div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="property-label">Ad</div>
+                            <div class="property-value @(string.IsNullOrEmpty(Model.FirstName) ? "empty" : "")">@(string.IsNullOrEmpty(Model.FirstName) ? "Belirtilmemiş" : Model.FirstName)</div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="property-label">Soyad</div>
+                            <div class="property-value @(string.IsNullOrEmpty(Model.LastName) ? "empty" : "")">@(string.IsNullOrEmpty(Model.LastName) ? "Belirtilmemiş" : Model.LastName)</div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="property-label">Hesap Durumu</div>
+                            <div class="property-value">
+                                @if (Model.Enabled)
+                                {
+                                    <span class="badge bg-success"><i class="mdi mdi-check-circle me-1"></i>Aktif</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-danger"><i class="mdi mdi-close-circle me-1"></i>Devre Dışı</span>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6">
+            <div class="card property-card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0"><i class="mdi mdi-image me-2 text-primary"></i>Profil Resmi</h5>
+                </div>
+                <div class="card-body">
+                    <div class="text-center mb-3">
+                        @if (!string.IsNullOrEmpty(Model.ProfileImageUrl))
+                        {
+                            <img src="@Model.ProfileImageUrl" alt="Profil Resmi" class="rounded-circle" style="width: 150px; height: 150px; object-fit: cover; border: 3px solid #6f42c1;" />
+                        }
+                        else
+                        {
+                            <div class="rounded-circle mx-auto d-flex align-items-center justify-content-center" style="width: 150px; height: 150px; background: #f3e8ff; border: 3px solid #6f42c1;">
+                                <i class="fas fa-user fa-4x" style="color: #6f42c1;"></i>
+                            </div>
+                        }
+                    </div>
+                    <div class="mb-3">
+                        <div class="property-label">Profil Resmi URL</div>
+                        <div class="property-value @(string.IsNullOrEmpty(Model.ProfileImageUrl) ? "empty" : "")">@(string.IsNullOrEmpty(Model.ProfileImageUrl) ? "Belirtilmemiş" : Model.ProfileImageUrl)</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <div class="alert alert-warning d-flex align-items-center" role="alert">
+        <i class="mdi mdi-alert-circle fs-4 me-2"></i>
+        <div>Profil bilgileri yüklenemedi. Lütfen daha sonra tekrar deneyiniz.</div>
+    </div>
+}

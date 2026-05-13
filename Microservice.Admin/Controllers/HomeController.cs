@@ -28,13 +28,17 @@ namespace Microservice.Admin.Controllers
         {
             try
             {
-                // Admin rolüne sahipse tüm siteleri görebilir, default siteId=1 ve dilId=1
+                // Admin rolüne sahipse site seçimi zorunlu
                 if (_currentUserService.IsAdmin)
                 {
-                    if (!HttpContext.Session.GetInt32("CurrentSiteId").HasValue)
+                    // Admin henüz site seçmemişse site seçim sayfasına yönlendir
+                    var currentSiteId = HttpContext.Session.GetInt32("CurrentSiteId");
+                    if (!currentSiteId.HasValue || currentSiteId.Value <= 0)
                     {
-                        HttpContext.Session.SetInt32("CurrentSiteId", 1);
+                        _logger.LogInformation("Admin kullanıcı site seçimi yapmadan anasayfaya erişmeye çalıştı. Site seçim sayfasına yönlendiriliyor.");
+                        return RedirectToAction("SelectSite", "SiteSelection");
                     }
+
                     if (!HttpContext.Session.GetInt32("CurrentDilId").HasValue)
                     {
                         HttpContext.Session.SetInt32("CurrentDilId", 1);
@@ -56,20 +60,35 @@ namespace Microservice.Admin.Controllers
                     return RedirectToAction("SignIn", "Auth");
                 }
 
-                // Yetkili siteler varsa, session'a ilk yetkili siteyi set et
-                if (!HttpContext.Session.GetInt32("CurrentSiteId").HasValue)
+                // Yetkili siteleri session'a kaydet
+                var authorizedSiteIds = authorizedSitesResult.Data.Select(s => s.SiteId).ToList();
+                HttpContext.Session.SetString("AuthorizedSiteIds", string.Join(",", authorizedSiteIds));
+
+                // Session'da site seçimi var mı kontrol et
+                var existingSiteId = HttpContext.Session.GetInt32("CurrentSiteId");
+
+                if (!existingSiteId.HasValue || existingSiteId.Value <= 0)
                 {
-                    var firstAuthorizedSite = authorizedSitesResult.Data.First();
-                    HttpContext.Session.SetInt32("CurrentSiteId", firstAuthorizedSite.SiteId);
+                    // Sadece 1 yetkili site varsa otomatik seç
+                    if (authorizedSitesResult.Data.Count == 1)
+                    {
+                        var singleSite = authorizedSitesResult.Data.First();
+                        HttpContext.Session.SetInt32("CurrentSiteId", singleSite.SiteId);
+                        HttpContext.Session.SetInt32("CurrentDilId", 1);
+                        _logger.LogInformation("Kullanıcıya tek yetkili site otomatik atandı. SiteId: {SiteId}, KeycloakUserId: {KeycloakUserId}", singleSite.SiteId, keycloakUserId);
+                    }
+                    else
+                    {
+                        // Birden fazla yetkili site varsa site seçim sayfasına yönlendir
+                        _logger.LogInformation("Admin olmayan kullanıcının birden fazla yetkili sitesi var. Site seçim sayfasına yönlendiriliyor. KeycloakUserId: {KeycloakUserId}", keycloakUserId);
+                        return RedirectToAction("SelectSite", "SiteSelection");
+                    }
                 }
+
                 if (!HttpContext.Session.GetInt32("CurrentDilId").HasValue)
                 {
                     HttpContext.Session.SetInt32("CurrentDilId", 1);
                 }
-
-                // Yetkili site ID'lerini session'a kaydet (site seçimi filtrelemesi için)
-                var authorizedSiteIds = authorizedSitesResult.Data.Select(s => s.SiteId).ToList();
-                HttpContext.Session.SetString("AuthorizedSiteIds", string.Join(",", authorizedSiteIds));
 
                 return View();
             }

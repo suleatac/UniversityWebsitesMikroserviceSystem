@@ -5,8 +5,6 @@ namespace Mikroservice.Site.Application.Features.PopupFeatures.CreatePopup
     public record CreatePopupCommand : IRequestByServiceResult<CreatePopupResponse>
     {
         public int SiteId { get; init; }
-        public int DilId { get; init; }
-        public int? HedefId { get; init; }
 
         public string Baslik { get; init; } = default!;
         public string KisaAciklama { get; init; } = default!;

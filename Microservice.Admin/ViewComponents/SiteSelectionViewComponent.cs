@@ -28,8 +28,8 @@ namespace Microservice.Admin.ViewComponents
 
         public async Task<IViewComponentResult> InvokeAsync()
         {
-            // Session'dan mevcut site ve dil bilgilerini al, yoksa default 1
-            var currentSiteId = HttpContext.Session.GetInt32("CurrentSiteId") ?? 1;
+            // Session'dan mevcut site bilgisini al, default DEĞİL - site seçimi zorunlu
+            var currentSiteId = HttpContext.Session.GetInt32("CurrentSiteId") ?? 0;
             var currentDilId = HttpContext.Session.GetInt32("CurrentDilId") ?? 1;
 
             var model = new SiteSelectionVm
@@ -47,11 +47,25 @@ namespace Microservice.Admin.ViewComponents
                 if (sitesResult.IsSuccess && sitesResult.Data != null)
                 {
                     model.Sites = sitesResult.Data;
+
+                    // Sistemde hiç site yoksa NoSitesAvailable flag'ini set et
+                    if (!model.Sites.Any())
+                    {
+                        model.NoSitesAvailable = true;
+                        _logger.LogWarning("Sistemde kayıtlı hiç site bulunmamaktadır. Admin kullanıcı site eklemeli.");
+                    }
                 }
                 else
                 {
                     _logger.LogWarning("Site listesi yüklenemedi. Varsayılan boş liste kullanılıyor.");
                     model.Sites = new List<ViewModels.Site.SiteGetVm>();
+                    model.NoSitesAvailable = true;
+                }
+
+                // Admin henüz site seçmemişse MustSelectSite flag'ini set et
+                if (currentSiteId <= 0)
+                {
+                    model.MustSelectSite = true;
                 }
             }
             else if (_currentUserService.IsAuthenticated)
@@ -78,12 +92,26 @@ namespace Microservice.Admin.ViewComponents
                         {
                             model.Sites = new List<ViewModels.Site.SiteGetVm>();
                         }
+
+                        // Yetkili site yoksa NoSitesAvailable flag'ini set et
+                        if (!model.Sites.Any())
+                        {
+                            model.NoSitesAvailable = true;
+                            _logger.LogWarning("Admin olmayan kullanıcının yetkili sitesi yok. KeycloakUserId: {KeycloakUserId}", keycloakUserId);
+                        }
                     }
                     else
                     {
                         _logger.LogWarning("Kullanıcının yetkili siteleri bulunamadı. KeycloakUserId: {KeycloakUserId}", keycloakUserId);
                         model.Sites = new List<ViewModels.Site.SiteGetVm>();
                         model.AuthorizedSiteIds = new List<int>();
+                        model.NoSitesAvailable = true;
+                    }
+
+                    // Admin olmayan kullanıcı henüz site seçmemişse MustSelectSite flag'ini set et
+                    if (currentSiteId <= 0)
+                    {
+                        model.MustSelectSite = true;
                     }
                 }
                 catch (Exception ex)
@@ -91,6 +119,7 @@ namespace Microservice.Admin.ViewComponents
                     _logger.LogError(ex, "Yetkili siteler yüklenirken hata oluştu.");
                     model.Sites = new List<ViewModels.Site.SiteGetVm>();
                     model.AuthorizedSiteIds = new List<int>();
+                    model.NoSitesAvailable = true;
                 }
             }
             else
@@ -111,9 +140,16 @@ namespace Microservice.Admin.ViewComponents
                 model.Diller = new List<ViewModels.Dil.GetDilVm>();
             }
 
-            // Mevcut site adını bul
-            var currentSite = model.Sites.FirstOrDefault(s => s.Id == currentSiteId);
-            model.CurrentSiteName = currentSite?.SiteAdi ?? $"Site {currentSiteId}";
+            // Mevcut site adını bul - site seçilmemişse "Site Seç" göster
+            if (currentSiteId > 0)
+            {
+                var currentSite = model.Sites.FirstOrDefault(s => s.Id == currentSiteId);
+                model.CurrentSiteName = currentSite?.SiteAdi ?? $"Site {currentSiteId}";
+            }
+            else
+            {
+                model.CurrentSiteName = "Site Seç";
+            }
 
             // Mevcut dil adını bul
             var currentDil = model.Diller.FirstOrDefault(d => d.Id == currentDilId);

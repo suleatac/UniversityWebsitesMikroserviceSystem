@@ -59,22 +59,7 @@
                                     <span asp-validation-for="EditYoneticiSite.SiteId" class="text-danger small"></span>
                                 </div>
                             </div>
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label asp-for="EditYoneticiSite.YoneticiTipiId" class="form-label">Yönetici Tipi <span class="text-danger">*</span></label>
-                                    <div class="input-group">
-                                        <span class="input-group-text"><i class="mdi mdi-account-tie"></i></span>
-                                        <select asp-for="EditYoneticiSite.YoneticiTipiId" class="form-select">
-                                            <option value="">-- Yönetici Tipi Seçin --</option>
-                                            @foreach (var tip in Model.YoneticiTipleri)
-                                            {
-                                                <option value="@tip.Id" selected="@(tip.Id == Model.EditYoneticiSite.YoneticiTipiId)">@tip.TipAdi</option>
-                                            }
-                                        </select>
-                                    </div>
-                                    <span asp-validation-for="EditYoneticiSite.YoneticiTipiId" class="text-danger small"></span>
-                                </div>
-                            </div>
+                           
                         </div>
                     </div>
 

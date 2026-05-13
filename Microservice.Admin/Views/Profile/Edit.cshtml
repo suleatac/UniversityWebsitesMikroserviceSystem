@@ -1,0 +1,118 @@
+@model Microservice.Admin.ViewModels.Profile.ProfileVm
+
+@{
+    ViewBag.pTitle = "Profil";
+    ViewBag.Title = "Profil Düzenle";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row justify-content-center">
+    <div class="col-xxl-8">
+        <div class="card shadow-lg border-0">
+            <div class="card-header bg-primary bg-opacity-10 border-bottom">
+                <div class="d-flex align-items-center">
+                    <div class="avatar-sm me-3"><div class="avatar-title bg-primary rounded-circle"><i class="mdi mdi-account-edit fs-5"></i></div></div>
+                    <div><h5 class="card-title mb-1">Profil Düzenle</h5><p class="card-text text-muted mb-0">Kullanıcı: <strong>@Model.UserName</strong></p></div>
+                </div>
+            </div>
+            <div class="card-body p-4">
+                <form asp-action="Edit" id="profileEditForm" class="needs-validation" novalidate>
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger d-none" role="alert"><i class="mdi mdi-block-helper me-2"></i><ul></ul></div>
+                    <input type="hidden" asp-for="Id" />
+                    <input type="hidden" asp-for="UserName" />
+                    <input type="hidden" asp-for="Enabled" />
+
+                    <div class="mb-4">
+                        <h6 class="text-primary border-bottom pb-2"><i class="mdi mdi-account me-1"></i> Kişisel Bilgiler</h6>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label asp-for="FirstName" class="form-label">Ad <span class="text-danger">*</span></label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="mdi mdi-account-outline"></i></span>
+                                        <input asp-for="FirstName" class="form-control" placeholder="Adınızı giriniz" />
+                                    </div>
+                                    <span asp-validation-for="FirstName" class="text-danger small"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label asp-for="LastName" class="form-label">Soyad <span class="text-danger">*</span></label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="mdi mdi-account-outline"></i></span>
+                                        <input asp-for="LastName" class="form-control" placeholder="Soyadınızı giriniz" />
+                                    </div>
+                                    <span asp-validation-for="LastName" class="text-danger small"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <h6 class="text-primary border-bottom pb-2"><i class="mdi mdi-email me-1"></i> İletişim Bilgileri</h6>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="mb-3">
+                                    <label asp-for="Email" class="form-label">E-posta <span class="text-danger">*</span></label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="mdi mdi-email-outline"></i></span>
+                                        <input asp-for="Email" class="form-control" placeholder="E-posta adresinizi giriniz" />
+                                    </div>
+                                    <span asp-validation-for="Email" class="text-danger small"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <h6 class="text-primary border-bottom pb-2"><i class="mdi mdi-image me-1"></i> Profil Resmi</h6>
+                        <div class="text-center mb-3" id="profileImagePreview">
+                            @if (!string.IsNullOrEmpty(Model.ProfileImageUrl))
+                            {
+                                <img src="@Model.ProfileImageUrl" alt="Profil Resmi" class="rounded-circle" style="width: 120px; height: 120px; object-fit: cover; border: 3px solid #6f42c1;" id="profileImg" />
+                            }
+                            else
+                            {
+                                <div class="rounded-circle mx-auto d-flex align-items-center justify-content-center" style="width: 120px; height: 120px; background: #f3e8ff; border: 3px solid #6f42c1;" id="profileImgPlaceholder">
+                                    <i class="fas fa-user fa-3x" style="color: #6f42c1;"></i>
+                                </div>
+                            }
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="ProfileImageUrl" class="form-label">Profil Resmi URL</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="mdi mdi-link-variant"></i></span>
+                                <input asp-for="ProfileImageUrl" class="form-control" placeholder="https://cdn.site.com/users/profile.jpg" id="profileImageUrlInput" />
+                            </div>
+                            <span asp-validation-for="ProfileImageUrl" class="text-danger small"></span>
+                            <small class="text-muted">Profil resminiz için bir URL giriniz. Örn: https://cdn.site.com/users/resim.jpg</small>
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-end gap-2">
+                        <a asp-action="Index" class="btn btn-secondary"><i class="mdi mdi-arrow-left me-1"></i> İptal</a>
+                        <button type="submit" class="btn btn-primary"><i class="mdi mdi-check me-1"></i> Kaydet</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Live preview of profile image URL
+        const profileImageUrlInput = document.getElementById('profileImageUrlInput');
+        if (profileImageUrlInput) {
+            profileImageUrlInput.addEventListener('input', function () {
+                const url = this.value.trim();
+                const previewContainer = document.getElementById('profileImagePreview');
+                if (url) {
+                    previewContainer.innerHTML = '<img src="' + url + '" alt="Profil Resmi" class="rounded-circle" style="width: 120px; height: 120px; object-fit: cover; border: 3px solid #6f42c1;" onerror="this.parentElement.innerHTML=\'<div class=\\\'rounded-circle mx-auto d-flex align-items-center justify-content-center\\\' style=\\\'width: 120px; height: 120px; background: #ffe0e0; border: 3px solid #dc3545;\\\'><i class=\\\'fas fa-exclamation-triangle fa-3x\\\' style=\\\'color: #dc3545;\\\'></i></div>\'" />';
+                } else {
+                    previewContainer.innerHTML = '<div class="rounded-circle mx-auto d-flex align-items-center justify-content-center" style="width: 120px; height: 120px; background: #f3e8ff; border: 3px solid #6f42c1;"><i class="fas fa-user fa-3x" style="color: #6f42c1;"></i></div>';
+                }
+            });
+        }
+    </script>
+}

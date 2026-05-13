@@ -1,6 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
-using Microservice.Admin.ViewModels.UserRole;
 
 namespace Microservice.Admin.ViewModels.User
 {

@@ -2,11 +2,8 @@ using Logging.Shared;
 using Microservice.Shared.Extentions;
 using Microservice.Shared.OpenTelemetry;
 using Microservice.Shared.SeriLog;
-using Microservice.Site.Api.Endpoints.YoneticiTipiEndPoints;
 using Microservice.Site.Api.Endpoints.YonetimDuyuruEndPoints;
-using Microservice.Site.Persistence;
 using Microservice.Site.Persistence.Extentions;
-using Microsoft.EntityFrameworkCore;
 using Mikroservice.Site.Api.Endpoints.BandLogoEndPoints;
 using Mikroservice.Site.Api.Endpoints.BannerEndPoints;
 using Mikroservice.Site.Api.Endpoints.BilgiEndPoints;
@@ -132,7 +129,6 @@ app.AddTemplateGroupsEndpointExt(apiVersionSet);
 app.AddUnvanGroupsEndpointExt(apiVersionSet);
 app.AddVideoGroupsEndpointExt(apiVersionSet);
 app.AddYoneticiSiteGroupsEndpointExt(apiVersionSet);
-app.AddYoneticiTipiGroupsEndpointExt(apiVersionSet);
 app.AddYonetimDuyuruGroupsEndpointExt(apiVersionSet);
 
 // Configure the HTTP request pipeline.

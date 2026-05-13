@@ -1,5 +1,4 @@
 using Microservice.Admin.ViewModels.TumPersonel;
-using Microservice.Admin.ViewModels.UserRole;
 
 namespace Microservice.Admin.ViewModels.User
 {

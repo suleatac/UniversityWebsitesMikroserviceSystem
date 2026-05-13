@@ -1,6 +1,4 @@
-﻿using Microservice.Admin.ViewModels.UserRole;
-
-namespace Microservice.Admin.ViewModels.User
+﻿namespace Microservice.Admin.ViewModels.User
 {
     public class UserUpdateVm
     {

@@ -76,7 +76,7 @@ namespace Microservice.Admin.Controllers
             {
                 UserAdd = UserAddVm.Empty,
                 TumPersoneller = personelResult.IsSuccess ? personelResult.Data ?? new List<GetPersonelVm>() : new List<GetPersonelVm>(),
-                AvailableRoles = rolesResult.IsSuccess ? rolesResult.Data ?? new List<UserRole.KeycloakRoleVm>() : new List<UserRole.KeycloakRoleVm>()
+                AvailableRoles = rolesResult.IsSuccess ? rolesResult.Data ?? new List<KeycloakRoleVm>() : new List<KeycloakRoleVm>()
             };
             return View(model);
         }
@@ -91,7 +91,7 @@ namespace Microservice.Admin.Controllers
                 var personelResult = await _tumPersonelService.GetTumPersonelsAsync();
                 var rolesResult = await _keycloakRoleService.GetRealmRolesAsync();
                 model.TumPersoneller = personelResult.IsSuccess ? personelResult.Data ?? new List<GetPersonelVm>() : new List<GetPersonelVm>();
-                model.AvailableRoles = rolesResult.IsSuccess ? rolesResult.Data ?? new List<UserRole.KeycloakRoleVm>() : new List<UserRole.KeycloakRoleVm>();
+                model.AvailableRoles = rolesResult.IsSuccess ? rolesResult.Data ?? new List<KeycloakRoleVm>() : new List<KeycloakRoleVm>();
                 return View(model);
             }
 
@@ -103,7 +103,7 @@ namespace Microservice.Admin.Controllers
                 var personelResult = await _tumPersonelService.GetTumPersonelsAsync();
                 var rolesResult = await _keycloakRoleService.GetRealmRolesAsync();
                 model.TumPersoneller = personelResult.IsSuccess ? personelResult.Data ?? new List<GetPersonelVm>() : new List<GetPersonelVm>();
-                model.AvailableRoles = rolesResult.IsSuccess ? rolesResult.Data ?? new List<UserRole.KeycloakRoleVm>() : new List<UserRole.KeycloakRoleVm>();
+                model.AvailableRoles = rolesResult.IsSuccess ? rolesResult.Data ?? new List<KeycloakRoleVm>() : new List<KeycloakRoleVm>();
                 return View(model);
             }
 
@@ -134,8 +134,8 @@ namespace Microservice.Admin.Controllers
             var assignedRolesResult = await _keycloakRoleService.GetUserRolesAsync(id);
             var allRolesResult = await _keycloakRoleService.GetRealmRolesAsync();
 
-            var assignedRoles = assignedRolesResult.IsSuccess ? assignedRolesResult.Data ?? new List<UserRole.KeycloakRoleVm>() : new List<UserRole.KeycloakRoleVm>();
-            var allRoles = allRolesResult.IsSuccess ? allRolesResult.Data ?? new List<UserRole.KeycloakRoleVm>() : new List<UserRole.KeycloakRoleVm>();
+            var assignedRoles = assignedRolesResult.IsSuccess ? assignedRolesResult.Data ?? new List<KeycloakRoleVm>() : new List<KeycloakRoleVm>();
+            var allRoles = allRolesResult.IsSuccess ? allRolesResult.Data ?? new List<KeycloakRoleVm>() : new List<KeycloakRoleVm>();
 
             var updateModel = new UserUpdateVm
             {
@@ -164,8 +164,8 @@ namespace Microservice.Admin.Controllers
                 // Reload roles for the view
                 var assignedRolesResult = await _keycloakRoleService.GetUserRolesAsync(model.Id);
                 var allRolesResult = await _keycloakRoleService.GetRealmRolesAsync();
-                var assignedRoles = assignedRolesResult.IsSuccess ? assignedRolesResult.Data ?? new List<UserRole.KeycloakRoleVm>() : new List<UserRole.KeycloakRoleVm>();
-                var allRoles = allRolesResult.IsSuccess ? allRolesResult.Data ?? new List<UserRole.KeycloakRoleVm>() : new List<UserRole.KeycloakRoleVm>();
+                var assignedRoles = assignedRolesResult.IsSuccess ? assignedRolesResult.Data ?? new List<KeycloakRoleVm>() : new List<KeycloakRoleVm>();
+                var allRoles = allRolesResult.IsSuccess ? allRolesResult.Data ?? new List<KeycloakRoleVm>() : new List<KeycloakRoleVm>();
                 model.AvailableRoles = allRoles.Where(r => !assignedRoles.Any(ar => ar.Id == r.Id)).ToList();
                 model.AssignedRoles = assignedRoles;
                 return View(model);
@@ -179,8 +179,8 @@ namespace Microservice.Admin.Controllers
                 ModelState.AddModelError("", result.Fail?.Detail ?? "Kullanıcı güncellenemedi");
                 var assignedRolesResult = await _keycloakRoleService.GetUserRolesAsync(model.Id);
                 var allRolesResult = await _keycloakRoleService.GetRealmRolesAsync();
-                var assignedRoles = assignedRolesResult.IsSuccess ? assignedRolesResult.Data ?? new List<UserRole.KeycloakRoleVm>() : new List<UserRole.KeycloakRoleVm>();
-                var allRoles = allRolesResult.IsSuccess ? allRolesResult.Data ?? new List<UserRole.KeycloakRoleVm>() : new List<UserRole.KeycloakRoleVm>();
+                var assignedRoles = assignedRolesResult.IsSuccess ? assignedRolesResult.Data ?? new List<KeycloakRoleVm>() : new List<KeycloakRoleVm>();
+                var allRoles = allRolesResult.IsSuccess ? allRolesResult.Data ?? new List<KeycloakRoleVm>() : new List<KeycloakRoleVm>();
                 model.AvailableRoles = allRoles.Where(r => !assignedRoles.Any(ar => ar.Id == r.Id)).ToList();
                 model.AssignedRoles = assignedRoles;
                 return View(model);

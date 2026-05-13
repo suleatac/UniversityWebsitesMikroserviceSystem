@@ -1,15 +1,12 @@
-@model IEnumerable<Microservice.Admin.ViewModels.Popup.GetPopupVm>
+@model Microservice.Admin.ViewModels.Popup.PopupDetailVm
 
 @{
-    ViewBag.pTitle = "Popuplar";
+    ViewBag.pTitle = "Popup";
     ViewBag.Title = "Popup Yönetimi";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 @section styles {
-    <link href="~/assets/libs/datatables.net-bs5/css/dataTables.bootstrap5.min.css" rel="stylesheet" type="text/css" />
-    <link href="~/assets/libs/datatables.net-responsive-bs5/css/responsive.bootstrap5.min.css" rel="stylesheet" type="text/css" />
-    <link href="~/assets/libs/datatables.net-buttons-bs5/css/buttons.bootstrap5.min.css" rel="stylesheet" type="text/css" />
     <style>
         .page-header-card {
             background: linear-gradient(135deg, #fd7e14 0%, #f0a050 100%);
@@ -17,21 +14,17 @@
             box-shadow: 0 4px 12px rgba(253, 126, 20, 0.2);
         }
         .page-header-card h4 { font-weight: 600; margin-bottom: 0.25rem; }
-        .page-header-card .breadcrumb { background: transparent; padding: 0; margin: 0; }
-        .page-header-card .breadcrumb-item a { color: rgba(255,255,255,0.9); text-decoration: none; }
-        .page-header-card .breadcrumb-item a:hover { color: #ffffff; }
-        .page-header-card .breadcrumb-item.active { color: rgba(255,255,255,0.8); }
-        .btn-create {
-            background: linear-gradient(135deg, #fd7e14 0%, #f0a050 100%);
-            border: none; color: white; padding: 0.6rem 1.2rem; border-radius: 8px; font-weight: 500;
-            transition: all 0.2s ease;
+        .property-card {
+            border: none; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+            margin-bottom: 1rem;
         }
-        .btn-create:hover { transform: translateY(-2px); box-shadow: 0 3px 10px rgba(253, 126, 20, 0.3); color: white; }
-        .table-card { border: none; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.06); }
-        .table-card .card-header {
+        .property-card .card-header {
             background: linear-gradient(135deg, #fdfefe 0%, #fff5eb 100%);
             border-bottom: 2px solid #fd7e14; border-radius: 12px 12px 0 0 !important; padding: 1rem 1.25rem;
         }
+        .property-label { font-size: 0.8rem; color: #6c757d; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.25rem; }
+        .property-value { font-weight: 600; color: #212529; word-break: break-all; }
+        .property-value.empty { color: #adb5bd; font-style: italic; font-weight: 400; }
     </style>
 }
 
@@ -39,83 +32,192 @@
     <div class="d-flex justify-content-between align-items-center">
         <div>
             <h4><i class="mdi mdi-window-popup me-2"></i>Popup Yönetimi</h4>
-            <p class="mb-0 opacity-75">Tüm popupları buradan yönetebilirsiniz</p>
+            <p class="mb-0 opacity-75">Site popup ayarlarını buradan yönetebilirsiniz</p>
         </div>
-        <a asp-action="Create" class="btn btn-create">
-            <i class="mdi mdi-plus-circle me-1"></i> Yeni Popup Ekle
-        </a>
+        <div class="d-flex gap-2">
+            @if (Model != null && Model.Id > 0)
+            {
+                <a asp-action="Edit" class="btn btn-warning">
+                    <i class="mdi mdi-pencil me-1"></i> Düzenle
+                </a>
+                <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger">
+                    <i class="mdi mdi-delete me-1"></i> Sil
+                </a>
+            }
+            else
+            {
+                <a asp-action="Create" class="btn btn-success">
+                    <i class="mdi mdi-plus-circle me-1"></i> Oluştur
+                </a>
+            }
+        </div>
     </div>
 </div>
 
-<div class="row">
-    <div class="col-12">
-        <div class="card table-card">
-            <div class="card-header">
-                <div class="d-flex justify-content-between align-items-center">
-                    <h5 class="card-title mb-0"><i class="mdi mdi-table me-2 text-primary"></i>Popup Listesi</h5>
-                    <span class="badge bg-warning bg-opacity-10 text-warning" id="tableBadge">Yükleniyor...</span>
+@if (Model != null && Model.Id > 0)
+{
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="card property-card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0"><i class="mdi mdi-information-outline me-2 text-primary"></i>Temel Bilgiler</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <div class="property-label">Başlık</div>
+                            <div class="property-value">@Model.Baslik</div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="property-label">Kısa Açıklama</div>
+                            <div class="property-value">@(string.IsNullOrEmpty(Model.KisaAciklama) ? "Belirtilmemiş" : Model.KisaAciklama)</div>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="card-body">
-                <table id="datatable-popup" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
-                    <thead><tr></tr></thead>
-                </table>
+        </div>
+
+        <div class="col-lg-6">
+            <div class="card property-card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0"><i class="mdi mdi-window-popup me-2 text-primary"></i>Popup Ayarları</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <div class="property-label">Tam Ekran</div>
+                            <div class="property-value">
+                                @if (Model.TamEkranMi)
+                                {
+                                    <span class="badge bg-success">Evet</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary">Hayır</span>
+                                }
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="property-label">Gösterim Süresi</div>
+                            <div class="property-value">@Model.GosterimSuresiSaniye sn</div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="property-label">Cookie Kontrolü</div>
+                            <div class="property-value">
+                                @if (Model.CookieIleTekrarGosterme)
+                                {
+                                    <span class="badge bg-success">Evet</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary">Hayır</span>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
-@section scripts {
-    <script src="~/assets/libs/datatables.net/js/jquery.dataTables.min.js"></script>
-    <script src="~/assets/libs/datatables.net-bs5/js/dataTables.bootstrap5.min.js"></script>
-    <script src="~/assets/libs/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
-    <script src="~/assets/libs/datatables.net-responsive-bs5/js/responsive.bootstrap5.min.js"></script>
-    <script src="~/assets/libs/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
-    <script src="~/assets/libs/datatables.net-buttons-bs5/js/buttons.bootstrap5.min.js"></script>
-    <script src="~/assets/libs/jszip/jszip.min.js"></script>
-    <script src="~/assets/libs/pdfmake/build/pdfmake.min.js"></script>
-    <script src="~/assets/libs/pdfmake/build/vfs_fonts.js"></script>
-    <script src="~/assets/libs/datatables.net-buttons/js/buttons.html5.min.js"></script>
-    <script src="~/assets/libs/datatables.net-buttons/js/buttons.print.min.js"></script>
-    <script src="~/assets/libs/datatables.net-buttons/js/buttons.colVis.min.js"></script>
-    <script>
-        $(document).ready(function () {
-            var a = null;
-            $(".dataTables_length select").addClass("form-select form-select-sm");
-            if (document.getElementById("datatable-popup")) {
-                a = $("#datatable-popup").DataTable({
-                    dom: '<"row"<"col-sm-12 col-md-6"B><"col-sm-12 col-md-6"f>><"row"<"col-sm-12"tr>><"row"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>',
-                    fixedHeader: true, deferRender: true, filter: true, paging: true, pageLength: 10,
-                    order: [[0, 'desc']],
-                    buttons: [
-                        { extend: 'copy', text: '<i class="fas fa-copy"></i> Kopyala', className: 'btn btn-sm btn-warning', exportOptions: { columns: ':visible' } },
-                        { extend: 'excel', text: '<i class="fas fa-file-excel"></i> Excel', className: 'btn btn-sm btn-success', exportOptions: { columns: ':visible' } },
-                        { extend: 'pdf', text: '<i class="fas fa-file-pdf"></i> PDF', className: 'btn btn-sm btn-info', exportOptions: { columns: ':visible' } },
-                        { extend: 'colvis', text: '<i class="fas fa-columns"></i> Sütunlar', className: 'btn btn-sm btn-secondary' },
-                        { extend: 'pageLength', className: 'btn btn-sm btn-danger' }
-                    ],
-                    lengthMenu: [[10, 25, 50, -1], ['10 adet', '25 adet', '50 adet', 'Hepsi']],
-                    language: { url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/tr.json', paginate: { previous: "<i class='mdi mdi-chevron-left'>", next: "<i class='mdi mdi-chevron-right'>" }, info: "Toplam _TOTAL_ kayıttan _START_ - _END_ arası gösteriliyor", infoEmpty: "Gösterilecek kayıt bulunmamaktadır", infoFiltered: "(_MAX_ kayıt içinden filtrelendi)", search: "Ara:", zeroRecords: "Eşleşen kayıt bulunamadı" },
-                    drawCallback: function (settings) { $(".dataTables_paginate > .pagination").addClass("pagination"); var info = a.page.info(); $('#tableBadge').text(info.recordsTotal + ' Kayıt'); },
-                    processing: true, serverSide: true,
-                    ajax: {
-                        url: "/Popup/GetPopupsForPagination", type: "GET",
-                        data: function (d) { return { page: (d.start / d.length) + 1, pageSize: d.length, search: d.search.value, orderColumn: d.order[0].column, orderDir: d.order[0].dir }; }
-                    },
-                    columnDefs: [{ "targets": [0], "visible": false, "searchable": false }],
-                    columns: [
-                        { data: "id", name: "id", title: "ID", autoWidth: true },
-                        { data: "baslik", name: "baslik", title: "Başlık", autoWidth: true },
-                        { data: "kisaAciklama", name: "kisaAciklama", title: "Kısa Açıklama", autoWidth: true },
-                        { data: "tamEkranMi", name: "tamEkranMi", title: "Tam Ekran", autoWidth: true, render: function (data) { return data ? '<span class="badge bg-success">Evet</span>' : '<span class="badge bg-secondary">Hayır</span>'; } },
-                        { data: "gosterimSuresiSaniye", name: "gosterimSuresiSaniye", title: "Süre (sn)", autoWidth: true },
-                        { data: "yayimTarihi", name: "yayimTarihi", title: "Yayım Tarihi", autoWidth: true, render: function (data) { if (data) { var date = new Date(data); return date.toLocaleDateString('tr-TR'); } return '-'; } },
-                        { "data": null, "render": function (data, type, row, meta) { return '<a class="btn btn-outline-primary btn-sm edit" title="Düzenle" href="/Popup/Edit/' + data.id + '"><i class="fas fa-pencil-alt"></i></a> <a class="btn btn-outline-danger btn-sm delete" href="/Popup/Delete/' + data.id + '" title="Sil"><i class="fas fa-trash-alt"></i></a>'; } }
-                    ]
-                });
-                a.buttons().container().appendTo("#datatable-popup_wrapper .col-md-6:eq(0)");
-            }
-        });
-    </script>
-    <script src="~/assets/js/app.js"></script>
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="card property-card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0"><i class="mdi mdi-calendar me-2 text-primary"></i>Tarih Bilgileri</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <div class="property-label">Yayım Tarihi</div>
+                            <div class="property-value">@Model.YayimTarihi.ToString("dd.MM.yyyy HH:mm")</div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="property-label">Başlama Tarihi</div>
+                            <div class="property-value">@(Model.BaslamaTarihi.HasValue ? Model.BaslamaTarihi.Value.ToString("dd.MM.yyyy HH:mm") : "Belirtilmemiş")</div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="property-label">Bitiş Tarihi</div>
+                            <div class="property-value">@(Model.BitisTarihi.HasValue ? Model.BitisTarihi.Value.ToString("dd.MM.yyyy HH:mm") : "Belirtilmemiş")</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6">
+            <div class="card property-card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0"><i class="mdi mdi-chart-bar me-2 text-primary"></i>İstatistikler</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <div class="property-label">Gösterim Sayısı</div>
+                            <div class="property-value">@Model.GosterimSayisi</div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="property-label">Eklenme Tarihi</div>
+                            <div class="property-value">@Model.EklemeTarihi.ToString("dd.MM.yyyy HH:mm")</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @if (!string.IsNullOrEmpty(Model.IcerikMetni) || !string.IsNullOrEmpty(Model.Link) || !string.IsNullOrEmpty(Model.ResimUrl))
+    {
+        <div class="row">
+            <div class="col-12">
+                <div class="card property-card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0"><i class="mdi mdi-file-document-outline me-2 text-primary"></i>İçerik Bilgileri</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            @if (!string.IsNullOrEmpty(Model.IcerikMetni))
+                            {
+                                <div class="col-md-6 mb-3">
+                                    <div class="property-label">İçerik Metni</div>
+                                    <div class="property-value" style="white-space: pre-wrap;">@(Model.IcerikMetni.Length > 200 ? Model.IcerikMetni.Substring(0, 200) + "..." : Model.IcerikMetni)</div>
+                                </div>
+                            }
+                            @if (!string.IsNullOrEmpty(Model.Link))
+                            {
+                                <div class="col-md-3 mb-3">
+                                    <div class="property-label">Link</div>
+                                    <div class="property-value"><a href="@Model.Link" target="_blank" class="text-decoration-none">@Model.Link</a></div>
+                                </div>
+                            }
+                            @if (!string.IsNullOrEmpty(Model.ResimUrl))
+                            {
+                                <div class="col-md-3 mb-3">
+                                    <div class="property-label">Resim URL</div>
+                                    <div class="property-value"><a href="@Model.ResimUrl" target="_blank" class="text-decoration-none">Resmi Görüntüle</a></div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+}
+else
+{
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body text-center py-5">
+                    <i class="mdi mdi-window-popup mdi-48px text-muted opacity-50"></i>
+                    <h5 class="mt-3 text-muted">Henüz popup oluşturulmamış</h5>
+                    <p class="text-muted mb-4">Bu site için henüz bir popup tanımlanmamış. Aşağıdaki butona tıklayarak yeni bir popup oluşturabilirsiniz.</p>
+                    <a asp-action="Create" class="btn btn-success">
+                        <i class="mdi mdi-plus-circle me-1"></i> Popup Oluştur
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
 }

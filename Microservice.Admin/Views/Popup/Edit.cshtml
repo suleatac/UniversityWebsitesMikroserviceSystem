@@ -20,7 +20,6 @@
                     <div asp-validation-summary="ModelOnly" class="alert alert-danger d-none" role="alert"><i class="mdi mdi-block-helper me-2"></i><ul></ul></div>
                     <input type="hidden" asp-for="Id" />
                     <input type="hidden" asp-for="SiteId" />
-                    <input type="hidden" asp-for="DilId" />
                     <input type="hidden" asp-for="EklemeTarihi" />
                     <input type="hidden" asp-for="GosterimSayisi" />
 
@@ -76,12 +75,11 @@
                     </div>
 
                     <div class="mb-4">
-                        <h6 class="text-primary border-bottom pb-2"><i class="mdi mdi-calendar me-1"></i> Tarih ve Hedef</h6>
+                        <h6 class="text-primary border-bottom pb-2"><i class="mdi mdi-calendar me-1"></i> Tarih Bilgileri</h6>
                         <div class="row">
-                            <div class="col-md-3"><div class="mb-3"><label asp-for="YayimTarihi" class="form-label">Yayım Tarihi</label><input asp-for="YayimTarihi" class="form-control" type="datetime-local" /></div></div>
-                            <div class="col-md-3"><div class="mb-3"><label asp-for="BaslamaTarihi" class="form-label">Başlama Tarihi</label><input asp-for="BaslamaTarihi" class="form-control" type="datetime-local" /></div></div>
-                            <div class="col-md-3"><div class="mb-3"><label asp-for="BitisTarihi" class="form-label">Bitiş Tarihi</label><input asp-for="BitisTarihi" class="form-control" type="datetime-local" /></div></div>
-                            <div class="col-md-3"><div class="mb-3"><label asp-for="HedefId" class="form-label">Hedef</label><select asp-for="HedefId" class="form-select"><option value="">-- Hedef Seçin --</option></select></div></div>
+                            <div class="col-md-4"><div class="mb-3"><label asp-for="YayimTarihi" class="form-label">Yayım Tarihi</label><input asp-for="YayimTarihi" class="form-control" type="datetime-local" /></div></div>
+                            <div class="col-md-4"><div class="mb-3"><label asp-for="BaslamaTarihi" class="form-label">Başlama Tarihi</label><input asp-for="BaslamaTarihi" class="form-control" type="datetime-local" /></div></div>
+                            <div class="col-md-4"><div class="mb-3"><label asp-for="BitisTarihi" class="form-label">Bitiş Tarihi</label><input asp-for="BitisTarihi" class="form-control" type="datetime-local" /></div></div>
                         </div>
                     </div>
 

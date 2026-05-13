@@ -11,9 +11,7 @@ namespace Mikroservice.Site.Application.Features.SiteOzellikleriFeatures.UpdateS
             RuleFor(x => x.SiteAdress).NotEmpty();
             RuleFor(x => x.SiteTelNo).NotEmpty();
 
-            RuleFor(x => x.SiteFacebookAdress)
-                .Must(x => string.IsNullOrEmpty(x) || Uri.IsWellFormedUriString(x, UriKind.Absolute))
-                .WithMessage("Geçerli bir URL giriniz.");
+
         }
     }
 }

@@ -3,48 +3,82 @@
 <!-- Site ve Dil Seçim Bölümü -->
 <div class="d-flex align-items-center gap-2">
 
-    @if (!Model.IsAdmin && Model.AuthorizedSiteIds.Any())
+    @if (Model.NoSitesAvailable)
     {
-        <span class="badge bg-info me-1"><i class="fas fa-lock me-1"></i> Yetkili Siteler</span>
+        <!-- Hiç site yoksa -->
+        @if (Model.IsAdmin)
+        {
+            <!-- Admin site eklemeye yönlendir -->
+            <a href="@Url.Action("Create", "Site")" class="btn btn-warning btn-sm fs-14">
+                <i class="fas fa-plus me-1"></i> Site Ekle
+            </a>
+            <span class="badge bg-danger">
+                <i class="fas fa-exclamation-triangle me-1"></i> Henüz site eklenmemiş
+            </span>
+        }
+        else
+        {
+            <!-- Admin olmayan kullanıcıya uyarı göster -->
+            <span class="badge bg-danger">
+                <i class="fas fa-exclamation-triangle me-1"></i> Yetkili siteniz bulunmamaktadır
+            </span>
+        }
     }
+    else if (Model.MustSelectSite)
+    {
+        <!-- Kullanıcı site seçmemişse - site seçim sayfasına yönlendir -->
+        <a href="@Url.Action("SelectSite", "SiteSelection")" class="btn btn-outline-warning btn-sm fs-14">
+            <i class="fas fa-globe me-1"></i> Site Seç
+        </a>
+        <span class="badge bg-warning text-dark">
+            <i class="fas fa-exclamation-circle me-1"></i> Lütfen site seçiniz
+        </span>
+    }
+    else
+    {
+        @if (!Model.IsAdmin && Model.AuthorizedSiteIds.Any())
+        {
+            <span class="badge bg-info me-1"><i class="fas fa-lock me-1"></i> Yetkili Siteler</span>
+        }
 
-    <!-- Site Seç Dropdown -->
-    <div class="dropdown d-none d-lg-block">
-        <button type="button" class="btn btn-primary btn-sm fs-14 dropdown-toggle" id="siteDropdownBtn" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            <i class="fas fa-globe me-1"></i> <span id="currentSiteName">@Model.CurrentSiteName</span>
-            <i class="mdi mdi-chevron-down align-middle"></i>
-        </button>
-        <div class="dropdown-menu dropdown-menu-start dropdown-menu-animated" aria-labelledby="siteDropdownBtn">
-            @foreach (var site in Model.Sites)
-            {
-                var isActive = site.Id == Model.CurrentSiteId;
-                var safeName = site.SiteAdi.Replace("'", "\\'");
-                <a href="javascript:void(0)" class="dropdown-item site-select-item @(isActive ? "active" : "")" data-site-id="@site.Id" onclick="selectSite(@site.Id, '@safeName')">
-                    <div class="dropdown-icon"><i class="fa fa-boxes"></i></div>
-                    <span class="dropdown-content">@site.SiteAdi</span>
-                </a>
-            }
+        <!-- Site Seç Dropdown -->
+        <div class="dropdown d-none d-lg-block">
+            <button type="button" class="btn btn-primary btn-sm fs-14 dropdown-toggle" id="siteDropdownBtn" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="fas fa-globe me-1"></i> <span id="currentSiteName">@Model.CurrentSiteName</span>
+                <i class="mdi mdi-chevron-down align-middle"></i>
+            </button>
+            <div class="dropdown-menu dropdown-menu-start dropdown-menu-animated" aria-labelledby="siteDropdownBtn">
+                @foreach (var site in Model.Sites)
+                {
+                    var isActive = site.Id == Model.CurrentSiteId;
+                    var safeName = site.SiteAdi.Replace("'", "\\'");
+                    <a href="javascript:void(0)" class="dropdown-item site-select-item @(isActive ? "active" : "")" data-site-id="@site.Id" onclick="selectSite(@site.Id, '@safeName')">
+                        <div class="dropdown-icon"><i class="fa fa-boxes"></i></div>
+                        <span class="dropdown-content">@site.SiteAdi</span>
+                    </a>
+                }
+            </div>
         </div>
-    </div>
 
-    <!-- Dil Seç Dropdown -->
-    <div class="dropdown d-none d-lg-block">
-        <button type="button" class="btn btn-outline-info btn-sm fs-14 dropdown-toggle" id="dilDropdownBtn" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            <i class="fas fa-language me-1"></i> <span id="currentDilName">@Model.CurrentDilName</span>
-            <i class="mdi mdi-chevron-down align-middle"></i>
-        </button>
-        <div class="dropdown-menu dropdown-menu-start dropdown-menu-animated" aria-labelledby="dilDropdownBtn">
-            @foreach (var dil in Model.Diller)
-            {
-                var isActive = dil.Id == Model.CurrentDilId;
-                var safeName = dil.Ad.Replace("'", "\\'");
-                <a href="javascript:void(0)" class="dropdown-item dil-select-item @(isActive ? "active" : "")" data-dil-id="@dil.Id" onclick="selectDil(@dil.Id, '@safeName')">
-                    <div class="dropdown-icon"><i class="fas fa-font"></i></div>
-                    <span class="dropdown-content">@dil.Ad</span>
-                </a>
-            }
+        <!-- Dil Seç Dropdown -->
+        <div class="dropdown d-none d-lg-block">
+            <button type="button" class="btn btn-outline-info btn-sm fs-14 dropdown-toggle" id="dilDropdownBtn" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="fas fa-language me-1"></i> <span id="currentDilName">@Model.CurrentDilName</span>
+                <i class="mdi mdi-chevron-down align-middle"></i>
+            </button>
+            <div class="dropdown-menu dropdown-menu-start dropdown-menu-animated" aria-labelledby="dilDropdownBtn">
+                @foreach (var dil in Model.Diller)
+                {
+                    var isActive = dil.Id == Model.CurrentDilId;
+                    var safeName = dil.Ad.Replace("'", "\\'");
+                    <a href="javascript:void(0)" class="dropdown-item dil-select-item @(isActive ? "active" : "")" data-dil-id="@dil.Id" onclick="selectDil(@dil.Id, '@safeName')">
+                        <div class="dropdown-icon"><i class="fas fa-font"></i></div>
+                        <span class="dropdown-content">@dil.Ad</span>
+                    </a>
+                }
+            </div>
         </div>
-    </div>
+    }
 </div>
 
 <script>

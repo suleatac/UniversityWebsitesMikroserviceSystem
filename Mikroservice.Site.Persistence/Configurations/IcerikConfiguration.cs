@@ -19,8 +19,7 @@ namespace Mikroservice.Site.Persistence.Configurations
                 .HasValue<Bilgi>(IcerikTip.Bilgi)
                 .HasValue<Etkinlik>(IcerikTip.Etkinlik)
                 .HasValue<Video>(IcerikTip.Video)
-                .HasValue<Banner>(IcerikTip.Banner)
-                .HasValue<Popup>(IcerikTip.Popup);
+                .HasValue<Banner>(IcerikTip.Banner);
 
             // =========================
             // COMMON PROPERTIES

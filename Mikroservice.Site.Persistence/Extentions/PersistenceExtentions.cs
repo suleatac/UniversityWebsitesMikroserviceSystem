@@ -1,6 +1,5 @@
 ﻿using Microservice.Site.Application.Contracts.IRepositories;
 using Microservice.Site.Persistence.Repositories;
-using Microservice.Site.Persistence.Services;
 using Microservice.Site.Persistence.UnitOfWorks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -55,16 +54,15 @@ namespace Microservice.Site.Persistence.Extentions
             services.AddScoped<IUnvanRepository, UnvanRepository>();
             services.AddScoped<IVideoRepository, VideoRepository>();
             services.AddScoped<IYoneticiSiteRepository, YoneticiSiteRepository>();
-            services.AddScoped<IYoneticiTipiRepository, YoneticiTipiRepository>();
             services.AddScoped<IYonetimDuyuruRepository, YonetimDuyuruRepository>();
 
-            services.AddScoped<ISeedService, YoneticiTipiSeedService>();
+           
             services.AddScoped<ISeedService, UnvanSeedService>();
             services.AddScoped<ISeedService, PersonelTipSeedService>();
             services.AddScoped<ISeedService, HedefSeedService>();
             services.AddScoped<ISeedService, DilSeedService>();
             services.AddScoped<ISeedService, BirimSeedService>();
-
+            services.AddScoped<ISeedService, TemplateSeedService>();
 
 
 

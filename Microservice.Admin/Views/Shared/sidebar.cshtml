@@ -17,6 +17,11 @@
                     </a>
                 </li>
 
+                @{
+                    var currentSiteId = Context.Session.GetInt32("CurrentSiteId");
+                    bool hasSiteSelected = currentSiteId.HasValue && currentSiteId.Value > 0;
+                }
+
                 @if (CurrentUserService.IsAdmin)
                 {
                     <li class="menu-title">Admin Yetkili İşlemler</li>
@@ -26,7 +31,6 @@
                             <i class="fa fa-palette"></i>
                             <span>Site Ekleme</span>
                         </a>
-                    
                     </li>
 
                     <li>
@@ -64,13 +68,7 @@
                     <li>
                         <a href="/YoneticiSite/Index">
                             <i class="fa fa-shapes"></i>
-                            <span>Yönetici Site Yönetimi</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="/UserRole/Index">
-                            <i class="fa fa-shield-alt"></i>
-                            <span>Rol Yönetimi</span>
+                            <span>Kullanıcı Site Yönetimi</span>
                         </a>
                     </li>
                     <li>
@@ -81,65 +79,75 @@
                     </li>
                 }
 
-                <li class="menu-title">SİTE GENEL İŞLEMLERİ</li>
+                @if (hasSiteSelected)
+                {
+                    <li class="menu-title">SİTE GENEL İŞLEMLERİ</li>
 
-                <li>
-                    <a href="/SiteOzellikleri/Index" >
-                        <i class="fa fa-chart-pie align-middle"></i> Site Genel Bilgiler</a>
-             
-                </li>
+                    <li>
+                        <a href="/SiteOzellikleri/Index" >
+                            <i class="fa fa-chart-pie align-middle"></i> Site Genel Bilgiler</a>
+                    </li>
 
-                <li>
-                    <a href="/SitePersonel/Index" >
-                        <i class="fas fa-table"></i>
-                        <span>Site Personel Yönetimi</span>
-                    </a>       
-                </li>
-                <li>
-                    <a href="/File" >
-                        <i class="fas fa-table"></i>
-                        <span>Dosya Yönetimi</span>
-                    </a>
-                </li>
-                <li class="menu-title">SİTE İÇERİK İŞLEMLERİ</li>
-                <li><a href="/Popup/Index"><i class="fa fa-dice"></i> <span>Popup Yönetimi</span></a></li>
+                    <li>
+                        <a href="/SitePersonel/Index" >
+                            <i class="fas fa-table"></i>
+                            <span>Site Personel Yönetimi</span>
+                        </a>       
+                    </li>
+                    <li>
+                        <a href="/File" >
+                            <i class="fas fa-table"></i>
+                            <span>Dosya Yönetimi</span>
+                        </a>
+                    </li>
+                    <li class="menu-title">SİTE İÇERİK İŞLEMLERİ</li>
+                    <li><a href="/Popup/Index"><i class="fa fa-dice"></i> <span>Popup Yönetimi</span></a></li>
 
-                <li><a href="/Menu/Index"><i class="fa fa-dice"></i> <span>Menü Yönetimi</span></a></li>
-                <li>
-                    <a href="/Banner/Index"><i class="fa fa-pencil-ruler"></i> <span>Banner Yönetimi</span></a>
+                    <li><a href="/Menu/Index"><i class="fa fa-dice"></i> <span>Menü Yönetimi</span></a></li>
+                    <li>
+                        <a href="/Banner/Index"><i class="fa fa-pencil-ruler"></i> <span>Banner Yönetimi</span></a>
 
-                </li>
-                <li>
-                    <a href="/Bilgi/Index" ><i class="fa fa-fill-drip"></i> <span>Bilgi Sayfası Yönetimi</span></a>
-             
-                </li>
+                    </li>
+                    <li>
+                        <a href="/Bilgi/Index" ><i class="fa fa-fill-drip"></i> <span>Bilgi Sayfası Yönetimi</span></a>
+                    </li>
 
-                <li>
-                    <a href="/Duyuru/Index" ><i class="fa fa-pencil-ruler"></i> <span>Duyuru Yönetimi</span></a>
-                  
-                </li>
-              
-                <li><a href="/Etkinlik/Index"><i class="fa fa-th-list"></i> <span>Etkinlik Yönetimi</span></a></li>
-                <li><a href="/Haber/Index"><i class="fa fa-ruler-combined"></i> <span>Haber Yönetimi</span></a></li>
-                <li><a href="/Video/Index"><i class="fa fa-check"></i> <span>Video Yönetimi</span></a></li>
+                    <li>
+                        <a href="/Duyuru/Index" ><i class="fa fa-pencil-ruler"></i> <span>Duyuru Yönetimi</span></a>
+                    </li>
 
-            <li>
-                <a href="/SikcaSorulanSoru/Index"><i class="fa fa-pencil-ruler"></i> <span>Sık Sorulan Sorular Yönetimi</span></a>
+                    <li><a href="/Etkinlik/Index"><i class="fa fa-th-list"></i> <span>Etkinlik Yönetimi</span></a></li>
+                    <li><a href="/Haber/Index"><i class="fa fa-ruler-combined"></i> <span>Haber Yönetimi</span></a></li>
+                    <li><a href="/Video/Index"><i class="fa fa-check"></i> <span>Video Yönetimi</span></a></li>
 
-            </li>
-            <li>
-                <a href="/SikcaSorulanSoruKategori/Index"><i class="fa fa-pencil-ruler"></i> <span>Sık Sorulan Sorular Kategori Yönetimi</span></a>
+                    <li>
+                        <a href="/SikcaSorulanSoru/Index"><i class="fa fa-pencil-ruler"></i> <span>Sık Sorulan Sorular Yönetimi</span></a>
+                    </li>
+                    <li>
+                        <a href="/SikcaSorulanSoruKategori/Index"><i class="fa fa-pencil-ruler"></i> <span>Sık Sorulan Sorular Kategori Yönetimi</span></a>
+                    </li>
 
-                <li class="menu-title">DİĞER İŞLEMLER</li>
+                    <li class="menu-title">DİĞER İŞLEMLER</li>
 
-                <li>
-                    <a href="javascript: void(0);" >
-                        <i class="fa fa-unlock-alt"></i>
-                        <span>Footer Yönetimi</span>
-                    </a>
-                </li>
+                    <li>
+                        <a href="javascript: void(0);" >
+                            <i class="fa fa-unlock-alt"></i>
+                            <span>Footer Yönetimi</span>
+                        </a>
+                    </li>
+                }
+                else if (!CurrentUserService.IsAdmin)
+                {
+                    // Admin olmayan ve site seçmemiş kullanıcıya uyarı göster
+                    <li class="menu-title">BİLGİ</li>
+                    <li>
+                        <a href="@Url.Action("SelectSite", "SiteSelection")" class="text-warning">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <span>Lütfen site seçiniz</span>
+                        </a>
+                    </li>
+                }
 
-              
             </ul>
         </div>
         <!-- Sidebar -->

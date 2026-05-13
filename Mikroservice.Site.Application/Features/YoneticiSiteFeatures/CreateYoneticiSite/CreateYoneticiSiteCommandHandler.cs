@@ -14,7 +14,7 @@ namespace Mikroservice.Site.Application.Features.YoneticiSiteFeatures.CreateYone
     {
         public async Task<ServiceResult<YoneticiSiteResponse>> Handle(CreateYoneticiSiteCommand request, CancellationToken cancellationToken)
         {
-            var exists = await repository.AnyWithKeycloakUserIdSiteIdYoneticiTipiIdAsync(request.KeycloakUserId, request.SiteId, request.YoneticiTipiId, cancellationToken);
+            var exists = await repository.AnyWithKeycloakUserIdSiteIdYoneticiTipiIdAsync(request.KeycloakUserId, request.SiteId, cancellationToken);
 
             if (exists)
                 return ServiceResult<YoneticiSiteResponse>.Error("Bu kullanıcı zaten bu role sahip.", System.Net.HttpStatusCode.BadRequest);
@@ -23,7 +23,6 @@ namespace Mikroservice.Site.Application.Features.YoneticiSiteFeatures.CreateYone
             {
                 KeycloakUserId = request.KeycloakUserId,
                 SiteId = request.SiteId,
-                YoneticiTipiId = request.YoneticiTipiId,
                 IsDeleted = false
             };
 

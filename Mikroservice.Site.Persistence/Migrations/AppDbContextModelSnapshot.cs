@@ -22,27 +22,6 @@ namespace Mikroservice.Site.Persistence.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("Microservice.Site.Domain.Entities.YoneticiTipi", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("TipAdi")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
-
-                    b.Property<int>("Value")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("YoneticiTipleri");
-                });
-
             modelBuilder.Entity("Microservice.Site.Domain.Entities.YonetimDuyuru", b =>
                 {
                     b.Property<int>("Id")
@@ -430,6 +409,94 @@ namespace Mikroservice.Site.Persistence.Migrations
                         .IsUnique();
 
                     b.ToTable("PersonelTipleri");
+                });
+
+            modelBuilder.Entity("Mikroservice.Site.Domain.Entities.Popup", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime?>("BaslamaTarihi")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("Baslik")
+                        .IsRequired()
+                        .HasMaxLength(300)
+                        .HasColumnType("character varying(300)");
+
+                    b.Property<DateTime?>("BitisTarihi")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<bool>("CookieIleTekrarGosterme")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(true);
+
+                    b.Property<DateTime>("EklemeTarihi")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp without time zone")
+                        .HasDefaultValueSql("NOW()");
+
+                    b.Property<int>("GosterimSayisi")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValue(0);
+
+                    b.Property<int>("GosterimSuresiSaniye")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValue(5);
+
+                    b.Property<string>("IcerikMetni")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("KisaAciklama")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<string>("Link")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<string>("ResimUrl")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<string>("SeoDescription")
+                        .HasColumnType("text");
+
+                    b.Property<string>("SeoTitle")
+                        .HasColumnType("text");
+
+                    b.Property<string>("SeoUrl")
+                        .HasMaxLength(300)
+                        .HasColumnType("character varying(300)");
+
+                    b.Property<int>("SiteId")
+                        .HasColumnType("integer");
+
+                    b.Property<bool>("TamEkranMi")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false);
+
+                    b.Property<DateTime>("YayimTarihi")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SiteId")
+                        .IsUnique();
+
+                    b.ToTable("Popuplar");
                 });
 
             modelBuilder.Entity("Mikroservice.Site.Domain.Entities.SikcaSorulanSoru", b =>
@@ -841,22 +908,12 @@ namespace Mikroservice.Site.Persistence.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
 
-                    b.Property<int>("PersonelId")
-                        .HasColumnType("integer");
-
                     b.Property<int>("SiteId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("YoneticiTipiId")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("YoneticiTipiId");
-
                     b.HasIndex("SiteId", "KeycloakUserId");
-
-                    b.HasIndex("SiteId", "PersonelId");
 
                     b.ToTable("YoneticiSiteler");
                 });
@@ -899,26 +956,6 @@ namespace Mikroservice.Site.Persistence.Migrations
                     b.HasBaseType("Mikroservice.Site.Domain.Entities.Icerik");
 
                     b.HasDiscriminator().HasValue(1);
-                });
-
-            modelBuilder.Entity("Mikroservice.Site.Domain.Entities.Popup", b =>
-                {
-                    b.HasBaseType("Mikroservice.Site.Domain.Entities.Icerik");
-
-                    b.Property<bool>("CookieIleTekrarGosterme")
-                        .HasColumnType("boolean");
-
-                    b.Property<int>("GosterimSuresiSaniye")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasDefaultValue(5);
-
-                    b.Property<bool>("TamEkranMi")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("boolean")
-                        .HasDefaultValue(false);
-
-                    b.HasDiscriminator().HasValue(7);
                 });
 
             modelBuilder.Entity("Mikroservice.Site.Domain.Entities.Video", b =>
@@ -1042,6 +1079,17 @@ namespace Mikroservice.Site.Persistence.Migrations
                     b.Navigation("SitePersonel");
                 });
 
+            modelBuilder.Entity("Mikroservice.Site.Domain.Entities.Popup", b =>
+                {
+                    b.HasOne("Mikroservice.Site.Domain.Entities.Site", "Site")
+                        .WithOne("Popup")
+                        .HasForeignKey("Mikroservice.Site.Domain.Entities.Popup", "SiteId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Site");
+                });
+
             modelBuilder.Entity("Mikroservice.Site.Domain.Entities.SikcaSorulanSoru", b =>
                 {
                     b.HasOne("Mikroservice.Site.Domain.Entities.Dil", "Dil")
@@ -1152,15 +1200,7 @@ namespace Mikroservice.Site.Persistence.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Microservice.Site.Domain.Entities.YoneticiTipi", "YoneticiTipi")
-                        .WithMany()
-                        .HasForeignKey("YoneticiTipiId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.Navigation("Site");
-
-                    b.Navigation("YoneticiTipi");
                 });
 
             modelBuilder.Entity("Mikroservice.Site.Domain.Entities.Banner", b =>
@@ -1218,17 +1258,6 @@ namespace Mikroservice.Site.Persistence.Migrations
                     b.Navigation("Site");
                 });
 
-            modelBuilder.Entity("Mikroservice.Site.Domain.Entities.Popup", b =>
-                {
-                    b.HasOne("Mikroservice.Site.Domain.Entities.Site", "Site")
-                        .WithMany()
-                        .HasForeignKey("SiteId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Site");
-                });
-
             modelBuilder.Entity("Mikroservice.Site.Domain.Entities.Video", b =>
                 {
                     b.HasOne("Mikroservice.Site.Domain.Entities.Site", "Site")
@@ -1275,6 +1304,8 @@ namespace Mikroservice.Site.Persistence.Migrations
                     b.Navigation("MediaFiles");
 
                     b.Navigation("Menus");
+
+                    b.Navigation("Popup");
 
                     b.Navigation("SikcaSorulanSorus");
 

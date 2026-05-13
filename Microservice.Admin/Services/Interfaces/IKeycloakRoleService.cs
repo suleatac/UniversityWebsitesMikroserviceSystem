@@ -1,5 +1,5 @@
 using Microservice.Admin.Services.ServiceResults;
-using Microservice.Admin.ViewModels.UserRole;
+using Microservice.Admin.ViewModels.User;
 
 namespace Microservice.Admin.Services.Interfaces
 {
