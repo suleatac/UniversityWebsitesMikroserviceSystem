@@ -31,7 +31,7 @@ namespace Mikroservice.Site.Application.Features.SikcaSorulanSoruFeatures.Update
 
             // 🔥 Cache silme işlemi
             var key = $"sikcasorulansoru:list:{sikcaSorulanSoru.SiteId}:*";
-            await redisCache.RemoveAsync(key, cancellationToken);
+            await redisCache.RemoveByPatternAsync(key, cancellationToken);
 
             return ServiceResult.Success();
         }

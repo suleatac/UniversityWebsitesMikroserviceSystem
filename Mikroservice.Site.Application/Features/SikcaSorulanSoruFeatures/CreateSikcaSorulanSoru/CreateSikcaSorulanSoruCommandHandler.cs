@@ -32,7 +32,7 @@ namespace Mikroservice.Site.Application.Features.SikcaSorulanSoruFeatures.Create
 
             // 🔥 Cache silme işlemi
             var key = $"sikcasorulansoru:list:{request.SiteId}:*";
-            await redisCache.RemoveAsync(key, cancellationToken);
+            await redisCache.RemoveByPatternAsync(key, cancellationToken);
 
             var response = new CreateSikcaSorulanSoruResponse(entity.Id);
             return ServiceResult<CreateSikcaSorulanSoruResponse>

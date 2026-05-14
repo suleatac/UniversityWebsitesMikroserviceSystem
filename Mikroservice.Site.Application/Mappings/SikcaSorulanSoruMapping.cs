@@ -10,6 +10,7 @@ namespace Mikroservice.Site.Application.Mappings
         {
             // READ
             CreateMap<SikcaSorulanSoru, SikcaSorulanSoruDto>();
+            CreateMap<SikcaSorulanSoru, SikcaSorulanSoruDetailDto>();
         }
     }
 }

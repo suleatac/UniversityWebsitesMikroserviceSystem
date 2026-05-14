@@ -28,7 +28,7 @@ namespace Mikroservice.Site.Application.Features.SikcaSorulanSoruFeatures.Delete
 
             // 🔥 Cache invalidation
             var key = $"sikcasorulansoru:list:{sikcaSorulanSoru.SiteId}:{sikcaSorulanSoru.DilId}";
-            await redisCache.RemoveAsync(key, cancellationToken);
+            await redisCache.RemoveByPatternAsync(key, cancellationToken);
 
             return ServiceResult.Success();
         }
