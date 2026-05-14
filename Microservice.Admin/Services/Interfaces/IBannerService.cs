@@ -13,5 +13,6 @@ namespace Microservice.Admin.Services.Interfaces
         Task<ServiceResult<object>> DeleteBannerAsync(int id);
         Task<ServiceResult<PaginatedResult<GetBannerVm>>> GetBannersPaginatedAsync(
             int siteId, int dilId, int page, int pageSize, string? search, string? orderBy, string? orderDir);
+        Task<ServiceResult<object>> ReorderBannersAsync(List<ReorderBannerItemVm> items);
     }
 }

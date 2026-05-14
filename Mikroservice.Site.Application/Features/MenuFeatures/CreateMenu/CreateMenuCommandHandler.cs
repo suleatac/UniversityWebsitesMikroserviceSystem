@@ -2,7 +2,6 @@
 using Microservice.Shared;
 using Microservice.Shared.Services.RedisServiceItems;
 using Microservice.Site.Application.Contracts.IRepositories;
-using Mikroservice.Site.Application.Features.SiteFeatures.CreateSite;
 using Mikroservice.Site.Domain.Entities;
 
 namespace Mikroservice.Site.Application.Features.MenuFeatures.CreateMenu

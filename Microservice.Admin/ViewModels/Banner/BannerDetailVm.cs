@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace Microservice.Admin.ViewModels.Banner
 {
     public class BannerDetailVm
@@ -17,10 +19,13 @@ namespace Microservice.Admin.ViewModels.Banner
         public int Sira { get; set; }
         public int GosterimSayisi { get; set; } = 0;
 
+        [DisplayFormat(DataFormatString = "{0:yyyy-MM-ddTHH:mm}", ApplyFormatInEditMode = true)]
         public DateTime YayimTarihi { get; set; }
+        [DisplayFormat(DataFormatString = "{0:yyyy-MM-ddTHH:mm}", ApplyFormatInEditMode = true)]
         public DateTime EklemeTarihi { get; set; }
-
+        [DisplayFormat(DataFormatString = "{0:yyyy-MM-ddTHH:mm}", ApplyFormatInEditMode = true)]
         public DateTime? BaslamaTarihi { get; set; }
+        [DisplayFormat(DataFormatString = "{0:yyyy-MM-ddTHH:mm}", ApplyFormatInEditMode = true)]
         public DateTime? BitisTarihi { get; set; }
 
         public string? SeoUrl { get; set; }

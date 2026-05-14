@@ -8,90 +8,729 @@
 
 <div class="row justify-content-center">
     <div class="col-xxl-10">
+
         <div class="card shadow-lg border-0">
+
             <div class="card-header bg-warning bg-opacity-10 border-bottom">
+
                 <div class="d-flex align-items-center">
-                    <div class="avatar-sm me-3"><div class="avatar-title bg-warning rounded-circle"><i class="mdi mdi-window-popup-plus fs-5"></i></div></div>
-                    <div><h5 class="card-title mb-1">Popup Bilgileri</h5><p class="card-text text-muted mb-0">Yeni bir popup oluşturmak için formu doldurun</p></div>
+
+                    <div class="avatar-sm me-3">
+                        <div class="avatar-title bg-warning rounded-circle">
+                            <i class="mdi mdi-window-popup-plus fs-5"></i>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h5 class="card-title mb-1">Popup Bilgileri</h5>
+                        <p class="card-text text-muted mb-0">
+                            Yeni bir popup oluşturmak için formu doldurun
+                        </p>
+                    </div>
+
                 </div>
+
             </div>
+
             <div class="card-body p-4">
-                <form asp-action="Create" id="popupCreateForm" class="needs-validation" novalidate>
-                    <div asp-validation-summary="ModelOnly" class="alert alert-danger d-none" role="alert"><i class="mdi mdi-block-helper me-2"></i><ul></ul></div>
+
+                <form asp-action="Create"
+                      id="popupCreateForm"
+                      class="needs-validation"
+                      novalidate>
+
+                    <div asp-validation-summary="ModelOnly"
+                         class="alert alert-danger d-none"
+                         role="alert"
+                         id="validationSummary">
+
+                        <i class="mdi mdi-block-helper me-2"></i>
+                        <ul></ul>
+
+                    </div>
+
                     <input type="hidden" asp-for="SiteId" />
 
+                    <!-- ========================================= -->
+                    <!-- Temel Bilgiler -->
+                    <!-- ========================================= -->
+
                     <div class="mb-4">
-                        <h6 class="text-primary border-bottom pb-2"><i class="mdi mdi-information-outline me-1"></i> Temel Bilgiler</h6>
+
+                        <h6 class="text-primary border-bottom pb-2">
+                            <i class="mdi mdi-information-outline me-1"></i>
+                            Temel Bilgiler
+                        </h6>
+
                         <div class="row">
+
                             <div class="col-md-8">
-                                <div class="mb-3"><label asp-for="Baslik" class="form-label">Başlık <span class="text-danger">*</span></label><div class="input-group"><span class="input-group-text"><i class="mdi mdi-format-title"></i></span><input asp-for="Baslik" class="form-control" placeholder="Popup başlığını giriniz" /></div><span asp-validation-for="Baslik" class="text-danger small"></span></div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="mb-3"><label asp-for="KisaAciklama" class="form-label">Kısa Açıklama <span class="text-danger">*</span></label><div class="input-group"><span class="input-group-text"><i class="mdi mdi-text-short"></i></span><input asp-for="KisaAciklama" class="form-control" placeholder="Kısa açıklama" /></div><span asp-validation-for="KisaAciklama" class="text-danger small"></span></div>
-                            </div>
-                        </div>
-                    </div>
 
-                    <div class="mb-4">
-                        <h6 class="text-primary border-bottom pb-2"><i class="mdi mdi-window-popup me-1"></i> Popup İçerik</h6>
-                        <div class="mb-3"><label asp-for="IcerikMetni" class="form-label">İçerik Metni</label><textarea asp-for="IcerikMetni" id="IcerikMetniEditor" class="form-control" rows="8" placeholder="Popup içeriğini giriniz..."></textarea><span asp-validation-for="IcerikMetni" class="text-danger small"></span></div>
-                        <div class="row">
-                            <div class="col-md-6"><div class="mb-3"><label asp-for="Link" class="form-label">Link</label><div class="input-group"><span class="input-group-text"><i class="mdi mdi-link"></i></span><input asp-for="Link" class="form-control" placeholder="https://..." /></div></div></div>
-                            <div class="col-md-6"><div class="mb-3"><label asp-for="ResimUrl" class="form-label">Resim URL</label><div class="input-group"><span class="input-group-text"><i class="mdi mdi-image"></i></span><input asp-for="ResimUrl" class="form-control" placeholder="Resim URL" /></div></div></div>
-                        </div>
-                    </div>
-
-                    <div class="mb-4">
-                        <h6 class="text-primary border-bottom pb-2"><i class="mdi mdi-cog me-1"></i> Popup Ayarları</h6>
-                        <div class="row">
-                            <div class="col-md-4">
                                 <div class="mb-3">
-                                    <label asp-for="TamEkranMi" class="form-label">Tam Ekran</label>
-                                    <div class="form-check form-switch form-switch-lg">
-                                        <input asp-for="TamEkranMi" class="form-check-input" type="checkbox" />
-                                        <label class="form-check-label" for="TamEkranMi">Tam Ekran Gösterim</label>
+
+                                    <label asp-for="Baslik" class="form-label">
+                                        Başlık
+                                        <span class="text-danger">*</span>
+                                    </label>
+
+                                    <div class="input-group">
+
+                                        <span class="input-group-text">
+                                            <i class="mdi mdi-format-title"></i>
+                                        </span>
+
+                                        <input asp-for="Baslik"
+                                               class="form-control"
+                                               placeholder="Popup başlığını giriniz" />
+
                                     </div>
+
+                                    <span asp-validation-for="Baslik"
+                                          class="text-danger small"></span>
+
                                 </div>
+
                             </div>
+
                             <div class="col-md-4">
-                                <div class="mb-3"><label asp-for="GosterimSuresiSaniye" class="form-label">Gösterim Süresi (sn)</label><div class="input-group"><span class="input-group-text"><i class="mdi mdi-timer"></i></span><input asp-for="GosterimSuresiSaniye" class="form-control" type="number" min="0" placeholder="Saniye" /></div><span asp-validation-for="GosterimSuresiSaniye" class="text-danger small"></span></div>
-                            </div>
-                            <div class="col-md-4">
+
                                 <div class="mb-3">
-                                    <label asp-for="CookieIleTekrarGosterme" class="form-label">Cookie ile Tekrar Gösterme</label>
-                                    <div class="form-check form-switch form-switch-lg">
-                                        <input asp-for="CookieIleTekrarGosterme" class="form-check-input" type="checkbox" />
-                                        <label class="form-check-label" for="CookieIleTekrarGosterme">Cookie Kontrolü</label>
+
+                                    <label asp-for="KisaAciklama" class="form-label">
+                                        Kısa Açıklama
+                                        <span class="text-danger">*</span>
+                                    </label>
+
+                                    <div class="input-group">
+
+                                        <span class="input-group-text">
+                                            <i class="mdi mdi-text-short"></i>
+                                        </span>
+
+                                        <input asp-for="KisaAciklama"
+                                               class="form-control"
+                                               placeholder="Kısa açıklama" />
+
                                     </div>
+
+                                    <span asp-validation-for="KisaAciklama"
+                                          class="text-danger small"></span>
+
                                 </div>
+
                             </div>
+
                         </div>
+
                     </div>
 
-                    <div class="mb-4">
-                        <h6 class="text-primary border-bottom pb-2"><i class="mdi mdi-calendar me-1"></i> Tarih Bilgileri</h6>
-                        <div class="row">
-                            <div class="col-md-4"><div class="mb-3"><label asp-for="YayimTarihi" class="form-label">Yayım Tarihi</label><input asp-for="YayimTarihi" class="form-control" type="datetime-local" /></div></div>
-                            <div class="col-md-4"><div class="mb-3"><label asp-for="BaslamaTarihi" class="form-label">Başlama Tarihi</label><input asp-for="BaslamaTarihi" class="form-control" type="datetime-local" /></div></div>
-                            <div class="col-md-4"><div class="mb-3"><label asp-for="BitisTarihi" class="form-label">Bitiş Tarihi</label><input asp-for="BitisTarihi" class="form-control" type="datetime-local" /></div></div>
-                        </div>
-                    </div>
+                    <!-- ========================================= -->
+                    <!-- Popup İçerik -->
+                    <!-- ========================================= -->
 
                     <div class="mb-4">
-                        <h6 class="text-primary border-bottom pb-2"><i class="mdi mdi-magnify me-1"></i> SEO Bilgileri</h6>
-                        <div class="row">
-                            <div class="col-md-4"><div class="mb-3"><label asp-for="SeoUrl" class="form-label">SEO URL</label><input asp-for="SeoUrl" class="form-control" placeholder="seo-url" /></div></div>
-                            <div class="col-md-4"><div class="mb-3"><label asp-for="SeoTitle" class="form-label">SEO Title</label><input asp-for="SeoTitle" class="form-control" placeholder="SEO başlık" /></div></div>
-                            <div class="col-md-4"><div class="mb-3"><label asp-for="SeoDescription" class="form-label">SEO Description</label><input asp-for="SeoDescription" class="form-control" placeholder="SEO açıklama" /></div></div>
+
+                        <h6 class="text-primary border-bottom pb-2">
+                            <i class="mdi mdi-window-popup me-1"></i>
+                            Popup İçerik
+                        </h6>
+
+                        <!-- TinyMCE -->
+
+                        <div class="mb-3">
+
+                            <label asp-for="IcerikMetni" class="form-label">
+                                İçerik Metni
+                            </label>
+
+                            <textarea asp-for="IcerikMetni"
+                                      id="IcerikMetniEditor"
+                                      class="form-control"
+                                      rows="10"
+                                      placeholder="Popup içeriğini giriniz..."></textarea>
+
+                            <span asp-validation-for="IcerikMetni"
+                                  class="text-danger small"></span>
+
                         </div>
+
+                        <div class="row">
+
+                            <!-- Link -->
+
+                            <div class="col-md-6">
+
+                                <div class="mb-3">
+
+                                    <label asp-for="Link" class="form-label">
+                                        Link
+                                    </label>
+
+                                    <div class="input-group">
+
+                                        <span class="input-group-text">
+                                            <i class="mdi mdi-link"></i>
+                                        </span>
+
+                                        <input asp-for="Link"
+                                               class="form-control"
+                                               placeholder="https://..." />
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                            <!-- Resim -->
+
+                            <div class="col-md-6">
+
+                                <div class="mb-3">
+
+                                    <label asp-for="ResimUrl" class="form-label">
+                                        Resim URL
+                                    </label>
+
+                                    <div class="input-group">
+
+                                        <span class="input-group-text">
+                                            <i class="mdi mdi-image"></i>
+                                        </span>
+
+                                        <input asp-for="ResimUrl"
+                                               id="ResimUrlInput"
+                                               class="form-control file-picker-input"
+                                               placeholder="Resim URL" />
+
+                                        <button type="button"
+                                                class="btn btn-outline-primary open-file-manager"
+                                                data-type="image"
+                                                title="Dosya Yöneticisi">
+
+                                            <i class="mdi mdi-folder-open-outline"></i>
+
+                                        </button>
+
+                                    </div>
+
+                                    <span asp-validation-for="ResimUrl"
+                                          class="text-danger small"></span>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
                     </div>
+
+                    <!-- ========================================= -->
+                    <!-- Popup Ayarları -->
+                    <!-- ========================================= -->
+
+                    <div class="mb-4">
+
+                        <h6 class="text-primary border-bottom pb-2">
+                            <i class="mdi mdi-cog me-1"></i>
+                            Popup Ayarları
+                        </h6>
+
+                        <div class="row">
+
+                            <div class="col-md-4">
+
+                                <div class="mb-3">
+
+                                    <label asp-for="TamEkranMi"
+                                           class="form-label">
+                                        Tam Ekran
+                                    </label>
+
+                                    <div class="form-check form-switch form-switch-lg">
+
+                                        <input asp-for="TamEkranMi"
+                                               class="form-check-input"
+                                               type="checkbox" />
+
+                                        <label class="form-check-label"
+                                               for="TamEkranMi">
+
+                                            Tam Ekran Gösterim
+
+                                        </label>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                            <div class="col-md-4">
+
+                                <div class="mb-3">
+
+                                    <label asp-for="GosterimSuresiSaniye"
+                                           class="form-label">
+
+                                        Gösterim Süresi (sn)
+
+                                    </label>
+
+                                    <div class="input-group">
+
+                                        <span class="input-group-text">
+                                            <i class="mdi mdi-timer"></i>
+                                        </span>
+
+                                        <input asp-for="GosterimSuresiSaniye"
+                                               class="form-control"
+                                               type="number"
+                                               min="0"
+                                               placeholder="Saniye" />
+
+                                    </div>
+
+                                    <span asp-validation-for="GosterimSuresiSaniye"
+                                          class="text-danger small"></span>
+
+                                </div>
+
+                            </div>
+
+                            <div class="col-md-4">
+
+                                <div class="mb-3">
+
+                                    <label asp-for="CookieIleTekrarGosterme"
+                                           class="form-label">
+
+                                        Cookie ile Tekrar Gösterme
+
+                                    </label>
+
+                                    <div class="form-check form-switch form-switch-lg">
+
+                                        <input asp-for="CookieIleTekrarGosterme"
+                                               class="form-check-input"
+                                               type="checkbox" />
+
+                                        <label class="form-check-label"
+                                               for="CookieIleTekrarGosterme">
+
+                                            Cookie Kontrolü
+
+                                        </label>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <!-- ========================================= -->
+                    <!-- Tarih Bilgileri -->
+                    <!-- ========================================= -->
+
+                    <div class="mb-4">
+
+                        <h6 class="text-primary border-bottom pb-2">
+                            <i class="mdi mdi-calendar me-1"></i>
+                            Tarih Bilgileri
+                        </h6>
+
+                        <div class="row">
+
+                            <div class="col-md-4">
+
+                                <div class="mb-3">
+
+                                    <label asp-for="YayimTarihi"
+                                           class="form-label">
+
+                                        Yayım Tarihi
+
+                                    </label>
+
+                                    <input asp-for="YayimTarihi"
+                                           class="form-control"
+                                           type="datetime-local" />
+
+                                </div>
+
+                            </div>
+
+                            <div class="col-md-4">
+
+                                <div class="mb-3">
+
+                                    <label asp-for="BaslamaTarihi"
+                                           class="form-label">
+
+                                        Başlama Tarihi
+
+                                    </label>
+
+                                    <input asp-for="BaslamaTarihi"
+                                           class="form-control"
+                                           type="datetime-local" />
+
+                                </div>
+
+                            </div>
+
+                            <div class="col-md-4">
+
+                                <div class="mb-3">
+
+                                    <label asp-for="BitisTarihi"
+                                           class="form-label">
+
+                                        Bitiş Tarihi
+
+                                    </label>
+
+                                    <input asp-for="BitisTarihi"
+                                           class="form-control"
+                                           type="datetime-local" />
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <!-- ========================================= -->
+                    <!-- SEO -->
+                    <!-- ========================================= -->
+
+                    <div class="mb-4">
+
+                        <h6 class="text-primary border-bottom pb-2">
+                            <i class="mdi mdi-magnify me-1"></i>
+                            SEO Bilgileri
+                        </h6>
+
+                        <div class="row">
+
+                            <div class="col-md-4">
+
+                                <div class="mb-3">
+
+                                    <label asp-for="SeoUrl"
+                                           class="form-label">
+
+                                        SEO URL
+
+                                    </label>
+
+                                    <input asp-for="SeoUrl"
+                                           class="form-control"
+                                           placeholder="seo-url" />
+
+                                </div>
+
+                            </div>
+
+                            <div class="col-md-4">
+
+                                <div class="mb-3">
+
+                                    <label asp-for="SeoTitle"
+                                           class="form-label">
+
+                                        SEO Title
+
+                                    </label>
+
+                                    <input asp-for="SeoTitle"
+                                           class="form-control"
+                                           placeholder="SEO başlık" />
+
+                                </div>
+
+                            </div>
+
+                            <div class="col-md-4">
+
+                                <div class="mb-3">
+
+                                    <label asp-for="SeoDescription"
+                                           class="form-label">
+
+                                        SEO Description
+
+                                    </label>
+
+                                    <input asp-for="SeoDescription"
+                                           class="form-control"
+                                           placeholder="SEO açıklama" />
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <!-- ========================================= -->
+                    <!-- Buttons -->
+                    <!-- ========================================= -->
 
                     <div class="d-flex justify-content-end gap-2">
-                        <a asp-action="Index" class="btn btn-secondary"><i class="mdi mdi-arrow-left me-1"></i> İptal</a>
-                        <button type="submit" class="btn btn-warning"><i class="mdi mdi-check me-1"></i> Kaydet</button>
+
+                        <a asp-action="Index"
+                           class="btn btn-secondary">
+
+                            <i class="mdi mdi-arrow-left me-1"></i>
+                            İptal
+
+                        </a>
+
+                        <button type="submit"
+                                class="btn btn-warning">
+
+                            <i class="mdi mdi-check me-1"></i>
+                            Kaydet
+
+                        </button>
+
                     </div>
+
                 </form>
+
             </div>
+
         </div>
+
     </div>
 </div>
+
+<!-- ========================================= -->
+<!-- File Manager Modal -->
+<!-- ========================================= -->
+
+<div class="modal fade"
+     id="fileManagerModal"
+     tabindex="-1"
+     aria-hidden="true">
+
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+
+                <h5 class="modal-title">
+
+                    <i class="mdi mdi-folder-open-outline me-1"></i>
+                    Dosya Yöneticisi
+
+                </h5>
+
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal">
+                </button>
+
+            </div>
+
+            <div class="modal-body p-0"
+                 style="height:600px;">
+
+                <iframe id="fileManagerFrame"
+                        src=""
+                        style="width:100%; height:100%; border:none;">
+                </iframe>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+@section scripts {
+
+    <partial name="_ValidationScriptsPartial" />
+
+    <!-- TinyMCE -->
+    <script src="~/assets/libs/tinymce/tinymce.min.js"></script>
+
+    <script>
+
+        let currentInput = null;
+
+        // ============================================
+        // TinyMCE
+        // ============================================
+
+        tinymce.init({
+
+        selector: '#IcerikMetniEditor',
+
+        height: 500,
+
+        menubar: true,
+
+        language: 'tr_TR',
+
+        plugins: [
+        'advlist', 'autolink', 'lists', 'link', 'image',
+        'charmap', 'preview', 'anchor', 'searchreplace',
+        'visualblocks', 'code', 'fullscreen',
+        'insertdatetime', 'media', 'table',
+        'help', 'wordcount', 'codesample'
+        ],
+
+        toolbar:
+        'undo redo | blocks fontfamily fontsize | ' +
+        'bold italic underline strikethrough | ' +
+        'forecolor backcolor | ' +
+        'alignleft aligncenter alignright alignjustify | ' +
+        'bullist numlist outdent indent | ' +
+        'link image table media | ' +
+        'codesample | removeformat | help',
+
+        branding: false,
+
+        placeholder: 'Popup içeriğini yazınız...',
+
+        content_style:
+        'body { font-family:Helvetica,Arial,sans-serif; font-size:14px; padding:10px; }',
+
+        file_picker_callback: function (callback, value, meta) {
+
+        let typeFilter = '';
+
+        if (meta.filetype === 'image') {
+        typeFilter = 'image';
+        }
+        else if (meta.filetype === 'media') {
+        typeFilter = 'video';
+        }
+
+        openFileManagerForTinyMCE(function (url) {
+
+        if (meta.filetype === 'image') {
+        callback(url, { alt: 'Görsel' });
+        }
+        else {
+        callback(url);
+        }
+
+        }, typeFilter);
+        },
+
+        setup: function (editor) {
+
+        editor.on('change', function () {
+        editor.save();
+        });
+
+        editor.on('keyup', function () {
+        editor.save();
+        });
+        }
+        });
+
+        // ============================================
+        // Form Submit
+        // ============================================
+
+        document.getElementById('popupCreateForm')
+        .addEventListener('submit', function () {
+
+        let editor = tinymce.get('IcerikMetniEditor');
+
+        if (editor) {
+        editor.save();
+        }
+        });
+
+        // ============================================
+        // File Manager Modal
+        // ============================================
+
+        $(function () {
+
+        $('.open-file-manager').on('click', function () {
+
+        currentInput = $(this)
+        .closest('.input-group')
+        .find('.file-picker-input');
+
+        let type = $(this).data('type');
+
+        $('#fileManagerFrame').attr(
+        'src',
+        '/File?mode=picker&type=' + type
+        );
+
+        $('#fileManagerModal').modal('show');
+        });
+
+        window.addEventListener('message', function (event) {
+
+        if (event.data.type === 'file-selected') {
+
+        if (currentInput) {
+        currentInput.val(event.data.url);
+        }
+
+        $('#fileManagerModal').modal('hide');
+        }
+        });
+        });
+
+        // ============================================
+        // TinyMCE Popup FileManager
+        // ============================================
+
+        function openFileManagerForTinyMCE(callback, type) {
+
+        let w = window.open(
+        '/File?mode=picker&type=' + type,
+        'FileManager',
+        'width=1200,height=700'
+        );
+
+        window.addEventListener('message', function handler(event) {
+
+        if (event.data.type === 'file-selected') {
+
+        callback(event.data.url);
+
+        w.close();
+
+        window.removeEventListener('message', handler);
+        }
+        });
+        }
+
+        // ============================================
+        // Validation Summary
+        // ============================================
+
+        $(document).ready(function () {
+
+        let validationSummary = $('#validationSummary');
+
+        if (
+        validationSummary.find('li').length > 0 ||
+        validationSummary.find('span').length > 0
+        ) {
+        validationSummary.removeClass('d-none');
+        }
+        });
+
+    </script>
+}

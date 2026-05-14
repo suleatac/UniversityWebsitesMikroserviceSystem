@@ -116,5 +116,21 @@ namespace Microservice.Admin.Services
 
             return ServiceResult<PaginatedResult<GetBannerVm>>.Success(response.Content!);
         }
+
+        public async Task<ServiceResult<object>> ReorderBannersAsync(List<ReorderBannerItemVm> items)
+        {
+            _logger.LogInformation("Banner sıralaması güncelleniyor. Öğe sayısı: {Count}", items?.Count ?? 0);
+            var response = await _bannerClient.ReorderBannersAsync(items!);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var problemDetails = response.Error != null
+                    ? JsonSerializer.Deserialize<Microsoft.AspNetCore.Mvc.ProblemDetails>(response.Error.Content!) : null;
+                _logger.LogError("API Error -> StatusCode: {StatusCode}, Title: {Title}, Detail: {Detail}", response.StatusCode, problemDetails?.Title, problemDetails?.Detail);
+                return ServiceResult<object>.Error(problemDetails?.Detail ?? problemDetails?.Title ?? "Sıralama güncellenemedi");
+            }
+
+            return ServiceResult<object>.Success(true);
+        }
     }
 }

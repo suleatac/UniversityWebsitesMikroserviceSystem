@@ -78,21 +78,6 @@ namespace Mikroservice.Site.Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "SikcaSorulanSoruKategorileri",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Ad = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
-                    Sira = table.Column<int>(type: "integer", nullable: false),
-                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_SikcaSorulanSoruKategorileri", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Templateler",
                 columns: table => new
                 {
@@ -109,20 +94,6 @@ namespace Mikroservice.Site.Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "YoneticiTipleri",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    TipAdi = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
-                    Value = table.Column<int>(type: "integer", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_YoneticiTipleri", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "YonetimDuyurular",
                 columns: table => new
                 {
@@ -131,7 +102,7 @@ namespace Mikroservice.Site.Persistence.Migrations
                     Baslik = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
                     Icerik = table.Column<string>(type: "text", nullable: false),
                     EklenmeTarihi = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
-                    Aktif = table.Column<bool>(type: "boolean", nullable: false)
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -147,7 +118,9 @@ namespace Mikroservice.Site.Persistence.Migrations
                     TipId = table.Column<int>(type: "integer", nullable: false),
                     Ad = table.Column<string>(type: "character varying(150)", maxLength: 150, nullable: false),
                     KisaAd = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
-                    Sira = table.Column<int>(type: "integer", nullable: false)
+                    Sira = table.Column<int>(type: "integer", nullable: false),
+                    ParentId = table.Column<int>(type: "integer", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -156,6 +129,12 @@ namespace Mikroservice.Site.Persistence.Migrations
                         name: "FK_Unvanlar_PersonelTipleri_TipId",
                         column: x => x.TipId,
                         principalTable: "PersonelTipleri",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Unvanlar_Unvanlar_ParentId",
+                        column: x => x.ParentId,
+                        principalTable: "Unvanlar",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -250,9 +229,6 @@ namespace Mikroservice.Site.Persistence.Migrations
                     SeoDescription = table.Column<string>(type: "text", nullable: true),
                     Tip = table.Column<int>(type: "integer", nullable: false),
                     Sira = table.Column<int>(type: "integer", nullable: true),
-                    TamEkranMi = table.Column<bool>(type: "boolean", nullable: true, defaultValue: false),
-                    GosterimSuresiSaniye = table.Column<int>(type: "integer", nullable: true, defaultValue: 5),
-                    CookieIleTekrarGosterme = table.Column<bool>(type: "boolean", nullable: true),
                     VideoUrl = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true)
                 },
                 constraints: table =>
@@ -355,14 +331,50 @@ namespace Mikroservice.Site.Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "SikcaSorulanSorular",
+                name: "Popuplar",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     SiteId = table.Column<int>(type: "integer", nullable: false),
+                    Baslik = table.Column<string>(type: "character varying(300)", maxLength: 300, nullable: false),
+                    KisaAciklama = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: false),
+                    IcerikMetni = table.Column<string>(type: "text", nullable: false),
+                    Link = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
+                    ResimUrl = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
+                    GosterimSayisi = table.Column<int>(type: "integer", nullable: false, defaultValue: 0),
+                    YayimTarihi = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    EklemeTarihi = table.Column<DateTime>(type: "timestamp without time zone", nullable: false, defaultValueSql: "NOW()"),
+                    BaslamaTarihi = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
+                    BitisTarihi = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
+                    SeoUrl = table.Column<string>(type: "character varying(300)", maxLength: 300, nullable: true),
+                    SeoTitle = table.Column<string>(type: "text", nullable: true),
+                    SeoDescription = table.Column<string>(type: "text", nullable: true),
+                    TamEkranMi = table.Column<bool>(type: "boolean", nullable: false, defaultValue: false),
+                    GosterimSuresiSaniye = table.Column<int>(type: "integer", nullable: false, defaultValue: 5),
+                    CookieIleTekrarGosterme = table.Column<bool>(type: "boolean", nullable: false, defaultValue: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Popuplar", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Popuplar_Siteler_SiteId",
+                        column: x => x.SiteId,
+                        principalTable: "Siteler",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "SikcaSorulanSorular",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    ParentId = table.Column<int>(type: "integer", nullable: true),
+                    SiteId = table.Column<int>(type: "integer", nullable: false),
                     DilId = table.Column<int>(type: "integer", nullable: false),
-                    KategoriId = table.Column<int>(type: "integer", nullable: false),
                     Soru = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: false),
                     Cevap = table.Column<string>(type: "text", nullable: false),
                     Sira = table.Column<int>(type: "integer", nullable: false),
@@ -379,9 +391,9 @@ namespace Mikroservice.Site.Persistence.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_SikcaSorulanSorular_SikcaSorulanSoruKategorileri_KategoriId",
-                        column: x => x.KategoriId,
-                        principalTable: "SikcaSorulanSoruKategorileri",
+                        name: "FK_SikcaSorulanSorular_SikcaSorulanSorular_ParentId",
+                        column: x => x.ParentId,
+                        principalTable: "SikcaSorulanSorular",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
@@ -441,15 +453,15 @@ namespace Mikroservice.Site.Persistence.Migrations
                     PersonelId = table.Column<int>(type: "integer", nullable: false),
                     UnvanId = table.Column<int>(type: "integer", nullable: false),
                     PersonelTipId = table.Column<int>(type: "integer", nullable: false),
-                    ResimUrl = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: false),
-                    IlgiAlanlari = table.Column<string>(type: "text", nullable: false),
-                    BlogAdress = table.Column<string>(type: "character varying(250)", maxLength: 250, nullable: false),
-                    TwitterAdress = table.Column<string>(type: "character varying(250)", maxLength: 250, nullable: false),
-                    FacebookAdress = table.Column<string>(type: "character varying(250)", maxLength: 250, nullable: false),
-                    InstagramAdress = table.Column<string>(type: "character varying(250)", maxLength: 250, nullable: false),
-                    GoogleplusAdress = table.Column<string>(type: "text", nullable: false),
-                    Hakkinda = table.Column<string>(type: "text", nullable: false),
-                    DeneyimVeCalismalari = table.Column<string>(type: "text", nullable: false),
+                    ResimUrl = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
+                    IlgiAlanlari = table.Column<string>(type: "text", nullable: true),
+                    BlogAdress = table.Column<string>(type: "character varying(250)", maxLength: 250, nullable: true),
+                    TwitterAdress = table.Column<string>(type: "character varying(250)", maxLength: 250, nullable: true),
+                    FacebookAdress = table.Column<string>(type: "character varying(250)", maxLength: 250, nullable: true),
+                    InstagramAdress = table.Column<string>(type: "character varying(250)", maxLength: 250, nullable: true),
+                    GoogleplusAdress = table.Column<string>(type: "text", nullable: true),
+                    Hakkinda = table.Column<string>(type: "text", nullable: true),
+                    DeneyimVeCalismalari = table.Column<string>(type: "text", nullable: true),
                     IsDeleted = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
@@ -481,9 +493,8 @@ namespace Mikroservice.Site.Persistence.Migrations
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    KeycloakUserId = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    KeycloakUserId = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
                     SiteId = table.Column<int>(type: "integer", nullable: false),
-                    YoneticiTipiId = table.Column<int>(type: "integer", nullable: false),
                     IsDeleted = table.Column<bool>(type: "boolean", nullable: false, defaultValue: false)
                 },
                 constraints: table =>
@@ -495,12 +506,6 @@ namespace Mikroservice.Site.Persistence.Migrations
                         principalTable: "Siteler",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_YoneticiSiteler_YoneticiTipleri_YoneticiTipiId",
-                        column: x => x.YoneticiTipiId,
-                        principalTable: "YoneticiTipleri",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -616,14 +621,10 @@ namespace Mikroservice.Site.Persistence.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_SikcaSorulanSoruKategorileri_Ad",
-                table: "SikcaSorulanSoruKategorileri",
-                column: "Ad");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_SikcaSorulanSoruKategorileri_Sira",
-                table: "SikcaSorulanSoruKategorileri",
-                column: "Sira");
+                name: "IX_Popuplar_SiteId",
+                table: "Popuplar",
+                column: "SiteId",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_SikcaSorulanSorular_DilId",
@@ -631,9 +632,9 @@ namespace Mikroservice.Site.Persistence.Migrations
                 column: "DilId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_SikcaSorulanSorular_KategoriId_Sira",
+                name: "IX_SikcaSorulanSorular_ParentId_Sira",
                 table: "SikcaSorulanSorular",
-                columns: new[] { "KategoriId", "Sira" });
+                columns: new[] { "ParentId", "Sira" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_SikcaSorulanSorular_SeoUrl",
@@ -678,6 +679,26 @@ namespace Mikroservice.Site.Persistence.Migrations
                 column: "UnvanId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Unvanlar_Ad",
+                table: "Unvanlar",
+                column: "Ad");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Unvanlar_KisaAd",
+                table: "Unvanlar",
+                column: "KisaAd");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Unvanlar_ParentId",
+                table: "Unvanlar",
+                column: "ParentId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Unvanlar_Sira",
+                table: "Unvanlar",
+                column: "Sira");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Unvanlar_TipId",
                 table: "Unvanlar",
                 column: "TipId");
@@ -686,11 +707,6 @@ namespace Mikroservice.Site.Persistence.Migrations
                 name: "IX_YoneticiSiteler_SiteId_KeycloakUserId",
                 table: "YoneticiSiteler",
                 columns: new[] { "SiteId", "KeycloakUserId" });
-
-            migrationBuilder.CreateIndex(
-                name: "IX_YoneticiSiteler_YoneticiTipiId",
-                table: "YoneticiSiteler",
-                column: "YoneticiTipiId");
         }
 
         /// <inheritdoc />
@@ -712,6 +728,9 @@ namespace Mikroservice.Site.Persistence.Migrations
                 name: "PersonelTelefonlar");
 
             migrationBuilder.DropTable(
+                name: "Popuplar");
+
+            migrationBuilder.DropTable(
                 name: "SikcaSorulanSorular");
 
             migrationBuilder.DropTable(
@@ -731,12 +750,6 @@ namespace Mikroservice.Site.Persistence.Migrations
 
             migrationBuilder.DropTable(
                 name: "Diller");
-
-            migrationBuilder.DropTable(
-                name: "SikcaSorulanSoruKategorileri");
-
-            migrationBuilder.DropTable(
-                name: "YoneticiTipleri");
 
             migrationBuilder.DropTable(
                 name: "Siteler");

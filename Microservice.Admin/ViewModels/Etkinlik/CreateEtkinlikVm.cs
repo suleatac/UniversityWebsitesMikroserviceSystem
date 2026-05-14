@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace Microservice.Admin.ViewModels.Etkinlik
 {
     public class CreateEtkinlikVm
@@ -12,9 +14,12 @@ namespace Microservice.Admin.ViewModels.Etkinlik
 
         public string? Link { get; set; }
         public string? ResimUrl { get; set; }
+        [DisplayFormat(DataFormatString = "{0:yyyy-MM-ddTHH:mm}", ApplyFormatInEditMode = true)]
 
         public DateTime YayimTarihi { get; set; } = DateTime.Now;
+        [DisplayFormat(DataFormatString = "{0:yyyy-MM-ddTHH:mm}", ApplyFormatInEditMode = true)]
         public DateTime? BaslamaTarihi { get; set; }
+        [DisplayFormat(DataFormatString = "{0:yyyy-MM-ddTHH:mm}", ApplyFormatInEditMode = true)]
         public DateTime? BitisTarihi { get; set; }
 
         public string? SeoUrl { get; set; }

@@ -7,28 +7,71 @@
 }
 
 @section styles {
+    <link href="~/assets/libs/jstree/themes/default/style.min.css" rel="stylesheet" />
     <style>
+        /* jsTree özelleştirmeleri */
+        #sssTree .jstree-default .jstree-node {
+            margin-left: 14px;
+        }
+        #sssTree .jstree-default .jstree-icon {
+            color: #17a2b8;
+        }
+        #sssTree .jstree-default .jstree-hovered {
+            background: #f0faff;
+            border-color: transparent;
+        }
+        #sssTree .jstree-default .jstree-clicked {
+            background: #17a2b8;
+            color: #fff;
+            border-radius: 3px;
+        }
+        .tree-toolbar {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+        .tree-toolbar .btn {
+            font-size: 0.8125rem;
+        }
+        .tree-toast {
+            position: fixed;
+            bottom: 1.5rem;
+            right: 1.5rem;
+            z-index: 9999;
+            min-width: 250px;
+        }
+        .tree-search-container {
+            position: relative;
+        }
+        .tree-search-container input {
+            padding-right: 2.5rem;
+        }
+        .tree-search-container .search-clear {
+            position: absolute;
+            right: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #6b7280;
+            background: none;
+            border: none;
+            padding: 0;
+        }
+        .tree-search-container .search-clear:hover {
+            color: #17a2b8;
+        }
         .page-header-card {
             background: linear-gradient(135deg, #17a2b8 0%, #4fc3f7 100%);
             border-radius: 12px; padding: 1.5rem; color: white; margin-bottom: 1.5rem;
             box-shadow: 0 4px 12px rgba(23, 162, 184, 0.2);
         }
         .page-header-card h4 { font-weight: 600; margin-bottom: 0.25rem; }
-        .page-header-card .breadcrumb { background: transparent; padding: 0; margin: 0; }
-        .page-header-card .breadcrumb-item a { color: rgba(255,255,255,0.9); text-decoration: none; }
-        .page-header-card .breadcrumb-item a:hover { color: #ffffff; }
-        .page-header-card .breadcrumb-item.active { color: rgba(255,255,255,0.8); }
         .btn-create {
             background: linear-gradient(135deg, #17a2b8 0%, #4fc3f7 100%);
             border: none; color: white; padding: 0.6rem 1.2rem; border-radius: 8px; font-weight: 500;
             transition: all 0.2s ease;
         }
         .btn-create:hover { transform: translateY(-2px); box-shadow: 0 3px 10px rgba(23, 162, 184, 0.3); color: white; }
-        .table-card { border: none; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.06); }
-        .table-card .card-header {
-            background: linear-gradient(135deg, #fdfefe 0%, #f0faff 100%);
-            border-bottom: 2px solid #17a2b8; border-radius: 12px 12px 0 0 !important; padding: 1rem 1.25rem;
-        }
     </style>
 }
 
@@ -36,7 +79,7 @@
     <div class="d-flex justify-content-between align-items-center">
         <div>
             <h4><i class="mdi mdi-help-circle me-2"></i>Sıkça Sorulan Sorular</h4>
-            <p class="mb-0 opacity-75">Tüm SSS kayıtlarını buradan yönetebilirsiniz</p>
+            <p class="mb-0 opacity-75">SSS kayıtlarını ağaç yapısında görüntüleyin ve yönetin</p>
         </div>
         <a asp-action="Create" class="btn btn-create">
             <i class="mdi mdi-plus-circle me-1"></i> Yeni Soru Ekle
@@ -46,14 +89,24 @@
 
 <div class="row">
     <div class="col-12">
-        <div class="card table-card">
-            <div class="card-header">
-                <div class="d-flex justify-content-between align-items-center">
-                    <h5 class="card-title mb-0"><i class="mdi mdi-table me-2 text-primary"></i>SSS Listesi</h5>
-                    <span class="badge bg-info bg-opacity-10 text-info">@Model.Count() Kayıt</span>
+        <div class="card shadow-lg border-0">
+            <div class="p-4 bg-info bg-opacity-10 border-bottom">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div class="d-flex align-items-center">
+                        <div class="avatar-sm me-3">
+                            <div class="avatar-title bg-info rounded-circle">
+                                <i class="mdi mdi-help-circle fs-5"></i>
+                            </div>
+                        </div>
+                        <div>
+                            <h5 class="card-title mb-1">SSS Ağacı</h5>
+                            <p class="card-text text-muted mb-0">Soruları sürükleyerek yeniden sıralayabilir ve hiyerarşiyi düzenleyebilirsiniz</p>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="card-body">
+
+            <div class="card-body p-4">
                 @if (TempData["Success"] != null)
                 {
                     <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -69,39 +122,244 @@
                     </div>
                 }
 
-                <div class="table-responsive">
-                    <table class="table table-striped table-bordered">
-                        <thead>
-                            <tr>
-                                <th width="60">ID</th>
-                                <th>Soru</th>
-                                <th>Kategori</th>
-                                <th width="60">Sıra</th>
-                                <th width="150">İşlemler</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var item in Model)
-                            {
-                                <tr>
-                                    <td>@item.Id</td>
-                                    <td>@item.Soru</td>
-                                    <td><span class="badge bg-info bg-opacity-10 text-info">@item.KategoriAd</span></td>
-                                    <td>@item.Sira</td>
-                                    <td>
-                                        <a class="btn btn-outline-primary btn-sm" asp-action="Edit" asp-route-id="@item.Id" title="Düzenle">
-                                            <i class="fas fa-pencil-alt"></i>
-                                        </a>
-                                        <a class="btn btn-outline-danger btn-sm" asp-action="Delete" asp-route-id="@item.Id" title="Sil">
-                                            <i class="fas fa-trash-alt"></i>
-                                        </a>
-                                    </td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
+                <!-- Arama ve aksiyonlar -->
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <div class="tree-search-container">
+                            <input type="text" id="treeSearch" class="form-control form-control-sm" placeholder="Soru ara..." />
+                            <button type="button" class="search-clear" id="clearSearch" title="Temizle" style="display:none;">
+                                <i class="mdi mdi-close-circle"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="col-md-8">
+                        <div class="tree-toolbar d-flex justify-content-end">
+                            <button type="button" class="btn btn-outline-secondary btn-sm" id="btnExpandAll" title="Tümünü Genişlet">
+                                <i class="mdi mdi-unfold-more-horizontal me-1"></i> Genişlet
+                            </button>
+                            <button type="button" class="btn btn-outline-secondary btn-sm" id="btnCollapseAll" title="Tümünü Daralt">
+                                <i class="mdi mdi-unfold-less-horizontal me-1"></i> Daralt
+                            </button>
+                            <button type="button" class="btn btn-outline-primary btn-sm" id="btnEditSelected" title="Düzenle" disabled>
+                                <i class="mdi mdi-pencil me-1"></i> Düzenle
+                            </button>
+                            <button type="button" class="btn btn-outline-danger btn-sm" id="btnDeleteSelected" title="Sil" disabled>
+                                <i class="mdi mdi-delete me-1"></i> Sil
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- jsTree ağacı -->
+                <div id="sssTree" class="border rounded p-3" style="min-height: 300px; max-height: 600px; overflow-y: auto;">
+                </div>
+
+                <!-- Bilgi mesajı -->
+                <div class="mt-3">
+                    <small class="text-muted">
+                        <i class="mdi mdi-information-outline me-1"></i>
+                        Soruları sürükleyerek sıralayabilir veya üst soru değiştirebilirsiniz. Düzenlemek için çift tıklayın.
+                    </small>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<!-- Toast bildirim alanı -->
+<div id="treeToast" class="tree-toast" style="display:none;">
+    <div class="alert border-0 mb-0" role="alert" id="treeToastContent"></div>
+</div>
+
+@section scripts {
+    <script src="~/assets/libs/jstree/jstree.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            var tree = $('#sssTree');
+
+            // jsTree başlat
+            tree.jstree({
+                'core': {
+                    'data': {
+                        'url': '@Url.Action("GetTreeData", "SikcaSorulanSoru")',
+                        'dataType': 'json'
+                    },
+                    'check_callback': function (operation, node, node_parent, node_position, more) {
+                        return true;
+                    },
+                    'themes': {
+                        'name': 'default',
+                        'responsive': true,
+                        'dots': true,
+                        'icons': true
+                    }
+                },
+                'plugins': ['dnd', 'search', 'contextmenu'],
+                'dnd': {
+                    'is_draggable': function (nodes) {
+                        return true;
+                    },
+                    'check_while_dragging': true,
+                    'touch': 'selected'
+                },
+                'search': {
+                    'case_sensitive': false,
+                    'show_only_matches': true,
+                    'show_only_matches_children': true
+                },
+                'contextmenu': {
+                    'items': function (node) {
+                        return {
+                            'edit': {
+                                'label': 'Düzenle',
+                                'icon': 'mdi mdi-pencil',
+                                'action': function () {
+                                    window.location.href = '/SikcaSorulanSoru/Edit/' + node.id;
+                                }
+                            },
+                            'delete': {
+                                'label': 'Sil',
+                                'icon': 'mdi mdi-delete',
+                                'action': function () {
+                                    window.location.href = '/SikcaSorulanSoru/Delete/' + node.id;
+                                }
+                            },
+                            'add': {
+                                'label': 'Yeni Alt Soru',
+                                'icon': 'mdi mdi-plus',
+                                'action': function () {
+                                    window.location.href = '/SikcaSorulanSoru/Create?parentId=' + node.id;
+                                }
+                            }
+                        };
+                    }
+                }
+            });
+
+            // Sayfa yüklendiğinde tüm düğümleri genişlet
+            tree.on('loaded.jstree', function () {
+                tree.jstree('open_all');
+            });
+
+            // Arama
+            var searchTimeout = null;
+            $('#treeSearch').on('input', function () {
+                var val = $(this).val();
+                $('#clearSearch').toggle(val.length > 0);
+
+                if (searchTimeout) clearTimeout(searchTimeout);
+                searchTimeout = setTimeout(function () {
+                    tree.jstree(true).search(val);
+                }, 250);
+            });
+
+            $('#clearSearch').on('click', function () {
+                $('#treeSearch').val('');
+                tree.jstree(true).search('');
+                $(this).hide();
+            });
+
+            // Tümünü genişlet / daralt
+            $('#btnExpandAll').on('click', function () {
+                tree.jstree('open_all');
+            });
+            $('#btnCollapseAll').on('click', function () {
+                tree.jstree('close_all');
+            });
+
+            // Seçim değiştiğinde butonları güncelle
+            tree.on('changed.jstree', function (e, data) {
+                var selected = data.selected;
+                $('#btnEditSelected').prop('disabled', selected.length !== 1);
+                $('#btnDeleteSelected').prop('disabled', selected.length === 0);
+            });
+
+            // Düzenle butonu
+            $('#btnEditSelected').on('click', function () {
+                var selected = tree.jstree('get_selected');
+                if (selected.length === 1) {
+                    window.location.href = '/SikcaSorulanSoru/Edit/' + selected[0];
+                }
+            });
+
+            // Sil butonu
+            $('#btnDeleteSelected').on('click', function () {
+                var selected = tree.jstree('get_selected');
+                if (selected.length > 0 && confirm('Seçili soruyu silmek istediğinizden emin misiniz?')) {
+                    window.location.href = '/SikcaSorulanSoru/Delete/' + selected[0];
+                }
+            });
+
+            // Çift tıkla düzenle
+            tree.on('dblclick.jstree', function (e) {
+                var node = $(e.target).closest('.jstree-node');
+                if (node.length) {
+                    var id = node[0].id;
+                    if (id) {
+                        window.location.href = '/SikcaSorulanSoru/Edit/' + id.replace('_jstree_', '');
+                    }
+                }
+            });
+
+            // Drag & Drop sonrası taşıma
+            tree.on('move_node.jstree', function (e, data) {
+                var movedId = data.node.id;
+                var newParentId = data.parent === '#' ? null : parseInt(data.parent);
+                var newPosition = data.position;
+
+                var parentNode = data.parent === '#' ? null : tree.jstree('get_node', data.parent);
+                var siblingIds = [];
+
+                if (parentNode) {
+                    siblingIds = parentNode.children.map(function (childId) {
+                        return parseInt(childId);
+                    });
+                } else {
+                    var rootNode = tree.jstree('get_node', '#');
+                    siblingIds = rootNode.children.map(function (childId) {
+                        return parseInt(childId);
+                    });
+                }
+
+                var moveData = {
+                    id: parseInt(movedId),
+                    parentId: newParentId,
+                    sira: newPosition,
+                    siblingIds: siblingIds
+                };
+
+                $.ajax({
+                    url: '@Url.Action("MoveSikcaSorulanSoru", "SikcaSorulanSoru")',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(moveData),
+                    headers: {
+                        'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+                    },
+                    success: function (result) {
+                        showToast('Soru başarıyla taşındı.', 'success');
+                    },
+                    error: function (xhr) {
+                        showToast('Soru taşınırken bir hata oluştu. Sayfa yenileniyor...', 'danger');
+                        setTimeout(function () { location.reload(); }, 2000);
+                    }
+                });
+            });
+
+            function showToast(message, type) {
+                var toast = $('#treeToast');
+                var content = $('#treeToastContent');
+                content.removeClass('alert-success alert-danger alert-warning alert-info');
+                content.addClass('alert-' + type);
+                content.html('<i class="mdi ' + (type === 'success' ? 'mdi-check-circle' : 'mdi-alert-circle') + ' me-2"></i>' + message);
+                toast.fadeIn();
+                setTimeout(function () { toast.fadeOut(); }, 3000);
+            }
+        });
+    </script>
+
+    <!-- Anti-forgery token for AJAX -->
+    <form id="antiForgeryForm" style="display:none;">
+        @Html.AntiForgeryToken()
+    </form>
+}

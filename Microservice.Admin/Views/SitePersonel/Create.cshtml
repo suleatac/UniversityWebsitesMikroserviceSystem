@@ -30,14 +30,40 @@
                     </div>
 
                     <input type="hidden" asp-for="CreateSitePersonel.SiteId" />
+                    <!-- Personel Seçimi -->
+                    <div class="col-md-12">
+                        <h6 class="text-primary border-bottom pb-2">
+                            <i class="mdi mdi-account-search me-1"></i> Personel Seçimi
+                        </h6>
 
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="mb-3">
+                                    <label asp-for="CreateSitePersonel.PersonelId" class="form-label">
+                                        Personel Seç <span class="text-danger">*</span>
+                                    </label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="mdi mdi-account-tie"></i></span>
+                                        <select asp-for="CreateSitePersonel.PersonelId" class="form-select" id="personelSelect">
+                                            <option value="">-- Personel Seçin --</option>
+                                            @foreach (var personel in Model.TumPersoneller)
+                                            {
+                                                <option value="@personel.Id" data-firstname="@personel.Adi" data-lastname="@personel.Soyadi" data-email="@personel.Eposta">@personel.Adi @personel.Soyadi</option>
+                                            }
+                                        </select>
+                                    </div>
+                                    <span asp-validation-for="CreateSitePersonel.PersonelId" class="text-danger small"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     <!-- Temel Bilgiler -->
                     <div class="mb-4">
                         <h6 class="text-primary border-bottom pb-2">
                             <i class="mdi mdi-information-outline me-1"></i> Temel Bilgiler
                         </h6>
                         <div class="row">
-                            <div class="col-md-4">
+                            <div class="col-md-6">
                                 <div class="mb-3">
                                     <label asp-for="CreateSitePersonel.UnvanId" class="form-label">Unvan <span class="text-danger">*</span></label>
                                     <select asp-for="CreateSitePersonel.UnvanId" class="form-select">
@@ -50,7 +76,7 @@
                                     <span asp-validation-for="CreateSitePersonel.UnvanId" class="text-danger small"></span>
                                 </div>
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-md-6">
                                 <div class="mb-3">
                                     <label asp-for="CreateSitePersonel.PersonelTipId" class="form-label">Personel Tip <span class="text-danger">*</span></label>
                                     <select asp-for="CreateSitePersonel.PersonelTipId" class="form-select">
@@ -62,14 +88,7 @@
                                     </select>
                                     <span asp-validation-for="CreateSitePersonel.PersonelTipId" class="text-danger small"></span>
                                 </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="mb-3">
-                                    <label asp-for="CreateSitePersonel.PersonelId" class="form-label">Personel ID <span class="text-danger">*</span></label>
-                                    <input asp-for="CreateSitePersonel.PersonelId" class="form-control" placeholder="Personel ID" />
-                                    <span asp-validation-for="CreateSitePersonel.PersonelId" class="text-danger small"></span>
-                                </div>
-                            </div>
+                            </div>            
                         </div>
                     </div>
 
@@ -101,7 +120,10 @@
                                     <label asp-for="CreateSitePersonel.ResimUrl" class="form-label">Resim URL <span class="text-danger">*</span></label>
                                     <div class="input-group">
                                         <span class="input-group-text"><i class="mdi mdi-image"></i></span>
-                                        <input asp-for="CreateSitePersonel.ResimUrl" class="form-control" placeholder="Resim URL" />
+                                        <input asp-for="CreateSitePersonel.ResimUrl" id="ResimUrlInput" class="form-control" placeholder="Resim URL" />
+                                        <button type="button" class="btn btn-outline-primary" id="openFileManagerBtn" title="Dosya Yöneticisi">
+                                            <i class="mdi mdi-folder-open-outline"></i>
+                                        </button>
                                     </div>
                                     <span asp-validation-for="CreateSitePersonel.ResimUrl" class="text-danger small"></span>
                                 </div>
@@ -174,3 +196,60 @@
         </div>
     </div>
 </div>
+<!-- Dosya Yöneticisi Modal -->
+<div class="modal fade" id="fileManagerModal" tabindex="-1" aria-labelledby="fileManagerModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="fileManagerModalLabel">
+                    <i class="mdi mdi-folder-open-outline me-1"></i> Dosya Yöneticisi
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
+            </div>
+            <div class="modal-body p-0" style="height: 600px;">
+                <iframe id="fileManagerFrame" src="" style="width:100%; height:100%; border:none;"></iframe>
+            </div>
+        </div>
+    </div>
+</div>
+
+                
+@section scripts {
+    <!-- Validation Scripts -->
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+       
+
+        // ============================================
+        // Dosya Yöneticisi - Modal (Resim URL alanı için)
+        // ============================================
+        $(function () {
+        $('#openFileManagerBtn').on('click', function () {
+        var type = 'image';
+        $('#fileManagerFrame').attr('src', '/File?mode=picker&type=' + type);
+        $('#fileManagerModal').modal('show');
+        });
+
+        // Dosya seçildiğinde mesaj dinle
+        window.addEventListener('message', function (event) {
+        if (event.data.type === 'file-selected') {
+        $('#ResimUrlInput').val(event.data.url);
+        $('#fileManagerModal').modal('hide');
+        }
+        });
+        });
+
+       
+
+        // ============================================
+        // Validation Summary Göster/Gizle
+        // ============================================
+        $(document).ready(function () {
+        var validationSummary = $('#validationSummary');
+        if (validationSummary.find('li').length > 0 || validationSummary.find('span').length > 0) {
+        validationSummary.removeClass('d-none');
+        }
+        });
+    </script>
+}

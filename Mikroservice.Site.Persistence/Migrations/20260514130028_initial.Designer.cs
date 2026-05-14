@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Mikroservice.Site.Persistence.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260430120649_initial")]
+    [Migration("20260514130028_initial")]
     partial class initial
     {
         /// <inheritdoc />
@@ -25,27 +25,6 @@ namespace Mikroservice.Site.Persistence.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("Microservice.Site.Domain.Entities.YoneticiTipi", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("TipAdi")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
-
-                    b.Property<int>("Value")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("YoneticiTipleri");
-                });
-
             modelBuilder.Entity("Microservice.Site.Domain.Entities.YonetimDuyuru", b =>
                 {
                     b.Property<int>("Id")
@@ -53,9 +32,6 @@ namespace Mikroservice.Site.Persistence.Migrations
                         .HasColumnType("integer");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<bool>("Aktif")
-                        .HasColumnType("boolean");
 
                     b.Property<string>("Baslik")
                         .IsRequired()
@@ -68,6 +44,9 @@ namespace Mikroservice.Site.Persistence.Migrations
                     b.Property<string>("Icerik")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
 
                     b.HasKey("Id");
 
@@ -435,6 +414,94 @@ namespace Mikroservice.Site.Persistence.Migrations
                     b.ToTable("PersonelTipleri");
                 });
 
+            modelBuilder.Entity("Mikroservice.Site.Domain.Entities.Popup", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime?>("BaslamaTarihi")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("Baslik")
+                        .IsRequired()
+                        .HasMaxLength(300)
+                        .HasColumnType("character varying(300)");
+
+                    b.Property<DateTime?>("BitisTarihi")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<bool>("CookieIleTekrarGosterme")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(true);
+
+                    b.Property<DateTime>("EklemeTarihi")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp without time zone")
+                        .HasDefaultValueSql("NOW()");
+
+                    b.Property<int>("GosterimSayisi")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValue(0);
+
+                    b.Property<int>("GosterimSuresiSaniye")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValue(5);
+
+                    b.Property<string>("IcerikMetni")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("KisaAciklama")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<string>("Link")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<string>("ResimUrl")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<string>("SeoDescription")
+                        .HasColumnType("text");
+
+                    b.Property<string>("SeoTitle")
+                        .HasColumnType("text");
+
+                    b.Property<string>("SeoUrl")
+                        .HasMaxLength(300)
+                        .HasColumnType("character varying(300)");
+
+                    b.Property<int>("SiteId")
+                        .HasColumnType("integer");
+
+                    b.Property<bool>("TamEkranMi")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false);
+
+                    b.Property<DateTime>("YayimTarihi")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SiteId")
+                        .IsUnique();
+
+                    b.ToTable("Popuplar");
+                });
+
             modelBuilder.Entity("Mikroservice.Site.Domain.Entities.SikcaSorulanSoru", b =>
                 {
                     b.Property<int>("Id")
@@ -453,7 +520,7 @@ namespace Mikroservice.Site.Persistence.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
 
-                    b.Property<int>("KategoriId")
+                    b.Property<int?>("ParentId")
                         .HasColumnType("integer");
 
                     b.Property<string>("SeoUrl")
@@ -477,39 +544,11 @@ namespace Mikroservice.Site.Persistence.Migrations
 
                     b.HasIndex("SeoUrl");
 
-                    b.HasIndex("KategoriId", "Sira");
+                    b.HasIndex("ParentId", "Sira");
 
                     b.HasIndex("SiteId", "DilId");
 
                     b.ToTable("SikcaSorulanSorular");
-                });
-
-            modelBuilder.Entity("Mikroservice.Site.Domain.Entities.SikcaSorulanSoruKategori", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Ad")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("character varying(200)");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
-
-                    b.Property<int>("Sira")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("Ad");
-
-                    b.HasIndex("Sira");
-
-                    b.ToTable("SikcaSorulanSoruKategorileri");
                 });
 
             modelBuilder.Entity("Mikroservice.Site.Domain.Entities.Site", b =>
@@ -686,33 +725,26 @@ namespace Mikroservice.Site.Persistence.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("BlogAdress")
-                        .IsRequired()
                         .HasMaxLength(250)
                         .HasColumnType("character varying(250)");
 
                     b.Property<string>("DeneyimVeCalismalari")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("FacebookAdress")
-                        .IsRequired()
                         .HasMaxLength(250)
                         .HasColumnType("character varying(250)");
 
                     b.Property<string>("GoogleplusAdress")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Hakkinda")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("IlgiAlanlari")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("InstagramAdress")
-                        .IsRequired()
                         .HasMaxLength(250)
                         .HasColumnType("character varying(250)");
 
@@ -726,7 +758,6 @@ namespace Mikroservice.Site.Persistence.Migrations
                         .HasColumnType("integer");
 
                     b.Property<string>("ResimUrl")
-                        .IsRequired()
                         .HasMaxLength(500)
                         .HasColumnType("character varying(500)");
 
@@ -734,7 +765,6 @@ namespace Mikroservice.Site.Persistence.Migrations
                         .HasColumnType("integer");
 
                     b.Property<string>("TwitterAdress")
-                        .IsRequired()
                         .HasMaxLength(250)
                         .HasColumnType("character varying(250)");
 
@@ -795,10 +825,16 @@ namespace Mikroservice.Site.Persistence.Migrations
                         .HasMaxLength(150)
                         .HasColumnType("character varying(150)");
 
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
                     b.Property<string>("KisaAd")
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)");
+
+                    b.Property<int?>("ParentId")
+                        .HasColumnType("integer");
 
                     b.Property<int>("Sira")
                         .HasColumnType("integer");
@@ -807,6 +843,14 @@ namespace Mikroservice.Site.Persistence.Migrations
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Ad");
+
+                    b.HasIndex("KisaAd");
+
+                    b.HasIndex("ParentId");
+
+                    b.HasIndex("Sira");
 
                     b.HasIndex("TipId");
 
@@ -827,19 +871,13 @@ namespace Mikroservice.Site.Persistence.Migrations
                         .HasDefaultValue(false);
 
                     b.Property<string>("KeycloakUserId")
-                        .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
 
                     b.Property<int>("SiteId")
                         .HasColumnType("integer");
 
-                    b.Property<int>("YoneticiTipiId")
-                        .HasColumnType("integer");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("YoneticiTipiId");
 
                     b.HasIndex("SiteId", "KeycloakUserId");
 
@@ -884,26 +922,6 @@ namespace Mikroservice.Site.Persistence.Migrations
                     b.HasBaseType("Mikroservice.Site.Domain.Entities.Icerik");
 
                     b.HasDiscriminator().HasValue(1);
-                });
-
-            modelBuilder.Entity("Mikroservice.Site.Domain.Entities.Popup", b =>
-                {
-                    b.HasBaseType("Mikroservice.Site.Domain.Entities.Icerik");
-
-                    b.Property<bool>("CookieIleTekrarGosterme")
-                        .HasColumnType("boolean");
-
-                    b.Property<int>("GosterimSuresiSaniye")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasDefaultValue(5);
-
-                    b.Property<bool>("TamEkranMi")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("boolean")
-                        .HasDefaultValue(false);
-
-                    b.HasDiscriminator().HasValue(7);
                 });
 
             modelBuilder.Entity("Mikroservice.Site.Domain.Entities.Video", b =>
@@ -1027,6 +1045,17 @@ namespace Mikroservice.Site.Persistence.Migrations
                     b.Navigation("SitePersonel");
                 });
 
+            modelBuilder.Entity("Mikroservice.Site.Domain.Entities.Popup", b =>
+                {
+                    b.HasOne("Mikroservice.Site.Domain.Entities.Site", "Site")
+                        .WithOne("Popup")
+                        .HasForeignKey("Mikroservice.Site.Domain.Entities.Popup", "SiteId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Site");
+                });
+
             modelBuilder.Entity("Mikroservice.Site.Domain.Entities.SikcaSorulanSoru", b =>
                 {
                     b.HasOne("Mikroservice.Site.Domain.Entities.Dil", "Dil")
@@ -1035,11 +1064,10 @@ namespace Mikroservice.Site.Persistence.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("Mikroservice.Site.Domain.Entities.SikcaSorulanSoruKategori", "Kategori")
-                        .WithMany("SikcaSorulanSorus")
-                        .HasForeignKey("KategoriId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                    b.HasOne("Mikroservice.Site.Domain.Entities.SikcaSorulanSoru", "Parent")
+                        .WithMany("Children")
+                        .HasForeignKey("ParentId")
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("Mikroservice.Site.Domain.Entities.Site", "Site")
                         .WithMany("SikcaSorulanSorus")
@@ -1049,7 +1077,7 @@ namespace Mikroservice.Site.Persistence.Migrations
 
                     b.Navigation("Dil");
 
-                    b.Navigation("Kategori");
+                    b.Navigation("Parent");
 
                     b.Navigation("Site");
                 });
@@ -1113,11 +1141,18 @@ namespace Mikroservice.Site.Persistence.Migrations
 
             modelBuilder.Entity("Mikroservice.Site.Domain.Entities.Unvan", b =>
                 {
+                    b.HasOne("Mikroservice.Site.Domain.Entities.Unvan", "Parent")
+                        .WithMany("Children")
+                        .HasForeignKey("ParentId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.HasOne("Mikroservice.Site.Domain.Entities.PersonelTip", "PersonelTip")
                         .WithMany("Unvans")
                         .HasForeignKey("TipId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.Navigation("Parent");
 
                     b.Navigation("PersonelTip");
                 });
@@ -1130,15 +1165,7 @@ namespace Mikroservice.Site.Persistence.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Microservice.Site.Domain.Entities.YoneticiTipi", "YoneticiTipi")
-                        .WithMany()
-                        .HasForeignKey("YoneticiTipiId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.Navigation("Site");
-
-                    b.Navigation("YoneticiTipi");
                 });
 
             modelBuilder.Entity("Mikroservice.Site.Domain.Entities.Banner", b =>
@@ -1196,17 +1223,6 @@ namespace Mikroservice.Site.Persistence.Migrations
                     b.Navigation("Site");
                 });
 
-            modelBuilder.Entity("Mikroservice.Site.Domain.Entities.Popup", b =>
-                {
-                    b.HasOne("Mikroservice.Site.Domain.Entities.Site", "Site")
-                        .WithMany()
-                        .HasForeignKey("SiteId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Site");
-                });
-
             modelBuilder.Entity("Mikroservice.Site.Domain.Entities.Video", b =>
                 {
                     b.HasOne("Mikroservice.Site.Domain.Entities.Site", "Site")
@@ -1237,9 +1253,9 @@ namespace Mikroservice.Site.Persistence.Migrations
                     b.Navigation("Unvans");
                 });
 
-            modelBuilder.Entity("Mikroservice.Site.Domain.Entities.SikcaSorulanSoruKategori", b =>
+            modelBuilder.Entity("Mikroservice.Site.Domain.Entities.SikcaSorulanSoru", b =>
                 {
-                    b.Navigation("SikcaSorulanSorus");
+                    b.Navigation("Children");
                 });
 
             modelBuilder.Entity("Mikroservice.Site.Domain.Entities.Site", b =>
@@ -1253,6 +1269,8 @@ namespace Mikroservice.Site.Persistence.Migrations
                     b.Navigation("MediaFiles");
 
                     b.Navigation("Menus");
+
+                    b.Navigation("Popup");
 
                     b.Navigation("SikcaSorulanSorus");
 
@@ -1276,6 +1294,8 @@ namespace Mikroservice.Site.Persistence.Migrations
 
             modelBuilder.Entity("Mikroservice.Site.Domain.Entities.Unvan", b =>
                 {
+                    b.Navigation("Children");
+
                     b.Navigation("SitePersonels");
                 });
 #pragma warning restore 612, 618

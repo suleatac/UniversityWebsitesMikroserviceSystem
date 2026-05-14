@@ -18,15 +18,13 @@ namespace Mikroservice.Site.Application.Features.SikcaSorulanSoruFeatures.Create
             {
                 SiteId = request.SiteId,
                 DilId = request.DilId,
-                KategoriId = request.KategoriId,
+                ParentId = request.ParentId,
 
                 Soru = request.Soru,
                 Cevap = request.Cevap,
 
                 Sira = request.Sira,
-                SeoUrl = request.SeoUrl,
-
-                IsDeleted = false
+                SeoUrl = request.SeoUrl
             };
 
             await soruRepository.AddAsync(entity);

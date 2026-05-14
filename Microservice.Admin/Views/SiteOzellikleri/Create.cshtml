@@ -11,8 +11,14 @@
         <div class="card shadow-lg border-0">
             <div class="card-header bg-primary bg-opacity-10 border-bottom">
                 <div class="d-flex align-items-center">
-                    <div class="avatar-sm me-3"><div class="avatar-title bg-primary rounded-circle"><i class="mdi mdi-cog-plus fs-5"></i></div></div>
-                    <div><h5 class="card-title mb-1">Site Özellikleri Bilgileri</h5><p class="card-text text-muted mb-0">Yeni site özellikleri oluşturmak için formu doldurun</p></div>
+                    <div class="avatar-sm me-3">
+                        <div class="avatar-title bg-primary rounded-circle">
+                            <i class="mdi mdi-pencil-outline fs-5"></i>
+                        </div>
+                    </div>
+                    <div>
+                        <h5 class="card-title mb-1">Site Özellikleri Bilgileri</h5><p class="card-text text-muted mb-0">Yeni site özellikleri oluşturmak için formu doldurun</p>
+                    </div>
                 </div>
             </div>
             <div class="card-body p-4">
@@ -55,7 +61,21 @@
                                 <div class="mb-3"><label asp-for="SiteHakkindaLink" class="form-label">Hakkında Link</label><div class="input-group"><span class="input-group-text"><i class="mdi mdi-link"></i></span><input asp-for="SiteHakkindaLink" class="form-control" placeholder="https://..." /></div></div>
                             </div>
                             <div class="col-md-6">
-                                <div class="mb-3"><label asp-for="SiteHakkindaResim" class="form-label">Hakkında Resim</label><div class="input-group"><span class="input-group-text"><i class="mdi mdi-image"></i></span><input asp-for="SiteHakkindaResim" class="form-control" placeholder="Resim URL" /></div></div>
+                                <div class="mb-3">
+                                    <label asp-for="SiteHakkindaResim" class="form-label">Hakkında Resim</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="mdi mdi-image"></i></span>
+                                        <input asp-for="SiteHakkindaResim"
+                                               class="form-control file-picker-input"
+                                               placeholder="Resim URL" />
+
+                                        <button type="button"
+                                                class="btn btn-outline-primary open-file-manager"
+                                                data-type="image">
+                                            <i class="mdi mdi-folder-open-outline"></i>
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -93,23 +113,91 @@
                                 <div class="mb-3"><label asp-for="SiteHaritaAdress" class="form-label">Harita Adresi</label><div class="input-group"><span class="input-group-text"><i class="mdi mdi-map-marker"></i></span><input asp-for="SiteHaritaAdress" class="form-control" placeholder="Google Maps embed URL" /></div></div>
                             </div>
                             <div class="col-md-6">
-                                <div class="mb-3"><label asp-for="SiteBaslangicVideoLink" class="form-label">Başlangıç Video Linki</label><div class="input-group"><span class="input-group-text"><i class="mdi mdi-video"></i></span><input asp-for="SiteBaslangicVideoLink" class="form-control" placeholder="Video URL" /></div></div>
+                                <div class="mb-3">
+                                    <label asp-for="SiteBaslangicVideoLink" class="form-label">Başlangıç Video Linki</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">
+                                            <i class="mdi mdi-video"></i>
+                                        </span>
+
+                                        <input asp-for="SiteBaslangicVideoLink"
+                                               class="form-control file-picker-input"
+                                               placeholder="Video URL" />
+
+                                        <button type="button"
+                                                class="btn btn-outline-primary open-file-manager"
+                                                data-type="video">
+                                            <i class="mdi mdi-folder-open-outline"></i>
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-md-4">
-                                <div class="mb-3"><label asp-for="SiteBaslangicVideoResimAdress" class="form-label">Video Resim Adresi</label><div class="input-group"><span class="input-group-text"><i class="mdi mdi-image"></i></span><input asp-for="SiteBaslangicVideoResimAdress" class="form-control" placeholder="Resim URL" /></div></div>
+                                <div class="mb-3">
+                                    <label asp-for="SiteBaslangicVideoResimAdress" class="form-label">Video Resim Adresi</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">
+                                            <i class="mdi mdi-image"></i>
+                                        </span>
+
+                                        <input asp-for="SiteBaslangicVideoResimAdress"
+                                               class="form-control file-picker-input"
+                                               placeholder="Resim URL" />
+
+                                        <button type="button"
+                                                class="btn btn-outline-primary open-file-manager"
+                                                data-type="image">
+                                            <i class="mdi mdi-folder-open-outline"></i>
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="mb-3"><label asp-for="SiteVideoType" class="form-label">Video Tipi</label><div class="input-group"><span class="input-group-text"><i class="mdi mdi-file-video"></i></span><input asp-for="SiteVideoType" class="form-control" placeholder="video/mp4" /></div></div>
                             </div>
                             <div class="col-md-4">
-                                <div class="mb-3"><label asp-for="SiteFooterLogo" class="form-label">Footer Logo</label><div class="input-group"><span class="input-group-text"><i class="mdi mdi-image-area"></i></span><input asp-for="SiteFooterLogo" class="form-control" placeholder="Logo URL" /></div></div>
+                                <div class="mb-3">
+                                    <label asp-for="SiteFooterLogo" class="form-label">Footer Logo</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">
+                                            <i class="mdi mdi-image-area"></i>
+                                        </span>
+
+                                        <input asp-for="SiteFooterLogo"
+                                               class="form-control file-picker-input"
+                                               placeholder="Logo URL" />
+
+                                        <button type="button"
+                                                class="btn btn-outline-primary open-file-manager"
+                                                data-type="image">
+                                            <i class="mdi mdi-folder-open-outline"></i>
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-md-6">
-                                <div class="mb-3"><label asp-for="SiteTopbarLogo" class="form-label">Topbar Logo</label><div class="input-group"><span class="input-group-text"><i class="mdi mdi-image-area-close"></i></span><input asp-for="SiteTopbarLogo" class="form-control" placeholder="Logo URL" /></div></div>
+                                <div class="mb-3">
+                                    <label asp-for="SiteTopbarLogo" class="form-label">Topbar Logo</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">
+                                            <i class="mdi mdi-image-area-close"></i>
+                                        </span>
+
+                                        <input asp-for="SiteTopbarLogo"
+                                               class="form-control file-picker-input"
+                                               placeholder="Logo URL" />
+
+                                        <button type="button"
+                                                class="btn btn-outline-primary open-file-manager"
+                                                data-type="image">
+                                            <i class="mdi mdi-folder-open-outline"></i>
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -123,3 +211,80 @@
         </div>
     </div>
 </div>
+
+<!-- Dosya Yöneticisi Modal -->
+<div class="modal fade" id="fileManagerModal" tabindex="-1" aria-labelledby="fileManagerModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="fileManagerModalLabel">
+                    <i class="mdi mdi-folder-open-outline me-1"></i> Dosya Yöneticisi
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
+            </div>
+            <div class="modal-body p-0" style="height: 600px;">
+                <iframe id="fileManagerFrame" src="" style="width:100%; height:100%; border:none;"></iframe>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <!-- Validation Scripts -->
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+
+
+
+
+        // ============================================
+        // Dosya Yöneticisi - Modal (Resim URL alanı için)
+        // ============================================
+        let currentInput = null;
+        $(function () {
+
+            // Butona tıklanınca
+            $('.open-file-manager').on('click', function () {
+
+                currentInput = $(this).closest('.input-group').find('.file-picker-input');
+
+                var type = $(this).data('type');
+
+                $('#fileManagerFrame').attr(
+                    'src',
+                    '/File?mode=picker&type=' + type
+                );
+
+                $('#fileManagerModal').modal('show');
+            });
+
+            // FileManager'dan dosya seçildiğinde
+            window.addEventListener('message', function (event) {
+
+                if (event.data.type === 'file-selected') {
+
+                    if (currentInput) {
+                        currentInput.val(event.data.url);
+                    }
+
+                    $('#fileManagerModal').modal('hide');
+                }
+            });
+        });
+
+        // ============================================
+        // Validation Summary
+        // ============================================
+        $(document).ready(function () {
+
+            var validationSummary = $('#validationSummary');
+
+            if (
+                validationSummary.find('li').length > 0 ||
+                validationSummary.find('span').length > 0
+            ) {
+                validationSummary.removeClass('d-none');
+            }
+        });
+    </script>
+}

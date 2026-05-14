@@ -1,11 +1,10 @@
 using FluentValidation;
-using Microservice.Site.Application.Contracts.IRepositories;
 
 namespace Mikroservice.Site.Application.Features.SikcaSorulanSoruFeatures.UpdateSikcaSorulanSoru
 {
     public class UpdateSikcaSorulanSoruCommandValidation : AbstractValidator<UpdateSikcaSorulanSoruCommand>
     {
-        public UpdateSikcaSorulanSoruCommandValidation(ISikcaSorulanSoruKategoriRepository kategoriRepository)
+        public UpdateSikcaSorulanSoruCommandValidation()
         {
             // 🔹 SiteId
             RuleFor(x => x.SiteId)
@@ -14,10 +13,6 @@ namespace Mikroservice.Site.Application.Features.SikcaSorulanSoruFeatures.Update
             // 🔹 DilId
             RuleFor(x => x.DilId)
                 .GreaterThan(0).WithMessage("Geçerli bir DilId girilmelidir.");
-
-            // 🔹 KategoriId
-            RuleFor(x => x.KategoriId)
-                .GreaterThan(0).WithMessage("Geçerli bir KategoriId girilmelidir.");
 
             // 🔹 Soru
             RuleFor(x => x.Soru)
@@ -37,11 +32,7 @@ namespace Mikroservice.Site.Application.Features.SikcaSorulanSoruFeatures.Update
                 .MaximumLength(300)
                 .When(x => !string.IsNullOrEmpty(x.SeoUrl))
                 .WithMessage("SeoUrl en fazla 300 karakter olabilir.");
-            // 🔥 Kategori var mı kontrolü
-            RuleFor(x => x).MustAsync(async (request, cancellationToken) =>
-            {
-                return await kategoriRepository.AnyByIdAsync(request.KategoriId, cancellationToken);
-            }).WithMessage("Kategori aynı site ve dile ait olmalıdır.");
+
 
         }
     }

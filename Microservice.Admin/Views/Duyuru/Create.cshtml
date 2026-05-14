@@ -6,9 +6,58 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
+@section styles {
+    <link href="~/assets/libs/select2/css/select2.min.css" rel="stylesheet" />
+
+    <style>
+        .select2-container--default .select2-selection--single {
+            height: calc(1.5em + 0.9rem + 2px) !important;
+            border: 1px solid #ced4da !important;
+            border-radius: 0.375rem !important;
+            padding: 0.45rem 0.75rem !important;
+        }
+
+            .select2-container--default .select2-selection--single .select2-selection__rendered {
+                line-height: 1.5 !important;
+                padding-left: 0 !important;
+                color: #495057;
+            }
+
+            .select2-container--default .select2-selection--single .select2-selection__arrow {
+                height: calc(1.5em + 0.9rem + 2px) !important;
+            }
+
+        .select2-container--default.select2-container--focus .select2-selection--single,
+        .select2-container--default.select2-container--open .select2-selection--single {
+            border-color: #86b7fe !important;
+            box-shadow: 0 0 0 .25rem rgba(13,110,253,.25) !important;
+        }
+
+        .tox-tinymce {
+            border-radius: 0.5rem !important;
+        }
+
+        .input-group-text {
+            min-width: 42px;
+            justify-content: center;
+        }
+
+        .preview-image {
+            max-height: 120px;
+            object-fit: cover;
+            border-radius: 0.5rem;
+            border: 1px solid #dee2e6;
+            padding: 4px;
+            background: #fff;
+        }
+    </style>
+}
+
 <div class="row justify-content-center">
     <div class="col-xxl-10">
         <div class="card shadow-lg border-0">
+
+            <!-- Header -->
             <div class="card-header bg-primary bg-opacity-10 border-bottom">
                 <div class="d-flex align-items-center">
                     <div class="avatar-sm me-3">
@@ -16,160 +65,534 @@
                             <i class="mdi mdi-bullhorn fs-5"></i>
                         </div>
                     </div>
+
                     <div>
                         <h5 class="card-title mb-1">Duyuru Bilgileri</h5>
-                        <p class="card-text text-muted mb-0">Yeni bir duyuru oluşturmak için formu doldurun</p>
+                        <p class="card-text text-muted mb-0">
+                            Yeni bir duyuru oluşturmak için formu doldurun
+                        </p>
                     </div>
                 </div>
             </div>
 
+            <!-- Body -->
             <div class="card-body p-4">
-                <form asp-action="Create" id="duyuruCreateForm" class="needs-validation" novalidate>
-                    <div asp-validation-summary="ModelOnly" class="alert alert-danger d-none" role="alert" id="validationSummary">
-                        <i class="mdi mdi-block-helper me-2"></i><ul></ul>
+
+                <form asp-action="Create"
+                      asp-controller="Duyuru"
+                      method="post"
+                      id="duyuruCreateForm"
+                      class="needs-validation"
+                      novalidate>
+
+                    @Html.AntiForgeryToken()
+
+                    <!-- Validation -->
+                    <div asp-validation-summary="ModelOnly"
+                         class="alert alert-danger d-none"
+                         role="alert"
+                         id="validationSummary">
+                        <i class="mdi mdi-block-helper me-2"></i>
                     </div>
 
+                    <!-- Hidden -->
                     <input type="hidden" asp-for="CreateDuyuru.SiteId" />
                     <input type="hidden" asp-for="CreateDuyuru.DilId" />
 
                     <!-- Temel Bilgiler -->
                     <div class="mb-4">
                         <h6 class="text-primary border-bottom pb-2">
-                            <i class="mdi mdi-information-outline me-1"></i> Temel Bilgiler
+                            <i class="mdi mdi-information-outline me-1"></i>
+                            Temel Bilgiler
                         </h6>
+
                         <div class="row">
+
                             <div class="col-md-8">
                                 <div class="mb-3">
-                                    <label asp-for="CreateDuyuru.Baslik" class="form-label">Başlık <span class="text-danger">*</span></label>
+                                    <label asp-for="CreateDuyuru.Baslik" class="form-label">
+                                        Başlık <span class="text-danger">*</span>
+                                    </label>
+
                                     <div class="input-group">
-                                        <span class="input-group-text"><i class="mdi mdi-format-title"></i></span>
-                                        <input asp-for="CreateDuyuru.Baslik" class="form-control" placeholder="Duyuru başlığını giriniz" />
+                                        <span class="input-group-text">
+                                            <i class="mdi mdi-format-title"></i>
+                                        </span>
+
+                                        <input asp-for="CreateDuyuru.Baslik"
+                                               class="form-control"
+                                               placeholder="Duyuru başlığını giriniz" />
                                     </div>
-                                    <span asp-validation-for="CreateDuyuru.Baslik" class="text-danger small"></span>
+
+                                    <span asp-validation-for="CreateDuyuru.Baslik"
+                                          class="text-danger small"></span>
                                 </div>
                             </div>
+
                             <div class="col-md-4">
                                 <div class="mb-3">
-                                    <label asp-for="CreateDuyuru.KisaAciklama" class="form-label">Kısa Açıklama <span class="text-danger">*</span></label>
+                                    <label asp-for="CreateDuyuru.KisaAciklama" class="form-label">
+                                        Kısa Açıklama <span class="text-danger">*</span>
+                                    </label>
+
                                     <div class="input-group">
-                                        <span class="input-group-text"><i class="mdi mdi-text-short"></i></span>
-                                        <input asp-for="CreateDuyuru.KisaAciklama" class="form-control" placeholder="Kısa açıklama" />
+                                        <span class="input-group-text">
+                                            <i class="mdi mdi-text-short"></i>
+                                        </span>
+
+                                        <input asp-for="CreateDuyuru.KisaAciklama"
+                                               class="form-control"
+                                               placeholder="Kısa açıklama giriniz" />
                                     </div>
-                                    <span asp-validation-for="CreateDuyuru.KisaAciklama" class="text-danger small"></span>
+
+                                    <span asp-validation-for="CreateDuyuru.KisaAciklama"
+                                          class="text-danger small"></span>
                                 </div>
                             </div>
+
                         </div>
                     </div>
 
                     <!-- İçerik ve Medya -->
                     <div class="mb-4">
                         <h6 class="text-primary border-bottom pb-2">
-                            <i class="mdi mdi-file-document-outline me-1"></i> İçerik ve Medya
+                            <i class="mdi mdi-file-document-outline me-1"></i>
+                            İçerik ve Medya
                         </h6>
+
+                        <!-- İçerik -->
                         <div class="mb-3">
-                            <label asp-for="CreateDuyuru.IcerikMetni" class="form-label">İçerik Metni <span class="text-danger">*</span></label>
-                            <textarea asp-for="CreateDuyuru.IcerikMetni" id="IcerikMetniEditor" class="form-control" rows="10" placeholder="Duyuru içeriğini giriniz..."></textarea>
-                            <span asp-validation-for="CreateDuyuru.IcerikMetni" class="text-danger small"></span>
+                            <label asp-for="CreateDuyuru.IcerikMetni" class="form-label">
+                                İçerik Metni <span class="text-danger">*</span>
+                            </label>
+
+                            <textarea asp-for="CreateDuyuru.IcerikMetni"
+                                      id="IcerikMetniEditor"
+                                      class="form-control"
+                                      rows="10"
+                                      placeholder="Duyuru içeriğini giriniz..."></textarea>
+
+                            <span asp-validation-for="CreateDuyuru.IcerikMetni"
+                                  class="text-danger small"></span>
                         </div>
+
                         <div class="row">
+
+                            <!-- Link -->
                             <div class="col-md-6">
                                 <div class="mb-3">
-                                    <label asp-for="CreateDuyuru.Link" class="form-label">Link</label>
+                                    <label asp-for="CreateDuyuru.Link" class="form-label">
+                                        Link
+                                    </label>
+
                                     <div class="input-group">
-                                        <span class="input-group-text"><i class="mdi mdi-link"></i></span>
-                                        <input asp-for="CreateDuyuru.Link" class="form-control" placeholder="https://..." />
+                                        <span class="input-group-text">
+                                            <i class="mdi mdi-link"></i>
+                                        </span>
+
+                                        <input asp-for="CreateDuyuru.Link"
+                                               class="form-control"
+                                               placeholder="https://example.com" />
                                     </div>
-                                    <span asp-validation-for="CreateDuyuru.Link" class="text-danger small"></span>
+
+                                    <span asp-validation-for="CreateDuyuru.Link"
+                                          class="text-danger small"></span>
                                 </div>
                             </div>
+
+                            <!-- Resim -->
                             <div class="col-md-6">
                                 <div class="mb-3">
-                                    <label asp-for="CreateDuyuru.ResimUrl" class="form-label">Resim URL</label>
+
+                                    <label asp-for="CreateDuyuru.ResimUrl" class="form-label">
+                                        Resim URL
+                                    </label>
+
                                     <div class="input-group">
-                                        <span class="input-group-text"><i class="mdi mdi-image"></i></span>
-                                        <input asp-for="CreateDuyuru.ResimUrl" class="form-control" placeholder="Resim URL" />
+                                        <span class="input-group-text">
+                                            <i class="mdi mdi-image"></i>
+                                        </span>
+
+                                        <input asp-for="CreateDuyuru.ResimUrl"
+                                               id="ResimUrlInput"
+                                               class="form-control"
+                                               placeholder="Resim URL" />
+
+                                        <button type="button"
+                                                class="btn btn-outline-primary"
+                                                id="openFileManagerBtn"
+                                                title="Dosya Yöneticisi">
+                                            <i class="mdi mdi-folder-open-outline"></i>
+                                        </button>
                                     </div>
-                                    <span asp-validation-for="CreateDuyuru.ResimUrl" class="text-danger small"></span>
+
+                                    <span asp-validation-for="CreateDuyuru.ResimUrl"
+                                          class="text-danger small"></span>
+
+                                    <div class="mt-2 d-none" id="imagePreviewWrapper">
+                                        <img id="imagePreview"
+                                             class="preview-image"
+                                             src=""
+                                             alt="Önizleme" />
+                                    </div>
+
                                 </div>
                             </div>
+
                         </div>
                     </div>
 
                     <!-- Tarih ve Hedef -->
                     <div class="mb-4">
                         <h6 class="text-primary border-bottom pb-2">
-                            <i class="mdi mdi-calendar me-1"></i> Tarih ve Hedef
+                            <i class="mdi mdi-calendar me-1"></i>
+                            Tarih ve Hedef
                         </h6>
+
                         <div class="row">
+
                             <div class="col-md-3">
                                 <div class="mb-3">
-                                    <label asp-for="CreateDuyuru.YayimTarihi" class="form-label">Yayım Tarihi</label>
-                                    <input asp-for="CreateDuyuru.YayimTarihi" class="form-control" type="datetime-local" />
-                                    <span asp-validation-for="CreateDuyuru.YayimTarihi" class="text-danger small"></span>
+                                    <label asp-for="CreateDuyuru.YayimTarihi" class="form-label">
+                                        Yayım Tarihi
+                                    </label>
+
+                                    <input asp-for="CreateDuyuru.YayimTarihi"
+                                           class="form-control"
+                                           type="datetime-local" />
+
+                                    <span asp-validation-for="CreateDuyuru.YayimTarihi"
+                                          class="text-danger small"></span>
                                 </div>
                             </div>
+
                             <div class="col-md-3">
                                 <div class="mb-3">
-                                    <label asp-for="CreateDuyuru.BaslamaTarihi" class="form-label">Başlama Tarihi</label>
-                                    <input asp-for="CreateDuyuru.BaslamaTarihi" class="form-control" type="datetime-local" />
-                                    <span asp-validation-for="CreateDuyuru.BaslamaTarihi" class="text-danger small"></span>
+                                    <label asp-for="CreateDuyuru.BaslamaTarihi" class="form-label">
+                                        Başlama Tarihi
+                                    </label>
+
+                                    <input asp-for="CreateDuyuru.BaslamaTarihi"
+                                           class="form-control"
+                                           type="datetime-local" />
+
+                                    <span asp-validation-for="CreateDuyuru.BaslamaTarihi"
+                                          class="text-danger small"></span>
                                 </div>
                             </div>
+
                             <div class="col-md-3">
                                 <div class="mb-3">
-                                    <label asp-for="CreateDuyuru.BitisTarihi" class="form-label">Bitiş Tarihi</label>
-                                    <input asp-for="CreateDuyuru.BitisTarihi" class="form-control" type="datetime-local" />
-                                    <span asp-validation-for="CreateDuyuru.BitisTarihi" class="text-danger small"></span>
+                                    <label asp-for="CreateDuyuru.BitisTarihi" class="form-label">
+                                        Bitiş Tarihi
+                                    </label>
+
+                                    <input asp-for="CreateDuyuru.BitisTarihi"
+                                           class="form-control"
+                                           type="datetime-local" />
+
+                                    <span asp-validation-for="CreateDuyuru.BitisTarihi"
+                                          class="text-danger small"></span>
                                 </div>
                             </div>
+
                             <div class="col-md-3">
                                 <div class="mb-3">
-                                    <label asp-for="CreateDuyuru.HedefId" class="form-label">Hedef</label>
-                                    <select asp-for="CreateDuyuru.HedefId" class="form-select">
+                                    <label asp-for="CreateDuyuru.HedefId" class="form-label">
+                                        Hedef
+                                    </label>
+
+                                    <select asp-for="CreateDuyuru.HedefId"
+                                            class="form-select select2"
+                                            asp-items="@(new SelectList(Model.Hedefler, "Id", "Aciklama"))">
                                         <option value="">-- Hedef Seçin --</option>
-                                        @foreach (var hedef in Model.Hedefler)
-                                        {
-                                            <option value="@hedef.Id">@hedef.Aciklama</option>
-                                        }
                                     </select>
+
+                                    <span asp-validation-for="CreateDuyuru.HedefId"
+                                          class="text-danger small"></span>
                                 </div>
                             </div>
+
                         </div>
                     </div>
 
                     <!-- SEO -->
                     <div class="mb-4">
                         <h6 class="text-primary border-bottom pb-2">
-                            <i class="mdi mdi-magnify me-1"></i> SEO Bilgileri
+                            <i class="mdi mdi-magnify me-1"></i>
+                            SEO Bilgileri
                         </h6>
+
                         <div class="row">
+
                             <div class="col-md-4">
                                 <div class="mb-3">
-                                    <label asp-for="CreateDuyuru.SeoUrl" class="form-label">SEO URL</label>
-                                    <input asp-for="CreateDuyuru.SeoUrl" class="form-control" placeholder="seo-url" />
+                                    <label asp-for="CreateDuyuru.SeoUrl" class="form-label">
+                                        SEO URL
+                                    </label>
+
+                                    <input asp-for="CreateDuyuru.SeoUrl"
+                                           class="form-control"
+                                           placeholder="seo-url" />
+
+                                    <span asp-validation-for="CreateDuyuru.SeoUrl"
+                                          class="text-danger small"></span>
                                 </div>
                             </div>
+
                             <div class="col-md-4">
                                 <div class="mb-3">
-                                    <label asp-for="CreateDuyuru.SeoTitle" class="form-label">SEO Title</label>
-                                    <input asp-for="CreateDuyuru.SeoTitle" class="form-control" placeholder="SEO başlık" />
+                                    <label asp-for="CreateDuyuru.SeoTitle" class="form-label">
+                                        SEO Title
+                                    </label>
+
+                                    <input asp-for="CreateDuyuru.SeoTitle"
+                                           class="form-control"
+                                           placeholder="SEO başlık" />
+
+                                    <span asp-validation-for="CreateDuyuru.SeoTitle"
+                                          class="text-danger small"></span>
                                 </div>
                             </div>
+
                             <div class="col-md-4">
                                 <div class="mb-3">
-                                    <label asp-for="CreateDuyuru.SeoDescription" class="form-label">SEO Description</label>
-                                    <input asp-for="CreateDuyuru.SeoDescription" class="form-control" placeholder="SEO açıklama" />
+                                    <label asp-for="CreateDuyuru.SeoDescription" class="form-label">
+                                        SEO Description
+                                    </label>
+
+                                    <input asp-for="CreateDuyuru.SeoDescription"
+                                           class="form-control"
+                                           placeholder="SEO açıklama" />
+
+                                    <span asp-validation-for="CreateDuyuru.SeoDescription"
+                                          class="text-danger small"></span>
                                 </div>
                             </div>
+
                         </div>
                     </div>
 
-                    <div class="d-flex justify-content-end gap-2">
-                        <a asp-action="Index" class="btn btn-secondary"><i class="mdi mdi-arrow-left me-1"></i> İptal</a>
-                        <button type="submit" class="btn btn-primary"><i class="mdi mdi-check me-1"></i> Kaydet</button>
+                    <!-- Buttons -->
+                    <div class="d-flex justify-content-end gap-2 pt-3 border-top">
+
+                        <a asp-action="Index" class="btn btn-outline-secondary">
+                            <i class="mdi mdi-arrow-left me-1"></i>
+                            İptal
+                        </a>
+
+                        <button type="submit" class="btn btn-primary">
+                            <i class="mdi mdi-content-save me-1"></i>
+                            Kaydet
+                        </button>
+
                     </div>
+
                 </form>
             </div>
         </div>
     </div>
 </div>
+
+<!-- File Manager Modal -->
+<div class="modal fade"
+     id="fileManagerModal"
+     tabindex="-1"
+     aria-labelledby="fileManagerModalLabel"
+     aria-hidden="true">
+
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title" id="fileManagerModalLabel">
+                    <i class="mdi mdi-folder-open-outline me-1"></i>
+                    Dosya Yöneticisi
+                </h5>
+
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal"
+                        aria-label="Kapat"></button>
+            </div>
+
+            <div class="modal-body p-0" style="height: 600px;">
+                <iframe id="fileManagerFrame"
+                        src=""
+                        style="width:100%; height:100%; border:none;">
+                </iframe>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <!-- Select2 -->
+    <script src="~/assets/libs/select2/js/select2.full.min.js"></script>
+    <script src="~/assets/libs/select2/js/i18n/tr.js"></script>
+
+    <!-- TinyMCE -->
+    <script src="~/assets/libs/tinymce/tinymce.min.js"></script>
+
+    <script>
+
+        $(document).ready(function () {
+
+        // Validation Summary
+        if ($('#validationSummary').find('li').length > 0) {
+        $('#validationSummary').removeClass('d-none');
+        }
+
+        // Select2
+        $('.select2').select2({
+        width: '100%',
+        language: 'tr',
+        placeholder: '-- Hedef Seçin --',
+        allowClear: true
+        });
+
+        // Resim Preview
+        $('#ResimUrlInput').on('input', function () {
+
+        const url = $(this).val();
+
+        if (url && url.trim() !== '') {
+        $('#imagePreview').attr('src', url);
+        $('#imagePreviewWrapper').removeClass('d-none');
+        }
+        else {
+        $('#imagePreview').attr('src', '');
+        $('#imagePreviewWrapper').addClass('d-none');
+        }
+
+        });
+
+        });
+
+        // TinyMCE
+        tinymce.init({
+        selector: '#IcerikMetniEditor',
+        height: 500,
+        menubar: true,
+        language: 'tr_TR',
+
+        plugins: [
+        'advlist', 'autolink', 'lists', 'link', 'image',
+        'charmap', 'preview', 'anchor', 'searchreplace',
+        'visualblocks', 'code', 'fullscreen',
+        'insertdatetime', 'media', 'table',
+        'help', 'wordcount', 'codesample'
+        ],
+
+        toolbar:
+        'undo redo | blocks fontfamily fontsize | ' +
+        'bold italic underline strikethrough | forecolor backcolor | ' +
+        'alignleft aligncenter alignright alignjustify | ' +
+        'bullist numlist outdent indent | ' +
+        'link image media table | codesample | ' +
+        'removeformat | code fullscreen help',
+
+        branding: false,
+
+        content_style:
+        'body { font-family:Helvetica,Arial,sans-serif; font-size:14px; padding:10px }',
+
+        placeholder: 'Duyuru içeriğini giriniz...',
+
+        file_picker_callback: function (callback, value, meta) {
+
+        let type = 'image';
+
+        if (meta.filetype === 'media') {
+        type = 'video';
+        }
+
+        openFileManagerForTinyMCE(function (url) {
+
+        if (meta.filetype === 'image') {
+        callback(url, { alt: 'Resim' });
+        }
+        else {
+        callback(url);
+        }
+
+        }, type);
+        },
+
+        setup: function (editor) {
+
+        editor.on('change', function () {
+        editor.save();
+        });
+
+        editor.on('keyup', function () {
+        editor.save();
+        });
+        }
+        });
+
+        // Submit
+        document.getElementById('duyuruCreateForm')
+        .addEventListener('submit', function () {
+
+        const editor = tinymce.get('IcerikMetniEditor');
+
+        if (editor) {
+        editor.save();
+        }
+        });
+
+        // File Manager Modal
+        $('#openFileManagerBtn').on('click', function () {
+
+        $('#fileManagerFrame')
+        .attr('src', '/File?mode=picker&type=image');
+
+        $('#fileManagerModal').modal('show');
+        });
+
+        // File Selected
+        window.addEventListener('message', function (event) {
+
+        if (event.data.type === 'file-selected') {
+
+        $('#ResimUrlInput').val(event.data.url).trigger('input');
+
+        $('#fileManagerModal').modal('hide');
+        }
+        });
+
+        // TinyMCE File Manager
+        function openFileManagerForTinyMCE(callback, type) {
+
+        const w = window.open(
+        '/File?mode=picker&type=' + type,
+        'FileManager',
+        'width=1200,height=700'
+        );
+
+        function handler(event) {
+
+        if (event.data.type === 'file-selected') {
+
+        callback(event.data.url);
+
+        if (w) {
+        w.close();
+        }
+
+        window.removeEventListener('message', handler);
+        }
+        }
+
+        window.addEventListener('message', handler);
+        }
+
+    </script>
+}

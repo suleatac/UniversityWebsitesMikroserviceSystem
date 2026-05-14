@@ -21,7 +21,7 @@ namespace Mikroservice.Site.Application.Features.SikcaSorulanSoruFeatures.Update
             }
             sikcaSorulanSoru.SiteId = request.SiteId;
             sikcaSorulanSoru.DilId = request.DilId;
-            sikcaSorulanSoru.KategoriId = request.KategoriId;
+            sikcaSorulanSoru.ParentId = request.ParentId;
             sikcaSorulanSoru.Soru = request.Soru;
             sikcaSorulanSoru.Cevap = request.Cevap;
             sikcaSorulanSoru.Sira = request.Sira;

@@ -10,7 +10,6 @@ using Microservice.Admin.Clients.MenuClients;
 using Microservice.Admin.Clients.PersonelTipClients;
 using Microservice.Admin.Clients.PopupClients;
 using Microservice.Admin.Clients.SikcaSorulanSoruClients;
-using Microservice.Admin.Clients.SikcaSorulanSoruKategoriClients;
 using Microservice.Admin.Clients.SiteClients;
 using Microservice.Admin.Clients.SiteOzellikleriClients;
 using Microservice.Admin.Clients.SitePersonelClients;
@@ -173,16 +172,7 @@ namespace Microservice.Admin.Clients
          .AddHttpMessageHandler<AuthenticatedHttpClientHandler>()//bu usertoken için istek atarken kullanmak için
          .AddHttpMessageHandler<ClientAuthenticatedHttpClientHandler>();//bu clientcredential için token alıp istek göndermek için
 
-          //SikcaSorulanSoruKategori Clients
-          services.AddRefitClient<ISikcaSorulanSoruKategoriClientServices>()
-         .ConfigureHttpClient(c => {
-
-             var microserviceOption = configuration.GetSection(MicroservicesSetting.SectionName).Get<MicroservicesSetting>();
-             c.BaseAddress = new Uri(microserviceOption!.Site.BaseUrl);
-         })
-         .AddHttpMessageHandler<AuthenticatedHttpClientHandler>()//bu usertoken için istek atarken kullanmak için
-         .AddHttpMessageHandler<ClientAuthenticatedHttpClientHandler>();//bu clientcredential için token alıp istek göndermek için
-
+    
           //SitePersonel Clients
           services.AddRefitClient<ISitePersonelClientServices>()
          .ConfigureHttpClient(c => {

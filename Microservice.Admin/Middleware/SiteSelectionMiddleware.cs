@@ -82,11 +82,7 @@ namespace Microservice.Admin.Middleware
             {
                 "/Auth/",
                 "/SiteSelection/",
-                "/Site/Create",
-                "/Site/Index",
-                "/Site/GetSitesForPagination",
-                "/Site/Edit/",
-                "/Site/Delete"
+                "/Site"
             };
 
             return excludedPrefixes.Any(prefix => path.StartsWith(prefix, StringComparison.OrdinalIgnoreCase));
@@ -107,7 +103,8 @@ namespace Microservice.Admin.Middleware
                 "/PersonelTip/",
                 "/User/",
                 "/YoneticiSite/",
-                "/Template/"
+                "/Template/",
+                "/Profile"
             };
 
             return adminPaths.Any(prefix => path.StartsWith(prefix, StringComparison.OrdinalIgnoreCase));

@@ -10,6 +10,10 @@ namespace Mikroservice.Site.Persistence.Configurations
         {
             builder.HasKey(x => x.Id);
 
+            builder.Property(x => x.PersonelId).IsRequired();
+            builder.Property(x => x.UnvanId).IsRequired();
+            builder.Property(x => x.PersonelTipId).IsRequired();
+            builder.Property(x => x.SiteId).IsRequired();
             // =========================
             // SITE (ZORUNLU)
             // =========================

@@ -1,7 +1,5 @@
 @model Microservice.Admin.ViewModels.Menu.MenuCreateIndexVm
 @using Microservice.Admin.ViewModels.Menu
-@using Microservice.Admin.ViewModels.Dil
-@using Microservice.Admin.ViewModels.Hedef
 
 @{
     ViewBag.pTitle = "Menüler";
@@ -10,219 +8,658 @@
 }
 
 @section styles {
+
     <link href="~/assets/libs/select2/css/select2.min.css" rel="stylesheet" />
+
     <style>
+
         .select2-container--default .select2-selection--single {
             height: calc(1.5em + 0.9rem + 2px) !important;
             border: 1px solid #ced4da !important;
             border-radius: 0.3rem !important;
             padding: 0.45rem 0.9rem !important;
         }
-        .select2-container--default .select2-selection--single .select2-selection__rendered {
-            line-height: 1.5 !important;
-            padding-left: 0 !important;
-            color: #495057;
-        }
-        .select2-container--default .select2-selection--single .select2-selection__arrow {
-            height: calc(1.5em + 0.9rem + 2px) !important;
-        }
-        .select2-container--default .select2-selection--single .select2-selection__clear {
-            display: none !important;
-        }
+
+            .select2-container--default .select2-selection--single .select2-selection__rendered {
+                line-height: 1.5 !important;
+                padding-left: 0 !important;
+                color: #495057;
+            }
+
+            .select2-container--default .select2-selection--single .select2-selection__arrow {
+                height: calc(1.5em + 0.9rem + 2px) !important;
+            }
+
+            .select2-container--default .select2-selection--single .select2-selection__clear {
+                display: none !important;
+            }
+
         .select2-container--default.select2-container--focus .select2-selection--single,
         .select2-container--default.select2-container--open .select2-selection--single {
             border-color: #80bdff !important;
             box-shadow: 0 0 0 0.2rem rgba(0,123,255,0.25) !important;
         }
+
         .select2-container--default .select2-results__option--highlighted[aria-selected] {
             background-color: #556ee6 !important;
         }
+
         .select2-dropdown {
             border-color: #ced4da !important;
         }
+
     </style>
 }
 
 <div class="row justify-content-center">
+
     <div class="col-xxl-8">
+
         <div class="card shadow-lg border-0">
+
             <div class="card-header bg-primary bg-opacity-10 border-bottom">
+
                 <div class="d-flex align-items-center">
+
                     <div class="avatar-sm me-3">
                         <div class="avatar-title bg-primary rounded-circle">
                             <i class="mdi mdi-menu-plus fs-5"></i>
                         </div>
                     </div>
+
                     <div>
                         <h5 class="card-title mb-1">Yeni Menu</h5>
-                        <p class="card-text text-muted mb-0">Yeni bir menü oluşturmak için formu doldurun</p>
+                        <p class="card-text text-muted mb-0">
+                            Yeni bir menü oluşturmak için formu doldurun
+                        </p>
                     </div>
+
                 </div>
+
             </div>
 
             <div class="card-body p-4">
-                <form asp-action="Create" class="needs-validation" novalidate>
-                    <div asp-validation-summary="ModelOnly" class="alert alert-danger d-none" role="alert" id="validationSummary">
+
+                <form asp-action="Create"
+                      method="post"
+                      id="menuCreateForm"
+                      class="needs-validation"
+                      novalidate>
+
+                    <div asp-validation-summary="ModelOnly"
+                         class="alert alert-danger d-none"
+                         role="alert"
+                         id="validationSummary">
+
                         <i class="mdi mdi-block-helper me-2"></i>
                         <ul></ul>
+
                     </div>
 
                     <!-- Temel Bilgiler -->
+
                     <div class="mb-4">
+
                         <h6 class="text-primary border-bottom pb-2">
-                            <i class="mdi mdi-information-outline me-1"></i> Temel Bilgiler
+                            <i class="mdi mdi-information-outline me-1"></i>
+                            Temel Bilgiler
                         </h6>
 
                         <div class="row">
+
                             <div class="col-md-6">
+
                                 <div class="mb-3">
+
                                     <label asp-for="CreateMenu.Ad" class="form-label">
                                         Menu Adı <span class="text-danger">*</span>
                                     </label>
+
                                     <div class="input-group">
-                                        <span class="input-group-text"><i class="mdi mdi-label"></i></span>
-                                        <input asp-for="CreateMenu.Ad" class="form-control" placeholder="Örn: Hakkımızda" />
+
+                                        <span class="input-group-text">
+                                            <i class="mdi mdi-label"></i>
+                                        </span>
+
+                                        <input asp-for="CreateMenu.Ad"
+                                               class="form-control"
+                                               placeholder="Örn: Hakkımızda" />
+
                                     </div>
-                                    <span asp-validation-for="CreateMenu.Ad" class="text-danger small"></span>
+
+                                    <span asp-validation-for="CreateMenu.Ad"
+                                          class="text-danger small"></span>
+
                                 </div>
+
                             </div>
+
                             <div class="col-md-6">
+
                                 <div class="mb-3">
+
                                     <label asp-for="CreateMenu.Link" class="form-label">
                                         Link <span class="text-danger">*</span>
                                     </label>
+
                                     <div class="input-group">
-                                        <span class="input-group-text"><i class="mdi mdi-link"></i></span>
-                                        <input asp-for="CreateMenu.Link" class="form-control" placeholder="Örn: /hakkimizda" />
+
+                                        <span class="input-group-text">
+                                            <i class="mdi mdi-link"></i>
+                                        </span>
+
+                                        <input asp-for="CreateMenu.Link"
+                                               class="form-control"
+                                               placeholder="Örn: /hakkimizda" />
+
                                     </div>
-                                    <span asp-validation-for="CreateMenu.Link" class="text-danger small"></span>
+
+                                    <span asp-validation-for="CreateMenu.Link"
+                                          class="text-danger small"></span>
+
                                 </div>
+
                             </div>
+
                         </div>
 
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="mb-3">
-                                    <label asp-for="CreateMenu.HedefId" class="form-label">
-                                        <i class="mdi mdi-target me-1"></i> Hedef
-                                    </label>
-                                    <select asp-for="CreateMenu.HedefId" class="form-select select2"
-                                            asp-items="@(new SelectList(Model.Hedefler, "Id", "Tag"))">
-                                        <option value="">Hedef seçin</option>
+                                    <label asp-for="CreateMenu.HedefId" class="form-label">Hedef</label>
+                                    <select asp-for="CreateMenu.HedefId" class="form-select">
+                                        @foreach (var hedef in Model.Hedefler)
+                                        {
+                                            <option value="@hedef.Id">@hedef.Aciklama</option>
+                                        }
                                     </select>
-                                    <span asp-validation-for="CreateMenu.HedefId" class="text-danger small"></span>
+                                    <span asp-validation-for="CreateMenu.HedefId"
+                                          class="text-danger small"></span>
                                 </div>
                             </div>
+
                             <div class="col-md-6">
+
                                 <div class="mb-3">
+
                                     <div class="form-check mt-4">
-                                        <input asp-for="CreateMenu.MegaMenu" class="form-check-input" type="checkbox" />
-                                        <label asp-for="CreateMenu.MegaMenu" class="form-check-label">
-                                            <i class="mdi mdi-view-grid me-1"></i> Mega Menu
+
+                                        <input asp-for="CreateMenu.MegaMenu"
+                                               class="form-check-input"
+                                               type="checkbox" />
+
+                                        <label asp-for="CreateMenu.MegaMenu"
+                                               class="form-check-label">
+
+                                            <i class="mdi mdi-view-grid me-1"></i>
+                                            Mega Menu
+
                                         </label>
+
                                     </div>
+
                                 </div>
+
                             </div>
+
                         </div>
 
                         <div class="row">
+
                             <div class="col-md-6">
+
                                 <div class="mb-3">
+
                                     <label asp-for="CreateMenu.IconUrl" class="form-label">
-                                        <i class="mdi mdi-image-outline me-1"></i> İkon URL
+                                        <i class="mdi mdi-image-outline me-1"></i>
+                                        İkon URL
                                     </label>
-                                    <input asp-for="CreateMenu.IconUrl" class="form-control" placeholder="İkon URL (opsiyonel)" />
-                                    <span asp-validation-for="CreateMenu.IconUrl" class="text-danger small"></span>
+
+                                    <div class="input-group">
+
+                                        <span class="input-group-text">
+                                            <i class="mdi mdi-image-outline"></i>
+                                        </span>
+
+                                        <input asp-for="CreateMenu.IconUrl"
+                                               id="IconUrlInput"
+                                               class="form-control"
+                                               placeholder="İkon URL (opsiyonel)" />
+
+                                        <button type="button"
+                                                class="btn btn-outline-primary"
+                                                id="openFileManagerBtn"
+                                                title="Dosya Yöneticisi">
+
+                                            <i class="mdi mdi-folder-open-outline"></i>
+
+                                        </button>
+
+                                    </div>
+
+                                    <span asp-validation-for="CreateMenu.IconUrl"
+                                          class="text-danger small"></span>
+
                                 </div>
+
                             </div>
+
                         </div>
 
                         <div class="row">
+
                             <div class="col-md-12">
+
                                 <div class="mb-3">
-                                    <label asp-for="CreateMenu.Icerik" class="form-label">
-                                        <i class="mdi mdi-text me-1"></i> İçerik
+
+                                    <label asp-for="CreateMenu.Icerik"
+                                           class="form-label">
+
+                                        İçerik Metni
+
                                     </label>
-                                    <textarea asp-for="CreateMenu.Icerik" class="form-control" rows="3" placeholder="Menü içeriği (opsiyonel)"></textarea>
-                                    <span asp-validation-for="CreateMenu.Icerik" class="text-danger small"></span>
+
+                                    <textarea asp-for="CreateMenu.Icerik"
+                                              id="IcerikMetniEditor"
+                                              class="form-control"
+                                              rows="10"
+                                              placeholder="Menu içeriği"></textarea>
+
+                                    <span asp-validation-for="CreateMenu.Icerik"
+                                          class="text-danger small"></span>
+
                                 </div>
+
                             </div>
+
                         </div>
 
                         <input type="hidden" asp-for="CreateMenu.Sira" value="0" />
                         <input type="hidden" asp-for="CreateMenu.SiteId" />
                         <input type="hidden" asp-for="CreateMenu.DilId" />
+
                     </div>
 
                     <!-- Hiyerarşi -->
+
                     <div class="mb-4">
+
                         <h6 class="text-primary border-bottom pb-2">
-                            <i class="mdi mdi-file-tree-outline me-1"></i> Hiyerarşi
+
+                            <i class="mdi mdi-file-tree-outline me-1"></i>
+                            Hiyerarşi
+
                         </h6>
 
                         <div class="row">
+
                             <div class="col-md-12">
+
                                 <div class="mb-3">
-                                    <label asp-for="CreateMenu.ParentId" class="form-label">
-                                        <i class="mdi mdi-account-tree me-1"></i> Üst Menu (Parent)
+
+                                    <label asp-for="CreateMenu.ParentId"
+                                           class="form-label">
+
+                                        <i class="mdi mdi-account-tree me-1"></i>
+                                        Üst Menu (Parent)
+
                                     </label>
-                                    <select asp-for="CreateMenu.ParentId" class="form-select select2"
+
+                                    <select asp-for="CreateMenu.ParentId"
+                                            class="form-select select2"
                                             asp-items="@(new SelectList(FlattenMenuler(Model.Menuler), "Id", "Ad"))">
-                                        <option value="">Üst menu yok (Kök menu)</option>
+
+                                        <option value="">
+                                            Üst menu yok (Kök menu)
+                                        </option>
+
                                     </select>
-                                    <span asp-validation-for="CreateMenu.ParentId" class="text-danger small"></span>
-                                    <small class="text-muted">Menu hiyerarşisindeki üst menuyu seçin. Boş bırakılırsa kök menu olarak oluşturulur.</small>
+
+                                    <span asp-validation-for="CreateMenu.ParentId"
+                                          class="text-danger small"></span>
+
+                                    <small class="text-muted">
+                                        Üst menü seçmezseniz kök menu oluşturulur.
+                                    </small>
+
                                 </div>
+
                             </div>
+
                         </div>
+
                     </div>
 
-                    <!-- Form Actions -->
+                    <!-- Actions -->
+
                     <div class="d-flex justify-content-between align-items-center pt-3 border-top">
-                        <a asp-action="Index" class="btn btn-outline-secondary">
-                            <i class="mdi mdi-arrow-left me-1"></i> Listeye Dön
+
+                        <a asp-action="Index"
+                           class="btn btn-outline-secondary">
+
+                            <i class="mdi mdi-arrow-left me-1"></i>
+                            Listeye Dön
+
                         </a>
-                        <button type="submit" class="btn btn-primary">
-                            <i class="mdi mdi-content-save me-1"></i> Kaydet
+
+                        <button type="submit"
+                                class="btn btn-primary">
+
+                            <i class="mdi mdi-content-save me-1"></i>
+                            Kaydet
+
                         </button>
+
                     </div>
+
                 </form>
+
             </div>
+
         </div>
+
     </div>
+
+</div>
+
+<!-- File Manager Modal -->
+
+<div class="modal fade"
+     id="fileManagerModal"
+     tabindex="-1"
+     aria-labelledby="fileManagerModalLabel"
+     aria-hidden="true">
+
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+
+                <h5 class="modal-title" id="fileManagerModalLabel">
+
+                    <i class="mdi mdi-folder-open-outline me-1"></i>
+                    Dosya Yöneticisi
+
+                </h5>
+
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal"
+                        aria-label="Kapat"></button>
+
+            </div>
+
+            <div class="modal-body p-0" style="height:600px;">
+
+                <iframe id="fileManagerFrame"
+                        src=""
+                        style="width:100%; height:100%; border:none;">
+                </iframe>
+
+            </div>
+
+        </div>
+
+    </div>
+
 </div>
 
 @functions {
-    private List<dynamic> FlattenMenuler(List<GetMenuVm> menuler, string prefix = "")
+
+    public class MenuSelectItemVm
     {
-        var result = new List<dynamic>();
-        foreach (var m in menuler.OrderBy(m => m.Sira))
+        public int Id { get; set; }
+        public string Ad { get; set; }
+    }
+
+    private List<MenuSelectItemVm> FlattenMenuler(List<GetMenuVm> menuler, int level = 0)
+    {
+        var result = new List<MenuSelectItemVm>();
+
+        foreach (var m in menuler.OrderBy(x => x.Sira))
         {
-            result.Add(new { Id = m.Id, Ad = string.IsNullOrEmpty(prefix) ? m.Ad : prefix + " └ " + m.Ad });
+            var prefix = new string('-', level * 3);
+
+            result.Add(new MenuSelectItemVm {
+                Id = m.Id,
+                Ad = $"{prefix} {m.Ad}"
+            });
+
             if (m.Children != null && m.Children.Any())
             {
-                result.AddRange(FlattenMenuler(m.Children, string.IsNullOrEmpty(prefix) ? m.Ad : prefix + " └ " + m.Ad));
+                result.AddRange(FlattenMenuler(m.Children, level + 1));
             }
         }
+
         return result;
     }
 }
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
     <script src="~/assets/libs/select2/js/select2.full.min.js"></script>
     <script src="~/assets/libs/select2/js/i18n/tr.js"></script>
-    <script>
-        $(document).ready(function () {
-            var validationSummary = $('#validationSummary');
-            if (validationSummary.find('li').length > 0 || validationSummary.find('span').length > 0) {
-                validationSummary.removeClass('d-none');
-            }
 
-            $('.select2').select2({
-                language: 'tr',
-                width: '100%'
-            });
+    <!-- TinyMCE -->
+    <script src="~/assets/libs/tinymce/tinymce.min.js"></script>
+
+    <script>
+
+        // ============================================
+        // Sayfa Yüklendi
+        // ============================================
+
+        $(document).ready(function () {
+
+        const validationSummary = $('#validationSummary');
+
+        if (validationSummary.find('li').length > 0) {
+        validationSummary.removeClass('d-none');
+        }
+
+        $('.select2').select2({
+        language: 'tr',
+        width: '100%',
+        placeholder: 'Seçiniz',
+        allowClear: true
         });
+
+        });
+
+        // ============================================
+        // TinyMCE Başlat
+        // ============================================
+
+        tinymce.init({
+
+        selector: '#IcerikMetniEditor',
+
+        height: 500,
+
+        menubar: true,
+
+        language: 'tr',
+
+        branding: false,
+
+        placeholder: 'Menu içeriğini buraya yazınız...',
+
+        plugins: [
+        'advlist',
+        'autolink',
+        'lists',
+        'link',
+        'image',
+        'charmap',
+        'preview',
+        'anchor',
+        'searchreplace',
+        'visualblocks',
+        'code',
+        'fullscreen',
+        'insertdatetime',
+        'media',
+        'table',
+        'help',
+        'wordcount',
+        'codesample'
+        ],
+
+        toolbar:
+        'undo redo | blocks fontfamily fontsize | ' +
+        'bold italic underline strikethrough | ' +
+        'forecolor backcolor | ' +
+        'alignleft aligncenter alignright alignjustify | ' +
+        'bullist numlist outdent indent | ' +
+        'link image table | ' +
+        'codesample | removeformat | help',
+
+        content_style:
+        'body { font-family:Helvetica,Arial,sans-serif; font-size:14px; padding:10px; }',
+
+        file_picker_callback: function (callback, value, meta) {
+
+        let typeFilter = '';
+
+        if (meta.filetype === 'image') {
+        typeFilter = 'image';
+        }
+        else if (meta.filetype === 'media') {
+        typeFilter = 'video';
+        }
+
+        openFileManagerForTinyMCE(function (url) {
+
+        if (meta.filetype === 'image') {
+
+        callback(url, {
+        alt: 'Görsel'
+        });
+
+        } else {
+
+        callback(url);
+
+        }
+
+        }, typeFilter);
+
+        },
+
+        setup: function (editor) {
+
+        editor.on('change', function () {
+        editor.save();
+        });
+
+        editor.on('keyup', function () {
+        editor.save();
+        });
+
+        }
+
+        });
+
+        // ============================================
+        // Form Submit
+        // ============================================
+
+        document
+        .getElementById('menuCreateForm')
+        .addEventListener('submit', function () {
+
+        const editor = tinymce.get('IcerikMetniEditor');
+
+        if (editor) {
+        editor.save();
+        }
+
+        });
+
+        // ============================================
+        // File Manager Modal
+        // ============================================
+
+        $('#openFileManagerBtn').on('click', function () {
+
+        const type = 'image';
+
+        $('#fileManagerFrame').attr(
+        'src',
+        '/File?mode=picker&type=' + type
+        );
+
+        $('#fileManagerModal').modal('show');
+
+        });
+
+        // ============================================
+        // File Manager Message Listener
+        // ============================================
+
+        function fileManagerMessageHandler(event) {
+
+        // Güvenlik kontrolü
+        if (event.origin !== window.location.origin)
+        return;
+
+        if (event.data.type === 'file-selected') {
+
+        $('#IconUrlInput').val(event.data.url);
+
+        $('#fileManagerModal').modal('hide');
+
+        }
+
+        }
+
+        window.removeEventListener('message', fileManagerMessageHandler);
+
+        window.addEventListener(
+        'message',
+        fileManagerMessageHandler
+        );
+
+        // ============================================
+        // TinyMCE File Manager Popup
+        // ============================================
+
+        function openFileManagerForTinyMCE(callback, type) {
+
+        const popup = window.open(
+        '/File?mode=picker&type=' + type,
+        'FileManager',
+        'width=1200,height=700'
+        );
+
+        function handler(event) {
+
+        if (event.origin !== window.location.origin)
+        return;
+
+        if (event.data.type === 'file-selected') {
+
+        callback(event.data.url);
+
+        if (popup) {
+        popup.close();
+        }
+
+        window.removeEventListener(
+        'message',
+        handler
+        );
+        }
+        }
+
+        window.addEventListener('message', handler);
+
+        }
+
     </script>
 }

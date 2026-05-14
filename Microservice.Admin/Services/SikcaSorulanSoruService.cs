@@ -49,7 +49,7 @@ namespace Microservice.Admin.Services
             return ServiceResult<SikcaSorulanSoruDetailVm>.Success(response.Content!);
         }
 
-        public async Task<ServiceResult<object>> CreateSikcaSorulanSoruAsync(CreateSikcaSorulanSoruVm dto)
+        public async Task<ServiceResult<bool>> CreateSikcaSorulanSoruAsync(CreateSikcaSorulanSoruVm dto)
         {
             _logger.LogInformation("Yeni SSS oluşturuluyor. Soru: {Soru}", dto.Soru);
             var response = await _sikcaSorulanSoruClient.CreateSikcaSorulanSoruAsync(dto);
@@ -59,14 +59,14 @@ namespace Microservice.Admin.Services
                 var problemDetails = response.Error != null
                     ? JsonSerializer.Deserialize<Microsoft.AspNetCore.Mvc.ProblemDetails>(response.Error.Content!) : null;
                 _logger.LogError("API Error -> StatusCode: {StatusCode}, Title: {Title}, Detail: {Detail}", response.StatusCode, problemDetails?.Title, problemDetails?.Detail);
-                return ServiceResult<object>.Error(problemDetails?.Detail ?? problemDetails?.Title ?? "SSS oluşturulamadı");
+                return ServiceResult<bool>.Error(problemDetails?.Detail ?? problemDetails?.Title ?? "SSS oluşturulamadı");
             }
 
             _logger.LogInformation("SSS oluşturuldu.");
-            return ServiceResult<object>.Success(true);
+            return ServiceResult<bool>.Success(true);
         }
 
-        public async Task<ServiceResult<object>> UpdateSikcaSorulanSoruAsync(SikcaSorulanSoruDetailVm dto)
+        public async Task<ServiceResult<bool>> UpdateSikcaSorulanSoruAsync(SikcaSorulanSoruDetailVm dto)
         {
             _logger.LogInformation("SSS güncelleniyor. Id: {Id}", dto.Id);
             var response = await _sikcaSorulanSoruClient.UpdateSikcaSorulanSoruAsync(dto.Id, dto);
@@ -76,14 +76,14 @@ namespace Microservice.Admin.Services
                 var problemDetails = response.Error != null
                     ? JsonSerializer.Deserialize<Microsoft.AspNetCore.Mvc.ProblemDetails>(response.Error.Content!) : null;
                 _logger.LogError("API Error -> StatusCode: {StatusCode}, Title: {Title}, Detail: {Detail}", response.StatusCode, problemDetails?.Title, problemDetails?.Detail);
-                return ServiceResult<object>.Error(problemDetails?.Detail ?? problemDetails?.Title ?? $"SSS güncellenemedi. Id: {dto.Id}");
+                return ServiceResult<bool>.Error(problemDetails?.Detail ?? problemDetails?.Title ?? $"SSS güncellenemedi. Id: {dto.Id}");
             }
 
             _logger.LogInformation("SSS güncellendi. Id: {Id}", dto.Id);
-            return ServiceResult<object>.Success(true);
+            return ServiceResult<bool>.Success(true);
         }
 
-        public async Task<ServiceResult<object>> DeleteSikcaSorulanSoruAsync(int id)
+        public async Task<ServiceResult<bool>> DeleteSikcaSorulanSoruAsync(int id)
         {
             _logger.LogWarning("SSS silme isteği alındı. Id: {Id}", id);
             var response = await _sikcaSorulanSoruClient.DeleteSikcaSorulanSoruAsync(id);
@@ -93,11 +93,11 @@ namespace Microservice.Admin.Services
                 var problemDetails = response.Error != null
                     ? JsonSerializer.Deserialize<Microsoft.AspNetCore.Mvc.ProblemDetails>(response.Error.Content!) : null;
                 _logger.LogError("API Error -> StatusCode: {StatusCode}, Title: {Title}, Detail: {Detail}", response.StatusCode, problemDetails?.Title, problemDetails?.Detail);
-                return ServiceResult<object>.Error(problemDetails?.Detail ?? problemDetails?.Title ?? "SSS silinemedi");
+                return ServiceResult<bool>.Error(problemDetails?.Detail ?? problemDetails?.Title ?? "SSS silinemedi");
             }
 
             _logger.LogInformation("SSS silindi. Id: {Id}", id);
-            return ServiceResult<object>.Success(true);
+            return ServiceResult<bool>.Success(true);
         }
     }
 }

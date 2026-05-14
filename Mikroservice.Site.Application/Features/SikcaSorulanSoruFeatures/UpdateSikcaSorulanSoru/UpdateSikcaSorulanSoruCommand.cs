@@ -9,7 +9,7 @@ namespace Mikroservice.Site.Application.Features.SikcaSorulanSoruFeatures.Update
 
         public int DilId { get; init; }
 
-        public int KategoriId { get; init; }
+        public int? ParentId { get; init; }
 
         public string Soru { get; init; } = default!;
 

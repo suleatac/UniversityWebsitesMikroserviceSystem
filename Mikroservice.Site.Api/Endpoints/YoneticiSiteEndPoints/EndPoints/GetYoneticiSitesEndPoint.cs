@@ -1,7 +1,7 @@
 ﻿using MediatR;
 using Microservice.Shared.Extentions;
-using Mikroservice.Site.Application.Features.SiteFeatures.GetSite;
 using Mikroservice.Site.Application.Features.YoneticiSiteFeatures.GetYoneticiSites;
+using Mikroservice.Site.Application.DTOs.YoneticiSiteDtos;
 
 namespace Mikroservice.Site.Api.Endpoints.YoneticiSiteEndPoints.EndPoints
 {
@@ -15,7 +15,7 @@ namespace Mikroservice.Site.Api.Endpoints.YoneticiSiteEndPoints.EndPoints
             })
             .WithName("GetYoneticiSites")
             .MapToApiVersion(1.0)
-            .Produces<List<Domain.Entities.Site>>(StatusCodes.Status200OK)
+            .Produces<List<YoneticiSiteDetailDto>>(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status500InternalServerError);
 
             return group;

@@ -41,9 +41,18 @@ namespace Microservice.Admin.Controllers
         public async Task<IActionResult> Edit()
         {
             _logger.LogInformation("Popup düzenleme sayfası açıldı.");
-            var currentSiteId = HttpContext.Session.GetInt32("CurrentSiteId") ?? 1;
+            var currentSiteId = HttpContext.Session.GetInt32("CurrentSiteId");
 
-            var result = await _popupService.GetPopupBySiteIdAsync(currentSiteId);
+            if (!currentSiteId.HasValue)
+            {
+                _logger.LogError("CurrentSiteId session değeri bulunamadı.");
+
+                TempData["Error"] = "Tekrar site seçiniz veya tekrar giriş yapınız.";
+
+                return RedirectToAction("SelectSite", "SiteSelection");
+            }
+
+            var result = await _popupService.GetPopupBySiteIdAsync(currentSiteId.Value);
 
             if (!result.IsSuccess || result.Data == null)
             {

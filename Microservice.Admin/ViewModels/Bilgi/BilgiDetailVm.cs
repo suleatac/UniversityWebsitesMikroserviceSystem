@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace Microservice.Admin.ViewModels.Bilgi
 {
     public class BilgiDetailVm
@@ -16,9 +18,12 @@ namespace Microservice.Admin.ViewModels.Bilgi
         public string? ResimUrl { get; set; }
         public int GosterimSayisi { get; set; } = 0;
 
+        [DisplayFormat(DataFormatString = "{0:yyyy-MM-ddTHH:mm}", ApplyFormatInEditMode = true)]
         public DateTime YayimTarihi { get; set; }
+        [DisplayFormat(DataFormatString = "{0:yyyy-MM-ddTHH:mm}", ApplyFormatInEditMode = true)]
         public DateTime EklemeTarihi { get; set; }
 
+        [DisplayFormat(DataFormatString = "{0:yyyy-MM-ddTHH:mm}", ApplyFormatInEditMode = true)]
         public DateTime? BaslamaTarihi { get; set; }
         public DateTime? BitisTarihi { get; set; }
 

@@ -7,8 +7,8 @@ namespace Microservice.Admin.ViewModels.SitePersonel
         public int PersonelId { get; set; }
         public int UnvanId { get; set; }
         public int PersonelTipId { get; set; }
-        public string ResimUrl { get; set; } = default!;
-        public string Hakkinda { get; set; } = default!;
+        public string? ResimUrl { get; set; } 
+        public string? Hakkinda { get; set; } 
         public string? UnvanAd { get; set; }
         public string? PersonelTipAd { get; set; }
     }

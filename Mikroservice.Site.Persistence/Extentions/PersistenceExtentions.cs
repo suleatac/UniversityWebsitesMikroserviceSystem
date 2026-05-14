@@ -45,7 +45,6 @@ namespace Microservice.Site.Persistence.Extentions
             services.AddScoped<IPersonelTelefonRepository, PersonelTelefonRepository>();
             services.AddScoped<IPersonelTipRepository, PersonelTipRepository>();
             services.AddScoped<IPopupRepository, PopupRepository>();
-            services.AddScoped<ISikcaSorulanSoruKategoriRepository, SikcaSorulanSoruKategoriRepository>();
             services.AddScoped<ISikcaSorulanSoruRepository, SikcaSorulanSoruRepository>();
             services.AddScoped<ISiteOzellikleriRepository, SiteOzellikleriRepository>();
             services.AddScoped<ISitePersonelRepository, SitePersonelRepository>();

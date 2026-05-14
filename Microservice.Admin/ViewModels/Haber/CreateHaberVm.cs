@@ -1,4 +1,6 @@
-﻿namespace Microservice.Admin.ViewModels.Haber
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Microservice.Admin.ViewModels.Haber
 {
     public class CreateHaberVm
     {
@@ -12,9 +14,11 @@
 
         public string? Link { get; set; }
         public string? ResimUrl { get; set; }
-
+        [DisplayFormat(DataFormatString = "{0:yyyy-MM-ddTHH:mm}", ApplyFormatInEditMode = true)]
         public DateTime YayimTarihi { get; set; } = DateTime.Now;
+        [DisplayFormat(DataFormatString = "{0:yyyy-MM-ddTHH:mm}", ApplyFormatInEditMode = true)]
         public DateTime? BaslamaTarihi { get; set; }
+        [DisplayFormat(DataFormatString = "{0:yyyy-MM-ddTHH:mm}", ApplyFormatInEditMode = true)]
         public DateTime? BitisTarihi { get; set; }
 
         // SEO (opsiyonel ama önemli)

@@ -7,8 +7,8 @@ namespace Microservice.Admin.Services.Interfaces
     {
         Task<ServiceResult<List<GetSikcaSorulanSoruVm>>> GetSikcaSorulanSorularAsync(int siteId, int dilId);
         Task<ServiceResult<SikcaSorulanSoruDetailVm>> GetSikcaSorulanSoruByIdAsync(int id);
-        Task<ServiceResult<object>> CreateSikcaSorulanSoruAsync(CreateSikcaSorulanSoruVm dto);
-        Task<ServiceResult<object>> UpdateSikcaSorulanSoruAsync(SikcaSorulanSoruDetailVm dto);
-        Task<ServiceResult<object>> DeleteSikcaSorulanSoruAsync(int id);
+        Task<ServiceResult<bool>> CreateSikcaSorulanSoruAsync(CreateSikcaSorulanSoruVm dto);
+        Task<ServiceResult<bool>> UpdateSikcaSorulanSoruAsync(SikcaSorulanSoruDetailVm dto);
+        Task<ServiceResult<bool>> DeleteSikcaSorulanSoruAsync(int id);
     }
 }

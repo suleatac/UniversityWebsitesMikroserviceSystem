@@ -21,5 +21,13 @@ namespace Microservice.Site.Persistence.Repositories
         {
             return await _appDbContext.Set<SitePersonel>().AnyAsync(x=>x.UnvanId==unvanId,cancellationToken);
         }
+        public async Task<List<SitePersonel>> GetAllWithPersonelTipAndUnvanAsync(int siteId,CancellationToken cancellationToken = default)
+        {
+            return await _appDbContext.Set<SitePersonel>()
+                .Include(x => x.Unvan).Include(x => x.PersonelTip)
+                .Where(x => x.SiteId == siteId)
+                .AsNoTracking()
+                .ToListAsync(cancellationToken);
+        }
     }
 }

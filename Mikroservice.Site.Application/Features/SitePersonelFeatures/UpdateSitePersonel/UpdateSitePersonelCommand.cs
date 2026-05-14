@@ -10,15 +10,15 @@ namespace Mikroservice.Site.Application.Features.SitePersonelFeatures.UpdateSite
         public int UnvanId { get; init; }
         public int PersonelTipId { get; init; }
 
-        public string ResimUrl { get; init; } = default!;
-        public string IlgiAlanlari { get; init; } = default!;
-        public string BlogAdress { get; init; } = default!;
-        public string TwitterAdress { get; init; } = default!;
-        public string FacebookAdress { get; init; } = default!;
-        public string InstagramAdress { get; init; } = default!;
-        public string GoogleplusAdress { get; init; } = default!;
+        public string? ResimUrl { get; init; } 
+        public string? IlgiAlanlari { get; init; }
+        public string? BlogAdress { get; init; } 
+        public string? TwitterAdress { get; init; } 
+        public string? FacebookAdress { get; init; } 
+        public string? InstagramAdress { get; init; } 
+        public string? GoogleplusAdress { get; init; } 
 
-        public string Hakkinda { get; init; } = default!;
-        public string DeneyimVeCalismalari { get; init; } = default!;
+        public string? Hakkinda { get; init; } 
+        public string? DeneyimVeCalismalari { get; init; } 
     }
 }

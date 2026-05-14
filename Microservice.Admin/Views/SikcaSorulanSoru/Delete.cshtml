@@ -18,26 +18,55 @@
             <div class="card-body p-4">
                 <div class="alert alert-danger d-flex align-items-center" role="alert">
                     <i class="mdi mdi-alert-circle fs-4 me-2"></i>
-                    <div><strong>Dikkat!</strong> Bu soruyu silmek üzeresiniz. Bu işlem geri alınamaz.</div>
-                </div>
-                <div class="row">
-                    <div class="col-md-12"><div class="mb-3"><label class="form-label text-muted small">Soru</label><div class="form-control-plaintext fw-semibold">@Model.Soru</div></div></div>
-                </div>
-                <div class="row">
-                    <div class="col-md-12"><div class="mb-3"><label class="form-label text-muted small">Cevap</label><div class="form-control-plaintext fw-semibold" style="max-height: 150px; overflow-y: auto;">@Model.Cevap</div></div></div>
-                </div>
-                <div class="row">
-                    <div class="col-md-6"><div class="mb-3"><label class="form-label text-muted small">Sıra</label><div class="form-control-plaintext fw-semibold">@Model.Sira</div></div></div>
-                    <div class="col-md-6"><div class="mb-3"><label class="form-label text-muted small">Kategori ID</label><div class="form-control-plaintext fw-semibold">@Model.KategoriId</div></div></div>
-                </div>
-                <form asp-action="DeleteConfirmed" method="post">
-                    @Html.AntiForgeryToken()
-                    <input type="hidden" asp-for="Id" />
-                    <div class="d-flex justify-content-end gap-2">
-                        <a asp-action="Index" class="btn btn-secondary"><i class="mdi mdi-arrow-left me-1"></i> İptal</a>
-                        <button type="submit" class="btn btn-danger"><i class="mdi mdi-delete me-1"></i> Sil</button>
+                    <div>
+                        <strong>Dikkat!</strong> "<strong>@Model.Soru</strong>" sorusunu silmek üzeresiniz.
+                        Bu işlem geri alınamaz ve alt sorular da etkilenebilir.
                     </div>
-                </form>
+                </div>
+
+                <h6 class="text-primary border-bottom pb-2 mb-3">
+                    <i class="mdi mdi-information-outline me-1"></i> Soru Bilgileri
+                </h6>
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="mb-3">
+                            <label class="form-label text-muted small">Soru</label>
+                            <div class="form-control-plaintext fw-semibold">@Model.Soru</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="mb-3">
+                            <label class="form-label text-muted small">Cevap</label>
+                            <div class="form-control-plaintext fw-semibold" style="max-height: 150px; overflow-y: auto;">@Model.Cevap</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label text-muted small">Sıra</label>
+                            <div class="form-control-plaintext fw-semibold">@Model.Sira</div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label text-muted small">Üst Soru</label>
+                            <div class="form-control-plaintext fw-semibold">@(Model.ParentId.HasValue ? Model.ParentId.Value.ToString() : "— (Kök Soru)")</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-between align-items-center pt-3 border-top">
+                    <a asp-action="Index" class="btn btn-outline-secondary"><i class="mdi mdi-arrow-left me-1"></i> İptal</a>
+                    <form asp-action="DeleteConfirmed" method="post" class="d-inline">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" asp-for="Id" />
+                        <button type="submit" class="btn btn-danger"><i class="mdi mdi-delete me-1"></i> Evet, Sil</button>
+                    </form>
+                </div>
             </div>
         </div>
     </div>

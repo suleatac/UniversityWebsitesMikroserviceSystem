@@ -1,8 +1,10 @@
 using Microservice.Site.Application.Contracts.IRepositories;
+using Microservice.Site.Persistence;
+using Microservice.Site.Persistence.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Mikroservice.Site.Domain.Entities;
 
-namespace Microservice.Site.Persistence.Repositories
+namespace Mikroservice.Site.Persistence.Repositories
 {
     public class YoneticiSiteRepository : GenericRepository<YoneticiSite>, IYoneticiSiteRepository
     {
@@ -30,6 +32,24 @@ namespace Microservice.Site.Persistence.Repositories
                 .Include(x => x.Site)
                 .Where(x => x.KeycloakUserId == keycloakUserId && !x.IsDeleted)
                 .ToListAsync(cancellationToken);
+        }
+
+        public async Task<List<YoneticiSite>> GetAllWithSiteAsync(CancellationToken cancellationToken = default)
+        {
+            return await _appDbContext.Set<YoneticiSite>()
+                .Include(x => x.Site)
+                .Where(x => !x.IsDeleted)
+                .AsNoTracking()
+                .ToListAsync(cancellationToken);
+        }
+
+        public async Task<YoneticiSite?> GetByIdWithSiteAsync(int id, CancellationToken cancellationToken = default)
+        {
+            return await _appDbContext.Set<YoneticiSite>()
+                .Include(x => x.Site)
+                .Where(x => x.Id == id && !x.IsDeleted)
+                .AsNoTracking()
+                .FirstOrDefaultAsync(cancellationToken);
         }
     }
 }

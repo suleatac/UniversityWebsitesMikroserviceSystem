@@ -23,6 +23,7 @@ namespace Mikroservice.Site.Api.Endpoints.BannerEndPoints
             group.GetBannersEndpointGroupItem();
             group.GetBannerByIdEndpointGroupItem();
             group.GetPaginatedBannerEndpointGroupItem();
+            group.ReorderBannersEndpointGroupItem();
             group.RequireAuthorization("Password");
         }
     }

@@ -1,5 +1,4 @@
-﻿using Microservice.Admin.Services;
-using Microservice.Admin.Services.Interfaces;
+﻿using Microservice.Admin.Services.Interfaces;
 using Microservice.Admin.ViewModels.Haber;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

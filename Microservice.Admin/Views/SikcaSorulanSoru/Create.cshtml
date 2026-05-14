@@ -1,9 +1,44 @@
 @model Microservice.Admin.ViewModels.SikcaSorulanSoru.SikcaSorulanSoruCreateIndexVm
+@using Microservice.Admin.ViewModels.SikcaSorulanSoru
 
 @{
     ViewBag.pTitle = "Sıkça Sorulan Sorular";
     ViewBag.Title = "Yeni Soru";
     Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section styles {
+    <link href="~/assets/libs/select2/css/select2.min.css" rel="stylesheet" />
+    <style>
+        .select2-container--default .select2-selection--single {
+            height: calc(1.5em + 0.9rem + 2px) !important;
+            border: 1px solid #ced4da !important;
+            border-radius: 0.3rem !important;
+            padding: 0.45rem 0.9rem !important;
+        }
+        .select2-container--default .select2-selection--single .select2-selection__rendered {
+            line-height: 1.5 !important;
+            padding-left: 0 !important;
+            color: #495057;
+        }
+        .select2-container--default .select2-selection--single .select2-selection__arrow {
+            height: calc(1.5em + 0.9rem + 2px) !important;
+        }
+        .select2-container--default .select2-selection--single .select2-selection__clear {
+            display: none !important;
+        }
+        .select2-container--default.select2-container--focus .select2-selection--single,
+        .select2-container--default.select2-container--open .select2-selection--single {
+            border-color: #80bdff !important;
+            box-shadow: 0 0 0 0.2rem rgba(0,123,255,0.25) !important;
+        }
+        .select2-container--default .select2-results__option--highlighted[aria-selected] {
+            background-color: #17a2b8 !important;
+        }
+        .select2-dropdown {
+            border-color: #ced4da !important;
+        }
+    </style>
 }
 
 <div class="row justify-content-center">
@@ -17,26 +52,14 @@
             </div>
             <div class="card-body p-4">
                 <form asp-action="Create" method="post" class="needs-validation" novalidate>
-                    <div asp-validation-summary="ModelOnly" class="alert alert-danger d-none" role="alert"><i class="mdi mdi-block-helper me-2"></i><ul></ul></div>
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger d-none" role="alert" id="validationSummary"><i class="mdi mdi-block-helper me-2"></i><ul></ul></div>
                     <input type="hidden" asp-for="CreateSikcaSorulanSoru.SiteId" />
                     <input type="hidden" asp-for="CreateSikcaSorulanSoru.DilId" />
-
+@* 
                     <div class="mb-4">
                         <h6 class="text-primary border-bottom pb-2"><i class="mdi mdi-information-outline me-1"></i> Temel Bilgiler</h6>
                         <div class="row">
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label asp-for="CreateSikcaSorulanSoru.KategoriId" class="form-label">Kategori <span class="text-danger">*</span></label>
-                                    <select asp-for="CreateSikcaSorulanSoru.KategoriId" class="form-select">
-                                        <option value="">-- Kategori Seçin --</option>
-                                        @foreach (var kategori in Model.Kategoriler)
-                                        {
-                                            <option value="@kategori.Id">@kategori.Ad</option>
-                                        }
-                                    </select>
-                                    <span asp-validation-for="CreateSikcaSorulanSoru.KategoriId" class="text-danger small"></span>
-                                </div>
-                            </div>
+                     
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label asp-for="CreateSikcaSorulanSoru.Sira" class="form-label">Sıra</label>
@@ -45,7 +68,7 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </div> *@
 
                     <div class="mb-4">
                         <h6 class="text-primary border-bottom pb-2"><i class="mdi mdi-comment-question me-1"></i> Soru ve Cevap</h6>
@@ -62,6 +85,25 @@
                     </div>
 
                     <div class="mb-4">
+                        <h6 class="text-primary border-bottom pb-2"><i class="mdi mdi-file-tree-outline me-1"></i> Hiyerarşi</h6>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="mb-3">
+                                    <label asp-for="CreateSikcaSorulanSoru.ParentId" class="form-label">
+                                        <i class="mdi mdi-account-tree me-1"></i> Üst Soru (Parent)
+                                    </label>
+                                    <select asp-for="CreateSikcaSorulanSoru.ParentId" class="form-select select2"
+                                            asp-items="@(new SelectList(FlattenSss(Model.SikcaSorulanSorular), "Id", "Ad"))">
+                                        <option value="">Üst soru yok (Kök soru)</option>
+                                    </select>
+                                    <span asp-validation-for="CreateSikcaSorulanSoru.ParentId" class="text-danger small"></span>
+                                    <small class="text-muted">SSS hiyerarşisindeki üst soruyu seçin. Boş bırakılırsa kök soru olarak oluşturulur.</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
                         <h6 class="text-primary border-bottom pb-2"><i class="mdi mdi-magnify me-1"></i> SEO</h6>
                         <div class="mb-3">
                             <label asp-for="CreateSikcaSorulanSoru.SeoUrl" class="form-label">SEO URL</label>
@@ -69,8 +111,8 @@
                         </div>
                     </div>
 
-                    <div class="d-flex justify-content-end gap-2">
-                        <a asp-action="Index" class="btn btn-secondary"><i class="mdi mdi-arrow-left me-1"></i> İptal</a>
+                    <div class="d-flex justify-content-between align-items-center pt-3 border-top">
+                        <a asp-action="Index" class="btn btn-outline-secondary"><i class="mdi mdi-arrow-left me-1"></i> Listeye Dön</a>
                         <button type="submit" class="btn btn-info text-white"><i class="mdi mdi-check me-1"></i> Kaydet</button>
                     </div>
                 </form>
@@ -78,3 +120,38 @@
         </div>
     </div>
 </div>
+
+@functions {
+    private List<dynamic> FlattenSss(List<GetSikcaSorulanSoruVm> sssList, string prefix = "")
+    {
+        var result = new List<dynamic>();
+        foreach (var m in sssList.OrderBy(m => m.Sira))
+        {
+            result.Add(new { Id = (int?)m.Id, Ad = string.IsNullOrEmpty(prefix) ? m.Soru : prefix + " └ " + m.Soru });
+            if (m.Children != null && m.Children.Any())
+            {
+                result.AddRange(FlattenSss(m.Children, string.IsNullOrEmpty(prefix) ? m.Soru : prefix + " └ " + m.Soru));
+            }
+        }
+        return result;
+    }
+}
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script src="~/assets/libs/select2/js/select2.full.min.js"></script>
+    <script src="~/assets/libs/select2/js/i18n/tr.js"></script>
+    <script>
+        $(document).ready(function () {
+            var validationSummary = $('#validationSummary');
+            if (validationSummary.find('li').length > 0 || validationSummary.find('span').length > 0) {
+                validationSummary.removeClass('d-none');
+            }
+
+            $('.select2').select2({
+                language: 'tr',
+                width: '100%'
+            });
+        });
+    </script>
+}

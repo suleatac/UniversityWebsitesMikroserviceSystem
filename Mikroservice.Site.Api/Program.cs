@@ -3,7 +3,9 @@ using Microservice.Shared.Extentions;
 using Microservice.Shared.OpenTelemetry;
 using Microservice.Shared.SeriLog;
 using Microservice.Site.Api.Endpoints.YonetimDuyuruEndPoints;
+using Microservice.Site.Persistence;
 using Microservice.Site.Persistence.Extentions;
+using Microsoft.EntityFrameworkCore;
 using Mikroservice.Site.Api.Endpoints.BandLogoEndPoints;
 using Mikroservice.Site.Api.Endpoints.BannerEndPoints;
 using Mikroservice.Site.Api.Endpoints.BilgiEndPoints;
@@ -18,7 +20,6 @@ using Mikroservice.Site.Api.Endpoints.MenuEndPoints;
 using Mikroservice.Site.Api.Endpoints.PersonelTipEndPoints;
 using Mikroservice.Site.Api.Endpoints.PopupEndPoints;
 using Mikroservice.Site.Api.Endpoints.SikcaSorulanSoruEndPoints;
-using Mikroservice.Site.Api.Endpoints.SikcaSorulanSoruKategoriEndPoints;
 using Mikroservice.Site.Api.Endpoints.SiteEndPoints;
 using Mikroservice.Site.Api.Endpoints.SiteOzellikleriEndPoints;
 using Mikroservice.Site.Api.Endpoints.SitePersonelEndPoints;
@@ -82,12 +83,12 @@ builder.Services.AddVersioningExt();
 var app = builder.Build();
 
 //Çalıştığında otomatik migration yapması için
-//using (var scope = app.Services.CreateScope())
-//{
-//    var serviceProvider = scope.ServiceProvider;
-//    var dbContext = serviceProvider.GetRequiredService<AppDbContext>();
-//    await dbContext.Database.MigrateAsync();
-//}
+using (var scope = app.Services.CreateScope())
+{
+    var serviceProvider = scope.ServiceProvider;
+    var dbContext = serviceProvider.GetRequiredService<AppDbContext>();
+    await dbContext.Database.MigrateAsync();
+}
 
 
 //Authentication ve Authorization middleware'leri eklendi
@@ -121,7 +122,6 @@ app.AddMenuGroupsEndpointExt(apiVersionSet);
 app.AddPersonelTipGroupsEndpointExt(apiVersionSet);
 app.AddPopupGroupsEndpointExt(apiVersionSet);
 app.AddSikcaSorulanSoruGroupsEndpointExt(apiVersionSet);
-app.AddSikcaSorulanSoruKategoriGroupsEndpointExt(apiVersionSet);
 app.AddSiteGroupsEndpointExt(apiVersionSet);
 app.AddSiteOzellikleriGroupsEndpointExt(apiVersionSet);
 app.AddSitePersonelGroupsEndpointExt(apiVersionSet);

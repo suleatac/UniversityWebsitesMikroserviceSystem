@@ -16,7 +16,7 @@ namespace Mikroservice.Site.Application.Features.YoneticiSiteFeatures.GetYonetic
     {
         public async Task<ServiceResult<YoneticiSiteDetailDto>> Handle(GetYoneticiSiteByIdQuery request, CancellationToken cancellationToken)
         {
-            var entity = await repository.GetByIdAsync(request.Id);
+            var entity = await repository.GetByIdWithSiteAsync(request.Id, cancellationToken);
 
             if (entity is null || entity.IsDeleted)
             {

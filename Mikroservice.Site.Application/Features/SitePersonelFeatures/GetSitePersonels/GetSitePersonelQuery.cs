@@ -1,8 +1,8 @@
 ﻿using Microservice.Shared;
-using Mikroservice.Site.Domain.Entities;
+using Mikroservice.Site.Application.DTOs.SitePersonelDtos;
 
 namespace Mikroservice.Site.Application.Features.SitePersonelFeatures.GetSitePersonels
 {
-    public record GetSitePersonelQuery(int SiteId) : IRequestByServiceResult<List<SitePersonel>>;
+    public record GetSitePersonelQuery(int SiteId) : IRequestByServiceResult<List<SitePersonelDetailDto>>;
 
 }

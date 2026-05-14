@@ -3,6 +3,7 @@ using Microservice.Admin.ViewModels;
 using Microservice.Admin.ViewModels.Banner;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Text.Json;
 
 namespace Microservice.Admin.Controllers
 {
@@ -29,41 +30,44 @@ namespace Microservice.Admin.Controllers
             _logger = logger;
         }
 
-        public IActionResult Index()
-        {
-            return View();
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> GetBannersForPagination(
-            int page = 1, int pageSize = 10, string search = "", int orderColumn = 0, string orderDir = "desc")
+        public async Task<IActionResult> Index()
         {
             var currentSiteId = HttpContext.Session.GetInt32("CurrentSiteId") ?? 1;
             var currentDilId = HttpContext.Session.GetInt32("CurrentDilId") ?? 1;
 
-            var columnName = orderColumn switch
-            {
-                1 => "Baslik",
-                2 => "KisaAciklama",
-                3 => "Sira",
-                4 => "YayimTarihi",
-                _ => "Id"
-            };
-
-            var result = await _bannerService.GetBannersPaginatedAsync(currentSiteId, currentDilId, page, pageSize, search, columnName, orderDir);
+            var result = await _bannerService.GetBannersAsync(currentSiteId, currentDilId);
 
             if (!result.IsSuccess)
             {
-                _logger.LogError("Paginated banner listesi alınamadı. Hata: {Error}", result.Fail?.Detail);
-                return BadRequest(new { error = result.Fail?.Detail });
+                _logger.LogError("Banner listesi alınamadı. Hata: {Error}", result.Fail?.Detail);
+                TempData["Error"] = result.Fail?.Detail ?? result.Fail?.Title ?? "Banner listesi alınamadı.";
+                return View(new List<GetBannerVm>());
             }
 
-            return Ok(new
+            return View(result.Data ?? new List<GetBannerVm>());
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ReorderBanners([FromBody] List<ReorderBannerItemVm> items)
+        {
+            if (items == null || items.Count == 0)
             {
-                data = result.Data!.Data,
-                recordsTotal = result.Data.TotalCount,
-                recordsFiltered = result.Data.TotalCount
-            });
+                return Json(new { success = false, message = "Geçersiz veri." });
+            }
+
+            _logger.LogInformation("Banner sıralaması güncelleniyor. {Count} öğe.", items.Count);
+
+            var result = await _bannerService.ReorderBannersAsync(items);
+
+            if (!result.IsSuccess)
+            {
+                _logger.LogError("Banner sıralaması güncellenemedi. Hata: {Error}", result.Fail?.Detail);
+                return Json(new { success = false, message = result.Fail?.Detail ?? "Sıralama güncellenemedi." });
+            }
+
+            _logger.LogInformation("Banner sıralaması başarıyla güncellendi.");
+            return Json(new { success = true, message = "Sıralama başarıyla güncellendi." });
         }
 
         [HttpGet]

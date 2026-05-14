@@ -36,8 +36,22 @@ namespace Microservice.Admin.Controllers
             _logger = logger;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
+            //// Admin henüz site eklememişse site create sayfasına yönlendir
+            var sitesResult = await _siteService.GetSitesAsync();
+            var hasSite = sitesResult.Data?.Any() == true;
+
+            if (!hasSite)
+            {
+                _logger.LogWarning(
+                    "Hiç site bulunamadı. Kullanıcı site oluşturma ekranına yönlendiriliyor.");
+
+                return RedirectToAction("Create", "Site");
+            }
+
+
+
             return View();
         }
 
@@ -82,22 +96,19 @@ namespace Microservice.Admin.Controllers
                 ? data
                 : data.Where(x =>
                     (x.SiteAdi ?? "").Contains(search, StringComparison.OrdinalIgnoreCase) ||
-                    (x.UserName ?? "").Contains(search, StringComparison.OrdinalIgnoreCase) ||
-                    (x.YoneticiTipiAdi ?? "").Contains(search, StringComparison.OrdinalIgnoreCase)).ToList();
+                    (x.UserName ?? "").Contains(search, StringComparison.OrdinalIgnoreCase) ).ToList();
 
             var orderedData = orderDir.ToLower() == "asc"
                 ? columnName switch
                 {
                     "SiteAdi" => filteredData.OrderBy(x => x.SiteAdi).ToList(),
                     "UserName" => filteredData.OrderBy(x => x.UserName).ToList(),
-                    "YoneticiTipiAdi" => filteredData.OrderBy(x => x.YoneticiTipiAdi).ToList(),
                     _ => filteredData.OrderBy(x => x.Id).ToList()
                 }
                 : columnName switch
                 {
                     "SiteAdi" => filteredData.OrderByDescending(x => x.SiteAdi).ToList(),
                     "UserName" => filteredData.OrderByDescending(x => x.UserName).ToList(),
-                    "YoneticiTipiAdi" => filteredData.OrderByDescending(x => x.YoneticiTipiAdi).ToList(),
                     _ => filteredData.OrderByDescending(x => x.Id).ToList()
                 };
 
@@ -117,15 +128,32 @@ namespace Microservice.Admin.Controllers
         {
             _logger.LogInformation("YoneticiSite oluşturma sayfası açıldı.");
 
-            var currentSiteId = HttpContext.Session.GetInt32("CurrentSiteId") ?? 1;
+            // Admin henüz site seçmemişse site seçim sayfasına yönlendir
+            var currentSiteId = HttpContext.Session.GetInt32("CurrentSiteId");
+     
+
             var tumPersoneller = await _tumPersonelService.GetTumPersonelsAsync();
             var tumSiteler = await _siteService.GetSitesAsync();
+
+            var hasSite = tumSiteler.Data?.Any() == true;
+            if (!hasSite)
+            {
+                _logger.LogWarning(
+                    "Hiç site bulunamadı. Kullanıcı site oluşturma ekranına yönlendiriliyor.");
+
+                return RedirectToAction("Create", "Site");
+            }
+
+
+
+
+
             var usersResult = await _userService.GetUsersAsync();
 
             var viewModel = new YoneticiSiteIndexVm
             {
                 TumPersoneller = tumPersoneller.Data ?? new List<GetPersonelVm>(),
-                YoneticiSite = new YoneticiSiteVm { SiteId = currentSiteId },
+                YoneticiSite = new YoneticiSiteVm { SiteId = currentSiteId ?? 0 },
                 TumSiteler = tumSiteler.Data ?? new List<SiteGetVm>(),
                 Users = usersResult.IsSuccess ? usersResult.Data ?? new List<UserListVm>() : new List<UserListVm>()
             };

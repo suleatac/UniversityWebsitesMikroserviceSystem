@@ -6,177 +6,803 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
+@section styles {
+
+    <link href="~/assets/libs/select2/css/select2.min.css" rel="stylesheet" />
+
+    <style>
+
+        .select2-container--default .select2-selection--single {
+            height: calc(1.5em + 0.9rem + 2px) !important;
+            border: 1px solid #ced4da !important;
+            border-radius: 0.3rem !important;
+            padding: 0.45rem 0.9rem !important;
+        }
+
+            .select2-container--default .select2-selection--single .select2-selection__rendered {
+                line-height: 1.5 !important;
+                padding-left: 0 !important;
+                color: #495057;
+            }
+
+            .select2-container--default .select2-selection--single .select2-selection__arrow {
+                height: calc(1.5em + 0.9rem + 2px) !important;
+            }
+
+            .select2-container--default .select2-selection--single .select2-selection__clear {
+                display: none !important;
+            }
+
+        .select2-container--default.select2-container--focus .select2-selection--single,
+        .select2-container--default.select2-container--open .select2-selection--single {
+            border-color: #80bdff !important;
+            box-shadow: 0 0 0 0.2rem rgba(0,123,255,0.25) !important;
+        }
+
+        .select2-container--default .select2-results__option--highlighted[aria-selected] {
+            background-color: #556ee6 !important;
+        }
+
+        .select2-dropdown {
+            border-color: #ced4da !important;
+        }
+
+    </style>
+}
+
 <div class="row justify-content-center">
+
     <div class="col-xxl-10">
+
         <div class="card shadow-lg border-0">
+
             <div class="card-header bg-primary bg-opacity-10 border-bottom">
+
                 <div class="d-flex align-items-center">
+
                     <div class="avatar-sm me-3">
+
                         <div class="avatar-title bg-primary rounded-circle">
                             <i class="mdi mdi-image-multiple fs-5"></i>
                         </div>
+
                     </div>
+
                     <div>
-                        <h5 class="card-title mb-1">Banner Bilgileri</h5>
-                        <p class="card-text text-muted mb-0">Yeni bir banner oluşturmak için formu doldurun</p>
+
+                        <h5 class="card-title mb-1">
+                            Banner Bilgileri
+                        </h5>
+
+                        <p class="card-text text-muted mb-0">
+                            Yeni bir banner oluşturmak için formu doldurun
+                        </p>
+
                     </div>
+
                 </div>
+
             </div>
 
             <div class="card-body p-4">
-                <form asp-action="Create" id="bannerCreateForm" class="needs-validation" novalidate>
-                    <div asp-validation-summary="ModelOnly" class="alert alert-danger d-none" role="alert" id="validationSummary">
-                        <i class="mdi mdi-block-helper me-2"></i><ul></ul>
+
+                <form asp-action="Create"
+                      method="post"
+                      id="bannerCreateForm"
+                      class="needs-validation"
+                      novalidate>
+
+                    <div asp-validation-summary="ModelOnly"
+                         class="alert alert-danger d-none"
+                         role="alert"
+                         id="validationSummary">
+
+                        <i class="mdi mdi-block-helper me-2"></i>
+
+                        <ul></ul>
+
                     </div>
 
                     <input type="hidden" asp-for="CreateBanner.SiteId" />
                     <input type="hidden" asp-for="CreateBanner.DilId" />
 
                     <!-- Temel Bilgiler -->
+
                     <div class="mb-4">
+
                         <h6 class="text-primary border-bottom pb-2">
-                            <i class="mdi mdi-information-outline me-1"></i> Temel Bilgiler
+
+                            <i class="mdi mdi-information-outline me-1"></i>
+                            Temel Bilgiler
+
                         </h6>
+
                         <div class="row">
+
                             <div class="col-md-6">
+
                                 <div class="mb-3">
-                                    <label asp-for="CreateBanner.Baslik" class="form-label">Başlık <span class="text-danger">*</span></label>
+
+                                    <label asp-for="CreateBanner.Baslik"
+                                           class="form-label">
+
+                                        Başlık
+                                        <span class="text-danger">*</span>
+
+                                    </label>
+
                                     <div class="input-group">
-                                        <span class="input-group-text"><i class="mdi mdi-format-title"></i></span>
-                                        <input asp-for="CreateBanner.Baslik" class="form-control" placeholder="Banner başlığını giriniz" />
+
+                                        <span class="input-group-text">
+                                            <i class="mdi mdi-format-title"></i>
+                                        </span>
+
+                                        <input asp-for="CreateBanner.Baslik"
+                                               class="form-control"
+                                               placeholder="Banner başlığını giriniz" />
+
                                     </div>
-                                    <span asp-validation-for="CreateBanner.Baslik" class="text-danger small"></span>
+
+                                    <span asp-validation-for="CreateBanner.Baslik"
+                                          class="text-danger small"></span>
+
                                 </div>
+
                             </div>
-                            <div class="col-md-3">
+
+                            <div class="col-md-6">
+
                                 <div class="mb-3">
-                                    <label asp-for="CreateBanner.KisaAciklama" class="form-label">Kısa Açıklama <span class="text-danger">*</span></label>
+
+                                    <label asp-for="CreateBanner.KisaAciklama"
+                                           class="form-label">
+
+                                        Kısa Açıklama
+                                        <span class="text-danger">*</span>
+
+                                    </label>
+
                                     <div class="input-group">
-                                        <span class="input-group-text"><i class="mdi mdi-text-short"></i></span>
-                                        <input asp-for="CreateBanner.KisaAciklama" class="form-control" placeholder="Kısa açıklama" />
+
+                                        <span class="input-group-text">
+                                            <i class="mdi mdi-text-short"></i>
+                                        </span>
+
+                                        <input asp-for="CreateBanner.KisaAciklama"
+                                               class="form-control"
+                                               placeholder="Kısa açıklama" />
+
                                     </div>
-                                    <span asp-validation-for="CreateBanner.KisaAciklama" class="text-danger small"></span>
+
+                                    <span asp-validation-for="CreateBanner.KisaAciklama"
+                                          class="text-danger small"></span>
+
                                 </div>
+
                             </div>
-                            <div class="col-md-3">
+
+                           @*  <div class="col-md-3">
+
                                 <div class="mb-3">
-                                    <label asp-for="CreateBanner.Sira" class="form-label">Sıra</label>
-                                    <input asp-for="CreateBanner.Sira" class="form-control" type="number" placeholder="0" />
-                                    <span asp-validation-for="CreateBanner.Sira" class="text-danger small"></span>
+
+                                    <label asp-for="CreateBanner.Sira"
+                                           class="form-label">
+
+                                        Sıra
+
+                                    </label>
+
+                                    <input asp-for="CreateBanner.Sira"
+                                           class="form-control"
+                                           type="number"
+                                           placeholder="0" />
+
+                                    <span asp-validation-for="CreateBanner.Sira"
+                                          class="text-danger small"></span>
+
                                 </div>
-                            </div>
+
+                            </div> *@
+
                         </div>
+
                     </div>
 
                     <!-- İçerik ve Medya -->
+
                     <div class="mb-4">
+
                         <h6 class="text-primary border-bottom pb-2">
-                            <i class="mdi mdi-file-document-outline me-1"></i> İçerik ve Medya
+
+                            <i class="mdi mdi-file-document-outline me-1"></i>
+                            İçerik ve Medya
+
                         </h6>
+
                         <div class="mb-3">
-                            <label asp-for="CreateBanner.IcerikMetni" class="form-label">İçerik Metni <span class="text-danger">*</span></label>
-                            <textarea asp-for="CreateBanner.IcerikMetni" id="IcerikMetniEditor" class="form-control" rows="10" placeholder="Banner içeriğini giriniz..."></textarea>
-                            <span asp-validation-for="CreateBanner.IcerikMetni" class="text-danger small"></span>
+
+                            <label asp-for="CreateBanner.IcerikMetni"
+                                   class="form-label">
+
+                                İçerik Metni
+                                <span class="text-danger">*</span>
+
+                            </label>
+
+                            <textarea asp-for="CreateBanner.IcerikMetni"
+                                      id="IcerikMetniEditor"
+                                      class="form-control"
+                                      rows="10"
+                                      placeholder="Banner içeriğini giriniz..."></textarea>
+
+                            <span asp-validation-for="CreateBanner.IcerikMetni"
+                                  class="text-danger small"></span>
+
                         </div>
+
                         <div class="row">
+
                             <div class="col-md-6">
+
                                 <div class="mb-3">
-                                    <label asp-for="CreateBanner.Link" class="form-label">Link</label>
+
+                                    <label asp-for="CreateBanner.Link"
+                                           class="form-label">
+
+                                        Link
+
+                                    </label>
+
                                     <div class="input-group">
-                                        <span class="input-group-text"><i class="mdi mdi-link"></i></span>
-                                        <input asp-for="CreateBanner.Link" class="form-control" placeholder="https://..." />
+
+                                        <span class="input-group-text">
+                                            <i class="mdi mdi-link"></i>
+                                        </span>
+
+                                        <input asp-for="CreateBanner.Link"
+                                               class="form-control"
+                                               placeholder="https://..." />
+
                                     </div>
-                                    <span asp-validation-for="CreateBanner.Link" class="text-danger small"></span>
+
+                                    <span asp-validation-for="CreateBanner.Link"
+                                          class="text-danger small"></span>
+
                                 </div>
+
                             </div>
+
                             <div class="col-md-6">
+
                                 <div class="mb-3">
-                                    <label asp-for="CreateBanner.ResimUrl" class="form-label">Resim URL</label>
+
+                                    <label asp-for="CreateBanner.ResimUrl"
+                                           class="form-label">
+
+                                        Resim URL
+
+                                    </label>
+
                                     <div class="input-group">
-                                        <span class="input-group-text"><i class="mdi mdi-image"></i></span>
-                                        <input asp-for="CreateBanner.ResimUrl" class="form-control" placeholder="Resim URL" />
+
+                                        <span class="input-group-text">
+                                            <i class="mdi mdi-image"></i>
+                                        </span>
+
+                                        <input asp-for="CreateBanner.ResimUrl"
+                                               id="ResimUrlInput"
+                                               class="form-control"
+                                               placeholder="Resim URL" />
+
+                                        <button type="button"
+                                                class="btn btn-outline-primary"
+                                                id="openFileManagerBtn"
+                                                title="Dosya Yöneticisi">
+
+                                            <i class="mdi mdi-folder-open-outline"></i>
+
+                                        </button>
+
                                     </div>
-                                    <span asp-validation-for="CreateBanner.ResimUrl" class="text-danger small"></span>
+
+                                    <span asp-validation-for="CreateBanner.ResimUrl"
+                                          class="text-danger small"></span>
+
                                 </div>
+
                             </div>
+
                         </div>
+
                     </div>
 
                     <!-- Tarih ve Hedef -->
+
                     <div class="mb-4">
+
                         <h6 class="text-primary border-bottom pb-2">
-                            <i class="mdi mdi-calendar me-1"></i> Tarih ve Hedef
+
+                            <i class="mdi mdi-calendar me-1"></i>
+                            Tarih ve Hedef
+
                         </h6>
+
                         <div class="row">
+
                             <div class="col-md-3">
                                 <div class="mb-3">
-                                    <label asp-for="CreateBanner.YayimTarihi" class="form-label">Yayım Tarihi</label>
-                                    <input asp-for="CreateBanner.YayimTarihi" class="form-control" type="datetime-local" />
-                                    <span asp-validation-for="CreateBanner.YayimTarihi" class="text-danger small"></span>
+
+                                    <label asp-for="CreateBanner.YayimTarihi"
+                                           class="form-label">
+                                        Yayım Tarihi
+                                    </label>
+
+                                    <input asp-for="CreateBanner.YayimTarihi"
+                                           class="form-control"
+                                           type="datetime-local" />
+
+                                    <span asp-validation-for="CreateBanner.YayimTarihi"
+                                          class="text-danger small"></span>
+
                                 </div>
                             </div>
+
                             <div class="col-md-3">
+
                                 <div class="mb-3">
-                                    <label asp-for="CreateBanner.BaslamaTarihi" class="form-label">Başlama Tarihi</label>
-                                    <input asp-for="CreateBanner.BaslamaTarihi" class="form-control" type="datetime-local" />
-                                    <span asp-validation-for="CreateBanner.BaslamaTarihi" class="text-danger small"></span>
+
+                                    <label asp-for="CreateBanner.BaslamaTarihi"
+                                           class="form-label">
+
+                                        Başlama Tarihi
+
+                                    </label>
+
+                                    <input asp-for="CreateBanner.BaslamaTarihi"
+                                           class="form-control"
+                                           type="datetime-local" />
+
+                                    <span asp-validation-for="CreateBanner.BaslamaTarihi"
+                                          class="text-danger small"></span>
+
                                 </div>
+
                             </div>
+
                             <div class="col-md-3">
+
                                 <div class="mb-3">
-                                    <label asp-for="CreateBanner.BitisTarihi" class="form-label">Bitiş Tarihi</label>
-                                    <input asp-for="CreateBanner.BitisTarihi" class="form-control" type="datetime-local" />
-                                    <span asp-validation-for="CreateBanner.BitisTarihi" class="text-danger small"></span>
+
+                                    <label asp-for="CreateBanner.BitisTarihi"
+                                           class="form-label">
+
+                                        Bitiş Tarihi
+
+                                    </label>
+
+                                    <input asp-for="CreateBanner.BitisTarihi"
+                                           class="form-control"
+                                           type="datetime-local" />
+
+                                    <span asp-validation-for="CreateBanner.BitisTarihi"
+                                          class="text-danger small"></span>
+
                                 </div>
+
                             </div>
+
                             <div class="col-md-3">
+
                                 <div class="mb-3">
-                                    <label asp-for="CreateBanner.HedefId" class="form-label">Hedef</label>
-                                    <select asp-for="CreateBanner.HedefId" class="form-select">
-                                        <option value="">-- Hedef Seçin --</option>
+
+                                    <label asp-for="CreateBanner.HedefId"
+                                           class="form-label">
+
+                                        Hedef
+
+                                    </label>
+
+                                    <select asp-for="CreateBanner.HedefId"
+                                            class="form-select select2">
+
+
                                         @foreach (var hedef in Model.Hedefler)
                                         {
-                                            <option value="@hedef.Id">@hedef.Aciklama</option>
+                                            <option value="@hedef.Id">
+                                                @hedef.Aciklama
+                                            </option>
                                         }
+
                                     </select>
+
+                                    <span asp-validation-for="CreateBanner.HedefId"
+                                          class="text-danger small"></span>
+
                                 </div>
+
                             </div>
+
                         </div>
+
                     </div>
 
                     <!-- SEO -->
+
                     <div class="mb-4">
+
                         <h6 class="text-primary border-bottom pb-2">
-                            <i class="mdi mdi-magnify me-1"></i> SEO Bilgileri
+
+                            <i class="mdi mdi-magnify me-1"></i>
+                            SEO Bilgileri
+
                         </h6>
+
                         <div class="row">
+
                             <div class="col-md-4">
+
                                 <div class="mb-3">
-                                    <label asp-for="CreateBanner.SeoUrl" class="form-label">SEO URL</label>
-                                    <input asp-for="CreateBanner.SeoUrl" class="form-control" placeholder="seo-url" />
+
+                                    <label asp-for="CreateBanner.SeoUrl"
+                                           class="form-label">
+
+                                        SEO URL
+
+                                    </label>
+
+                                    <input asp-for="CreateBanner.SeoUrl"
+                                           class="form-control"
+                                           placeholder="seo-url" />
+
                                 </div>
+
                             </div>
+
                             <div class="col-md-4">
+
                                 <div class="mb-3">
-                                    <label asp-for="CreateBanner.SeoTitle" class="form-label">SEO Title</label>
-                                    <input asp-for="CreateBanner.SeoTitle" class="form-control" placeholder="SEO başlık" />
+
+                                    <label asp-for="CreateBanner.SeoTitle"
+                                           class="form-label">
+
+                                        SEO Title
+
+                                    </label>
+
+                                    <input asp-for="CreateBanner.SeoTitle"
+                                           class="form-control"
+                                           placeholder="SEO başlık" />
+
                                 </div>
+
                             </div>
+
                             <div class="col-md-4">
+
                                 <div class="mb-3">
-                                    <label asp-for="CreateBanner.SeoDescription" class="form-label">SEO Description</label>
-                                    <input asp-for="CreateBanner.SeoDescription" class="form-control" placeholder="SEO açıklama" />
+
+                                    <label asp-for="CreateBanner.SeoDescription"
+                                           class="form-label">
+
+                                        SEO Description
+
+                                    </label>
+
+                                    <input asp-for="CreateBanner.SeoDescription"
+                                           class="form-control"
+                                           placeholder="SEO açıklama" />
+
                                 </div>
+
                             </div>
+
                         </div>
+
                     </div>
 
+                    <!-- Form Actions -->
+
                     <div class="d-flex justify-content-end gap-2">
-                        <a asp-action="Index" class="btn btn-secondary"><i class="mdi mdi-arrow-left me-1"></i> İptal</a>
-                        <button type="submit" class="btn btn-primary"><i class="mdi mdi-check me-1"></i> Kaydet</button>
+
+                        <a asp-action="Index"
+                           class="btn btn-secondary">
+
+                            <i class="mdi mdi-arrow-left me-1"></i>
+                            İptal
+
+                        </a>
+
+                        <button type="submit"
+                                class="btn btn-primary">
+
+                            <i class="mdi mdi-check me-1"></i>
+                            Kaydet
+
+                        </button>
+
                     </div>
+
                 </form>
+
             </div>
+
         </div>
+
     </div>
+
 </div>
+
+<!-- File Manager Modal -->
+
+<div class="modal fade"
+     id="fileManagerModal"
+     tabindex="-1"
+     aria-labelledby="fileManagerModalLabel"
+     aria-hidden="true">
+
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+
+                <h5 class="modal-title"
+                    id="fileManagerModalLabel">
+
+                    <i class="mdi mdi-folder-open-outline me-1"></i>
+                    Dosya Yöneticisi
+
+                </h5>
+
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal"
+                        aria-label="Kapat"></button>
+
+            </div>
+
+            <div class="modal-body p-0"
+                 style="height:600px;">
+
+                <iframe id="fileManagerFrame"
+                        src=""
+                        style="width:100%; height:100%; border:none;">
+                </iframe>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+@section Scripts {
+
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script src="~/assets/libs/select2/js/select2.full.min.js"></script>
+    <script src="~/assets/libs/select2/js/i18n/tr.js"></script>
+
+    <!-- TinyMCE -->
+    <script src="~/assets/libs/tinymce/tinymce.min.js"></script>
+
+    <script>
+
+        // ============================================
+        // Sayfa Hazır
+        // ============================================
+
+        $(document).ready(function () {
+
+        const validationSummary = $('#validationSummary');
+
+        if (validationSummary.find('li').length > 0) {
+        validationSummary.removeClass('d-none');
+        }
+
+        $('.select2').select2({
+        language: 'tr',
+        width: '100%',
+        placeholder: 'Seçiniz',
+        allowClear: true
+        });
+
+        });
+
+        // ============================================
+        // TinyMCE Başlat
+        // ============================================
+
+        tinymce.init({
+
+        selector: '#IcerikMetniEditor',
+
+        height: 500,
+
+        menubar: true,
+
+        language: 'tr',
+
+        branding: false,
+
+        placeholder: 'Banner içeriğini buraya yazınız...',
+
+        plugins: [
+        'advlist',
+        'autolink',
+        'lists',
+        'link',
+        'image',
+        'charmap',
+        'preview',
+        'anchor',
+        'searchreplace',
+        'visualblocks',
+        'code',
+        'fullscreen',
+        'insertdatetime',
+        'media',
+        'table',
+        'help',
+        'wordcount',
+        'codesample'
+        ],
+
+        toolbar:
+        'undo redo | blocks fontfamily fontsize | ' +
+        'bold italic underline strikethrough | ' +
+        'forecolor backcolor | ' +
+        'alignleft aligncenter alignright alignjustify | ' +
+        'bullist numlist outdent indent | ' +
+        'link image table | ' +
+        'codesample | removeformat | help',
+
+        content_style:
+        'body { font-family:Helvetica,Arial,sans-serif; font-size:14px; padding:10px; }',
+
+        file_picker_callback: function (callback, value, meta) {
+
+        let typeFilter = '';
+
+        if (meta.filetype === 'image') {
+        typeFilter = 'image';
+        }
+        else if (meta.filetype === 'media') {
+        typeFilter = 'video';
+        }
+
+        openFileManagerForTinyMCE(function (url) {
+
+        if (meta.filetype === 'image') {
+
+        callback(url, {
+        alt: 'Görsel'
+        });
+
+        } else {
+
+        callback(url);
+
+        }
+
+        }, typeFilter);
+
+        },
+
+        setup: function (editor) {
+
+        editor.on('change', function () {
+        editor.save();
+        });
+
+        editor.on('keyup', function () {
+        editor.save();
+        });
+
+        }
+
+        });
+
+        // ============================================
+        // Form Submit
+        // ============================================
+
+        document
+        .getElementById('bannerCreateForm')
+        .addEventListener('submit', function () {
+
+        const editor = tinymce.get('IcerikMetniEditor');
+
+        if (editor) {
+        editor.save();
+        }
+
+        });
+
+        // ============================================
+        // File Manager Modal
+        // ============================================
+
+        $('#openFileManagerBtn').on('click', function () {
+
+        const type = 'image';
+
+        $('#fileManagerFrame').attr(
+        'src',
+        '/File?mode=picker&type=' + type
+        );
+
+        $('#fileManagerModal').modal('show');
+
+        });
+
+        // ============================================
+        // Message Listener
+        // ============================================
+
+        function fileManagerMessageHandler(event) {
+
+        if (event.origin !== window.location.origin)
+        return;
+
+        if (event.data.type === 'file-selected') {
+
+        $('#ResimUrlInput').val(event.data.url);
+
+        $('#fileManagerModal').modal('hide');
+
+        }
+
+        }
+
+        window.removeEventListener(
+        'message',
+        fileManagerMessageHandler
+        );
+
+        window.addEventListener(
+        'message',
+        fileManagerMessageHandler
+        );
+
+        // ============================================
+        // TinyMCE File Manager Popup
+        // ============================================
+
+        function openFileManagerForTinyMCE(callback, type) {
+
+        const popup = window.open(
+        '/File?mode=picker&type=' + type,
+        'FileManager',
+        'width=1200,height=700'
+        );
+
+        function handler(event) {
+
+        if (event.origin !== window.location.origin)
+        return;
+
+        if (event.data.type === 'file-selected') {
+
+        callback(event.data.url);
+
+        if (popup) {
+        popup.close();
+        }
+
+        window.removeEventListener(
+        'message',
+        handler
+        );
+        }
+        }
+
+        window.addEventListener('message', handler);
+
+        }
+
+    </script>
+}

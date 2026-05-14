@@ -29,5 +29,8 @@ namespace Microservice.Admin.Clients.BannerClients
           [AliasAs("search")] string? search,
           [AliasAs("orderBy")] string? orderBy,
           [AliasAs("orderDir")] string? orderDir);
+
+        [Put("/api/v1/banners/reorder")]
+        Task<ApiResponse<object>> ReorderBannersAsync([Body] List<ReorderBannerItemVm> items);
     }
 }
