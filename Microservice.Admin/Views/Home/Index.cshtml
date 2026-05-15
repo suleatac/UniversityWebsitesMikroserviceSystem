@@ -1,4 +1,6 @@
-﻿@{
+﻿@model Microservice.Admin.ViewModels.Dashboard.DashboardViewModel
+
+@{
     ViewBag.Title = "Anasayfa";
     ViewBag.pTitle = "Admin Paneli";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -10,7 +12,7 @@
 
         <div class="row">
             <div class="col-xl-4">
-                <div class="card bg-danger-subtle" style="background: url('/assets/images/dashboard/dashboard-shape-1.png'); background-repeat: no-repeat; background-position: bottom center; ">
+                <div class="card bg-danger-subtle">
                     <div class="card-body">
                         <div class="d-flex">
                             <div class="avatar avatar-sm avatar-label-danger">
@@ -18,17 +20,15 @@
                             </div>
                             <div class="ms-3">
                                 <p class="text-danger mb-1">Toplam haber</p>
-                                <h4 class="mb-0">120</h4>
+                                <h4 class="mb-0">@Model.HaberCount</h4>
                             </div>
                         </div>
-                        <div class="hstack gap-2 mt-3">
-                            <button class="btn btn-info">Tüm haberleri görün -> </button>
-                        </div>
+
                     </div>
                 </div>
             </div>
             <div class="col-xl-4">
-                <div class="card bg-success-subtle" style="background: url('/assets/images/dashboard/dashboard-shape-2.png'); background-repeat: no-repeat; background-position: bottom center; ">
+                <div class="card bg-success-subtle">
                     <div class="card-body">
                         <div class="d-flex">
                             <div class="avatar avatar-sm avatar-label-success">
@@ -36,17 +36,14 @@
                             </div>
                             <div class="ms-3">
                                 <p class="text-success mb-1">Toplam Duyuru</p>
-                                <h4 class="mb-0">120</h4>
+                                <h4 class="mb-0">@Model.DuyuruCount</h4>
                             </div>
-                        </div>
-                        <div class="mt-3 mb-2">
-                            <p class="mb-0">Tüm duyuruları gör</p>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="col-xl-4">
-                <div class="card bg-info-subtle" style="background: url('/assets/images/dashboard/dashboard-shape-3.png'); background-repeat: no-repeat; background-position: bottom center; ">
+                <div class="card bg-info-subtle">
                     <div class="card-body">
                         <div class="d-flex">
                             <div class="avatar avatar-sm avatar-label-info">
@@ -54,11 +51,8 @@
                             </div>
                             <div class="ms-3">
                                 <p class="text-info mb-1">Toplam etkinlik</p>
-                                <h4 class="mb-0">72</h4>
+                                <h4 class="mb-0">@Model.EtkinlikCount</h4>
                             </div>
-                        </div>
-                        <div class="mt-3 mb-2">
-                            <p class="mb-0"><span class="text-primary me-2 fs-14"><i class="fas fa-caret-up me-1"></i>3.4%</span>vs last month</p>
                         </div>
                     </div>
                 </div>
@@ -164,113 +158,34 @@
                     <div class="card-header">
                         <div class="card-icon text-muted"><i class="fa fa-bell"></i></div>
                         <h3 class="card-title">Yönetimden Duyurular</h3>
-                        <div class="card-addon">
-                            <div class="dropdown">
-                                <button class="btn btn-sm py-0 btn-label-primary dropdown-toggle" data-bs-toggle="dropdown">All <i class="mdi mdi-chevron-down fs-17 align-middle ms-1"></i></button>
-                                <div class="dropdown-menu dropdown-menu-end dropdown-menu-animated">
-                                    <a class="dropdown-item" href="#"><span class="badge badge-label-primary">Personal</span> </a>
-                                    <a class="dropdown-item" href="#"><span class="badge badge-label-info">Work</span> </a>
-                                    <a class="dropdown-item" href="#"><span class="badge badge-label-success">Important</span> </a>
-                                    <a class="dropdown-item" href="#"><span class="badge badge-label-danger">Company</span></a>
-                                </div>
-                            </div>
-                        </div>
                     </div>
                     <div class="card-body">
                         <div class="rich-list rich-list-bordered rich-list-action">
-                            <div class="rich-list-item">
-                                <div class="rich-list-prepend">
-                                    <div class="avatar avatar-xs avatar-label-info">
-                                        <div class=""><i class="fa fa-file-invoice"></i></div>
-                                    </div>
-                                </div>
-                                <div class="rich-list-content">
-                                    <h4 class="rich-list-title mb-1">New report has been received</h4>
-                                    <p class="rich-list-subtitle mb-0">2 min ago</p>
-                                </div>
-                                <div class="rich-list-append">
-                                    <div class="dropdown">
-                                        <button class="btn btn-sm btn-label-secondary btn-icon" data-bs-toggle="dropdown"><i class="fa fa-ellipsis-h fs-12"></i></button>
-                                        <div class="dropdown-menu dropdown-menu-end dropdown-menu-animated">
-                                            <a class="dropdown-item" href="#">
-                                                <div class="dropdown-icon"><i class="fa fa-check"></i></div>
-                                                <span class="dropdown-content">Mark as read</span>
-                                            </a>
-                                            <a class="dropdown-item" href="#">
-                                                <div class="dropdown-icon"><i class="fa fa-trash-alt"></i></div>
-                                                <span class="dropdown-content">Delete</span>
-                                            </a>
-                                            <div class="dropdown-divider"></div>
-                                            <a class="dropdown-item" href="#">
-                                                <div class="dropdown-icon"><i class="fa fa-cog"></i></div>
-                                                <span class="dropdown-content">Settings</span>
-                                            </a>
+                            @if (Model.RecentYonetimDuyurular.Any())
+                            {
+                                foreach (var duyuru in Model.RecentYonetimDuyurular)
+                                {
+                                    <div class="rich-list-item" role="button" onclick="duyuruDetayGoster(@duyuru.Id)" style="cursor:pointer;">
+                                        <div class="rich-list-prepend">
+                                            <div class="avatar avatar-xs avatar-label-info">
+                                                <div class=""><i class="fa fa-bullhorn"></i></div>
+                                            </div>
+                                        </div>
+                                        <div class="rich-list-content">
+                                            <h4 class="rich-list-title mb-1">@duyuru.Baslik</h4>
+                                            <p class="rich-list-subtitle mb-0">@duyuru.Icerik</p>
                                         </div>
                                     </div>
-                                </div>
-                            </div>
-                            <div class="rich-list-item">
-                                <div class="rich-list-prepend">
-                                    <div class="avatar avatar-xs avatar-label-success">
-                                        <div class=""><i class="fa fa-shopping-basket"></i></div>
+                                }
+                            }
+                            else
+                            {
+                                <div class="rich-list-item">
+                                    <div class="rich-list-content text-center">
+                                        <p class="rich-list-subtitle mb-0 text-muted">Henüz duyuru bulunmamaktadır.</p>
                                     </div>
                                 </div>
-                                <div class="rich-list-content">
-                                    <h4 class="rich-list-title mb-1">Last order was completed</h4>
-                                    <p class="rich-list-subtitle mb-0">1 hrs ago</p>
-                                </div>
-                                <div class="rich-list-append">
-                                    <div class="dropdown">
-                                        <button class="btn btn-sm btn-label-secondary btn-icon" data-bs-toggle="dropdown"><i class="fa fa-ellipsis-h fs-12"></i></button>
-                                        <div class="dropdown-menu dropdown-menu-end dropdown-menu-animated">
-                                            <a class="dropdown-item" href="#">
-                                                <div class="dropdown-icon"><i class="fa fa-check"></i></div>
-                                                <span class="dropdown-content">Mark as read</span>
-                                            </a>
-                                            <a class="dropdown-item" href="#">
-                                                <div class="dropdown-icon"><i class="fa fa-trash-alt"></i></div>
-                                                <span class="dropdown-content">Delete</span>
-                                            </a>
-                                            <div class="dropdown-divider"></div>
-                                            <a class="dropdown-item" href="#">
-                                                <div class="dropdown-icon"><i class="fa fa-cog"></i></div>
-                                                <span class="dropdown-content">Settings</span>
-                                            </a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="rich-list-item">
-                                <div class="rich-list-prepend">
-                                    <div class="avatar avatar-xs avatar-label-danger">
-                                        <div class=""><i class="fa fa-users"></i></div>
-                                    </div>
-                                </div>
-                                <div class="rich-list-content">
-                                    <h4 class="rich-list-title mb-1">Company meeting canceled</h4>
-                                    <p class="rich-list-subtitle mb-0">5 hrs ago</p>
-                                </div>
-                                <div class="rich-list-append">
-                                    <div class="dropdown">
-                                        <button class="btn btn-sm btn-label-secondary btn-icon" data-bs-toggle="dropdown"><i class="fa fa-ellipsis-h fs-12"></i></button>
-                                        <div class="dropdown-menu dropdown-menu-end dropdown-menu-animated">
-                                            <a class="dropdown-item" href="#">
-                                                <div class="dropdown-icon"><i class="fa fa-check"></i></div>
-                                                <span class="dropdown-content">Mark as read</span>
-                                            </a>
-                                            <a class="dropdown-item" href="#">
-                                                <div class="dropdown-icon"><i class="fa fa-trash-alt"></i></div>
-                                                <span class="dropdown-content">Delete</span>
-                                            </a>
-                                            <div class="dropdown-divider"></div>
-                                            <a class="dropdown-item" href="#">
-                                                <div class="dropdown-icon"><i class="fa fa-cog"></i></div>
-                                                <span class="dropdown-content">Settings</span>
-                                            </a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                            }
                         </div>
                     </div>
                 </div>
@@ -338,6 +253,55 @@
 </div>
 <!-- end row -->
 
+<!-- Duyuru Detay Modal -->
+<div class="modal fade" id="duyuruDetayModal" tabindex="-1" aria-labelledby="duyuruDetayModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header bg-info">
+                <h5 class="modal-title text-white" id="duyuruDetayModalLabel">
+                    <i class="far fa-bell me-2"></i> Duyuru Detayı
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="duyuruDetayLoading" class="text-center py-4">
+                    <div class="spinner-border text-info" role="status">
+                        <span class="visually-hidden">Yükleniyor...</span>
+                    </div>
+                    <p class="mt-2 text-muted">Duyuru detayı yükleniyor...</p>
+                </div>
+                <div id="duyuruDetayContent" style="display:none;">
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Başlık</label>
+                        <h4 id="detayBaslik" class="text-info"></h4>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">İçerik</label>
+                        <p id="detayIcerik" class="text-muted" style="white-space: pre-wrap;"></p>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Yayınlanma Tarihi</label>
+                        <p id="detayTarih" class="text-muted"></p>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Durum</label>
+                        <p><span id="detayOkunduBadge" class="badge"></span></p>
+                    </div>
+                </div>
+                <div id="duyuruDetayError" style="display:none;">
+                    <div class="alert alert-danger text-center" role="alert">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        <span id="detayErrorMessage">Duyuru detayı yüklenirken bir hata oluştu.</span>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Kapat</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 @section scripts {
 
     <script src="~/assets/libs/apexcharts/apexcharts.min.js"></script>
@@ -346,4 +310,76 @@
 
     <!-- App js -->
     <script src="~/assets/js/app.js"></script>
+
+    <script>
+        function duyuruDetayGoster(id) {
+            // Modalı göster
+            var modal = new bootstrap.Modal(document.getElementById('duyuruDetayModal'));
+            
+            // Loading göster, içerik gizle
+            document.getElementById('duyuruDetayLoading').style.display = 'block';
+            document.getElementById('duyuruDetayContent').style.display = 'none';
+            document.getElementById('duyuruDetayError').style.display = 'none';
+            
+            modal.show();
+
+            // API'den detayı getir
+            fetch('/YonetimDuyuru/GetDetail/' + id)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Duyuru detayı alınamadı');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    // Loading gizle, içerik göster
+                    document.getElementById('duyuruDetayLoading').style.display = 'none';
+                    document.getElementById('duyuruDetayContent').style.display = 'block';
+
+                    // Detay bilgilerini doldur
+                    document.getElementById('detayBaslik').textContent = data.baslik || data.Baslik;
+                    document.getElementById('detayIcerik').textContent = data.icerik || data.Icerik;
+                    
+                    var tarih = data.eklenmeTarihi || data.EklenmeTarihi;
+                    if (tarih) {
+                        var date = new Date(tarih);
+                        document.getElementById('detayTarih').textContent = date.toLocaleDateString('tr-TR', {
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit'
+                        });
+                    }
+
+                    var okunduMu = data.okunduMu || data.OkunduMu;
+                    var badge = document.getElementById('detayOkunduBadge');
+                    if (okunduMu) {
+                        badge.className = 'badge bg-success';
+                        badge.textContent = 'Okundu';
+                    } else {
+                        badge.className = 'badge bg-warning text-dark';
+                        badge.textContent = 'Okunmadı';
+                    }
+
+                    // Okundu olarak işaretle (arka planda)
+                    fetch('/YonetimDuyuru/MarkAsRead/' + id, { method: 'POST' })
+                        .then(function(response) {
+                            if (response.ok) {
+                                // Başarılı - badge'i güncelle
+                                badge.className = 'badge bg-success';
+                                badge.textContent = 'Okundu';
+                            }
+                        })
+                        .catch(function(error) {
+                            console.warn('Okundu işaretlenirken hata:', error);
+                        });
+                })
+                .catch(error => {
+                    document.getElementById('duyuruDetayLoading').style.display = 'none';
+                    document.getElementById('duyuruDetayError').style.display = 'block';
+                    document.getElementById('detayErrorMessage').textContent = error.message || 'Duyuru detayı yüklenirken bir hata oluştu.';
+                });
+        }
+    </script>
 }

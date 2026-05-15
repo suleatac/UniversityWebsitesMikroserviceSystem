@@ -175,6 +175,27 @@ namespace Mikroservice.Site.Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "YonetimDuyuruOkunduBilgileri",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    YonetimDuyuruId = table.Column<int>(type: "integer", nullable: false),
+                    KeycloakUserId = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    OkunmaTarihi = table.Column<DateTime>(type: "timestamp without time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_YonetimDuyuruOkunduBilgileri", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_YonetimDuyuruOkunduBilgileri_YonetimDuyurular_YonetimDuyuru~",
+                        column: x => x.YonetimDuyuruId,
+                        principalTable: "YonetimDuyurular",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "BandLogos",
                 columns: table => new
                 {
@@ -707,6 +728,12 @@ namespace Mikroservice.Site.Persistence.Migrations
                 name: "IX_YoneticiSiteler_SiteId_KeycloakUserId",
                 table: "YoneticiSiteler",
                 columns: new[] { "SiteId", "KeycloakUserId" });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_YonetimDuyuruOkunduBilgileri_YonetimDuyuruId_KeycloakUserId",
+                table: "YonetimDuyuruOkunduBilgileri",
+                columns: new[] { "YonetimDuyuruId", "KeycloakUserId" },
+                unique: true);
         }
 
         /// <inheritdoc />
@@ -740,7 +767,7 @@ namespace Mikroservice.Site.Persistence.Migrations
                 name: "YoneticiSiteler");
 
             migrationBuilder.DropTable(
-                name: "YonetimDuyurular");
+                name: "YonetimDuyuruOkunduBilgileri");
 
             migrationBuilder.DropTable(
                 name: "Hedefler");
@@ -750,6 +777,9 @@ namespace Mikroservice.Site.Persistence.Migrations
 
             migrationBuilder.DropTable(
                 name: "Diller");
+
+            migrationBuilder.DropTable(
+                name: "YonetimDuyurular");
 
             migrationBuilder.DropTable(
                 name: "Siteler");

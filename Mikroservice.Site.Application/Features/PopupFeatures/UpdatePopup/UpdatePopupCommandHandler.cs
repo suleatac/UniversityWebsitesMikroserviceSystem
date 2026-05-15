@@ -39,10 +39,8 @@ namespace Mikroservice.Site.Application.Features.PopupFeatures.UpdatePopup
             await unitOfWork.SaveChangesAsync(cancellationToken);
 
             //Cache temizleme işlemi.
-            var key = $"popup:site:{popup.SiteId}";
-            await redisCache.RemoveAsync(key, cancellationToken);
-            var listKey = $"popup:list:{popup.SiteId}:*";
-            await redisCache.RemoveByPatternAsync(listKey, cancellationToken);
+            var listKey = $"popup:list:{popup.SiteId}";
+            await redisCache.RemoveAsync(listKey, cancellationToken);
 
             return ServiceResult.Success();
         }

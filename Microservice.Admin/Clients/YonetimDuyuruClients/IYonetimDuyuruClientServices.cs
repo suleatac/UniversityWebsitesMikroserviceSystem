@@ -28,5 +28,14 @@ namespace Microservice.Admin.Clients.YonetimDuyuruClients
           [AliasAs("search")] string? search,
           [AliasAs("orderBy")] string? orderBy,
           [AliasAs("orderDir")] string? orderDir);
+
+        [Get("/api/v1/yonetimDuyuru/{id}/detail")]
+        Task<ApiResponse<YonetimDuyuruDetailVm>> GetYonetimDuyuruDetailAsync(int id);
+
+        [Post("/api/v1/yonetimDuyuru/{id}/mark-read")]
+        Task<ApiResponse<object>> MarkYonetimDuyuruAsReadAsync(int id);
+
+        [Get("/api/v1/yonetimDuyuru/unread-count")]
+        Task<ApiResponse<int>> GetUnreadYonetimDuyuruCountAsync();
     }
 }

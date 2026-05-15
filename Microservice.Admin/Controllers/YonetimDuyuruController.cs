@@ -183,5 +183,38 @@ namespace Microservice.Admin.Controllers
 
 
 
+        // GET DETAIL - AJAX
+        [HttpGet]
+        public async Task<IActionResult> GetDetail(int id)
+        {
+            _logger.LogInformation("Yonetim duyuru detaji getiriliyor (AJAX). Id: {Id}", id);
+
+            var result = await _yonetimDuyuruService.GetYonetimDuyuruDetailAsync(id);
+
+            if (!result.IsSuccess)
+            {
+                _logger.LogError("Yonetim duyuru detaji alinamadi. Id: {Id}", id);
+                return NotFound(new { error = result.Fail?.Detail ?? "Duyuru detayi bulunamadi" });
+            }
+
+            return Ok(result.Data);
+        }
+
+        // MARK AS READ - AJAX
+        [HttpPost]
+        public async Task<IActionResult> MarkAsRead(int id)
+        {
+            _logger.LogInformation("Yonetim duyuru okundu olarak isaretleniyor (AJAX). Id: {Id}", id);
+
+            var result = await _yonetimDuyuruService.MarkYonetimDuyuruAsReadAsync(id);
+
+            if (!result.IsSuccess)
+            {
+                _logger.LogError("Yonetim duyuru okundu isaretlenemedi. Id: {Id}", id);
+                return BadRequest(new { error = result.Fail?.Detail ?? "Islem basarisiz" });
+            }
+
+            return Ok(new { success = true });
+        }
     }
 }

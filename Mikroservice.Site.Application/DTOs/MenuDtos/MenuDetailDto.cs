@@ -9,7 +9,7 @@ namespace Mikroservice.Site.Application.DTOs.MenuDtos
         public int HedefId { get; set; }
 
         public string Ad { get; set; } = default!;
-        public string Link { get; set; } = default!;
+        public string? Link { get; set; } = default!;
         public string? IconUrl { get; set; }
         public string? Icerik { get; set; }
 

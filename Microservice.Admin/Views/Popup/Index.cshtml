@@ -53,7 +53,17 @@
         </div>
     </div>
 </div>
-
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <i class="mdi mdi-alert-circle-outline me-2"></i>
+        @TempData["Error"]
+        <button type="button"
+                class="btn-close"
+                data-bs-dismiss="alert">
+        </button>
+    </div>
+}
 @if (Model != null && Model.Id > 0)
 {
     <div class="row">
@@ -180,7 +190,9 @@
                             {
                                 <div class="col-md-6 mb-3">
                                     <div class="property-label">İçerik Metni</div>
-                                    <div class="property-value" style="white-space: pre-wrap;">@(Model.IcerikMetni.Length > 200 ? Model.IcerikMetni.Substring(0, 200) + "..." : Model.IcerikMetni)</div>
+                                    <div class="property-value" style="white-space: pre-wrap;">
+                                        @Html.Raw(Model.IcerikMetni)
+                                    </div>
                                 </div>
                             }
                             @if (!string.IsNullOrEmpty(Model.Link))
@@ -193,8 +205,16 @@
                             @if (!string.IsNullOrEmpty(Model.ResimUrl))
                             {
                                 <div class="col-md-3 mb-3">
-                                    <div class="property-label">Resim URL</div>
-                                    <div class="property-value"><a href="@Model.ResimUrl" target="_blank" class="text-decoration-none">Resmi Görüntüle</a></div>
+                                    <div class="property-label">Popup Resmi</div>
+
+                                    <div class="property-value">
+                                        <a href="@Model.ResimUrl" target="_blank">
+                                            <img src="@Model.ResimUrl"
+                                                 alt="Popup Resmi"
+                                                 class="img-fluid rounded shadow-sm border"
+                                                 style="max-height:250px; object-fit:cover;" />
+                                        </a>
+                                    </div>
                                 </div>
                             }
                         </div>

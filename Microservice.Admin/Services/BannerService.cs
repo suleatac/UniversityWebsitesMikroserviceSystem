@@ -120,7 +120,10 @@ namespace Microservice.Admin.Services
         public async Task<ServiceResult<object>> ReorderBannersAsync(List<ReorderBannerItemVm> items)
         {
             _logger.LogInformation("Banner sıralaması güncelleniyor. Öğe sayısı: {Count}", items?.Count ?? 0);
-            var response = await _bannerClient.ReorderBannersAsync(items!);
+            var newReorderList = new ReorderBannersCommandListVm {
+                Items = items ?? new List<ReorderBannerItemVm>()
+            };
+            var response = await _bannerClient.ReorderBannersAsync(newReorderList);
 
             if (!response.IsSuccessStatusCode)
             {

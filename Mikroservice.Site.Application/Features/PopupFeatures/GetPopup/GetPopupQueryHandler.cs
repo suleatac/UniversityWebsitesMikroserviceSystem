@@ -16,8 +16,10 @@ namespace Mikroservice.Site.Application.Features.PopupFeatures.GetPopup
     {
         public async Task<ServiceResult<Popup>> Handle(GetPopupQuery request, CancellationToken cancellationToken)
         {
-            var cacheKey = $"popup:site:{request.SiteId}";
+            var cacheKey = $"popup:list:{request.SiteId}";
+
             var cached = await redisCacheService.GetAsync<Popup>(cacheKey, cancellationToken);
+
             if (cached is not null)
             {
                 logger.LogInformation(
@@ -33,7 +35,7 @@ namespace Mikroservice.Site.Application.Features.PopupFeatures.GetPopup
                 return ServiceResult<Popup>.Error("Popup bulunamadı", System.Net.HttpStatusCode.NotFound);
             }
 
-            await redisCacheService.SetAsync(cacheKey, popup, cancellationToken: cancellationToken);
+            await redisCacheService.SetAsync(cacheKey, popup, TimeSpan.FromHours(24), cancellationToken: cancellationToken);
 
             logger.LogInformation(
                 "Popup verisi veritabanından alındı. SiteId:{siteId}",

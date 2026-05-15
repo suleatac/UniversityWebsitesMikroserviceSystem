@@ -1,4 +1,5 @@
 using Microservice.Admin.Services.Interfaces;
+using Microservice.Admin.ViewModels.Dashboard;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
@@ -11,15 +12,27 @@ namespace Microservice.Admin.Controllers
     {
         private readonly ICurrentUserService _currentUserService;
         private readonly IYoneticiSiteService _yoneticiSiteService;
+        private readonly IHaberService _haberService;
+        private readonly IDuyuruService _duyuruService;
+        private readonly IEtkinlikService _etkinlikService;
+        private readonly IYonetimDuyuruService _yonetimDuyuruService;
         private readonly ILogger<HomeController> _logger;
 
         public HomeController(
             ICurrentUserService currentUserService,
             IYoneticiSiteService yoneticiSiteService,
+            IHaberService haberService,
+            IDuyuruService duyuruService,
+            IEtkinlikService etkinlikService,
+            IYonetimDuyuruService yonetimDuyuruService,
             ILogger<HomeController> logger)
         {
             _currentUserService = currentUserService;
             _yoneticiSiteService = yoneticiSiteService;
+            _haberService = haberService;
+            _duyuruService = duyuruService;
+            _etkinlikService = etkinlikService;
+            _yonetimDuyuruService = yonetimDuyuruService;
             _logger = logger;
         }
 
@@ -44,7 +57,8 @@ namespace Microservice.Admin.Controllers
                         HttpContext.Session.SetInt32("CurrentDilId", 1);
                     }
 
-                    return View();
+                    var model = await BuildDashboardViewModelAsync(currentSiteId.Value, HttpContext.Session.GetInt32("CurrentDilId") ?? 1);
+                    return View(model);
                 }
 
                 // Admin değilse, yetkili olduğu siteleri kontrol et
@@ -76,6 +90,9 @@ namespace Microservice.Admin.Controllers
                         HttpContext.Session.SetInt32("CurrentSiteId", singleSite.SiteId);
                         HttpContext.Session.SetInt32("CurrentDilId", 1);
                         _logger.LogInformation("Kullanıcıya tek yetkili site otomatik atandı. SiteId: {SiteId}, KeycloakUserId: {KeycloakUserId}", singleSite.SiteId, keycloakUserId);
+
+                        var dashboardModel = await BuildDashboardViewModelAsync(singleSite.SiteId, 1);
+                        return View(dashboardModel);
                     }
                     else
                     {
@@ -90,13 +107,96 @@ namespace Microservice.Admin.Controllers
                     HttpContext.Session.SetInt32("CurrentDilId", 1);
                 }
 
-                return View();
+                var modelForExistingSite = await BuildDashboardViewModelAsync(
+                    existingSiteId.Value,
+                    HttpContext.Session.GetInt32("CurrentDilId") ?? 1);
+                return View(modelForExistingSite);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Home/Index hatası");
                 return RedirectToAction("SignIn", "Auth");
             }
+        }
+
+        private async Task<DashboardViewModel> BuildDashboardViewModelAsync(int siteId, int dilId)
+        {
+            var model = new DashboardViewModel();
+
+            try
+            {
+                // Toplam haber sayısı
+                var haberResult = await _haberService.GetHabersAsync(siteId, dilId);
+                if (haberResult.IsSuccess && haberResult.Data != null)
+                {
+                    model.HaberCount = haberResult.Data.Count;
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Haber sayısı alınırken hata oluştu. SiteId: {SiteId}, DilId: {DilId}", siteId, dilId);
+            }
+
+            try
+            {
+                // Toplam duyuru sayısı
+                var duyuruResult = await _duyuruService.GetDuyurularAsync(siteId, dilId);
+                if (duyuruResult.IsSuccess && duyuruResult.Data != null)
+                {
+                    model.DuyuruCount = duyuruResult.Data.Count;
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Duyuru sayısı alınırken hata oluştu. SiteId: {SiteId}, DilId: {DilId}", siteId, dilId);
+            }
+
+            try
+            {
+                // Toplam etkinlik sayısı
+                var etkinlikResult = await _etkinlikService.GetEtkinliklerAsync(siteId, dilId);
+                if (etkinlikResult.IsSuccess && etkinlikResult.Data != null)
+                {
+                    model.EtkinlikCount = etkinlikResult.Data.Count;
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Etkinlik sayısı alınırken hata oluştu. SiteId: {SiteId}, DilId: {DilId}", siteId, dilId);
+            }
+
+            try
+            {
+                // Son 5 yönetim duyurusu
+                var yonetimDuyuruResult = await _yonetimDuyuruService.GetYonetimDuyurusAsync();
+                if (yonetimDuyuruResult.IsSuccess && yonetimDuyuruResult.Data != null)
+                {
+                    model.RecentYonetimDuyurular = yonetimDuyuruResult.Data
+                        .OrderByDescending(d => d.Id)
+                        .Take(5)
+                        .ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Yönetim duyuruları alınırken hata oluştu.");
+            }
+
+            try
+            {
+                // Okunmamış yönetim duyurusu sayısı
+                var unreadCountResult = await _yonetimDuyuruService.GetUnreadYonetimDuyuruCountAsync();
+                if (unreadCountResult.IsSuccess)
+                {
+                    model.UnreadYonetimDuyuruCount = unreadCountResult.Data;
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Okunmamış yönetim duyurusu sayısı alınırken hata oluştu.");
+            }
+
+            return model;
         }
     }
 }

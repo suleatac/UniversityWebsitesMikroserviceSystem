@@ -10,6 +10,7 @@ namespace Mikroservice.Site.Application.Mappings
         {
             // READ
             CreateMap<YonetimDuyuru, YonetimDuyuruDto>();
+            CreateMap<YonetimDuyuru, YonetimDuyuruDetailDto>();
         }
     }
 }

@@ -4,8 +4,8 @@ namespace Mikroservice.Site.Application.DTOs.PopupDtos
     {
         public int Id { get; set; }
         public int SiteId { get; set; }
-        public string Baslik { get; set; } = default!;
-        public string KisaAciklama { get; set; } = default!;
+        public string? Baslik { get; set; } = default!;
+        public string? KisaAciklama { get; set; } = default!;
         public string? ResimUrl { get; set; }
         public bool TamEkranMi { get; set; }
         public int GosterimSuresiSaniye { get; set; }

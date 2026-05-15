@@ -6,10 +6,9 @@ namespace Microservice.Admin.ViewModels.SignIn
     public record SignInVm
     {
 
-        [Display(Name = "Email")]
-        [Required(ErrorMessage = "Email is required")]
-        [EmailAddress(ErrorMessage = "Invalid Email Address")]
-        public string? Email { get; init; }
+        [Display(Name = "Usernmae")]
+        [Required(ErrorMessage = "Username is required")]
+        public string? Username { get; init; }
 
 
         [Display(Name = "Password")]

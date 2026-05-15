@@ -7,6 +7,7 @@
 }
 
 @section styles {
+    <link href="~/assets/libs/toastr/build/toastr.min.css" rel="stylesheet" />
     <style>
         .page-header-card {
             background: linear-gradient(135deg, #e83e8c 0%, #f06292 100%);
@@ -124,7 +125,7 @@
             flex-shrink: 0;
         }
 
-        .toast-container { z-index: 9999; }
+      
 
         /* Loading overlay */
         .sortable-loading {
@@ -159,13 +160,59 @@
         }
         .btn-delete-banner:hover { background: #c62828; color: white; }
 
-        .toast-success { background: linear-gradient(135deg, #43a047 0%, #66bb6a 100%) !important; }
-        .toast-error { background: linear-gradient(135deg, #e53935 0%, #ef5350 100%) !important; }
+
+        /* Toastr Custom Styling - Bootstrap Look */
+        #toast-container {
+            z-index: 999999;
+        }
+        #toast-container > div {
+            opacity: 1 !important;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15) !important;
+            border-radius: 10px !important;
+            padding: 15px 15px 15px 50px !important;
+            font-family: inherit !important;
+        }
+
+        .toast-success {
+            background-color: #28a745 !important;
+        }
+
+        .toast-error {
+            background-color: #dc3545 !important;
+        }
+
+        /* İkonları MDI fontuyla değiştirmek için (isteğe bağlı) */
+        #toast-container > .toast-success {
+            background-image: none !important;
+        }
+
+        #toast-container > .toast-error {
+            background-image: none !important;
+        }
+
+        #toast-container > div:before {
+            position: absolute;
+            left: 15px;
+            font-family: "Material Design Icons";
+            font-size: 24px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: white;
+        }
+
+        #toast-container > .toast-success:before {
+            content: "\F012C";
+        }
+        /* mdi-check-circle */
+        #toast-container > .toast-error:before {
+            content: "\F0026";
+        }
+        /* mdi-alert-circle */
     </style>
 }
 
-<!-- Toast Container -->
-<div class="toast-container position-fixed top-0 end-0 p-3"></div>
+
+
 
 <!-- Page Header -->
 <div class="page-header-card">
@@ -181,7 +228,7 @@
 </div>
 
 <!-- Sortable Banner List -->
-<div class="row">
+<div class="row" id="toastContainer">
     <div class="col-12">
         <div class="card banner-sortable-container position-relative">
             <div class="sortable-loading" id="sortableLoading">
@@ -269,8 +316,10 @@
                         </a>
                     </div>
                 }
+
             </div>
         </div>
+    </div>
     </div>
 <!-- Anti-forgery token for AJAX POST -->
 <form id="antiforgeryForm" class="d-none">
@@ -283,113 +332,93 @@
 
     <script>
         $(document).ready(function () {
-            var sortableList = document.getElementById('bannerSortableList');
-            if (!sortableList) return;
 
-            var sortable = new Sortable(sortableList, {
-                animation: 200,
-                easing: "cubic-bezier(0.4, 0, 0.2, 1)",
-                handle: '.drag-handle',
-                ghostClass: 'sortable-ghost',
-                chosenClass: 'sortable-chosen',
-                dragClass: 'sortable-drag',
-                delay: 100,
-                delayOnTouchOnly: true,
-                onEnd: function (evt) {
-                    updateBannerOrder();
-                }
-            });
 
-            function updateBannerOrder() {
-                var items = [];
-                var listItems = sortableList.querySelectorAll('.banner-sortable-item');
 
-                listItems.forEach(function (item, index) {
-                    var id = parseInt(item.getAttribute('data-id'));
-                    items.push({
-                        id: id,
-                        sira: index + 1
-                    });
-                });
 
-                // Sıra badge'lerini güncelle
-                listItems.forEach(function (item, index) {
-                    var badge = item.querySelector('.banner-order-badge');
-                    if (badge) {
-                        badge.textContent = index + 1;
-                    }
-                });
+        toastr.options = {
+        "closeButton": true,
+        "debug": false,
+        "newestOnTop": false,
+        "progressBar": true,
+        "positionClass": "toast-top-right",
+        "preventDuplicates": false,
+        "onclick": null,
+        "showDuration": "300",
+        "hideDuration": "1000",
+        "timeOut": "5000",
+        "extendedTimeOut": "1000",
+        "showEasing": "swing",
+        "hideEasing": "linear",
+        "showMethod": "fadeIn",
+        "hideMethod": "fadeOut"
+        }
 
-                // Loading göster
-                $('#sortableLoading').addClass('show');
 
-                $.ajax({
-                    url: '/Banner/ReorderBanners',
-                    type: 'POST',
-                    contentType: 'application/json; charset=utf-8',
-                    data: JSON.stringify(items),
-                    headers: {
-                        'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
-                            || getAntiForgeryToken()
-                    },
-                    success: function (response) {
-                        $('#sortableLoading').removeClass('show');
-                        if (response.success) {
-                            showToast('success', 'Sıralama başarıyla güncellendi.');
-                        } else {
-                            showToast('error', response.message || 'Sıralama güncellenemedi.');
-                        }
-                    },
-                    error: function (xhr, status, error) {
-                        $('#sortableLoading').removeClass('show');
-                        showToast('error', 'Sıralama güncellenirken bir hata oluştu: ' + error);
-                    }
-                });
-            }
+        // 2. SortableJS Başlatma
+        var sortableList = document.getElementById('bannerSortableList');
+        if (sortableList) {
+        var sortable = new Sortable(sortableList, {
+        animation: 200,
+        delay: 100,
+        delayOnTouchOnly: true,
+        onEnd: function (evt) {
+        updateBannerOrder();
+        }
+     
+        });
+        }
 
-            function getAntiForgeryToken() {
-                // Bazı durumlarda token farklı bir input'ta olabilir
-                var token = $('input[name="__RequestVerificationToken"]').val();
-                if (token) return token;
+        // 3. Sıralama Güncelleme Fonksiyonu
+        function updateBannerOrder() {
+        var items = [];
+        var listItems = $('#bannerSortableList .banner-sortable-item');
 
-                // Try to find any input with antiforgery
-                var allInputs = document.querySelectorAll('input[type="hidden"]');
-                for (var i = 0; i < allInputs.length; i++) {
-                    if (allInputs[i].name && allInputs[i].name.indexOf('RequestVerificationToken') !== -1) {
-                        return allInputs[i].value;
-                    }
-                }
-                return '';
-            }
+        listItems.each(function (index) {
+        var id = $(this).data('id');
+        var newOrder = index + 1;
 
-            function showToast(type, message) {
-                if (typeof toastr !== 'undefined') {
-                    toastr.options = {
-                        closeButton: true,
-                        progressBar: true,
-                        positionClass: 'toast-top-right',
-                        timeOut: 3000,
-                        extendedTimeOut: 1000,
-                        preventDuplicates: true,
-                    };
-                    if (type === 'success') {
-                        toastr.success(message, 'Başarılı');
-                    } else {
-                        toastr.error(message, 'Hata');
-                    }
-                } else {
-                    // Fallback alert
-                    var alertHtml = '<div class="alert alert-' + (type === 'success' ? 'success' : 'danger') +
-                        ' alert-dismissible fade show" role="alert">' +
-                        message +
-                        '<button type="button" class="btn-close" data-bs-dismiss="alert"></button>' +
-                        '</div>';
-                    $('.page-header-card').after(alertHtml);
-                    setTimeout(function () {
-                        $('.alert').alert('close');
-                    }, 3000);
-                }
-            }
+        items.push({ id: id, sira: newOrder });
+
+        // Arayüzdeki sıra badge'ini anlık güncelle
+        $(this).find('.banner-order-badge').text(newOrder);
+        });
+
+        // Loading göster
+        $('#sortableLoading').addClass('show');
+
+        $.ajax({
+        url: '/Banner/ReorderBanners',
+        type: 'POST',
+        contentType: 'application/json; charset=utf-8',
+        data: JSON.stringify(items),
+        headers: {
+        'RequestVerificationToken': getAntiForgeryToken()
+        },
+        success: function (response) {
+        $('#sortableLoading').removeClass('show');
+        if (response.success) {
+        toastr.success('Yeni sıralama başarıyla kaydedildi.', 'Başarılı');
+        } else {
+        toastr.error(response.message || 'Bir hata oluştu.', 'Hata');
+        }
+        },
+        error: function (xhr) {
+        $('#sortableLoading').removeClass('show');
+        toastr.error('Sunucu bağlantısında hata oluştu.', 'Hata');
+        console.error(xhr);
+        }
+        });
+        }
+
+        // 4. Anti-Forgery Token Alıcı
+        function getAntiForgeryToken() {
+        return $('input[name="__RequestVerificationToken"]').val() ||
+        $('#antiforgeryForm input').val();
+        }
+
+   
         });
     </script>
+    <script src="~/assets/js/app.js"></script>
 }

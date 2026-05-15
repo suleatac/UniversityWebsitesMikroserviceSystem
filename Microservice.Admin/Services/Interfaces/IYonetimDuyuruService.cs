@@ -13,5 +13,8 @@ namespace Microservice.Admin.Services.Interfaces
         Task<ServiceResult<object>> CreateYonetimDuyuruAsync(YonetimDuyuruVm dto);
         Task<ServiceResult<bool>> UpdateYonetimDuyuruAsync(YonetimDuyuruVm dto);
         Task<ServiceResult<bool>> DeleteYonetimDuyuruAsync(int id);
+        Task<ServiceResult<YonetimDuyuruDetailVm>> GetYonetimDuyuruDetailAsync(int id);
+        Task<ServiceResult<bool>> MarkYonetimDuyuruAsReadAsync(int id);
+        Task<ServiceResult<int>> GetUnreadYonetimDuyuruCountAsync();
     }
 }

@@ -11,9 +11,9 @@ namespace Mikroservice.Site.Application.Features.BannerFeatures.CreateBanner
           IUnitOfWork unitOfWork,
           IRedisCacheService redisCache
         )
-        : IRequestHandler<CreateBannerCommand, ServiceResult>
+        : IRequestHandler<CreateBannerCommand, ServiceResult<CreateBannerResponse>>
     {
-        public async Task<ServiceResult> Handle(CreateBannerCommand request, CancellationToken cancellationToken)
+        public async Task<ServiceResult<CreateBannerResponse>> Handle(CreateBannerCommand request, CancellationToken cancellationToken)
         {
             var newBanner = new Banner {
                 Baslik = request.Baslik,

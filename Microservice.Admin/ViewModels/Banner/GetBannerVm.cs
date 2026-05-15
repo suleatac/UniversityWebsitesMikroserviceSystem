@@ -7,10 +7,12 @@ namespace Microservice.Admin.ViewModels.Banner
         public int Id { get; set; }
         public int SiteId { get; set; }
         public int DilId { get; set; }
-        public int? HedefId { get; set; }
-        public string Baslik { get; set; } = default!;
-        public string KisaAciklama { get; set; } = default!;
-        public string? ResimUrl { get; set; }
+        public int HedefId { get; set; }
+        public string? Baslik { get; set; } = default!;
+        public string? KisaAciklama { get; set; } = default!;
+
+        [Required(ErrorMessage = "Banner için resim URL'si gereklidir.")]
+        public string ResimUrl { get; set; }= default!;
         public int Sira { get; set; }
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-ddTHH:mm}", ApplyFormatInEditMode = true)]
         public DateTime YayimTarihi { get; set; }

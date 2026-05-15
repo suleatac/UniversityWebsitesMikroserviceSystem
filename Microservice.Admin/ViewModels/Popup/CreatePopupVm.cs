@@ -6,11 +6,11 @@ namespace Microservice.Admin.ViewModels.Popup
     {
         public int SiteId { get; set; }
 
-        [Required(ErrorMessage = "Başlık zorunludur")]
-        public string Baslik { get; set; } = default!;
-        [Required(ErrorMessage = "Kısa Açıklama zorunludur")]
-        public string KisaAciklama { get; set; } = default!;
-        public string IcerikMetni { get; set; } = default!;
+   
+        public string? Baslik { get; set; } = default!;
+   
+        public string? KisaAciklama { get; set; } = default!;
+        public string? IcerikMetni { get; set; } = default!;
 
         public string? Link { get; set; }
         public string? ResimUrl { get; set; }

@@ -7,7 +7,7 @@ namespace Microservice.Admin.ViewModels.Menu
         public int DilId { get; set; }
         public int HedefId { get; set; }
         public string Ad { get; set; } = default!;
-        public string Link { get; set; } = default!;
+        public string? Link { get; set; } = default!;
         public string? IconUrl { get; set; }
         public string? Icerik { get; set; }
         public int Sira { get; set; }

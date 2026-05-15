@@ -6,14 +6,16 @@ namespace Microservice.Admin.ViewModels.Banner
     {
         public int SiteId { get; set; }
         public int DilId { get; set; }
-        public int? HedefId { get; set; }
+        public int HedefId { get; set; }
 
-        public string Baslik { get; set; } = default!;
-        public string KisaAciklama { get; set; } = default!;
-        public string IcerikMetni { get; set; } = default!;
+        public string? Baslik { get; set; } = default!;
+        public string? KisaAciklama { get; set; } = default!;
+        public string? IcerikMetni { get; set; } = default!;
 
         public string? Link { get; set; }
-        public string? ResimUrl { get; set; }
+
+        [Required(ErrorMessage = "Banner için resim URL'si gereklidir.")]
+        public string ResimUrl { get; set; }= default!;
 
         public int Sira { get; set; }
 

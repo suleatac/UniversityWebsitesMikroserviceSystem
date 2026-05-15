@@ -168,7 +168,7 @@ namespace Microservice.Admin.Services
                 Address = discovery.TokenEndpoint,
                 ClientId = identitySetting.WebAdmin.ClientId,
                 ClientSecret = identitySetting.WebAdmin.ClientSecret,
-                UserName = signInViewModel.Email!,
+                UserName = signInViewModel.Username!,
                 Password = signInViewModel.Password,
                 Scope = "openid profile email offline_access"
             });

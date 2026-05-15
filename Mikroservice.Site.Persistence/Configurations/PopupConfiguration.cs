@@ -16,15 +16,11 @@ namespace Mikroservice.Site.Persistence.Configurations
                    .HasForeignKey<Popup>(p => p.SiteId)
                    .OnDelete(DeleteBehavior.Cascade);
 
-            builder.Property(x => x.Baslik)
-                .IsRequired()
-                .HasMaxLength(300);
 
             builder.Property(x => x.KisaAciklama)
                 .HasMaxLength(500);
 
-            builder.Property(x => x.IcerikMetni)
-                .IsRequired();
+
 
             builder.Property(x => x.Link)
                 .HasMaxLength(500);

@@ -15,6 +15,9 @@ namespace Microservice.Site.Api.Endpoints.YonetimDuyuruEndPoints
             group.GetYonetimDuyurulariEndpointGroupItem();
             group.GetPaginatedYonetimDuyuruEndpointGroupItem();
             group.GetYonetimDuyuruByIdEndpointGroupItem();
+            group.GetYonetimDuyuruDetailEndpointGroupItem();
+            group.MarkYonetimDuyuruAsReadEndpointGroupItem();
+            group.GetUnreadYonetimDuyuruCountEndpointGroupItem();
             group.WithApiVersionSet(apiVersionSet);
             group.RequireAuthorization("Instructor");
         }

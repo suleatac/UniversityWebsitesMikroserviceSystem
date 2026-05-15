@@ -33,6 +33,7 @@ namespace Microservice.Admin.Controllers
             {
                 return View(signInViewModel);
             }
+          
             var result = await authService.AuthenticateAsync(signInViewModel);
 
             if (result.IsSuccess)

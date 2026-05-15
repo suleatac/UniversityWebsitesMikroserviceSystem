@@ -31,6 +31,7 @@ namespace Microservice.Site.Persistence
         public DbSet<Video> Videolar { get; set; }
         public DbSet<YoneticiSite> YoneticiSiteler { get; set; }
         public DbSet<YonetimDuyuru> YonetimDuyurular { get; set; }
+        public DbSet<YonetimDuyuruOkundu> YonetimDuyuruOkunduBilgileri { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -38,7 +39,6 @@ namespace Microservice.Site.Persistence
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(PersistenceAssembly).Assembly);
             base.OnModelCreating(modelBuilder);
         }
-
 
 
 

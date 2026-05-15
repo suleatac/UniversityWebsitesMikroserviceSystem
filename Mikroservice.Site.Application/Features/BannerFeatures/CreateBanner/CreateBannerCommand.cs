@@ -13,7 +13,7 @@ namespace Mikroservice.Site.Application.Features.BannerFeatures.CreateBanner
         public string IcerikMetni { get; init; } = default!;
 
         public string? Link { get; init; }
-        public string? ResimUrl { get; init; }
+        public string ResimUrl { get; init; }
 
         public int Sira { get; init; }
 

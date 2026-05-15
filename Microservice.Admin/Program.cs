@@ -3,6 +3,7 @@ using Microservice.Admin.Configurations;
 using Microservice.Admin.HttpHandlers;
 using Microservice.Admin.Middleware;
 using Microservice.Admin.Services.ServicesExtentions;
+using Microservice.Admin.Settings;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Localization;
 using System.Globalization;
@@ -20,6 +21,11 @@ builder.Services.AddMinioExtentions(builder.Configuration);
 builder.Services.AddRedisExtentions(builder.Configuration);
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddHttpClient();
+
+//LDAP Ayarları
+builder.Services.Configure<LdapSetting>(
+    builder.Configuration.GetSection("LdapSettings"));
+
 
 //Http handler Ayarları
 builder.Services.AddScoped<AuthenticatedHttpClientHandler>();

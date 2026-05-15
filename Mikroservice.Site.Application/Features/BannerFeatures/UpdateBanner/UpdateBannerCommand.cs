@@ -14,7 +14,7 @@ namespace Mikroservice.Site.Application.Features.BannerFeatures.UpdateBanner
         public string IcerikMetni { get; init; } = default!;
 
         public string? Link { get; init; }
-        public string? ResimUrl { get; init; }
+        public string ResimUrl { get; init; }= default!;
 
         public int Sira { get; init; }
 

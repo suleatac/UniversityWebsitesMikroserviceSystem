@@ -191,5 +191,90 @@ namespace Microservice.Admin.Services
         }
 
 
+        // GET DETAIL
+        public async Task<ServiceResult<YonetimDuyuruDetailVm>> GetYonetimDuyuruDetailAsync(int id)
+        {
+            _logger.LogInformation("Yonetim duyuru detayi getiriliyor. Id: {Id}", id);
+
+            var response = await _yonetimDuyuruRefitService.GetYonetimDuyuruDetailAsync(id);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var problemDetails = response.Error != null
+                   ? JsonSerializer.Deserialize<Microsoft.AspNetCore.Mvc.ProblemDetails>(response.Error.Content!)
+                   : null;
+
+                _logger.LogError(
+                    "API Error -> StatusCode: {StatusCode}, Title: {Title}, Detail: {Detail}",
+                    response.StatusCode,
+                    problemDetails?.Title,
+                    problemDetails?.Detail
+                );
+
+                return ServiceResult<YonetimDuyuruDetailVm>
+                    .Error(problemDetails?.Detail ?? problemDetails?.Title ?? "Yonetim duyuru detayi alinamadi");
+
+            }
+
+            return ServiceResult<YonetimDuyuruDetailVm>.Success(response.Content!);
+        }
+
+        // MARK AS READ
+        public async Task<ServiceResult<bool>> MarkYonetimDuyuruAsReadAsync(int id)
+        {
+            _logger.LogInformation("Yonetim duyuru okundu olarak isaretleniyor. Id: {Id}", id);
+
+            var response = await _yonetimDuyuruRefitService.MarkYonetimDuyuruAsReadAsync(id);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var problemDetails = response.Error != null
+                  ? JsonSerializer.Deserialize<Microsoft.AspNetCore.Mvc.ProblemDetails>(response.Error.Content!)
+                  : null;
+
+                _logger.LogError(
+                    "API Error -> StatusCode: {StatusCode}, Title: {Title}, Detail: {Detail}",
+                    response.StatusCode,
+                    problemDetails?.Title,
+                    problemDetails?.Detail
+                );
+
+                return ServiceResult<bool>
+                    .Error(problemDetails?.Detail ?? problemDetails?.Title ?? $"Duyuru okundu olarak isaretlenemedi. Id: {id}");
+
+            }
+
+            _logger.LogInformation("Yonetim duyuru okundu olarak isaretlendi. Id: {Id}", id);
+            return ServiceResult<bool>.Success(true);
+        }
+
+        // GET UNREAD COUNT
+        public async Task<ServiceResult<int>> GetUnreadYonetimDuyuruCountAsync()
+        {
+            _logger.LogInformation("Okunmamis yonetim duyuru sayisi getiriliyor.");
+
+            var response = await _yonetimDuyuruRefitService.GetUnreadYonetimDuyuruCountAsync();
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var problemDetails = response.Error != null
+                   ? JsonSerializer.Deserialize<Microsoft.AspNetCore.Mvc.ProblemDetails>(response.Error.Content!)
+                   : null;
+
+                _logger.LogError(
+                    "API Error -> StatusCode: {StatusCode}, Title: {Title}, Detail: {Detail}",
+                    response.StatusCode,
+                    problemDetails?.Title,
+                    problemDetails?.Detail
+                );
+
+                return ServiceResult<int>
+                    .Error(problemDetails?.Detail ?? problemDetails?.Title ?? "Okunmamis duyuru sayisi alinamadi");
+
+            }
+
+            return ServiceResult<int>.Success(response.Content);
+        }
+
     }
 }

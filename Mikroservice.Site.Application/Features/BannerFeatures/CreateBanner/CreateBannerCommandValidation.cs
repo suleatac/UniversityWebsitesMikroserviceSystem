@@ -30,9 +30,7 @@ namespace Mikroservice.Site.Application.Features.BannerFeatures.CreateBanner
 
             RuleFor(x => x.ResimUrl)
                 .MaximumLength(500)
-                .When(x => !string.IsNullOrEmpty(x.ResimUrl))
-                .Must(uri => string.IsNullOrEmpty(uri) || Uri.TryCreate(uri, UriKind.Absolute, out _))
-                .WithMessage("Geçerli bir resim URL giriniz.");
+                .NotEmpty().WithMessage("Resim URL'si boş olamaz.");
 
             RuleFor(x => x.Link)
                 .MaximumLength(500)

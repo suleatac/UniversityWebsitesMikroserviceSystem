@@ -8,7 +8,7 @@ namespace Mikroservice.Site.Application.DTOs.BannerDtos
         public int? HedefId { get; set; }
         public string Baslik { get; set; } = default!;
         public string KisaAciklama { get; set; } = default!;
-        public string? ResimUrl { get; set; }
+        public string ResimUrl { get; set; }= default!;
         public int Sira { get; set; }
         public DateTime YayimTarihi { get; set; }
         public DateTime? BaslamaTarihi { get; set; }

@@ -28,7 +28,7 @@ namespace Microservice.Site.Persistence.Extentions
 
             });
 
-           
+            
 
             services.AddScoped<IBandLogoRepository, BandLogoRepository>();
             services.AddScoped<IBannerRepository, BannerRepository>();
@@ -54,16 +54,15 @@ namespace Microservice.Site.Persistence.Extentions
             services.AddScoped<IVideoRepository, VideoRepository>();
             services.AddScoped<IYoneticiSiteRepository, YoneticiSiteRepository>();
             services.AddScoped<IYonetimDuyuruRepository, YonetimDuyuruRepository>();
+            services.AddScoped<IYonetimDuyuruOkunduRepository, YonetimDuyuruOkunduRepository>();
 
-           
+            
             services.AddScoped<ISeedService, UnvanSeedService>();
             services.AddScoped<ISeedService, PersonelTipSeedService>();
             services.AddScoped<ISeedService, HedefSeedService>();
             services.AddScoped<ISeedService, DilSeedService>();
             services.AddScoped<ISeedService, BirimSeedService>();
             services.AddScoped<ISeedService, TemplateSeedService>();
-
-
 
 
 
@@ -76,4 +75,3 @@ namespace Microservice.Site.Persistence.Extentions
         }
     }
 }
-

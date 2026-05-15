@@ -26,15 +26,15 @@
                         <form asp-action="SignIn">
                             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-                            <!-- EMAIL -->
+                            <!-- USERNAME -->
                             <div class="auth-form-group-custom mb-3">
                         
                                 <div class="input-group">
                                     <span class="input-group-text bg-primary bg-opacity-10 fs-16 " id="basic-addon1"><i class="mdi mdi-account-outline auti-custom-input-icon"></i></span>
-                                    <input asp-for="Email" type="email" placeholder="Email" aria-label="Email" aria-describedby="basic-addon1" class="form-control" value="suleatac@gmail.com" />
+                                    <input asp-for="Username" type="text" placeholder="Username" aria-label="Username" aria-describedby="basic-addon1" class="form-control" value="suleatac" />
                                 </div>
 
-                                <span asp-validation-for="Email" class="text-danger small"></span>
+                                <span asp-validation-for="Username" class="text-danger small"></span>
                             </div>
                             <!-- PASSWORD -->
                             <div class="auth-form-group-custom mb-3">                            
@@ -50,9 +50,7 @@
                                     <input type="checkbox" class="form-check-input" id="customControlInline">
                                     <label class="form-check-label" for="customControlInline">Beni hatırla</label>
                                 </div>
-                            @*     <div class="float-sm-end">
-                                    <a href="auth-recoverpw.html" class="text-muted"><i class="mdi mdi-lock me-1"></i> Şifreni mi unuttun?</a>
-                                </div> *@
+                 
                             </div>
 
                             <div class="pt-3 text-center">

@@ -50,6 +50,33 @@ namespace Mikroservice.Site.Persistence.Migrations
                     b.ToTable("YonetimDuyurular");
                 });
 
+            modelBuilder.Entity("Microservice.Site.Domain.Entities.YonetimDuyuruOkundu", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("KeycloakUserId")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<DateTime>("OkunmaTarihi")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<int>("YonetimDuyuruId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("YonetimDuyuruId", "KeycloakUserId")
+                        .IsUnique();
+
+                    b.ToTable("YonetimDuyuruOkunduBilgileri");
+                });
+
             modelBuilder.Entity("Mikroservice.Site.Domain.Entities.BandLogo", b =>
                 {
                     b.Property<int>("Id")
@@ -932,6 +959,17 @@ namespace Mikroservice.Site.Persistence.Migrations
                     b.HasDiscriminator().HasValue(5);
                 });
 
+            modelBuilder.Entity("Microservice.Site.Domain.Entities.YonetimDuyuruOkundu", b =>
+                {
+                    b.HasOne("Microservice.Site.Domain.Entities.YonetimDuyuru", "YonetimDuyuru")
+                        .WithMany("OkunduBilgileri")
+                        .HasForeignKey("YonetimDuyuruId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("YonetimDuyuru");
+                });
+
             modelBuilder.Entity("Mikroservice.Site.Domain.Entities.BandLogo", b =>
                 {
                     b.HasOne("Mikroservice.Site.Domain.Entities.Dil", "Dil")
@@ -1229,6 +1267,11 @@ namespace Mikroservice.Site.Persistence.Migrations
                         .IsRequired();
 
                     b.Navigation("Site");
+                });
+
+            modelBuilder.Entity("Microservice.Site.Domain.Entities.YonetimDuyuru", b =>
+                {
+                    b.Navigation("OkunduBilgileri");
                 });
 
             modelBuilder.Entity("Mikroservice.Site.Domain.Entities.Birim", b =>

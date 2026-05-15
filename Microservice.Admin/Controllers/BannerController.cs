@@ -1,9 +1,7 @@
 using Microservice.Admin.Services.Interfaces;
-using Microservice.Admin.ViewModels;
 using Microservice.Admin.ViewModels.Banner;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Text.Json;
 
 namespace Microservice.Admin.Controllers
 {

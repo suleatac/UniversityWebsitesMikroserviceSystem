@@ -7,5 +7,8 @@
         public string Icerik { get; set; }= default!;
         public DateTime EklenmeTarihi { get; set; }
         public bool IsDeleted { get; set; }= false;
+
+        // Navigation property
+        public ICollection<YonetimDuyuruOkundu> OkunduBilgileri { get; set; } = new List<YonetimDuyuruOkundu>();
     }
 }
