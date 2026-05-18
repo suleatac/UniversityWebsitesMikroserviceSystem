@@ -1,4 +1,5 @@
-﻿using Microservice.Admin.Services.Interfaces;
+﻿using Microservice.Admin.Filters;
+using Microservice.Admin.Services.Interfaces;
 
 namespace Microservice.Admin.Services.ServicesExtentions
 {
@@ -6,6 +7,9 @@ namespace Microservice.Admin.Services.ServicesExtentions
     {
         public static IServiceCollection AddServicesExtentions(this IServiceCollection services, IConfiguration configuration)
         {
+            // AuditLogFilter global olarak register edildi
+            services.AddScoped<AuditLogFilter>();
+
             services.AddScoped<IMinioService, MinioService>();
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<IBirimService, BirimService>();
@@ -36,6 +40,7 @@ namespace Microservice.Admin.Services.ServicesExtentions
             services.AddScoped<ISiteOzellikleriService, SiteOzellikleriService>();
             services.AddScoped<ITumPersonelService, TumPersonelService>();
             services.AddScoped<IProfileService, ProfileService>();
+            services.AddScoped<IAuditLogService, AuditLogService>();
             return services;
         }
     }

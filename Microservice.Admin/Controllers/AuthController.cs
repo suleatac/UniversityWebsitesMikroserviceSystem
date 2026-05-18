@@ -1,4 +1,5 @@
-﻿using Microservice.Admin.Services.Interfaces;
+﻿using Microservice.Admin.Attributes;
+using Microservice.Admin.Services.Interfaces;
 using Microservice.Admin.ViewModels.SignIn;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -13,10 +14,8 @@ namespace Microservice.Admin.Controllers
         {
             this.authService = authService;
         }
-        public IActionResult Index()
-        {
-            return View();
-        }
+
+        [SkipAudit]
         public IActionResult SignIn()
         {
             // Yetkisi olmayan kullanıcı logout edildikten sonra gelen uyarı mesajını göster
@@ -26,6 +25,7 @@ namespace Microservice.Admin.Controllers
             }
             return View();
         }
+        [SkipAudit]
         [HttpPost]
         public async Task<IActionResult> SignIn(SignInVm signInViewModel)
         {
@@ -53,6 +53,7 @@ namespace Microservice.Admin.Controllers
         }
 
         [HttpPost]
+        [SkipAudit]
         public async Task<IActionResult> LogOut()
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
@@ -63,6 +64,7 @@ namespace Microservice.Admin.Controllers
 
             return RedirectToAction("SignIn");
         }
+        [SkipAudit]
         public IActionResult AccessDenied()
         {
             return View();

@@ -13,6 +13,30 @@ namespace Mikroservice.Site.Persistence.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
+                name: "AuditLogs",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    UserId = table.Column<string>(type: "text", nullable: true),
+                    Username = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
+                    Action = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    TraceId = table.Column<string>(type: "text", nullable: true),
+                    EntityName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
+                    EntityId = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
+                    Description = table.Column<string>(type: "character varying(2000)", maxLength: 2000, nullable: true),
+                    OldValues = table.Column<string>(type: "text", nullable: true),
+                    NewValues = table.Column<string>(type: "text", nullable: true),
+                    IpAddress = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
+                    SiteId = table.Column<int>(type: "integer", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false, defaultValueSql: "NOW()")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AuditLogs", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Birimler",
                 columns: table => new
                 {
@@ -314,7 +338,7 @@ namespace Mikroservice.Site.Persistence.Migrations
                     HedefId = table.Column<int>(type: "integer", nullable: false),
                     ParentId = table.Column<int>(type: "integer", nullable: true),
                     Ad = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
-                    Link = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: false),
+                    Link = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
                     IconUrl = table.Column<string>(type: "character varying(300)", maxLength: 300, nullable: true),
                     Icerik = table.Column<string>(type: "text", nullable: true),
                     Sira = table.Column<int>(type: "integer", nullable: false),
@@ -358,9 +382,9 @@ namespace Mikroservice.Site.Persistence.Migrations
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     SiteId = table.Column<int>(type: "integer", nullable: false),
-                    Baslik = table.Column<string>(type: "character varying(300)", maxLength: 300, nullable: false),
-                    KisaAciklama = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: false),
-                    IcerikMetni = table.Column<string>(type: "text", nullable: false),
+                    Baslik = table.Column<string>(type: "text", nullable: true),
+                    KisaAciklama = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
+                    IcerikMetni = table.Column<string>(type: "text", nullable: true),
                     Link = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
                     ResimUrl = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
                     GosterimSayisi = table.Column<int>(type: "integer", nullable: false, defaultValue: 0),
@@ -548,6 +572,36 @@ namespace Mikroservice.Site.Persistence.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AuditLogs_CreatedAt",
+                table: "AuditLogs",
+                column: "CreatedAt");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AuditLogs_EntityId",
+                table: "AuditLogs",
+                column: "EntityId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AuditLogs_EntityName",
+                table: "AuditLogs",
+                column: "EntityName");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AuditLogs_SiteId",
+                table: "AuditLogs",
+                column: "SiteId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AuditLogs_UserId",
+                table: "AuditLogs",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AuditLogs_Username",
+                table: "AuditLogs",
+                column: "Username");
 
             migrationBuilder.CreateIndex(
                 name: "IX_BandLogos_DilId",
@@ -739,6 +793,9 @@ namespace Mikroservice.Site.Persistence.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "AuditLogs");
+
             migrationBuilder.DropTable(
                 name: "BandLogos");
 

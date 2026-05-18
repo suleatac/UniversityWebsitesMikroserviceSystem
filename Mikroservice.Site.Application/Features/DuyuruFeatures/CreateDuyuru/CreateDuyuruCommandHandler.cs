@@ -3,7 +3,6 @@ using Microservice.Shared;
 using Microservice.Shared.Services.RedisServiceItems;
 using Microservice.Site.Application.Contracts.IRepositories;
 using Mikroservice.Site.Domain.Entities;
-using System.Reflection;
 
 namespace Mikroservice.Site.Application.Features.DuyuruFeatures.CreateDuyuru
 {

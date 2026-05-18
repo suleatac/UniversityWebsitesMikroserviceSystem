@@ -28,8 +28,8 @@ namespace Microservice.Site.Persistence.Extentions
 
             });
 
-            
 
+            services.AddScoped<IAuditLogRepository, AuditLogRepository>();
             services.AddScoped<IBandLogoRepository, BandLogoRepository>();
             services.AddScoped<IBannerRepository, BannerRepository>();
             services.AddScoped<IBilgiRepository, BilgiRepository>();
@@ -64,6 +64,8 @@ namespace Microservice.Site.Persistence.Extentions
             services.AddScoped<ISeedService, BirimSeedService>();
             services.AddScoped<ISeedService, TemplateSeedService>();
 
+            
+            services.AddScoped<IUserContextService, UserContextService>();
 
 
 

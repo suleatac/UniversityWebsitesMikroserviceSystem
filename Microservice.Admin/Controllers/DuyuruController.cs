@@ -1,5 +1,6 @@
+using Microservice.Admin.Attributes;
+using Microservice.Admin.Filters;
 using Microservice.Admin.Services.Interfaces;
-using Microservice.Admin.ViewModels;
 using Microservice.Admin.ViewModels.Duyuru;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -112,6 +113,8 @@ namespace Microservice.Admin.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        //[AuditLog("Kullanıcı ürün bilgilerini güncelledi")]
+        //[ServiceFilter(typeof(AuditLogFilter))]
         [HttpGet]
         public async Task<IActionResult> Edit(int id)
         {

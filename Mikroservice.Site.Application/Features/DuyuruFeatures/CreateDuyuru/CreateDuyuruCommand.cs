@@ -1,5 +1,4 @@
 ﻿using Microservice.Shared;
-using Mikroservice.Site.Application.Features.BannerFeatures.CreateBanner;
 
 namespace Mikroservice.Site.Application.Features.DuyuruFeatures.CreateDuyuru
 {

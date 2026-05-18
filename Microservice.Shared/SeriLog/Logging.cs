@@ -2,9 +2,6 @@
 using Serilog;
 using Serilog.Exceptions;
 using Serilog.Formatting.Elasticsearch;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Microservice.Shared.SeriLog
 {

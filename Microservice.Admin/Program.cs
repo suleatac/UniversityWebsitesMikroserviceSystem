@@ -1,17 +1,23 @@
 using Microservice.Admin.Clients;
 using Microservice.Admin.Configurations;
+using Microservice.Admin.Filters;
 using Microservice.Admin.HttpHandlers;
 using Microservice.Admin.Middleware;
+using Microservice.Admin.SeriLog;
 using Microservice.Admin.Services.ServicesExtentions;
 using Microservice.Admin.Settings;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Localization;
+using Serilog;
 using System.Globalization;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddControllersWithViews();
+builder.Services.AddControllersWithViews(options =>
+{
+    options.Filters.AddService<AuditLogFilter>();
+});
 
 
 //Configuration Ayarları
@@ -36,7 +42,7 @@ builder.Services.AddServicesExtentions(builder.Configuration);
 
 //Client Extentions Ayarları
 builder.Services.AddClientExtentions(builder.Configuration);
-
+builder.Services.AddLoggingExt(builder.Configuration);
 //Session Ayarları - Site ve Dil seçimi için
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(options =>
@@ -64,7 +70,8 @@ builder.Services.AddAuthentication(configureOption => {
 
 builder.Services.AddAuthorization();
 
-
+//Log işlemi için eklenen kısım
+builder.Host.UseSerilog(Logging.ConfigureLogging);
 
 
 
@@ -77,7 +84,8 @@ builder.Services.AddAuthorization();
 
 var app = builder.Build();
 
-
+app.UseExceptionMiddleware();
+app.UseMiddleware<ObservabilityMiddleware>();
 
 var cultueInfo = new CultureInfo("tr-TR");
 CultureInfo.DefaultThreadCurrentCulture = cultueInfo;

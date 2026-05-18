@@ -6,6 +6,7 @@ using Microservice.Site.Api.Endpoints.YonetimDuyuruEndPoints;
 using Microservice.Site.Persistence;
 using Microservice.Site.Persistence.Extentions;
 using Microsoft.EntityFrameworkCore;
+using Mikroservice.Site.Api.Endpoints.AuditLogEndPoints;
 using Mikroservice.Site.Api.Endpoints.BandLogoEndPoints;
 using Mikroservice.Site.Api.Endpoints.BannerEndPoints;
 using Mikroservice.Site.Api.Endpoints.BilgiEndPoints;
@@ -53,6 +54,8 @@ builder.Services.AddOpenTelemetryTraceExt(builder.Configuration);
 //Log işlemi için eklenen kısım
 builder.Host.UseSerilog(Microservice.Shared.SeriLog.Logging.ConfigureLogging);
 
+builder.Services.AddHttpContextAccessor();
+
 //Persistence işlemleri için eklenen extention
 builder.Services.AddPersistenceExtentions(builder.Configuration);
 
@@ -99,6 +102,7 @@ app.UseAuthorization();
 app.UseMiddleware<OpenTelemetryTraceIdMiddleware>();
 app.UseMiddleware<RequestAndResponseActivityMiddleware>();
 app.UseExceptionMiddleware();
+app.UseMiddleware<AuditContextMiddleware>();
 //Metric işlemi için eklenen middleware
 app.UseOpenTelemetryPrometheusScrapingEndpoint("/metrics");
 
@@ -108,6 +112,7 @@ await app.InitializeSeedDataAsync();
 //Endpointler eklendi
 var apiVersionSet = app.AddVersionSetExt();
 
+app.AddAuditLogGroupsEndpointExt(apiVersionSet);
 app.AddBandLogoGroupsEndpointExt(apiVersionSet);
 app.AddBannerGroupsEndpointExt(apiVersionSet);
 app.AddBilgiGroupsEndpointExt(apiVersionSet);

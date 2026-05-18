@@ -1,4 +1,5 @@
-﻿using Microservice.Admin.Clients.BannerClients;
+﻿using Microservice.Admin.Clients.AuditLogClients;
+using Microservice.Admin.Clients.BannerClients;
 using Microservice.Admin.Clients.BilgiClients;
 using Microservice.Admin.Clients.BirimClients;
 using Microservice.Admin.Clients.DilClients;
@@ -29,6 +30,18 @@ namespace Microservice.Admin.Clients
     {
         public static IServiceCollection AddClientExtentions(this IServiceCollection services, IConfiguration configuration)
         {
+
+            //AuditLog Clients
+            services.AddRefitClient<IAuditLogClientServices>()
+            .ConfigureHttpClient(c => {
+
+                var microserviceOption = configuration.GetSection(MicroservicesSetting.SectionName).Get<MicroservicesSetting>();
+                c.BaseAddress = new Uri(microserviceOption!.Site.BaseUrl);
+            })
+            .AddHttpMessageHandler<AuthenticatedHttpClientHandler>()//bu usertoken için istek atarken kullanmak için
+            .AddHttpMessageHandler<ClientAuthenticatedHttpClientHandler>();//bu clientcredential için token alıp istek göndermek için
+
+
             //Site Clients
             services.AddRefitClient<ISiteClientServices>()
             .ConfigureHttpClient(c => {
