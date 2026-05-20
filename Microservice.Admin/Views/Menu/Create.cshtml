@@ -224,7 +224,7 @@
                                         <input asp-for="CreateMenu.IconUrl"
                                                id="IconUrlInput"
                                                class="form-control"
-                                               placeholder="İkon URL (opsiyonel)" />
+                                               placeholder="İkon URL veya Font Awesome class (opsiyonel)" />
 
                                         <button type="button"
                                                 class="btn btn-outline-primary"
@@ -235,10 +235,34 @@
 
                                         </button>
 
+                                        <button type="button"
+                                                class="btn btn-outline-info"
+                                                id="openIconPickerBtn"
+                                                title="İkon Seç">
+
+                                            <i class="fas fa-icons"></i>
+
+                                        </button>
+
+                                    </div>
+
+                                    <!-- Icon Preview -->
+                                    <div id="iconPreview" class="mt-2 d-none">
+                                        <div class="d-flex align-items-center p-2 bg-light rounded border">
+                                            <i id="previewIcon" class="fas fa-circle fs-4 me-2 text-primary"></i>
+                                            <code id="previewIconText" class="small"></code>
+                                        </div>
                                     </div>
 
                                     <span asp-validation-for="CreateMenu.IconUrl"
                                           class="text-danger small"></span>
+
+                                    <small class="text-muted">
+                                        <i class="mdi mdi-information-outline"></i>
+                                        İkon seçmek için
+                                        <a href="javascript:void(0);" id="openIconPickerLink">tıklayın</a>
+                                        veya doğrudan Font Awesome class adını (ör: <code>fas fa-user</code>) yazın.
+                                    </small>
 
                                 </div>
 
@@ -362,49 +386,84 @@
 
 </div>
 
-<!-- File Manager Modal -->
-
-<div class="modal fade"
-     id="fileManagerModal"
-     tabindex="-1"
-     aria-labelledby="fileManagerModalLabel"
-     aria-hidden="true">
-
+<!-- Dosya Yöneticisi Modal -->
+<div class="modal fade" id="fileManagerModal" tabindex="-1" aria-labelledby="fileManagerModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-xl modal-dialog-centered">
-
         <div class="modal-content">
-
             <div class="modal-header">
-
                 <h5 class="modal-title" id="fileManagerModalLabel">
-
-                    <i class="mdi mdi-folder-open-outline me-1"></i>
-                    Dosya Yöneticisi
-
+                    <i class="mdi mdi-folder-open-outline me-1"></i> Dosya Yöneticisi
                 </h5>
-
-                <button type="button"
-                        class="btn-close"
-                        data-bs-dismiss="modal"
-                        aria-label="Kapat"></button>
-
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
             </div>
-
-            <div class="modal-body p-0" style="height:600px;">
-
-                <iframe id="fileManagerFrame"
-                        src=""
-                        style="width:100%; height:100%; border:none;">
-                </iframe>
-
+            <div class="modal-body p-0" style="height: 600px;">
+                <iframe id="fileManagerFrame" src="" style="width:100%; height:100%; border:none;"></iframe>
             </div>
-
         </div>
-
     </div>
-
 </div>
 
+<!-- Icons Modal -->
+<div class="modal fade" id="iconModal" tabindex="-1" aria-labelledby="iconModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="iconModalLabel">
+                    <i class="mdi mdi-folder-open-outline me-1"></i> Tüm İkonlar
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
+            </div>
+            <div class="modal-body p-0" style="height: 600px;">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">Font awesome</h3>
+                            </div>
+                            <div class="card-body">
+                                <p class="text-muted">Get icons on your website with <strong>Font Awesome</strong>, the web's most popular icon set and toolkit. For more info visit <a href="http://fontawesome.com" target="_blank">Font Awesome's page</a>.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">Solid</h3>
+                            </div>
+                            <div class="card-body">
+                                <p class="card-title-desc mb-2">Use <code>&lt;i class="fas fa-ad"&gt;&lt;/i&gt;</code> <span class="badge bg-success">v 5.13.0</span>.</p>
+                                <div class="row icon-demo-content" id="solid">
+                                </div>
+                            </div> <!-- end card-body -->
+                        </div> <!-- end card -->
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">Regular</h3>
+                            </div>
+                            <div class="card-body">
+                                <p class="card-title-desc mb-2">Use <code>&lt;i class="far fa-address-book"&gt;&lt;/i&gt;</code> <span class="badge bg-success">v 5.13.0</span>.</p>
+                                <div class="row icon-demo-content" id="regular">
+                                </div>
+                            </div> <!-- end card-body -->
+                        </div> <!-- end card -->
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">Brands</h3>
+                            </div>
+                            <div class="card-body">
+                                <p class="card-title-desc mb-2">Use <code>&lt;i class="fab fa-500px"&gt;&lt;/i&gt;</code> <span class="badge bg-success">v 5.13.0</span>.</p>
+                                <div class="row icon-demo-content" id="brand">
+                                </div>
+                            </div> <!-- end card-body -->
+                        </div> <!-- end card -->
+                    </div> <!-- end col -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 @functions {
 
     public class MenuSelectItemVm
@@ -441,7 +500,7 @@
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
-
+    <script src="~/assets/js/pages/fontawesome.init.js"></script>
     <script src="~/assets/libs/select2/js/select2.full.min.js"></script>
     <script src="~/assets/libs/select2/js/i18n/tr.js"></script>
 
@@ -596,6 +655,59 @@
 
         $('#fileManagerModal').modal('show');
 
+        });
+
+        // ============================================
+        // Icon Picker (Font Awesome)
+        // ============================================
+
+        $('#openIconPickerBtn, #openIconPickerLink').on('click', function () {
+            $('#iconModal').modal('show');
+        });
+
+        // Click handler for icon selection in the modal
+        $(document).on('click', '#iconModal .icon-demo-content .col-xl-3', function () {
+            var $wrapper = $(this).find('.icon-wrapper');
+            var $icon = $wrapper.find('i');
+            var iconHtml = $icon.length
+                ? $icon.prop('outerHTML')
+                : $(this).find('i').prop('outerHTML') || '';
+
+            // Extract class names from the <i> tag
+            var match = iconHtml.match(/class="([^"]+)"/);
+            if (match && match[1]) {
+                var iconClass = match[1];
+                $('#IconUrlInput').val(iconClass);
+
+                // Show icon preview next to input
+                $('#previewIcon').attr('class', iconClass + ' fs-4 me-2 text-primary');
+                $('#previewIconText').text(iconClass);
+                $('#iconPreview').removeClass('d-none');
+
+                $('#iconModal').modal('hide');
+            }
+        });
+
+        // Update preview when user types manually
+        $('#IconUrlInput').on('input', function () {
+            var val = $(this).val().trim();
+            if (val) {
+                $('#previewIcon').attr('class', val + ' fs-4 me-2 text-primary');
+                $('#previewIconText').text(val);
+                $('#iconPreview').removeClass('d-none');
+            } else {
+                $('#iconPreview').addClass('d-none');
+            }
+        });
+
+        // On page load, if input already has a value, show preview
+        $(document).ready(function () {
+            var initialVal = $('#IconUrlInput').val().trim();
+            if (initialVal) {
+                $('#previewIcon').attr('class', initialVal + ' fs-4 me-2 text-primary');
+                $('#previewIconText').text(initialVal);
+                $('#iconPreview').removeClass('d-none');
+            }
         });
 
         // ============================================

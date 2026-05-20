@@ -9,6 +9,8 @@ namespace Microservice.Admin.Services.Interfaces
         Task<ServiceResult<AuditLogDetailVm>> GetAuditLogByIdAsync(int id);
         Task<ServiceResult<object>> CreateAuditLogAsync(CreateAuditLogVm dto);
         Task<ServiceResult<object>> DeleteAuditLogAsync(int id);
-        Task<ServiceResult<PaginatedResult<AuditLogVm>>> GetAuditLoglarPaginatedAsync(int siteId, int dilId, int page, int pageSize, string? search, string? orderBy, string? orderDir);
+        Task<ServiceResult<PaginatedResult<AuditLogVm>>> GetAuditLoglarPaginatedAsync(int siteId, int dilId, int page, int pageSize, string? search, string? orderBy, string? orderDir, DateTime? startDate = null, DateTime? endDate = null);
+
+        Task<ServiceResult<List<AuditLogDailyStatVm>>> GetAuditLogDailyStatsAsync(DateTime startDate, DateTime endDate);
     }
 }

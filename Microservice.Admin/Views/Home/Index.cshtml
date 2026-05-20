@@ -1,17 +1,37 @@
 ﻿@model Microservice.Admin.ViewModels.Dashboard.DashboardViewModel
+@using System.Globalization
+@using System.Text.Json
 
 @{
     ViewBag.Title = "Anasayfa";
     ViewBag.pTitle = "Admin Paneli";
     Layout = "~/Views/Shared/_Layout.cshtml";
-}
 
+    // Pre-compute chart data for ApexCharts (only used when user is admin)
+    var weekDayNames = new[] { "Pazartesi", "Salı", "Çarşamba", "Perşembe", "Cuma", "Cumartesi", "Pazar" };
+    var todayDt = DateTime.Today;
+    var diffFromMonday = (7 + (int)todayDt.DayOfWeek - (int)DayOfWeek.Monday) % 7;
+    var weekStartDt = todayDt.AddDays(-diffFromMonday);
+
+    var chartDayLabels = new List<string>();
+    var chartDayCounts = new List<int>();
+    for (int idx = 0; idx < 7; idx++)
+    {
+        var dayDate = weekStartDt.AddDays(idx);
+        var stat = Model.DailyAuditLogStats.FirstOrDefault(s => s.Date.Date == dayDate.Date);
+        chartDayLabels.Add(weekDayNames[idx]);
+        chartDayCounts.Add(stat?.Count ?? 0);
+    }
+
+    var chartLabelsJson = JsonSerializer.Serialize(chartDayLabels);
+    var chartDataJson = JsonSerializer.Serialize(chartDayCounts);
+}
 
 <div class="row">
     <div class="col-xxl-9">
 
         <div class="row">
-            <div class="col-xl-4">
+            <div class="col-xl-3">
                 <div class="card bg-danger-subtle">
                     <div class="card-body">
                         <div class="d-flex">
@@ -27,7 +47,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-xl-4">
+            <div class="col-xl-3">
                 <div class="card bg-success-subtle">
                     <div class="card-body">
                         <div class="d-flex">
@@ -42,7 +62,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-xl-4">
+            <div class="col-xl-3">
                 <div class="card bg-info-subtle">
                     <div class="card-body">
                         <div class="d-flex">
@@ -57,98 +77,71 @@
                     </div>
                 </div>
             </div>
-        </div>
-        <!-- end row -->
-        <div class="row">
-            <div class="card">
-                <div class="card-header">
-                    <div class="card-icon">
-                        <i class="fas fa-layer-group fs-14 text-muted"></i>
-                    </div>
-                    <h4 class="card-title mb-0">Toplam Yapılan İşlemler</h4>
-                </div><!-- end card header -->
-
-                <div class="card-body">
-                    <div class="row align-items-center">
-                        <div class="col-sm-8">
-                            <div id="products" data-colors='["--bs-primary"]' class="apex-charts" dir="ltr"></div>
-                        </div>
-                        <div class="col-sm-4">
-                            <div class="d-grid gap-2">
-                                <div class="mb-3">
-                                    <div class="d-flex justify-content-between">
-                                        <span class="text-muted">48</span>
-                                        <span class="text-muted">Pazartesi</span>
-                                    </div>
-                                    <div class="progress" style="height: 6px;">
-                                        <div class="progress-bar progress-bar-striped progress-bar-animated bg-primary" style="width: 48%;"></div>
-                                    </div>
+            @if (ViewBag.IsCurrentUserAdmin == true)
+            {
+                <div class="col-xl-3">
+                    <div class="card bg-primary-subtle">
+                        <div class="card-body">
+                            <div class="d-flex">
+                                <div class="avatar avatar-sm avatar-label-primary">
+                                    <i class="mdi mdi-clipboard-text mt-1"></i>
                                 </div>
-                                <div class="mb-3">
-                                    <div class="d-flex justify-content-between">
-                                        <span class="text-muted">100</span>
-                                        <span class="text-muted">Salı</span>
-                                    </div>
-                                    <div class="progress" style="height: 6px;">
-                                        <div class="progress-bar progress-bar-striped progress-bar-animated bg-secondary" style="width: 100%;"></div>
-                                    </div>
-                                </div>
-
-                                <div class="mb-3">
-                                    <div class="d-flex justify-content-between">
-                                        <span class="text-muted">40</span>
-                                        <span class="text-muted">Çarşamba</span>
-                                    </div>
-                                    <div class="progress" style="height: 6px;">
-                                        <div class="progress-bar progress-bar-striped progress-bar-animated bg-danger" style="width: 40%;"></div>
-                                    </div>
-                                </div>
-
-                                <div class="mb-3">
-                                    <div class="d-flex justify-content-between">
-                                        <span class="text-muted">68</span>
-                                        <span class="text-muted">Perşembe</span>
-                                    </div>
-                                    <div class="progress" style="height: 6px;">
-                                        <div class="progress-bar progress-bar-striped progress-bar-animated bg-info" style="width: 68%;"></div>
-                                    </div>
-                                </div>
-
-                                <div class="mb-3">
-                                    <div class="d-flex justify-content-between">
-                                        <span class="text-muted">56</span>
-                                        <span class="text-muted">Cuma</span>
-                                    </div>
-                                    <div class="progress" style="height: 6px;">
-                                        <div class="progress-bar progress-bar-striped progress-bar-animated bg-success" style="width: 56%;"></div>
-                                    </div>
-                                </div>
-
-                                <div class="mb-3">
-                                    <div class="d-flex justify-content-between">
-                                        <span class="text-muted">80</span>
-                                        <span class="text-muted">Cumartesi</span>
-                                    </div>
-                                    <div class="progress" style="height: 6px;">
-                                        <div class="progress-bar progress-bar-striped progress-bar-animated bg-warning" style="width: 80%;"></div>
-                                    </div>
-                                </div>
-
-                                <div class="">
-                                    <div class="d-flex justify-content-between">
-                                        <span class="text-muted">80</span>
-                                        <span class="text-muted">Pazar</span>
-                                    </div>
-                                    <div class="progress" style="height: 6px;">
-                                        <div class="progress-bar progress-bar-striped progress-bar-animated bg-dark" style="width: 92%;"></div>
-                                    </div>
+                                <div class="ms-3">
+                                    <p class="text-primary mb-1">Toplam İşlem</p>
+                                    <h4 class="mb-0">@Model.TotalAuditLogCount</h4>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div><!-- end card-body -->
-            </div>
+                </div>
+            }
         </div>
+        <!-- end row -->
+        @if (ViewBag.IsCurrentUserAdmin == true)
+        {
+            var progressColors = new[] { "bg-primary", "bg-secondary", "bg-danger", "bg-info", "bg-success", "bg-warning", "bg-dark" };
+            var maxCount = Model.DailyAuditLogStats.Any() ? Model.DailyAuditLogStats.Max(x => x.Count) : 1;
+            <div class="row">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon">
+                            <i class="fas fa-layer-group fs-14 text-muted"></i>
+                        </div>
+                        <h4 class="card-title mb-0">Toplam Yapılan İşlemler (Bu Hafta)</h4>
+                    </div><!-- end card header -->
+
+                    <div class="card-body">
+                        <div class="row align-items-center">
+                            <div class="col-sm-8">
+                                <div id="products" data-colors='["--bs-primary"]' class="apex-charts" dir="ltr"></div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="d-grid gap-2">
+                                    @for (int i = 0; i < 7; i++)
+                                    {
+                                        var dayDate = weekStartDt.AddDays(i);
+                                        var stat = Model.DailyAuditLogStats.FirstOrDefault(x => x.Date.Date == dayDate.Date);
+                                        var count = stat?.Count ?? 0;
+                                        var percent = maxCount > 0 ? (int)((double)count / maxCount * 100) : 0;
+                                        var isLast = i == 6;
+
+                                        <div class="@(isLast ? "" : "mb-3")">
+                                            <div class="d-flex justify-content-between">
+                                                <span class="text-muted fw-medium">@count</span>
+                                                <span class="text-muted">@weekDayNames[i]</span>
+                                            </div>
+                                            <div class="progress" style="height: 6px;">
+                                                <div class="progress-bar progress-bar-striped progress-bar-animated @progressColors[i]" style="width: @percent%;" role="progressbar" aria-valuenow="@count" aria-valuemin="0" aria-valuemax="@maxCount"></div>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div><!-- end card-body -->
+                </div>
+            </div>
+        }
     </div>
 
     <div class="col-xxl-3">
@@ -190,69 +183,78 @@
                     </div>
                 </div>
             </div>
-            <div class="col-xxl-12 order-3">
-                <div class="card" style="overflow-y: auto; height: 313px;" data-simplebar="">
-                    <div class="card-header card-header-bordered">
-                        <div class="card-icon text-muted"><i class="fa fa-clipboard-list fs-14"></i></div>
-                        <h3 class="card-title">Yapılan son aktiviteler</h3>
-                        <div class="card-addon">
-                            <button class="btn btn-sm btn-label-primary">See all</button>
+            @if (ViewBag.IsCurrentUserAdmin == true)
+            {
+                <div class="col-xxl-12 order-3">
+                    <div class="card" style="overflow-y: auto; height: 313px;" data-simplebar="">
+                        <div class="card-header card-header-bordered">
+                            <div class="card-icon text-muted"><i class="fa fa-clipboard-list fs-14"></i></div>
+                            <h3 class="card-title">Yapılan son aktiviteler</h3>
+                            <div class="card-addon">
+                                <a href="@Url.Action("Index", "AuditLog")" class="btn btn-sm btn-label-primary">Tümünü Gör</a>
+                            </div>
                         </div>
-                    </div>
-                    <div class="card-body">
-                        <div class="timeline timeline-timed">
-                            <div class="timeline-item">
-                                <span class="timeline-time">10:00</span>
-                                <div class="timeline-pin"><i class="marker marker-circle text-primary"></i></div>
-                                <div class="timeline-content">
-                                    <div>
-                                        <span>Meeting with</span>
-                                        <div class="avatar-group ms-2">
-                                            <div class="avatar avatar-circle">
-                                                <img src="~/assets/images/users/avatar-1.png" alt="Avatar image" class="avatar-2xs" />
-                                            </div>
-                                            <div class="avatar avatar-circle">
-                                                <img src="~/assets/images/users/avatar-2.png" alt="Avatar image" class="avatar-2xs" />
-                                            </div>
-                                            <div class="avatar avatar-circle">
-                                                <img src="~/assets/images/users/avatar-3.png" alt="Avatar image" class="avatar-2xs" />
+                        <div class="card-body">
+                            @if (Model.RecentAuditLogs.Any())
+                            {
+                                <div class="timeline timeline-timed">
+                                    @foreach (var log in Model.RecentAuditLogs)
+                                    {
+                                        var actionColor = log.Action?.ToLower() switch {
+                                            "create" or "oluşturma" or "ekleme" => "text-success",
+                                            "update" or "güncelleme" or "düzenleme" => "text-info",
+                                            "delete" or "silme" => "text-danger",
+                                            "login" or "giriş" => "text-primary",
+                                            "logout" or "çıkış" => "text-warning",
+                                            _ => "text-secondary"
+                                        };
+                                        var timeStr = log.CreatedAt.ToString("HH:mm");
+                                        var desc = !string.IsNullOrEmpty(log.Description)
+                                            ? (log.Description.Length > 80 ? log.Description[..80] + "..." : log.Description)
+                                            : (log.Action + " - " + log.EntityName);
+
+                                        <div class="timeline-item">
+                                            <span class="timeline-time">@timeStr</span>
+                                            <div class="timeline-pin"><i class="marker marker-circle @actionColor"></i></div>
+                                            <div class="timeline-content">
+                                                <p class="mb-0">
+                                                    <strong>@log.Username</strong>
+                                                    <span class="text-muted">@log.Action</span>
+                                                    @if (!string.IsNullOrEmpty(log.EntityName))
+                                                    {
+                                                        <span class="text-muted">·</span>
+                                                        <span>@log.EntityName</span>
+                                                    }
+                                                    @if (!string.IsNullOrEmpty(log.IpAddress))
+                                                    {
+                                                        <br /><small class="text-muted"><i class="mdi mdi-ip-network"></i> @log.IpAddress</small>
+                                                    }
+                                                </p>
+                                                @if (!string.IsNullOrEmpty(log.Description))
+                                                {
+                                                    <small class="text-muted d-block mt-1">@desc</small>
+                                                }
                                             </div>
                                         </div>
-                                    </div>
+                                    }
                                 </div>
-                            </div>
-                            <div class="timeline-item">
-                                <span class="timeline-time">14:00</span>
-                                <div class="timeline-pin"><i class="marker marker-circle text-danger"></i></div>
-                                <div class="timeline-content">
-                                    <p class="mb-0">Received a new feedback on <a href="#">GoFinance</a> App product.</p>
+                            }
+                            else
+                            {
+                                <div class="text-center py-4">
+                                    <i class="mdi mdi-clipboard-text-outline fs-2 text-muted"></i>
+                                    <p class="text-muted mt-2">Henüz işlem kaydı bulunmamaktadır.</p>
                                 </div>
-                            </div>
-                            <div class="timeline-item">
-                                <span class="timeline-time">15:20</span>
-                                <div class="timeline-pin"><i class="marker marker-circle text-success"></i></div>
-                                <div class="timeline-content">
-                                    <p class="mb-0">Lorem ipsum dolor sit amit,consectetur eiusmdd tempor incididunt ut labore et dolore magna.</p>
-                                </div>
-                            </div>
-                            <div class="timeline-item">
-                                <span class="timeline-time">17:00</span>
-                                <div class="timeline-pin"><i class="marker marker-circle text-info"></i></div>
-                                <div class="timeline-content">
-                                    <p class="mb-0">Make Deposit <a href="#">USD 700</a> o ESL.</p>
-                                </div>
-                            </div>
+                            }
                         </div>
                     </div>
                 </div>
+            }
 
-            </div>
-         
         </div>
     </div>
 </div>
 <!-- end row -->
-
 <!-- Duyuru Detay Modal -->
 <div class="modal fade" id="duyuruDetayModal" tabindex="-1" aria-labelledby="duyuruDetayModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
@@ -305,81 +307,173 @@
 @section scripts {
 
     <script src="~/assets/libs/apexcharts/apexcharts.min.js"></script>
-
-    <script src="~/assets/js/pages/dashboard.init.js"></script>
-
     <!-- App js -->
     <script src="~/assets/js/app.js"></script>
 
+@if (ViewBag.IsCurrentUserAdmin == true)
+    {
+        <script>
+
+            function getChartColorsArray(e) {
+            if (null !== document.getElementById(e)) {
+            var t = document.getElementById(e).getAttribute("data-colors");
+            if (t) return (t = JSON.parse(t)).map(function (e) {
+            var t = e.replace(" ", "");
+            if (-1 === t.indexOf(",")) {
+            var o = getComputedStyle(document.documentElement).getPropertyValue(t);
+            return o || t
+            }
+            var r = e.split(",");
+            return 2 != r.length ? t : "rgba(" + getComputedStyle(document.documentElement).getPropertyValue(r[0]) + "," + r[1] + ")"
+            })
+            }
+            }
+
+
+            // Haftalık İşlem İstatistikleri Bar Grafiği (Dynamic from AuditLog)
+            var chartLabels = @Html.Raw(chartLabelsJson);
+            var chartData = @Html.Raw(chartDataJson);
+
+            var chartRadarPolyradarColors = getChartColorsArray("products");
+            chartRadarPolyradarColors && (options = {
+            series: [{
+            name: "Series 1",
+            data: chartData
+            }],
+            chart: {
+            height: 400,
+            type: "radar",
+            toolbar: {
+            show: !1
+            }
+            },
+            dataLabels: {
+            enabled: !1
+            },
+            plotOptions: {
+            radar: {
+            size: 140,
+            polygons: {
+            strokeColor: "#e8e8e8",
+            fill: {
+            colors: ["#f8f8f8", "#fff"]
+            }
+            }
+            }
+            },
+            colors: chartRadarPolyradarColors,
+            markers: {
+            size: 7,
+            colors: ["#fff"],
+            strokeColors: ["#38c66c", "#74788d", "#fe5b5b", "#4e7adf", "#41c3a9", "#ffd166", "#343a40"],
+            strokeWidth: 5
+            },
+            tooltip: {
+            y: {
+            formatter: function (e) {
+            return e
+            }
+            }
+            },
+            xaxis: {
+            categories: chartLabels
+            },
+            yaxis: {
+            tickAmount: 7,
+            labels: {
+            formatter: function (e, t) {
+            return t % 2 == 0 ? e : ""
+            }
+            }
+            },
+            responsive: [{
+            breakpoint: 420,
+            options: {
+            chart: {
+            height: "300"
+            },
+            plotOptions: {
+            radar: {
+            size: 110
+            }
+            }
+            }
+            }]
+            }, (chart = new ApexCharts(document.querySelector("#products"), options)).render());
+        </script>
+
+    }
+  
+    
     <script>
         function duyuruDetayGoster(id) {
-            // Modalı göster
-            var modal = new bootstrap.Modal(document.getElementById('duyuruDetayModal'));
-            
-            // Loading göster, içerik gizle
-            document.getElementById('duyuruDetayLoading').style.display = 'block';
-            document.getElementById('duyuruDetayContent').style.display = 'none';
-            document.getElementById('duyuruDetayError').style.display = 'none';
-            
-            modal.show();
+        // Modalı göster
+        var modal = new bootstrap.Modal(document.getElementById('duyuruDetayModal'));
 
-            // API'den detayı getir
-            fetch('/YonetimDuyuru/GetDetail/' + id)
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Duyuru detayı alınamadı');
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    // Loading gizle, içerik göster
-                    document.getElementById('duyuruDetayLoading').style.display = 'none';
-                    document.getElementById('duyuruDetayContent').style.display = 'block';
+        // Loading göster, içerik gizle
+        document.getElementById('duyuruDetayLoading').style.display = 'block';
+        document.getElementById('duyuruDetayContent').style.display = 'none';
+        document.getElementById('duyuruDetayError').style.display = 'none';
 
-                    // Detay bilgilerini doldur
-                    document.getElementById('detayBaslik').textContent = data.baslik || data.Baslik;
-                    document.getElementById('detayIcerik').textContent = data.icerik || data.Icerik;
-                    
-                    var tarih = data.eklenmeTarihi || data.EklenmeTarihi;
-                    if (tarih) {
-                        var date = new Date(tarih);
-                        document.getElementById('detayTarih').textContent = date.toLocaleDateString('tr-TR', {
-                            year: 'numeric',
-                            month: 'long',
-                            day: 'numeric',
-                            hour: '2-digit',
-                            minute: '2-digit'
-                        });
-                    }
+        modal.show();
 
-                    var okunduMu = data.okunduMu || data.OkunduMu;
-                    var badge = document.getElementById('detayOkunduBadge');
-                    if (okunduMu) {
-                        badge.className = 'badge bg-success';
-                        badge.textContent = 'Okundu';
-                    } else {
-                        badge.className = 'badge bg-warning text-dark';
-                        badge.textContent = 'Okunmadı';
-                    }
+        // API'den detayı getir
+        fetch('/YonetimDuyuru/GetDetail/' + id)
+        .then(response => {
+        if (!response.ok) {
+        throw new Error('Duyuru detayı alınamadı');
+        }
+        return response.json();
+        })
+        .then(data => {
+        // Loading gizle, içerik göster
+        document.getElementById('duyuruDetayLoading').style.display = 'none';
+        document.getElementById('duyuruDetayContent').style.display = 'block';
 
-                    // Okundu olarak işaretle (arka planda)
-                    fetch('/YonetimDuyuru/MarkAsRead/' + id, { method: 'POST' })
-                        .then(function(response) {
-                            if (response.ok) {
-                                // Başarılı - badge'i güncelle
-                                badge.className = 'badge bg-success';
-                                badge.textContent = 'Okundu';
-                            }
-                        })
-                        .catch(function(error) {
-                            console.warn('Okundu işaretlenirken hata:', error);
-                        });
-                })
-                .catch(error => {
-                    document.getElementById('duyuruDetayLoading').style.display = 'none';
-                    document.getElementById('duyuruDetayError').style.display = 'block';
-                    document.getElementById('detayErrorMessage').textContent = error.message || 'Duyuru detayı yüklenirken bir hata oluştu.';
-                });
+        // Detay bilgilerini doldur
+        document.getElementById('detayBaslik').textContent = data.baslik || data.Baslik;
+        document.getElementById('detayIcerik').textContent = data.icerik || data.Icerik;
+
+        var tarih = data.eklenmeTarihi || data.EklenmeTarihi;
+        if (tarih) {
+        var date = new Date(tarih);
+        document.getElementById('detayTarih').textContent = date.toLocaleDateString('tr-TR', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+        });
+        }
+
+        var okunduMu = data.okunduMu || data.OkunduMu;
+        var badge = document.getElementById('detayOkunduBadge');
+        if (okunduMu) {
+        badge.className = 'badge bg-success';
+        badge.textContent = 'Okundu';
+        } else {
+        badge.className = 'badge bg-warning text-dark';
+        badge.textContent = 'Okunmadı';
+        }
+
+        // Okundu olarak işaretle (arka planda)
+        fetch('/YonetimDuyuru/MarkAsRead/' + id, { method: 'POST' })
+        .then(function (response) {
+        if (response.ok) {
+        // Başarılı - badge'i güncelle
+        badge.className = 'badge bg-success';
+        badge.textContent = 'Okundu';
+        }
+        })
+        .catch(function (error) {
+        console.warn('Okundu işaretlenirken hata:', error);
+        });
+        })
+        .catch(error => {
+        document.getElementById('duyuruDetayLoading').style.display = 'none';
+        document.getElementById('duyuruDetayError').style.display = 'block';
+        document.getElementById('detayErrorMessage').textContent = error.message || 'Duyuru detayı yüklenirken bir hata oluştu.';
+        });
         }
     </script>
 }

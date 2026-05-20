@@ -21,7 +21,6 @@ namespace Microservice.Admin.ViewModels.Profile
         public string Email { get; set; } = default!;
 
         [Display(Name = "Profil Resmi URL")]
-        [Url(ErrorMessage = "Geçerli bir URL giriniz")]
         public string? ProfileImageUrl { get; set; }
 
         public bool Enabled { get; set; }

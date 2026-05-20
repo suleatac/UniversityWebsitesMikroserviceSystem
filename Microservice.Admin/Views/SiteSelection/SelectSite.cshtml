@@ -100,7 +100,7 @@
                         </div>
                     }
 
-                    <form asp-action="SelectSite" asp-controller="SiteSelection" method="post">
+                    <form id="siteSelectionForm" asp-action="SelectSite" asp-controller="SiteSelection" method="post">
                         @Html.AntiForgeryToken()
 
                         <div class="mb-3">
@@ -156,7 +156,7 @@
     <script>
         // Form validation
         (function() {
-            var form = document.querySelector('form');
+            var form = document.querySelector('#siteSelectionForm');
             if (form) {
                 form.addEventListener('submit', function(e) {
                     var siteSelect = document.getElementById('siteId');

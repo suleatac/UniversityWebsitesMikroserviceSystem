@@ -1,0 +1,334 @@
+@model Microservice.Admin.ViewModels.AuditLog.AuditLogDetailVm
+
+@{
+    ViewBag.pTitle = "Denetim Kayıtları";
+    ViewBag.Title = "Denetim Kaydı Detayı";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section styles {
+    <style>
+        .detail-header-card {
+            background: linear-gradient(135deg, #1e3a5f 0%, #2a5298 100%);
+            border-radius: 14px;
+            padding: 1.75rem;
+            color: white;
+            margin-bottom: 1.75rem;
+            box-shadow: 0 6px 16px rgba(30, 58, 95, 0.25);
+        }
+
+            .detail-header-card h4 {
+            color: white;
+        }
+
+        .detail-footer-card{
+           /*  background: linear-gradient(135deg, #1e3a5f 0%, #2a5298 100%); */
+            border-radius: 14px;
+            padding: 1.75rem;
+            color: white;
+            margin-bottom: 1.75rem;
+            box-shadow: 0 6px 16px rgba(30, 58, 95, 0.25);
+        }
+        .detail-card {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+            margin-bottom: 1.5rem;
+        }
+
+        .detail-card .card-header {
+            background: transparent;
+            border-bottom: 2px solid #eef2f7;
+            padding: 1rem 1.25rem;
+        }
+
+        .detail-card .card-header h5 {
+            font-weight: 600;
+            color: #1e3a5f;
+            margin: 0;
+        }
+
+        .detail-card .card-body {
+            padding: 1.5rem;
+        }
+
+        .detail-label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #6c757d;
+            margin-bottom: 0.3rem;
+        }
+
+        .detail-value {
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: #212529;
+            padding: 0.5rem 0.75rem;
+            background: #f8f9fc;
+            border-radius: 8px;
+            border: 1px solid #eef2f7;
+        }
+
+        .detail-value code {
+            font-size: 0.85rem;
+            color: #d63384;
+        }
+
+        .badge-action-lg {
+            font-size: 0.85rem;
+            padding: 0.4em 0.9em;
+            border-radius: 8px;
+            font-weight: 500;
+        }
+
+        .badge-create-lg { background: #d1e7dd; color: #0f5132; }
+        .badge-update-lg { background: #cff4fc; color: #055160; }
+        .badge-delete-lg { background: #f8d7da; color: #842029; }
+        .badge-read-lg { background: #e2e3f5; color: #3a3f7a; }
+
+        .info-section {
+            border-left: 3px solid #2a5298;
+            padding-left: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .info-section h6 {
+            color: #2a5298;
+            font-weight: 600;
+        }
+
+        .json-pre {
+            background: #1e1e2e;
+            color: #cdd6f4;
+            padding: 1rem;
+            border-radius: 10px;
+            font-size: 0.8rem;
+            max-height: 200px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            word-break: break-all;
+            font-family: 'SF Mono', 'Consolas', 'Monaco', monospace;
+        }
+
+        .back-btn {
+            border: 1px solid rgba(255,255,255,0.3);
+            color: white;
+            border-radius: 8px;
+            padding: 0.5rem 1.2rem;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .back-btn:hover {
+            background: rgba(255,255,255,0.1);
+            color: white;
+        }
+    </style>
+}
+
+@functions {
+    string GetActionBadgeClass(string action)
+    {
+        var a = (action ?? "").ToLower();
+        if (a.Contains("create") || a.Contains("ekle") || a.Contains("add")) return "badge-create-lg";
+        if (a.Contains("update") || a.Contains("güncelle") || a.Contains("edit")) return "badge-update-lg";
+        if (a.Contains("delete") || a.Contains("sil") || a.Contains("remove")) return "badge-delete-lg";
+        return "badge-read-lg";
+    }
+
+    string GetActionDisplay(string action)
+    {
+        if (string.IsNullOrEmpty(action)) return "-";
+        var a = action.ToLower();
+        if (a.Contains("create") || a.Contains("add")) return "Oluşturma";
+        if (a.Contains("update") || a.Contains("edit")) return "Güncelleme";
+        if (a.Contains("delete") || a.Contains("remove")) return "Silme";
+        if (a.Contains("read") || a.Contains("view")) return "Görüntüleme";
+        if (a.Contains("login")) return "Giriş";
+        if (a.Contains("logout")) return "Çıkış";
+        return action;
+    }
+
+    string FormatJson(string? json)
+    {
+        if (string.IsNullOrEmpty(json)) return "—";
+        try
+        {
+            var obj = System.Text.Json.JsonSerializer.Deserialize<object>(json);
+            return System.Text.Json.JsonSerializer.Serialize(obj, new System.Text.Json.JsonSerializerOptions { WriteIndented = true });
+        }
+        catch
+        {
+            return json;
+        }
+    }
+}
+
+<!-- Page Header -->
+<div class="detail-header-card">
+    <div class="d-flex justify-content-between align-items-center">
+        <div>
+            <h4 class="mb-1"><i class="mdi mdi-shield-account me-2"></i>Denetim Kaydı Detayı</h4>
+            <p class="mb-0 opacity-75">ID: #@Model.Id</p>
+        </div>
+        <a asp-action="Index" class=" back-btn">
+            <i class="mdi mdi-arrow-left me-1"></i> Listeye Dön
+        </a>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Main Info -->
+    <div class="col-lg-8">
+        <div class="card detail-card">
+            <div class="card-header">
+                <div class="d-flex align-items-center gap-2">
+                    <i class="mdi mdi-information-outline fs-5 text-primary"></i>
+                    <h5>İşlem Bilgileri</h5>
+                    <span class="badge badge-action-lg @GetActionBadgeClass(Model.Action)">
+                        <i class="mdi mdi-shield-check me-1"></i> @GetActionDisplay(Model.Action)
+                    </span>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="row g-4">
+                    <div class="col-md-6">
+                        <div class="detail-label">İşlem Türü</div>
+                        <div class="detail-value">
+                            <code>@Model.Action</code>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="detail-label">İşlem Tarihi</div>
+                        <div class="detail-value">
+                            <i class="mdi mdi-calendar me-1"></i> @Model.CreatedAt.ToString("dd MMMM yyyy HH:mm:ss")
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="detail-label">Kullanıcı Adı</div>
+                        <div class="detail-value">
+                            <i class="mdi mdi-account me-1"></i> @Model.Username
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="detail-label">Kullanıcı ID</div>
+                        <div class="detail-value">
+                            <code>@(Model.UserId ?? "—")</code>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="detail-label">IP Adresi</div>
+                        <div class="detail-value">
+                            <i class="mdi mdi-ip-network me-1"></i> <code>@Model.IpAddress</code>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="detail-label">Trace ID</div>
+                        <div class="detail-value">
+                            <code>@(Model.TraceId ?? "—")</code>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Description -->
+        <div class="card detail-card">
+            <div class="card-header">
+                <div class="d-flex align-items-center gap-2">
+                    <i class="mdi mdi-text-box-outline fs-5 text-info"></i>
+                    <h5>Açıklama</h5>
+                </div>
+            </div>
+            <div class="card-body">
+                @if (!string.IsNullOrEmpty(Model.Description))
+                {
+                    <p class="mb-0">@Model.Description</p>
+                }
+                else
+                {
+                    <p class="text-muted mb-0">—</p>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- Sidebar Info -->
+    <div class="col-lg-4">
+        <!-- Entity Info -->
+        <div class="card detail-card">
+            <div class="card-header">
+                <div class="d-flex align-items-center gap-2">
+                    <i class="mdi mdi-database fs-5 text-success"></i>
+                    <h5>İlgili Kaynak</h5>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <div class="detail-label">Tablo / Entity</div>
+                    <div class="detail-value">
+                        @(Model.EntityName ?? "—")
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <div class="detail-label">Kayıt ID</div>
+                    <div class="detail-value">
+                        <code>@(Model.EntityId ?? "—")</code>
+                    </div>
+                </div>
+               
+            </div>
+        </div>
+
+        <!-- Old / New Values -->
+        @if (!string.IsNullOrEmpty(Model.OldValues) || !string.IsNullOrEmpty(Model.NewValues))
+        {
+            <div class="card detail-card">
+                <div class="card-header">
+                    <div class="d-flex align-items-center gap-2">
+                        <i class="mdi mdi-code-json fs-5 text-warning"></i>
+                        <h5>Değişiklik Detayı</h5>
+                    </div>
+                </div>
+                <div class="card-body">
+                    @if (!string.IsNullOrEmpty(Model.OldValues))
+                    {
+                        <div class="mb-3">
+                            <div class="detail-label text-danger mb-2">
+                                <i class="mdi mdi-arrow-down-bold-circle me-1"></i> Eski Değerler
+                            </div>
+                            <div class="json-pre">@FormatJson(Model.OldValues)</div>
+                        </div>
+                    }
+                    @if (!string.IsNullOrEmpty(Model.NewValues))
+                    {
+                        <div>
+                            <div class="detail-label text-success mb-2">
+                                <i class="mdi mdi-arrow-up-bold-circle me-1"></i> Yeni Değerler
+                            </div>
+                            <div class="json-pre">@FormatJson(Model.NewValues)</div>
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<div class="row mt-2">
+    <div class="col-lg-12">
+        <div class="card detail-footer-card">
+            <div class="d-flex gap-2">
+                <a asp-action="Index" class="btn btn-outline-secondary">
+                    <i class="mdi mdi-arrow-left me-1"></i> Listeye Dön
+                </a>
+                <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-outline-danger">
+                    <i class="mdi mdi-trash-can me-1"></i> Bu Kaydı Sil
+                </a>
+            </div>
+        </div>
+    </div>
+    
+</div>

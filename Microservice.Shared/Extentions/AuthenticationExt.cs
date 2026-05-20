@@ -39,7 +39,7 @@ namespace Microservice.Shared.Extentions
                         ValidateLifetime = true,
                         ValidateIssuerSigningKey = true,
                         RoleClaimType = ClaimTypes.Role,
-                        NameClaimType = ClaimTypes.NameIdentifier
+                        NameClaimType = ClaimTypes.Name
                     };
 
 

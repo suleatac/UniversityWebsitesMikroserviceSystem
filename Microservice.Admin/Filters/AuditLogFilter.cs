@@ -104,7 +104,6 @@ namespace Microservice.Admin.Filters
                     TraceId = Activity.Current?.TraceId.ToString()
                               ?? httpContext.TraceIdentifier,
                     IpAddress = ipAddress,
-                    SiteId = httpContext.Session.GetInt32("CurrentSiteId"),
                     EntityName = controllerName,
                     EntityId = entityId,
                     Description = description

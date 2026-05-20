@@ -9,6 +9,8 @@ namespace Mikroservice.Site.Application.Features.AuditLogFeatures.GetPaginatedAu
         int PageSize = 10,
         string? Search = null,
         string? OrderBy = "Id",
-        string? OrderDir = "desc"
+        string? OrderDir = "desc",
+        DateTime? StartDate = null,
+        DateTime? EndDate = null
     ) : IRequestByServiceResult<PaginatedResult<AuditLogDto>>;
 }

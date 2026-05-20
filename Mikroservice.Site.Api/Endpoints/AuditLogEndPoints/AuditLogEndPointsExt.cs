@@ -21,6 +21,7 @@ namespace Mikroservice.Site.Api.Endpoints.AuditLogEndPoints
             group.DeleteAuditLogEndpointGroupItem();
             group.GetAuditLogByIdEndpointGroupItem();
             group.GetPaginatedAuditLogEndpointGroupItem();
+            group.GetAuditLogDailyStatsEndpointGroupItem();
             group.RequireAuthorization("Password");
         }
     }

@@ -72,10 +72,10 @@ namespace Microservice.Admin.Services
             return ServiceResult<object>.Success(true);
         }
 
-        public async Task<ServiceResult<PaginatedResult<AuditLogVm>>> GetAuditLoglarPaginatedAsync(int siteId, int dilId, int page, int pageSize, string? search, string? orderBy, string? orderDir)
+        public async Task<ServiceResult<PaginatedResult<AuditLogVm>>> GetAuditLoglarPaginatedAsync(int siteId, int dilId, int page, int pageSize, string? search, string? orderBy, string? orderDir, DateTime? startDate = null, DateTime? endDate = null)
         {
             _logger.LogInformation("Paginated audit log listesi çekiliyor. Page: {Page}, PageSize: {PageSize}", page, pageSize);
-            var response = await _auditLogClient.GetAuditLogsPaginatedAsync(page, pageSize, search, orderBy, orderDir);
+            var response = await _auditLogClient.GetAuditLogsPaginatedAsync(page, pageSize, search, orderBy, orderDir, startDate, endDate);
 
             if (!response.IsSuccessStatusCode)
             {
@@ -86,6 +86,22 @@ namespace Microservice.Admin.Services
             }
 
             return ServiceResult<PaginatedResult<AuditLogVm>>.Success(response.Content!);
+        }
+
+        public async Task<ServiceResult<List<AuditLogDailyStatVm>>> GetAuditLogDailyStatsAsync(DateTime startDate, DateTime endDate)
+        {
+            _logger.LogInformation("Günlük audit log istatistikleri çekiliyor. {StartDate} - {EndDate}", startDate.ToString("yyyy-MM-dd"), endDate.ToString("yyyy-MM-dd"));
+            var response = await _auditLogClient.GetAuditLogDailyStatsAsync(startDate, endDate);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var problemDetails = response.Error != null
+                    ? JsonSerializer.Deserialize<Microsoft.AspNetCore.Mvc.ProblemDetails>(response.Error.Content!) : null;
+                _logger.LogError("API Error -> StatusCode: {StatusCode}, Title: {Title}", response.StatusCode, problemDetails?.Title);
+                return ServiceResult<List<AuditLogDailyStatVm>>.Error(problemDetails?.Detail ?? problemDetails?.Title ?? "Günlük istatistikler alınamadı");
+            }
+
+            return ServiceResult<List<AuditLogDailyStatVm>>.Success(response.Content!);
         }
     }
 }

@@ -14,7 +14,6 @@ namespace Mikroservice.Site.Application.Features.AuditLogFeatures.GetPaginatedAu
 {
     public class GetPaginatedAuditLogQueryHandler(
         IAuditLogRepository auditLogRepository,
-        IRedisCacheService redis,
         ILogger<GetPaginatedAuditLogQueryHandler> logger,
         IMapper mapper
     ) : IRequestHandler<GetPaginatedAuditLogQuery, ServiceResult<PaginatedResult<AuditLogDto>>>
@@ -29,12 +28,27 @@ namespace Mikroservice.Site.Application.Features.AuditLogFeatures.GetPaginatedAu
 
             if (!string.IsNullOrWhiteSpace(request.Search))
             {
-                var search = request.Search.Trim().ToLower();
+                var search = request.Search;
                 query = query.Where(x =>
-                x.UserId.ToString().Contains(search) ||
-                    x.Username.ToLower().Contains(search) ||
-                    x.Action.ToLower().Contains(search) ||
-                    x.IpAddress.ToLower().Contains(search));
+                    x.UserId != null && x.UserId.Contains(search) ||
+                    x.Username.Contains(search) ||
+                    x.Action.Contains(search) ||
+                    x.IpAddress.Contains(search) ||
+                    x.EntityName != null && x.EntityName.Contains(search) ||
+                    x.Description != null && x.Description.Contains(search));
+            }
+
+            // Date range filtering
+            if (request.StartDate.HasValue)
+            {
+                var start = request.StartDate.Value.Date;
+                query = query.Where(x => x.CreatedAt >= start);
+            }
+
+            if (request.EndDate.HasValue)
+            {
+                var end = request.EndDate.Value.Date.AddDays(1);
+                query = query.Where(x => x.CreatedAt < end);
             }
 
             query = (request.OrderBy?.ToLower(), request.OrderDir?.ToLower()) switch {

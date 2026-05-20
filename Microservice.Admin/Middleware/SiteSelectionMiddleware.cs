@@ -80,7 +80,7 @@ namespace Microservice.Admin.Middleware
         {
             var excludedPrefixes = new[]
             {
-                "/Auth/",
+                "/Auth",
                 "/SiteSelection/",
                 "/Site"
             };
@@ -96,12 +96,12 @@ namespace Microservice.Admin.Middleware
         {
             var adminPaths = new[]
             {
-                "/Auth/",
-                "/Birim/",
-                "/YonetimDuyuru/",
-                "/Unvan/",
-                "/PersonelTip/",
-                "/User/",
+                "/Auth",
+                "/Birim",
+                "/YonetimDuyuru",
+                "/Unvan",
+                "/PersonelTip",
+                "/User",
                 "/YoneticiSite/",
                 "/Template/",
                 "/Profile"

@@ -24,6 +24,13 @@ namespace Microservice.Admin.Clients.AuditLogClients
           [AliasAs("pageSize")] int pageSize,
           [AliasAs("search")] string? search,
           [AliasAs("orderBy")] string? orderBy,
-          [AliasAs("orderDir")] string? orderDir);
+          [AliasAs("orderDir")] string? orderDir,
+          [AliasAs("startDate")] DateTime? startDate = null,
+          [AliasAs("endDate")] DateTime? endDate = null);
+
+        [Get("/api/v1/audit-logs/daily-stats")]
+        Task<ApiResponse<List<AuditLogDailyStatVm>>> GetAuditLogDailyStatsAsync(
+          [AliasAs("startDate")] DateTime startDate,
+          [AliasAs("endDate")] DateTime endDate);
     }
 }

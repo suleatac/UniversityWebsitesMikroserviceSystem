@@ -13,8 +13,7 @@ namespace Microservice.Site.Persistence
     public class AppDbContext : DbContext
     {
 
-        // Cache for entity-type to SiteId property info (performance optimization)
-        private static readonly ConcurrentDictionary<Type, PropertyInfo?> _siteIdPropertyCache = new();
+
 
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
@@ -53,13 +52,7 @@ namespace Microservice.Site.Persistence
 
 
 
-        // JSON serialization options: ignore navigation properties to avoid circular refs & keep payload lean
-        private static readonly JsonSerializerOptions _auditJsonOptions = new() {
-            WriteIndented = false,
-            ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles,
-            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-            DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull
-        };
+     
 
 
         // ──────────────────────────────────────────────
@@ -67,13 +60,29 @@ namespace Microservice.Site.Persistence
         // ──────────────────────────────────────────────
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
-            var auditEntries = CollectAuditEntries();
+            // Collect audit info for Modified & Deleted entries BEFORE save
+            // (we need OriginalValues, and these entities have real IDs already)
+            var preAuditEntries = CollectAuditEntries(excludeAdded: true);
+
+            // Collect Added entries info BEFORE save (we need snapshot of old state)
+            // but we'll re-collect their IDs AFTER save when the DB generates them
+            var addedEntries = ChangeTracker.Entries()
+                .Where(e => e.State == EntityState.Added && e.Entity.GetType() != typeof(AuditLog))
+                .ToList();
+
             var result = await base.SaveChangesAsync(cancellationToken);
 
-            // After successful save, persist the audit logs
-            if (auditEntries.Count > 0)
+            // After successful save, Added entities now have real DB-generated IDs.
+            // Collect their audit info now.
+            var postAuditEntries = CollectAddedAuditEntries(addedEntries);
+
+            var allAuditEntries = new List<AuditLog>(preAuditEntries.Count + postAuditEntries.Count);
+            allAuditEntries.AddRange(preAuditEntries);
+            allAuditEntries.AddRange(postAuditEntries);
+
+            if (allAuditEntries.Count > 0)
             {
-                AuditLogs.AddRange(auditEntries);
+                AuditLogs.AddRange(allAuditEntries);
                 await base.SaveChangesAsync(cancellationToken);
             }
 
@@ -83,8 +92,9 @@ namespace Microservice.Site.Persistence
 
         // ──────────────────────────────────────────────
         //  Core: Collect audit entries from tracked changes
+        //  excludeAdded: when true, skip Added entities (they get negative temp IDs before SaveChanges)
         // ──────────────────────────────────────────────
-        private List<AuditLog> CollectAuditEntries()
+        private List<AuditLog> CollectAuditEntries(bool excludeAdded = false)
         {
             var entries = ChangeTracker.Entries()
                 .Where(e => e.State is EntityState.Added or EntityState.Modified or EntityState.Deleted)
@@ -108,10 +118,13 @@ namespace Microservice.Site.Persistence
                 if (entityType == typeof(AuditLog))
                     continue;
 
+                // Skip Added entities if excludeAdded is true (they get temp negative IDs)
                 var action = entry.State.ToString();
+                if (excludeAdded && entry.State == EntityState.Added)
+                    continue;
+
                 var entityName = entityType.Name;
                 var entityId = GetEntityId(entry);
-                var siteId = GetSiteId(entry, entityType);
 
                 // Serialize old/new values (scalar properties only)
                 string? oldValues = null;
@@ -143,9 +156,58 @@ namespace Microservice.Site.Persistence
                     Action = action,
                     EntityName = entityName,
                     EntityId = entityId,
-                    SiteId = siteId,
                     Description = description,
                     OldValues = oldValues,
+                    NewValues = newValues,
+                    IpAddress = ipAddress ?? "0.0.0.0",
+                    CreatedAt = utcNow
+                });
+            }
+
+            return auditLogs;
+        }
+
+        // ──────────────────────────────────────────────
+        //  Collect audit entries for Added entities AFTER SaveChanges
+        //  (they now have real DB-generated IDs instead of EF temp negative values)
+        // ──────────────────────────────────────────────
+        private List<AuditLog> CollectAddedAuditEntries(List<EntityEntry> addedEntries)
+        {
+            if (addedEntries.Count == 0)
+                return [];
+
+            var utcNow = DateTime.Now;
+            var userId = AuditLogContext.UserId;
+            var username = AuditLogContext.Username;
+            var traceId = AuditLogContext.TraceId;
+            var ipAddress = AuditLogContext.IpAddress;
+            var auditLogs = new List<AuditLog>(addedEntries.Count);
+
+            foreach (var entry in addedEntries)
+            {
+                // Re-check to ensure the entry is still tracked (it should be after SaveChanges)
+                if (entry.State == EntityState.Detached)
+                    continue;
+
+                var entityType = entry.Entity.GetType();
+                var action = "Added";
+                var entityName = entityType.Name;
+                var entityId = GetEntityId(entry);
+
+                // Serialize current values (post-save, so real IDs are available)
+                var newValues = SerializeAllProperties(entry);
+                var description = BuildDescription(entityName, action, entry);
+
+                auditLogs.Add(new AuditLog
+                {
+                    UserId = userId,
+                    Username = username ?? string.Empty,
+                    TraceId = traceId,
+                    Action = action,
+                    EntityName = entityName,
+                    EntityId = entityId,
+                    Description = description,
+                    OldValues = null,
                     NewValues = newValues,
                     IpAddress = ipAddress ?? "0.0.0.0",
                     CreatedAt = utcNow
@@ -169,25 +231,15 @@ namespace Microservice.Site.Persistence
             return string.Join("-", keyValues);
         }
 
-        // ──────────────────────────────────────────────
-        //  Extract SiteId via reflection (cached)
-        // ──────────────────────────────────────────────
-        private static int? GetSiteId(EntityEntry entry, Type entityType)
-        {
-            // Fast path: no need to check AuditLog itself
-            if (entityType == typeof(AuditLog))
-                return null;
 
-            var propInfo = _siteIdPropertyCache.GetOrAdd(entityType, t =>
-                t.GetProperty("SiteId", BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase));
 
-            if (propInfo == null)
-                return null;
-
-            var value = propInfo.GetValue(entry.Entity);
-            return value is int intVal ? intVal : null;
-        }
-
+        // JSON serialization options: ignore navigation properties to avoid circular refs & keep payload lean
+        private static readonly JsonSerializerOptions _auditJsonOptions = new() {
+            WriteIndented = false,
+            ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles,
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+            DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull
+        };
         // ──────────────────────────────────────────────
         //  Serialize only modified scalar properties
         // ──────────────────────────────────────────────

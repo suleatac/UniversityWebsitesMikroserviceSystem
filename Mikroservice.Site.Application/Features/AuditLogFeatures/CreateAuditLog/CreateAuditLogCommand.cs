@@ -18,7 +18,5 @@ namespace Mikroservice.Site.Application.Features.AuditLogFeatures.CreateAuditLog
 
         public string IpAddress { get; set; } = default!;
 
-        public int? SiteId { get; set; }
-
     }
 }

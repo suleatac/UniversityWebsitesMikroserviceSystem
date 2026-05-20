@@ -1,0 +1,180 @@
+@model Microservice.Admin.ViewModels.AuditLog.AuditLogDetailVm
+
+@{
+    ViewBag.pTitle = "Denetim Kayıtları";
+    ViewBag.Title = "Denetim Kaydı Sil";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section styles {
+    <style>
+        .delete-header-card {
+            background: linear-gradient(135deg, #dc3545 0%, #b02a37 100%);
+            border-radius: 14px;
+            padding: 1.75rem;
+            color: white;
+            margin-bottom: 1.75rem;
+            box-shadow: 0 6px 16px rgba(220, 53, 69, 0.25);
+        }
+
+        .delete-card {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+        }
+
+        .delete-card .card-header {
+            background: #fef2f2;
+            border-bottom: 2px solid #fecaca;
+            border-radius: 12px 12px 0 0 !important;
+            padding: 1rem 1.25rem;
+        }
+
+        .delete-card .card-header h5 {
+            font-weight: 600;
+            color: #dc3545;
+            margin: 0;
+        }
+
+        .delete-card .card-body {
+            padding: 1.5rem;
+        }
+
+        .detail-label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #6c757d;
+            margin-bottom: 0.3rem;
+        }
+
+        .detail-value {
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: #212529;
+            padding: 0.5rem 0.75rem;
+            background: #f8f9fc;
+            border-radius: 8px;
+            border: 1px solid #eef2f7;
+        }
+
+        .alert-custom {
+            border-radius: 10px;
+            border-left: 4px solid #dc3545;
+        }
+
+        .btn-back {
+            border: 1px solid rgba(255,255,255,0.3);
+            color: white;
+            border-radius: 8px;
+            padding: 0.5rem 1.2rem;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .btn-back:hover {
+            background: rgba(255,255,255,0.1);
+            color: white;
+        }
+    </style>
+}
+
+<!-- Page Header -->
+<div class="delete-header-card">
+    <div class="d-flex justify-content-between align-items-center">
+        <div>
+            <h4 class="mb-1"><i class="mdi mdi-shield-off me-2"></i>Denetim Kaydı Silme</h4>
+            <p class="mb-0 opacity-75">ID: #@Model.Id — Bu işlem geri alınamaz</p>
+        </div>
+        <a asp-action="Index" class="btn btn-back">
+            <i class="mdi mdi-arrow-left me-1"></i> Listeye Dön
+        </a>
+    </div>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-xxl-8">
+        <div class="card delete-card shadow-lg border-0">
+            <!-- Warning header -->
+            <div class="card-header">
+                <div class="d-flex align-items-center">
+                    <div class="avatar-sm me-3">
+                        <div class="avatar-title bg-danger rounded-circle">
+                            <i class="mdi mdi-delete-variant fs-4 text-white"></i>
+                        </div>
+                    </div>
+                    <div>
+                        <h5 class="mb-1">Silme Onayı</h5>
+                        <p class="text-muted mb-0">Bu işlem geri alınamaz, veriler kalıcı olarak silinecektir.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-body p-4">
+                <!-- Warning Alert -->
+                <div class="alert alert-danger alert-custom d-flex align-items-center" role="alert">
+                    <i class="mdi mdi-alert-circle fs-4 me-2"></i>
+                    <div>
+                        <strong>Dikkat!</strong>
+                        "@Model.Username" kullanıcısının <strong>@Model.CreatedAt.ToString("dd MMMM yyyy HH:mm")</strong> tarihinde gerçekleştirdiği
+                        "<strong>@Model.Action</strong>" işlemine ait denetim kaydını silmek üzeresiniz.
+                        Bu işlem geri alınamaz ve tüm veriler kalıcı olarak silinecektir.
+                    </div>
+                </div>
+
+                <!-- Record Info -->
+                <h6 class="text-danger border-bottom pb-2 mb-3">
+                    <i class="mdi mdi-information-outline me-1"></i> Kayıt Bilgileri
+                </h6>
+
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <div class="detail-label">Kullanıcı</div>
+                        <div class="detail-value">
+                            <i class="mdi mdi-account me-1"></i> @Model.Username
+                            @if (!string.IsNullOrEmpty(Model.UserId))
+                            {
+                                <small class="text-muted ms-2">(@Model.UserId)</small>
+                            }
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="detail-label">İşlem Türü</div>
+                        <div class="detail-value">
+                            <code>@Model.Action</code>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="detail-label">İlgili Tablo</div>
+                        <div class="detail-value">@(Model.EntityName ?? "—")</div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="detail-label">İşlem Tarihi</div>
+                        <div class="detail-value">
+                            <i class="mdi mdi-calendar me-1"></i> @Model.CreatedAt.ToString("dd MMMM yyyy HH:mm:ss")
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="detail-label">Açıklama</div>
+                        <div class="detail-value">@(Model.Description ?? "—")</div>
+                    </div>
+                </div>
+
+                <!-- Form Actions -->
+                <div class="d-flex justify-content-between align-items-center pt-4 mt-3 border-top">
+                    <a asp-action="Index" class="btn btn-outline-secondary">
+                        <i class="mdi mdi-arrow-left me-1"></i> İptal
+                    </a>
+                    <form asp-action="DeleteConfirmed" method="post" class="d-inline">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="id" value="@Model.Id" />
+                        <button type="submit" class="btn btn-danger px-4">
+                            <i class="mdi mdi-delete me-1"></i> Evet, Kalıcı Olarak Sil
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

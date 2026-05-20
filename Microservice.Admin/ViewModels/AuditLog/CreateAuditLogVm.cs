@@ -16,7 +16,5 @@
         public string? Description { get; set; }
 
         public string IpAddress { get; set; } = default!;
-
-        public int? SiteId { get; set; }
     }
 }

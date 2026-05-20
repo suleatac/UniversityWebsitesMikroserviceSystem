@@ -16,8 +16,10 @@ namespace Mikroservice.Site.Api.Endpoints.AuditLogEndPoints.EndPoints
                 string? search,
                 string? orderBy,
                 string? orderDir,
+                DateTime? startDate,
+                DateTime? endDate,
                 IMediator mediator) => {
-                    var query = new GetPaginatedAuditLogQuery(page, pageSize, search, orderBy, orderDir);
+                    var query = new GetPaginatedAuditLogQuery(page, pageSize, search, orderBy, orderDir, startDate, endDate);
                     var result = await mediator.Send(query);
                     return result.ToGenericResult();
                 })

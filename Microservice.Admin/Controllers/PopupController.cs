@@ -30,7 +30,7 @@ namespace Microservice.Admin.Controllers
             if (!result.IsSuccess || result.Data == null)
             {
                 _logger.LogWarning("Popup bulunamadı. SiteId: {SiteId}", currentSiteId);
-                TempData["Error"] = result.Fail?.Detail ?? "Popup bulunamadı.";
+
                 return View(new PopupDetailVm { SiteId = currentSiteId });
             }
 

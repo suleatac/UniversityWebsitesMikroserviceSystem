@@ -16,6 +16,7 @@ namespace Microservice.Admin.Controllers
         private readonly IDuyuruService _duyuruService;
         private readonly IEtkinlikService _etkinlikService;
         private readonly IYonetimDuyuruService _yonetimDuyuruService;
+        private readonly IAuditLogService _auditLogService;
         private readonly ILogger<HomeController> _logger;
 
         public HomeController(
@@ -25,6 +26,7 @@ namespace Microservice.Admin.Controllers
             IDuyuruService duyuruService,
             IEtkinlikService etkinlikService,
             IYonetimDuyuruService yonetimDuyuruService,
+            IAuditLogService auditLogService,
             ILogger<HomeController> logger)
         {
             _currentUserService = currentUserService;
@@ -33,6 +35,7 @@ namespace Microservice.Admin.Controllers
             _duyuruService = duyuruService;
             _etkinlikService = etkinlikService;
             _yonetimDuyuruService = yonetimDuyuruService;
+            _auditLogService = auditLogService;
             _logger = logger;
         }
 
@@ -42,6 +45,8 @@ namespace Microservice.Admin.Controllers
             try
             {
                 // Admin rolüne sahipse site seçimi zorunlu
+                ViewBag.IsCurrentUserAdmin = _currentUserService.IsAdmin;
+
                 if (_currentUserService.IsAdmin)
                 {
                     // Admin henüz site seçmemişse site seçim sayfasına yönlendir
@@ -194,6 +199,40 @@ namespace Microservice.Admin.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Okunmamış yönetim duyurusu sayısı alınırken hata oluştu.");
+            }
+
+            try
+            {
+                // Günlük audit log istatistikleri (bu haftanın günleri)
+                var today = DateTime.Today;
+                var diff = (7 + (int)today.DayOfWeek - (int)DayOfWeek.Monday) % 7;
+                var startOfWeek = today.AddDays(-diff);
+                var endOfWeek = startOfWeek.AddDays(7);
+
+                var dailyStatsResult = await _auditLogService.GetAuditLogDailyStatsAsync(startOfWeek, endOfWeek);
+                if (dailyStatsResult.IsSuccess && dailyStatsResult.Data != null)
+                {
+                    model.DailyAuditLogStats = dailyStatsResult.Data;
+                    model.TotalAuditLogCount = dailyStatsResult.Data.Sum(x => x.Count);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Audit log günlük istatistikler alınırken hata oluştu.");
+            }
+
+            try
+            {
+                // Son 10 audit log aktivitesi
+                var recentLogsResult = await _auditLogService.GetAuditLoglarPaginatedAsync(siteId, dilId, 1, 10, null, "Id", "desc");
+                if (recentLogsResult.IsSuccess && recentLogsResult.Data != null && recentLogsResult.Data.Data != null)
+                {
+                    model.RecentAuditLogs = recentLogsResult.Data.Data.ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Son aktiviteler alınırken hata oluştu.");
             }
 
             return model;

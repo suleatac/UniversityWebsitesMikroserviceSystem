@@ -17,9 +17,11 @@
 
         public string? Description { get; set; }
 
-        public string IpAddress { get; set; } = default!;
+        public string? OldValues { get; set; }
 
-        public int? SiteId { get; set; }
+        public string? NewValues { get; set; }
+
+        public string IpAddress { get; set; } = default!;
 
         public DateTime CreatedAt { get; set; }
     }

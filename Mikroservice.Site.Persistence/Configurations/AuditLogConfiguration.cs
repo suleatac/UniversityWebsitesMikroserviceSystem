@@ -44,8 +44,7 @@ namespace Mikroservice.Site.Persistence.Configurations
             builder.HasIndex(x => x.EntityName);
             builder.HasIndex(x => x.EntityId);
 
-            // Site bazlı filtreleme yapılacaksa indeks eklenmeli
-            builder.HasIndex(x => x.SiteId);
+
 
             // Tablo Adı (Opsiyonel)
             builder.ToTable("AuditLogs");

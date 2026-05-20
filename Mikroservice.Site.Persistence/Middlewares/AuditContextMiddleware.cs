@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Components.Forms;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Mikroservice.Site.Persistence;
 using System.Security.Claims;
 
@@ -18,7 +17,7 @@ public class AuditContextMiddleware
         {
             var user = context.User;
 
-            AuditLogContext.UserId = user?.FindFirst("UserId")?.Value?? "-1";
+            AuditLogContext.UserId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "-1";
 
             AuditLogContext.Username =
                 user?.Identity?.IsAuthenticated == true

@@ -21,8 +21,6 @@
 
         public string IpAddress { get; set; } = default!;
 
-        public int? SiteId { get; set; }
-
         public DateTime CreatedAt { get; set; }
     }
 }

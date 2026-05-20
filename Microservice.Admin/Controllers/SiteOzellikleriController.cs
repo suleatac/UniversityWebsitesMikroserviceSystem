@@ -30,7 +30,7 @@ namespace Microservice.Admin.Controllers
             if (!result.IsSuccess || result.Data == null)
             {
                 _logger.LogWarning("SiteOzellikleri bulunamadı. SiteId: {SiteId}", currentSiteId);
-                TempData["Error"] = result.Fail?.Detail ?? "Site özellikleri bulunamadı.";
+
                 return View(new SiteOzellikleriVm { SiteId = currentSiteId });
             }
 

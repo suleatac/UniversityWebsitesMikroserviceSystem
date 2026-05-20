@@ -65,8 +65,7 @@ namespace Microservice.Admin.Services
                 Email = keycloakUser.Email ?? "",
                 Enabled = keycloakUser.Enabled,
                 ProfileImageUrl = keycloakUser.Attributes?.TryGetValue("profileImage", out var images) == true
-                    ? images.FirstOrDefault()
-                    : null
+                    ? images.FirstOrDefault(): null
             };
 
             return ServiceResult<ProfileVm>.Success(profile);

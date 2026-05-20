@@ -1,0 +1,482 @@
+@{
+    ViewBag.pTitle = "Ana Sayfa";
+    ViewBag.Title = "Denetim Kayıtları (Audit Log)";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section styles {
+    <link href="~/assets/libs/datatables.net-bs5/css/dataTables.bootstrap5.min.css" rel="stylesheet" />
+    <link href="~/assets/libs/datatables.net-responsive-bs5/css/responsive.bootstrap5.min.css" rel="stylesheet" />
+    <link href="~/assets/libs/datatables.net-buttons-bs5/css/buttons.bootstrap5.min.css" rel="stylesheet" />
+    <style>
+        .page-header-card {
+            background: linear-gradient(135deg, #1e3a5f 0%, #2a5298 100%);
+            border-radius: 14px;
+            padding: 1.75rem;
+            color: white;
+            margin-bottom: 1.75rem;
+            box-shadow: 0 6px 16px rgba(30, 58, 95, 0.25);
+        }
+
+        .page-header-card h4{
+
+            color: white;
+         
+        }
+        .filter-card {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+            margin-bottom: 1.5rem;
+            background: #ffffff;
+        }
+
+        .filter-card .card-header {
+            background: transparent;
+            border-bottom: 2px solid #eef2f7;
+            padding: 0.9rem 1.25rem;
+        }
+
+        .filter-card .card-header h5 {
+            font-weight: 600;
+            color: #1e3a5f;
+        }
+
+        .filter-card .card-body {
+            padding: 1.25rem;
+        }
+
+        .table-card {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+        }
+
+        .table-card .card-header {
+            background: linear-gradient(135deg, #f8f9fc 0%, #eef2f7 100%);
+            border-bottom: 2px solid #2a5298;
+            border-radius: 12px 12px 0 0 !important;
+            padding: 1rem 1.25rem;
+        }
+
+        .table-card .card-header h5 {
+            font-weight: 600;
+            color: #1e3a5f;
+        }
+
+        .btn-filterbutton {
+            background: linear-gradient(135deg, #2a5298 0%, #1e3a5f 100%);
+            border: none;
+            color: white;
+            padding: 0.5rem 1.2rem;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+            .btn-filterbutton:hover {
+            box-shadow: 0 4px 12px rgba(42, 82, 152, 0.35);
+            color: white;
+            transform: translateY(-1px);
+        }
+
+        .btn-clear-filter {
+            background: #eef2f7;
+            border: 1px solid #dce1e8;
+            color: #6c757d;
+            padding: 0.5rem 1.2rem;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .btn-clear-filter:hover {
+            background: #e2e6ea;
+            color: #495057;
+        }
+
+        .date-input {
+            background-color: #fff;
+            border: 1px solid #dce1e8;
+            border-radius: 8px;
+            padding: 0.5rem 0.75rem;
+            font-size: 0.875rem;
+            width: 100%;
+            transition: border-color 0.15s, box-shadow 0.15s;
+        }
+
+        .date-input:focus {
+            border-color: #2a5298;
+            box-shadow: 0 0 0 0.2rem rgba(42, 82, 152, 0.15);
+            outline: none;
+        }
+
+        .badge-action {
+            font-size: 0.75rem;
+            padding: 0.35em 0.65em;
+            border-radius: 6px;
+            font-weight: 500;
+        }
+
+        .badge-create { background: #d1e7dd; color: #0f5132; }
+        .badge-update { background: #cff4fc; color: #055160; }
+        .badge-delete { background: #f8d7da; color: #842029; }
+        .badge-read { background: #e2e3f5; color: #3a3f7a; }
+
+        .action-cell a {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            transition: all 0.15s;
+            margin: 0 2px;
+        }
+
+        .action-cell a:hover {
+            transform: translateY(-1px);
+        }
+
+        .table > thead > tr > th {
+            font-weight: 600;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #495057;
+            border-bottom: 2px solid #eef2f7;
+        }
+
+        .table > tbody > tr > td {
+            vertical-align: middle;
+            font-size: 0.875rem;
+        }
+    </style>
+}
+
+<!-- Page Header -->
+<div class="page-header-card">
+    <div class="d-flex justify-content-between align-items-center">
+        <div>
+            <h4 class="mb-1"><i class="mdi mdi-shield-account me-2"></i>Denetim Kayıtları</h4>
+            <p class="mb-0 opacity-75">Tüm sistem denetim kayıtlarını görüntüleyin, filtreleyin ve yönetin</p>
+        </div>
+        <span class="badge bg-dark bg-opacity-20  fs-6" id="totalBadge">
+            <i class="mdi mdi-database me-1"></i> <span id="totalCount">0</span> Kayıt
+        </span>
+    </div>
+</div>
+
+<!-- Filter Card -->
+<div class="card filter-card">
+    <div class="card-header">
+        <div class="d-flex justify-content-between align-items-center">
+            <h5 class="mb-0"><i class="mdi mdi-filter-variant me-2 text-primary"></i>Tarih Aralığı Filtresi</h5>
+            <small class="text-muted">İşlem tarihine göre filtreleme yapın</small>
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="row g-3 align-items-end">
+            <div class="col-md-4">
+                <label class="form-label fw-semibold text-muted small">
+                    <i class="mdi mdi-calendar-start me-1"></i> Başlangıç Tarihi
+                </label>
+                <input type="date" id="startDate" class="date-input" />
+            </div>
+            <div class="col-md-4">
+                <label class="form-label fw-semibold text-muted small">
+                    <i class="mdi mdi-calendar-end me-1"></i> Bitiş Tarihi
+                </label>
+                <input type="date" id="endDate" class="date-input" />
+            </div>
+            <div class="col-md-4 d-flex gap-2">
+                <button id="filterBtn" class=" btn-filterbutton flex-fill">
+                    <i class="mdi mdi-magnify me-1"></i> Filtrele
+                </button>
+                <button id="clearFilterBtn" class=" btn-clear-filter" title="Filtreyi Temizle">
+                    <i class="mdi mdi-close"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- DataTable -->
+<div class="row">
+    <div class="col-12">
+        <div class="card table-card">
+            <div class="card-header">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0">
+                        <i class="mdi mdi-table me-2 text-primary"></i>Denetim Kayıtları Listesi
+                    </h5>
+                    <span class="badge bg-primary bg-opacity-10 text-primary" id="tableBadge">Yükleniyor...</span>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table id="datatable-audit" class="table table-hover table-bordered dt-responsive nowrap" style="width: 100%;">
+                        <thead class="table-light">
+                            <tr>
+                                <th>ID</th>
+                                <th>Kullanıcı</th>
+                                <th>İşlem</th>
+                                <th>İlgili Tablo</th>
+                                <th>IP Adresi</th>
+                                <th>Açıklama</th>
+                                <th>Tarih</th>
+                                <th class="text-center" style="width: 100px;">İşlemler</th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <script src="~/assets/libs/datatables.net/js/jquery.dataTables.min.js"></script>
+    <script src="~/assets/libs/datatables.net-bs5/js/dataTables.bootstrap5.min.js"></script>
+    <script src="~/assets/libs/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
+    <script src="~/assets/libs/datatables.net-responsive-bs5/js/responsive.bootstrap5.min.js"></script>
+    <script src="~/assets/libs/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
+    <script src="~/assets/libs/datatables.net-buttons-bs5/js/buttons.bootstrap5.min.js"></script>
+    <script src="~/assets/libs/jszip/jszip.min.js"></script>
+    <script src="~/assets/libs/pdfmake/build/pdfmake.min.js"></script>
+    <script src="~/assets/libs/pdfmake/build/vfs_fonts.js"></script>
+    <script src="~/assets/libs/datatables.net-buttons/js/buttons.html5.min.js"></script>
+    <script src="~/assets/libs/datatables.net-buttons/js/buttons.print.min.js"></script>
+    <script src="~/assets/libs/datatables.net-buttons/js/buttons.colVis.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            function formatDate(dateStr) {
+                if (!dateStr) return '-';
+                var d = new Date(dateStr);
+                return d.toLocaleDateString('tr-TR', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+            }
+
+            function getActionBadge(action) {
+                var a = (action || '').toLowerCase();
+                if (a.includes('create') || a.includes('ekle') || a.includes('add')) return 'badge-create';
+                if (a.includes('update') || a.includes('güncelle') || a.includes('edit')) return 'badge-update';
+                if (a.includes('delete') || a.includes('sil') || a.includes('remove')) return 'badge-delete';
+                return 'badge-read';
+            }
+
+            function getActionIcon(action) {
+                var a = (action || '').toLowerCase();
+                if (a.includes('create') || a.includes('ekle') || a.includes('add')) return 'mdi-plus-circle';
+                if (a.includes('update') || a.includes('güncelle') || a.includes('edit')) return 'mdi-pencil-circle';
+                if (a.includes('delete') || a.includes('sil') || a.includes('remove')) return 'mdi-delete-circle';
+                return 'mdi-information';
+            }
+
+            function getActionDisplay(action) {
+                if (!action) return '-';
+                var map = {
+                    'create': 'Oluşturma',
+                    'add': 'Ekleme',
+                    'update': 'Güncelleme',
+                    'edit': 'Düzenleme',
+                    'delete': 'Silme',
+                    'remove': 'Kaldırma',
+                    'read': 'Görüntüleme',
+                    'login': 'Giriş',
+                    'logout': 'Çıkış'
+                };
+                var a = action.toLowerCase();
+                for (var key in map) {
+                    if (a.includes(key)) return map[key];
+                }
+                return action;
+            }
+
+            function getDateParams() {
+                var startVal = document.getElementById('startDate').value;
+                var endVal = document.getElementById('endDate').value;
+                return {
+                    startDate: startVal ? new Date(startVal).toISOString() : null,
+                    endDate: endVal ? new Date(endVal).toISOString() : null
+                };
+            }
+
+            var table = $("#datatable-audit").DataTable({
+                dom: '<"row"<"col-sm-12 col-md-6"B><"col-sm-12 col-md-6"f>>' +
+                     '<"row"<"col-sm-12"tr>>' +
+                     '<"row"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>',
+                fixedHeader: true,
+                deferRender: true,
+                filter: true,
+                paging: true,
+                pageLength: 10,
+                order: [[0, 'desc']],
+                buttons: [
+                    { extend: 'copy', text: '<i class="fas fa-copy"></i> Kopyala', className: 'btn btn-sm btn-warning', exportOptions: { columns: ':visible' } },
+                    { extend: 'excel', text: '<i class="fas fa-file-excel"></i> Excel', className: 'btn btn-sm btn-success', exportOptions: { columns: ':visible' } },
+                    { extend: 'pdf', text: '<i class="fas fa-file-pdf"></i> PDF', className: 'btn btn-sm btn-info', exportOptions: { columns: ':visible' } },
+                    { extend: 'colvis', text: '<i class="fas fa-columns"></i> Sütunlar', className: 'btn btn-sm btn-secondary' },
+                    { extend: 'pageLength', className: 'btn btn-sm btn-danger' }
+                ],
+                lengthMenu: [[10, 25, 50, -1], ['10 adet', '25 adet', '50 adet', 'Hepsi']],
+                language: {
+                    url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/tr.json',
+                    paginate: {
+                        previous: "<i class='mdi mdi-chevron-left'>",
+                        next: "<i class='mdi mdi-chevron-right'>"
+                    },
+                    info: "Toplam _TOTAL_ kayıttan _START_ - _END_ arası gösteriliyor",
+                    infoEmpty: "Gösterilecek kayıt bulunmamaktadır",
+                    infoFiltered: "(_MAX_ kayıt içinden filtrelendi)",
+                    search: "Ara:",
+                    zeroRecords: "Eşleşen kayıt bulunamadı"
+                },
+                drawCallback: function (settings) {
+                    var info = table.page.info();
+                    $('#tableBadge').text(info.recordsTotal + ' Kayıt');
+                    $('#totalCount').text(info.recordsTotal);
+                },
+                processing: true,
+                serverSide: true,
+                ajax: {
+                    url: "/AuditLog/GetAuditLogsForPagination",
+                    type: "GET",
+                    data: function (d) {
+                        var dateParams = getDateParams();
+                        return {
+                            page: (d.start / d.length) + 1,
+                            pageSize: d.length,
+                            search: d.search.value,
+                            orderColumn: d.order[0].column,
+                            orderDir: d.order[0].dir,
+                            startDate: dateParams.startDate,
+                            endDate: dateParams.endDate
+                        };
+                    }
+                },
+                columns: [
+                    {
+                        data: "id",
+                        name: "id",
+                        title: "ID",
+                        width: "60px",
+                        render: function (data) {
+                            return '<span class="fw-semibold text-muted">#' + data + '</span>';
+                        }
+                    },
+                    {
+                        data: "username",
+                        name: "Username",
+                        title: "Kullanıcı",
+                        render: function (data, type, row) {
+                            if (!data) return '-';
+                            return '<div class="d-flex align-items-center">' +
+                                   '<div class="avatar-xs me-2">' +
+                                   '    <span class="avatar-title rounded-circle bg-soft-primary text-primary fs-6">' +
+                                   data.charAt(0).toUpperCase() +
+                                   '    </span>' +
+                                   '</div>' +
+                                   '<div>' +
+                                   '    <div class="fw-semibold small">' + data + '</div>' +
+                                   '    <small class="text-muted">' + (row.userId || '') + '</small>' +
+                                   '</div>' +
+                                   '</div>';
+                        }
+                    },
+                    {
+                        data: "action",
+                        name: "Action",
+                        title: "İşlem",
+                        render: function (data) {
+                            if (!data) return '-';
+                            var badge = getActionBadge(data);
+                            var icon = getActionIcon(data);
+                            var display = getActionDisplay(data);
+                            return '<span class="badge badge-action ' + badge + '">' +
+                                   '<i class="mdi ' + icon + ' me-1"></i>' + display +
+                                   '</span>';
+                        }
+                    },
+                    {
+                        data: "entityName",
+                        name: "EntityName",
+                        title: "İlgili Tablo",
+                        render: function (data) {
+                            if (!data) return '<span class="text-muted">-</span>';
+                            return '<span class="fw-medium">' + data + '</span>';
+                        }
+                    },
+                    {
+                        data: "ipAddress",
+                        name: "IpAddress",
+                        title: "IP Adresi",
+                        render: function (data) {
+                            if (!data) return '-';
+                            return '<code class="text-dark">' + data + '</code>';
+                        }
+                    },
+                    {
+                        data: "description",
+                        name: "Description",
+                        title: "Açıklama",
+                        render: function (data) {
+                            if (!data) return '<span class="text-muted">-</span>';
+                            if (data.length > 60) {
+                                return '<span title="' + data.replace(/"/g, '"') + '">' + data.substring(0, 60) + '...</span>';
+                            }
+                            return data;
+                        }
+                    },
+                    {
+                        data: "createdAt",
+                        name: "CreatedAt",
+                        title: "Tarih",
+                        width: "160px",
+                        render: function (data) {
+                            return '<span class="text-nowrap small"><i class="mdi mdi-clock-outline me-1 text-muted"></i>' + formatDate(data) + '</span>';
+                        }
+                    },
+                    {
+                        data: null,
+                        className: "text-center action-cell",
+                        width: "100px",
+                        orderable: false,
+                        render: function (data) {
+                            return '<a class="btn btn-outline-info btn-sm" title="Detay" href="/AuditLog/Detail/' + data.id + '">' +
+                                   '<i class="mdi mdi-eye"></i></a> ' +
+                                   '<a class="btn btn-outline-danger btn-sm" title="Sil" href="/AuditLog/Delete/' + data.id + '">' +
+                                   '<i class="mdi mdi-trash-can"></i></a>';
+                        }
+                    }
+                ]
+            });
+
+            table.buttons().container().appendTo("#datatable-audit_wrapper .col-md-6:eq(0)");
+
+            // Filter button click
+            $('#filterBtn').on('click', function () {
+                table.ajax.reload();
+            });
+
+            // Clear filter button click
+            $('#clearFilterBtn').on('click', function () {
+                $('#startDate').val('');
+                $('#endDate').val('');
+                table.ajax.reload();
+            });
+
+            // Enter key triggers filter
+            $('#startDate, #endDate').on('keydown', function (e) {
+                if (e.key === 'Enter') {
+                    $('#filterBtn').click();
+                }
+            });
+        });
+    </script>
+}

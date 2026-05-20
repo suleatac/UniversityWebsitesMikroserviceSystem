@@ -22,7 +22,6 @@ namespace Mikroservice.Site.Application.Features.AuditLogFeatures.CreateAuditLog
                 Action = request.Action,
                 EntityName = request.EntityName,
                 EntityId = request.EntityId,
-                SiteId = request.SiteId,
                 CreatedAt = DateTime.Now
             };
             await auditLogRepository.AddAsync(newAuditLog);

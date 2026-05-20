@@ -1,4 +1,5 @@
 ﻿using Microservice.Admin.Services.Interfaces;
+using Microservice.Admin.ViewModels.PersonelTip;
 using Microservice.Admin.ViewModels.Unvan;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -12,11 +13,13 @@ namespace Microservice.Admin.Controllers
     {
         private readonly IUnvanService _unvanService;
         private readonly ILogger<UnvanController> _logger;
+        private readonly IPersonelTipService _personelTipService;
 
-        public UnvanController(IUnvanService unvanService, ILogger<UnvanController> logger)
+        public UnvanController(IUnvanService unvanService, ILogger<UnvanController> logger, IPersonelTipService personelTipService)
         {
             _unvanService = unvanService;
             _logger = logger;
+            _personelTipService = personelTipService;
         }
 
         // 🔹 LIST
@@ -46,8 +49,10 @@ namespace Microservice.Admin.Controllers
             _logger.LogInformation("Unvan oluşturma sayfası açıldı. ParentId: {ParentId}", parentId);
 
             var unvanlarResult = await _unvanService.GetUnvansAsync();
+            var personelTipleriResult = await _personelTipService.GetPersonelTiplerAsync();
             var vm = new UnvanIndexVm
             {
+                PersonelTipleri= personelTipleriResult.IsSuccess ? personelTipleriResult.Data! : new List<GetPersonelTipVm>(),
                 Unvan = new UnvanVm { ParentId = parentId },
                 Unvanlar = unvanlarResult.IsSuccess ? unvanlarResult.Data! : new List<GetUnvanVm>()
             };
@@ -68,7 +73,11 @@ namespace Microservice.Admin.Controllers
                 _logger.LogWarning("Create Unvan - ModelState geçersiz.");
 
                 var unvanlarResult = await _unvanService.GetUnvansAsync();
+                var personelTipleriResult = await _personelTipService.GetPersonelTiplerAsync();
+
                 model.Unvanlar = unvanlarResult.IsSuccess ? unvanlarResult.Data! : new List<GetUnvanVm>();
+                model.PersonelTipleri = personelTipleriResult.IsSuccess ? personelTipleriResult.Data! : new List<GetPersonelTipVm>();
+
                 return View(model);
             }
 
@@ -87,7 +96,9 @@ namespace Microservice.Admin.Controllers
                 ModelState.AddModelError("", result.Fail?.Detail ?? result.Fail?.Title ?? "Unvan oluşturulamadı.");
 
                 var unvanlarResult = await _unvanService.GetUnvansAsync();
+                var personelTipleriResult = await _personelTipService.GetPersonelTiplerAsync();
                 model.Unvanlar = unvanlarResult.IsSuccess ? unvanlarResult.Data! : new List<GetUnvanVm>();
+                model.PersonelTipleri = personelTipleriResult.IsSuccess ? personelTipleriResult.Data! : new List<GetPersonelTipVm>();
                 return View(model);
             }
 
@@ -124,10 +135,12 @@ namespace Microservice.Admin.Controllers
             };
 
             var unvanlarResult = await _unvanService.GetUnvansAsync();
+            var personelTipleriResult = await _personelTipService.GetPersonelTiplerAsync();
             var vm = new UnvanIndexVm
             {
                 Unvan = updateVm,
-                Unvanlar = unvanlarResult.IsSuccess ? unvanlarResult.Data! : new List<GetUnvanVm>()
+                Unvanlar = unvanlarResult.IsSuccess ? unvanlarResult.Data! : new List<GetUnvanVm>(),
+                PersonelTipleri = personelTipleriResult.IsSuccess ? personelTipleriResult.Data! : new List<GetPersonelTipVm>()
             };
 
             return View(vm);
@@ -143,7 +156,9 @@ namespace Microservice.Admin.Controllers
                 _logger.LogWarning("Update Unvan - ModelState geçersiz.");
 
                 var unvanlarResult = await _unvanService.GetUnvansAsync();
+                var personelTipleriResult = await _personelTipService.GetPersonelTiplerAsync();
                 model.Unvanlar = unvanlarResult.IsSuccess ? unvanlarResult.Data! : new List<GetUnvanVm>();
+                model.PersonelTipleri = personelTipleriResult.IsSuccess ? personelTipleriResult.Data! : new List<GetPersonelTipVm>();
                 return View(model);
             }
 
@@ -156,7 +171,10 @@ namespace Microservice.Admin.Controllers
                 ModelState.AddModelError("", result.Fail?.Detail ?? result.Fail?.Title ?? "Güncelleme başarısız");
 
                 var unvanlarResult = await _unvanService.GetUnvansAsync();
+                var personelTipleriResult = await _personelTipService.GetPersonelTiplerAsync();
+
                 model.Unvanlar = unvanlarResult.IsSuccess ? unvanlarResult.Data! : new List<GetUnvanVm>();
+                model.PersonelTipleri = personelTipleriResult.IsSuccess ? personelTipleriResult.Data! : new List<GetPersonelTipVm>();
                 return View(model);
             }
 
