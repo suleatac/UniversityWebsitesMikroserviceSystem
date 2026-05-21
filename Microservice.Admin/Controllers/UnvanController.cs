@@ -3,12 +3,10 @@ using Microservice.Admin.ViewModels.PersonelTip;
 using Microservice.Admin.ViewModels.Unvan;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 
 namespace Microservice.Admin.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "Admin")]
     public class UnvanController : Controller
     {
         private readonly IUnvanService _unvanService;

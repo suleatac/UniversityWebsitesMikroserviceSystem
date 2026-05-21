@@ -7,7 +7,7 @@ namespace Microservice.Admin.Controllers
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Logging;
 
-    [Authorize]
+    [Authorize(Roles ="Admin")]
     public class SiteController : Controller
     {
         private readonly ISiteService _siteService;

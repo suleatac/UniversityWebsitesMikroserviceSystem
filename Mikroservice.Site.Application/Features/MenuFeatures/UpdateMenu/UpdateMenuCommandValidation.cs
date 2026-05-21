@@ -1,9 +1,5 @@
 ﻿using FluentValidation;
 using Microservice.Site.Application.Contracts.IRepositories;
-using Mikroservice.Site.Application.Features.MenuFeatures.CreateMenu;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Mikroservice.Site.Application.Features.MenuFeatures.UpdateMenu
 {
@@ -17,9 +13,7 @@ namespace Mikroservice.Site.Application.Features.MenuFeatures.UpdateMenu
                 .MaximumLength(200).WithMessage("Menü adı en fazla 200 karakter olabilir.");
 
             // 🔹 Link
-            RuleFor(x => x.Link)
-                .NotEmpty().WithMessage("Link alanı boş olamaz.")
-                .MaximumLength(500).WithMessage("Link en fazla 500 karakter olabilir.");
+            RuleFor(x => x.Link).MaximumLength(500).WithMessage("Link en fazla 500 karakter olabilir.");
 
             // 🔹 SiteId
             RuleFor(x => x.SiteId)

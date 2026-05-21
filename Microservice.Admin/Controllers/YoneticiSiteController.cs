@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Microservice.Admin.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "Admin")]
     public class YoneticiSiteController : Controller
     {
         private readonly IYoneticiSiteService _yoneticiSiteService;

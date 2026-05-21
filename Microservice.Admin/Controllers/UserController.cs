@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Microservice.Admin.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "Admin")]
     public class UserController : Controller
     {
         private readonly IUserService _userService;

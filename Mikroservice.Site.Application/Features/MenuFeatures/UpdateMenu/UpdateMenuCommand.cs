@@ -1,7 +1,4 @@
 ﻿using Microservice.Shared;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Mikroservice.Site.Application.Features.MenuFeatures.UpdateMenu
 {
@@ -16,7 +13,7 @@ namespace Mikroservice.Site.Application.Features.MenuFeatures.UpdateMenu
 
         public string Ad { get; init; } = default!;
 
-        public string Link { get; init; } = default!;
+        public string? Link { get; init; } = default!;
 
         public string? IconUrl { get; init; }
 

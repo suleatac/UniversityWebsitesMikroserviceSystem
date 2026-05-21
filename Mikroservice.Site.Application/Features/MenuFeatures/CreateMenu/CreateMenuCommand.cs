@@ -12,7 +12,7 @@ namespace Mikroservice.Site.Application.Features.MenuFeatures.CreateMenu
 
         public string Ad { get; init; } = default!;
 
-        public string Link { get; init; } = default!;
+        public string? Link { get; init; } = default!;
 
         public string? IconUrl { get; init; }
 

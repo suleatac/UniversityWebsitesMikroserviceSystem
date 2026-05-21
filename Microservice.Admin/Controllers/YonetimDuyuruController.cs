@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Microservice.Admin.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "Admin")]
     public class YonetimDuyuruController : Controller
     {
         private readonly IYonetimDuyuruService _yonetimDuyuruService;
