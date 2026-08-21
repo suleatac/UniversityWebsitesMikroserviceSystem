@@ -1,6 +1,8 @@
 using MediatR;
+using MassTransit;
 using Microservice.Shared;
 using Microservice.Shared.Services.RedisServiceItems;
+using Microservice.Shared.Services.RabbitMqMasstransitServiceItems.Events.SiteEvents;
 using Microservice.Site.Application.Contracts.IRepositories;
 
 namespace Mikroservice.Site.Application.Features.SiteFeatures.UpdateSite
@@ -8,7 +10,8 @@ namespace Mikroservice.Site.Application.Features.SiteFeatures.UpdateSite
     public class UpdateSiteCommandHandler(
      ISiteRepository siteRepository,
      IUnitOfWork unitOfWork,
-     IRedisCacheService redisCache
+     IRedisCacheService redisCache,
+     IPublishEndpoint publishEndpoint
  ) : IRequestHandler<UpdateSiteCommand, ServiceResult>
     {
         public async Task<ServiceResult> Handle(UpdateSiteCommand request, CancellationToken cancellationToken)
@@ -17,6 +20,8 @@ namespace Mikroservice.Site.Application.Features.SiteFeatures.UpdateSite
 
             if (site == null || site.IsDeleted)
                 return ServiceResult.ErrorAsNotFound();
+
+            var previousSiteAlanAdi = site.SiteAlanAdi;
 
             site.SiteAdi = request.SiteAdi;
             site.SiteAdiEng = request.SiteAdiEng;
@@ -35,6 +40,10 @@ namespace Mikroservice.Site.Application.Features.SiteFeatures.UpdateSite
             // Cache invalidation
             await redisCache.RemoveByPatternAsync(
                 "site:*",
+                cancellationToken);
+
+            await publishEndpoint.Publish(
+                new SiteChangedEvent(site.Id, site.SiteAlanAdi, previousSiteAlanAdi, SiteChangeType.Updated),
                 cancellationToken);
 
            return ServiceResult.Success();

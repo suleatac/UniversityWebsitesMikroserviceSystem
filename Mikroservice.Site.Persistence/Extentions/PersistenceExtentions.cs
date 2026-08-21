@@ -4,6 +4,7 @@ using Microservice.Site.Persistence.UnitOfWorks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microservice.Shared.Options;
 using Mikroservice.Site.Application.Contracts.IRepositories;
 using Mikroservice.Site.Application.Contracts.Services;
 using Mikroservice.Site.Persistence;
@@ -55,6 +56,8 @@ namespace Microservice.Site.Persistence.Extentions
             services.AddScoped<IYoneticiSiteRepository, YoneticiSiteRepository>();
             services.AddScoped<IYonetimDuyuruRepository, YonetimDuyuruRepository>();
             services.AddScoped<IYonetimDuyuruOkunduRepository, YonetimDuyuruOkunduRepository>();
+            services.AddScoped<SiteNginxConfigService>();
+            services.Configure<SiteNginxConfigOption>(configuration.GetSection(SiteNginxConfigOption.Key));
 
             
             services.AddScoped<ISeedService, UnvanSeedService>();

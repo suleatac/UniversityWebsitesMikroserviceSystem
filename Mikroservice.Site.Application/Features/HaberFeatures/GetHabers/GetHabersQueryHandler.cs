@@ -6,7 +6,6 @@ using Microservice.Site.Application.Contracts.IRepositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Mikroservice.Site.Application.DTOs.HaberDtos;
-using Mikroservice.Site.Application.DTOs.TemplateDtos;
 
 namespace Mikroservice.Site.Application.Features.HaberFeatures.GetHabers
 {
@@ -21,7 +20,7 @@ namespace Mikroservice.Site.Application.Features.HaberFeatures.GetHabers
         public async Task<ServiceResult<List<HaberDto>>> Handle(GetHabersQuery request, CancellationToken cancellationToken)
         {
             // Önce cache'e bak
-            var cacheKey = $"habers:list:{request.SiteId}:{request.DilId}";
+            var cacheKey = $"haber:list:{request.SiteId}:{request.DilId}";
             var cached = await redisCacheService.GetListAsync<HaberDto>(cacheKey, cancellationToken);
             if (cached is not null)
             {

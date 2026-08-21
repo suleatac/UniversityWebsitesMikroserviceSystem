@@ -143,7 +143,7 @@ namespace Microservice.Admin.Services
 
 
 
-            var response = await _haberClient.CreateHaberAsync(testVerisi);
+            var response = await _haberClient.CreateHaberAsync(dto);
 
             if (!response.IsSuccessStatusCode)
             {

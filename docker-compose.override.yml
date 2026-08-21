@@ -85,3 +85,22 @@ services:
     ports:
       - "8087:8080"
 
+
+  microservice.web:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080
+      - ASPNETCORE_HTTPS_PORTS=8081
+      - IdentityOption:Adress=http://keycloak:8080/realms/UniversityRealm
+      - IdentityOption:Issuer=http://keycloak:8080/realms/UniversityRealm
+      - Microservices:Site:BaseUrl=http://mikroservice.site.api:8080
+      - Microservices:Personel:BaseUrl=http://mikroservice.personel.api:8080
+      - Microservices:Ogrenci:BaseUrl=http://mikroservice.ogrenci.api:8080
+    ports:
+      - "8088:8080"
+      - "8081:8081"
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
+      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
+      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro

@@ -1,6 +1,8 @@
 using MediatR;
+using MassTransit;
 using Microservice.Shared;
 using Microservice.Shared.Services.RedisServiceItems;
+using Microservice.Shared.Services.RabbitMqMasstransitServiceItems.Events.SiteEvents;
 using Microservice.Site.Application.Contracts.IRepositories;
 
 namespace Mikroservice.Site.Application.Features.SiteFeatures.CreateSite
@@ -8,7 +10,8 @@ namespace Mikroservice.Site.Application.Features.SiteFeatures.CreateSite
     public class CreateSiteCommandHandler(
      ISiteRepository siteRepository,
      IUnitOfWork unitOfWork,
-     IRedisCacheService redisCache
+     IRedisCacheService redisCache,
+     IPublishEndpoint publishEndpoint
  ) : IRequestHandler<CreateSiteCommand, ServiceResult<CreateSiteResponse>>
     {
         public async Task<ServiceResult<CreateSiteResponse>> Handle(CreateSiteCommand request, CancellationToken cancellationToken)
@@ -37,6 +40,10 @@ namespace Mikroservice.Site.Application.Features.SiteFeatures.CreateSite
             await redisCache.RemoveByPatternAsync(
               "site:*",
               cancellationToken);
+
+                        await publishEndpoint.Publish(
+                                new SiteChangedEvent(site.Id, site.SiteAlanAdi, null, SiteChangeType.Created),
+                                cancellationToken);
 
 
             var response = new CreateSiteResponse(site.Id);

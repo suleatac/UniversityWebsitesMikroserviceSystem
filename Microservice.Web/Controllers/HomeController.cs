@@ -1,18 +1,30 @@
 using Microservice.Web.Models;
+using Microservice.Web.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
 namespace Microservice.Web.Controllers
 {
+  
+
     public class HomeController : Controller
     {
-        public IActionResult Index()
+        private readonly IHaberService _haberService;
+
+        public HomeController(IHaberService haberService)
         {
+            _haberService = haberService;
+        }
+
+        public async Task<IActionResult> Index()
+        {
+          
             return View();
         }
 
-        public IActionResult Privacy()
+        public async Task<IActionResult> Privacy()
         {
+            var result = await _haberService.GetHabersAsync(1, 1);
             return View();
         }
 

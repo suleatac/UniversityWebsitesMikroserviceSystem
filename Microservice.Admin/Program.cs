@@ -42,7 +42,10 @@ builder.Services.AddServicesExtentions(builder.Configuration);
 
 //Client Extentions Ayarları
 builder.Services.AddClientExtentions(builder.Configuration);
+
+//Logging Extentions Ayarları
 builder.Services.AddLoggingExt(builder.Configuration);
+
 //Session Ayarları - Site ve Dil seçimi için
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(options =>

@@ -57,9 +57,7 @@ services:
       - esdatalog:/usr/share/elasticsearch/data
     networks:
       - university-network
-   
-
-
+  
   kibana.log.ui:
     image: docker.elastic.co/kibana/kibana:8.13.4
     container_name: kibana.log.ui.container
@@ -310,6 +308,13 @@ services:
       dockerfile: Microservice.Admin/Dockerfile
     networks:
       - university-network
+  microservice.web:
+    image: ${DOCKER_REGISTRY-}microserviceweb
+    build:
+      context: .
+      dockerfile: Microservice.Web/Dockerfile
+    networks:
+      - university-network
 volumes:
   jaeger.data.volume:
   postgres.db.keycloak.volume:
@@ -329,5 +334,6 @@ volumes:
 networks:
   university-network:
     driver: bridge
+
 
 
