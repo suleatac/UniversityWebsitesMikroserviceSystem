@@ -15,7 +15,7 @@ namespace Mikroservice.Site.Api.Endpoints.SiteEndPoints.EndPoints
             })
             .WithName("GetSiteById")
             .MapToApiVersion(1.0)
-            .Produces<SiteDetailDto>(StatusCodes.Status200OK)
+            .Produces<PageRouteDto>(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status500InternalServerError);
 
             return group;

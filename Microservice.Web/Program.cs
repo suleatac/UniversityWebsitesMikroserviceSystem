@@ -61,8 +61,13 @@ app.MapStaticAssets();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}")
+    pattern: "{controller=Template}/{action=Index}/{id?}")
     .WithStaticAssets();
+
+app.MapControllerRoute(
+    name: "seo-route",
+    pattern: "{*seoUrl}",
+    defaults: new { controller = "Template", action = "Seo" });
 
 
 app.Run();

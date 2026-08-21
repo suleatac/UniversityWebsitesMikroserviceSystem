@@ -8,10 +8,10 @@ namespace Microservice.Web.Services
 {
     public class HaberService : IHaberService
     {
-        private readonly IHaberClientService _haberClient;
+        private readonly IHaberClientServices _haberClient;
         private readonly ILogger<HaberService> _logger;
 
-        public HaberService(IHaberClientService haberClient, ILogger<HaberService> logger)
+        public HaberService(IHaberClientServices haberClient, ILogger<HaberService> logger)
         {
             _haberClient = haberClient ?? throw new ArgumentNullException(nameof(haberClient));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));

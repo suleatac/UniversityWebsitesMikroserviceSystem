@@ -11,6 +11,9 @@ namespace Microservice.Web.Clients.SiteClients
         [Get("/api/v1/sites/{id}")]
         Task<ApiResponse<SiteDetailGetVm>> GetSiteByIdAsync(int id);
 
+        [Get("/api/v1/sites/by-host/{host}")]
+        Task<ApiResponse<SiteDetailGetVm>> GetSiteByHostAsync(string host);
+
       
     }
 }

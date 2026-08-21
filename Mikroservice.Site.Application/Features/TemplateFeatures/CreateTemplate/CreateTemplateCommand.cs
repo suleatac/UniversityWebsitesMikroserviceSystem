@@ -6,7 +6,8 @@ namespace Mikroservice.Site.Application.Features.TemplateFeatures.CreateTemplate
     {
         public string TemplateAdi { get; set; } = default!;
         public string TemplateTuru { get; set; } = default!;
-        public string? FolderName { get; set; } = default!;
-        public string? LayoutPath { get; set; } = default!;
+        public bool IsDeleted { get; set; } = false;
+        public DateTime CreatedAt { get; set; } = default!;
+
     }
 }

@@ -75,8 +75,34 @@ namespace Microservice.Web.Services
             return ServiceResult<SiteDetailGetVm>.Success(response.Content!);
         }
 
-  
+        public async Task<ServiceResult<SiteDetailGetVm>> GetSiteByHostAsync(string host)
+        {
+            _logger.LogInformation("Host'a göre site getiriliyor. Host: {Host}", host);
+
+            var response = await _siteRefitService.GetSiteByHostAsync(host);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var problemDetails = response.Error != null
+                    ? JsonSerializer.Deserialize<Microsoft.AspNetCore.Mvc.ProblemDetails>(response.Error.Content!)
+                    : null;
+
+                _logger.LogError(
+                    "API Error -> StatusCode: {StatusCode}, Title: {Title}, Detail: {Detail}",
+                    response.StatusCode,
+                    problemDetails?.Title,
+                    problemDetails?.Detail
+                );
+
+                return ServiceResult<SiteDetailGetVm>
+                    .Error(problemDetails?.Detail ?? problemDetails?.Title ?? "Host için site bulunamadı");
+            }
+
+            return ServiceResult<SiteDetailGetVm>.Success(response.Content!);
+        }
+
 
        
+
     }
 }

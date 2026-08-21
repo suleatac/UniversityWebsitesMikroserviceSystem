@@ -12,9 +12,9 @@ namespace Mikroservice.Site.Application.Features.SiteFeatures.GetSiteById
     ISiteRepository siteRepository,
     ILogger<GetSiteByIdQueryHandler> logger,
     IMapper mapper
-) : IRequestHandler<GetSiteByIdQuery, ServiceResult<SiteDetailDto>>
+) : IRequestHandler<GetSiteByIdQuery, ServiceResult<PageRouteDto>>
     {
-        public async Task<ServiceResult<SiteDetailDto>> Handle(GetSiteByIdQuery request, CancellationToken cancellationToken)
+        public async Task<ServiceResult<PageRouteDto>> Handle(GetSiteByIdQuery request, CancellationToken cancellationToken)
         {
 
             // ✔ DB'den TEK kayıt çek
@@ -24,15 +24,15 @@ namespace Mikroservice.Site.Application.Features.SiteFeatures.GetSiteById
             {
                 logger.LogWarning("Site bulunamadı. Id: {Id}", request.Id);
 
-                return ServiceResult<SiteDetailDto>.Error("Site bulunamadı", HttpStatusCode.NotFound);
+                return ServiceResult<PageRouteDto>.Error("Site bulunamadı", HttpStatusCode.NotFound);
             }
 
             // ✔ map
-            var dto = mapper.Map<SiteDetailDto>(entity);
+            var dto = mapper.Map<PageRouteDto>(entity);
 
             logger.LogInformation("Site DB'den alındı. Id: {Id}", request.Id);
 
-            return ServiceResult<SiteDetailDto>.SuccessAsOK(dto);
+            return ServiceResult<PageRouteDto>.SuccessAsOK(dto);
         }
     }
 }

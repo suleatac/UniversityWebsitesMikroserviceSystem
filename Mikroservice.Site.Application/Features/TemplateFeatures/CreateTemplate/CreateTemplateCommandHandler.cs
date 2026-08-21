@@ -16,8 +16,7 @@ namespace Mikroservice.Site.Application.Features.TemplateFeatures.CreateTemplate
             var template = new Domain.Entities.Template {
                 TemplateAdi = request.TemplateAdi,
                 TemplateTuru = request.TemplateTuru,
-                FolderName = request.FolderName,
-                LayoutPath = request.LayoutPath
+                CreatedAt = DateTime.Now
             };
 
             await templateRepository.AddAsync(template);

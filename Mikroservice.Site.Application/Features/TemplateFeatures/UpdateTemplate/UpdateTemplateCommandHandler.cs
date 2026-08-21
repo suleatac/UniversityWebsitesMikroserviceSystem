@@ -22,8 +22,6 @@ namespace Mikroservice.Site.Application.Features.TemplateFeatures.UpdateTemplate
 
             template.TemplateAdi = request.TemplateAdi;
             template.TemplateTuru = request.TemplateTuru;
-            template.FolderName = request.FolderName;
-            template.LayoutPath = request.LayoutPath;
 
             await unitOfWork.SaveChangesAsync(cancellationToken);
 

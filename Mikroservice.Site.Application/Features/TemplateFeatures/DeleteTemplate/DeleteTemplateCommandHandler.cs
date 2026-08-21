@@ -2,6 +2,7 @@
 using Microservice.Shared;
 using Microservice.Shared.Services.RedisServiceItems;
 using Microservice.Site.Application.Contracts.IRepositories;
+using Mikroservice.Site.Domain.Entities;
 
 namespace Mikroservice.Site.Application.Features.TemplateFeatures.DeleteTemplate
 {
@@ -20,7 +21,14 @@ namespace Mikroservice.Site.Application.Features.TemplateFeatures.DeleteTemplate
                 return ServiceResult.ErrorAsNotFound();
             }
 
-            templateRepository.Delete(template);
+
+            template.IsDeleted = true;
+            templateRepository.Update(template);
+            await unitOfWork.SaveChangesAsync(cancellationToken);
+
+
+
+           
 
             await unitOfWork.SaveChangesAsync(cancellationToken);
 

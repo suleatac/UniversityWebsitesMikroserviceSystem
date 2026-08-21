@@ -19,6 +19,9 @@ namespace Microservice.Site.Persistence
         {
         }
 
+        public DbSet<SeoMetadata> SeoMetadatas { get; set; }
+        public DbSet<PageRoute> PageRoutes { get; set; }
+        public DbSet<PageType> PageTypes { get; set; }
         public DbSet<AuditLog> AuditLogs { get; set; }
         public DbSet<BandLogo> BandLogos { get; set; }
         public DbSet<Banner> Bannerler { get; set; }

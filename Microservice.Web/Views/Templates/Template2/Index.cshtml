@@ -1,0 +1,21 @@
+@model Microservice.Web.ViewModels.Template.TemplatePageViewModel
+@{
+    ViewData["Title"] = Model.Site.SiteAdi;
+}
+
+<section class="container py-5">
+    <div class="border rounded-4 p-4">
+        <h1 class="fw-bold">@Model.Site.SiteAdi</h1>
+        <p class="text-secondary">Template 2</p>
+
+        <div class="row g-2 mt-2">
+            @foreach (var menu in Model.Menus.OrderBy(x => x.Sira))
+            {
+                var href = string.IsNullOrWhiteSpace(menu.Link) ? "#" : "/" + menu.Link.Trim('/');
+                <div class="col-md-4">
+                    <a class="btn btn-outline-dark w-100" href="@href">@menu.Ad</a>
+                </div>
+            }
+        </div>
+    </div>
+</section>

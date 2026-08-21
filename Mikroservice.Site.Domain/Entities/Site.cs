@@ -1,4 +1,6 @@
-﻿namespace Mikroservice.Site.Domain.Entities
+﻿using Microsoft.AspNetCore.Routing;
+
+namespace Mikroservice.Site.Domain.Entities
 {
     public class Site
     {
@@ -27,5 +29,6 @@
         public ICollection<MediaFile> MediaFiles { get; set; } = new List<MediaFile>();
         public ICollection<SikcaSorulanSoru> SikcaSorulanSorus { get; set; } = new List<SikcaSorulanSoru>();
         public Popup? Popup { get; set; }
+        public ICollection<PageRoute> PageRoutes { get; set; } =new List<PageRoute>();
     }
 }

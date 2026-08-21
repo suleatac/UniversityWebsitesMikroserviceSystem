@@ -1,0 +1,18 @@
+@model Microservice.Web.ViewModels.Template.TemplatePageViewModel
+@{
+    ViewData["Title"] = Model.CurrentMenu?.Ad ?? "Menu";
+}
+
+<div class="container py-4">
+    <p class="text-muted">Template 1</p>
+    <h1>@(Model.CurrentMenu?.Ad ?? "Menu")</h1>
+
+    @if (!string.IsNullOrWhiteSpace(Model.CurrentMenu?.Icerik))
+    {
+        <div>@Model.CurrentMenu!.Icerik</div>
+    }
+    else
+    {
+        <p>Bu menü için içerik girilmemiş.</p>
+    }
+</div>

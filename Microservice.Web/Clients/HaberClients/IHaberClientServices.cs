@@ -3,7 +3,7 @@ using Refit;
 
 namespace Microservice.Web.Clients.HaberClients
 {
-    public interface IHaberClientService
+    public interface IHaberClientServices
     {
         [Get("/api/v1/habers")]
         Task<ApiResponse<List<GetHaberVm>>> GetHabersAsync(int siteId, int dilId);

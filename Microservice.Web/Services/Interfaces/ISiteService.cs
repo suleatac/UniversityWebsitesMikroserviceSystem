@@ -7,6 +7,6 @@ namespace Microservice.Web.Services.Interfaces
     {
         Task<ServiceResult<List<SiteGetVm>>> GetSitesAsync();
         Task<ServiceResult<SiteDetailGetVm>> GetSiteByIdAsync(int id);
-
+        Task<ServiceResult<SiteDetailGetVm>> GetSiteByHostAsync(string host);
     }
 }

@@ -10,7 +10,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Core\" />
     <Folder Include="Views\Templates\Template2\" />
     <Folder Include="Views\Templates\Template1\" />
   </ItemGroup>

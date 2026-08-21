@@ -17,6 +17,12 @@ namespace Mikroservice.Site.Persistence.Configurations
                 .WithOne(x => x.Template)
                 .HasForeignKey(x => x.TemplateId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            // =========================
+            // FILTER
+            // =========================
+
+            builder.HasQueryFilter(b => !b.IsDeleted);
         }
     }
 }

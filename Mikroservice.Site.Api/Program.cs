@@ -135,7 +135,7 @@ app.AddUnvanGroupsEndpointExt(apiVersionSet);
 app.AddVideoGroupsEndpointExt(apiVersionSet);
 app.AddYoneticiSiteGroupsEndpointExt(apiVersionSet);
 app.AddYonetimDuyuruGroupsEndpointExt(apiVersionSet);
-
+app.AddPageRouteGroupsEndpointExt(apiVersionSet);
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {

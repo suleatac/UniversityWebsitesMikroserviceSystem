@@ -1,4 +1,6 @@
 ﻿using Microservice.Web.Clients.HaberClients;
+using Microservice.Web.Clients.MenuClients;
+using Microservice.Web.Clients.PageRouteClients;
 using Microservice.Web.Clients.SiteClients;
 using Microservice.Web.HttpHandlers;
 using Microservice.Web.Settings;
@@ -23,7 +25,25 @@ namespace Microservice.Web.Clients
             .AddHttpMessageHandler<ClientAuthenticatedHttpClientHandler>();//bu clientcredential için token alıp istek göndermek için
 
             //Haber Clients
-            services.AddRefitClient<IHaberClientService>()
+            services.AddRefitClient<IHaberClientServices>()
+           .ConfigureHttpClient(c => {
+
+               var microserviceOption = configuration.GetSection(MicroservicesSetting.SectionName).Get<MicroservicesSetting>();
+               c.BaseAddress = new Uri(microserviceOption!.Site.BaseUrl);
+           })
+           .AddHttpMessageHandler<ClientAuthenticatedHttpClientHandler>();//bu clientcredential için token alıp istek göndermek için
+
+            //Menu Clients
+            services.AddRefitClient<IMenuClientServices>()
+           .ConfigureHttpClient(c => {
+
+               var microserviceOption = configuration.GetSection(MicroservicesSetting.SectionName).Get<MicroservicesSetting>();
+               c.BaseAddress = new Uri(microserviceOption!.Site.BaseUrl);
+           })
+           .AddHttpMessageHandler<ClientAuthenticatedHttpClientHandler>();//bu clientcredential için token alıp istek göndermek için
+
+            //PageRoute Clients
+            services.AddRefitClient<IPageRouteClientServices>()
            .ConfigureHttpClient(c => {
 
                var microserviceOption = configuration.GetSection(MicroservicesSetting.SectionName).Get<MicroservicesSetting>();

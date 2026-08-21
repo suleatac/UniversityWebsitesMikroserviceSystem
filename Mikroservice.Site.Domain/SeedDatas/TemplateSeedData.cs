@@ -12,8 +12,7 @@ namespace Mikroservice.Site.Domain.SeedDatas
                 Id = 1, 
                 TemplateAdi = "Default", 
                 TemplateTuru = "İdari",
-                FolderName = "/Default",
-                LayoutPath = "/Layouts/Default",
+
               }
           
         };
