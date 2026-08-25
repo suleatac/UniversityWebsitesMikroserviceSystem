@@ -16,6 +16,7 @@ namespace Mikroservice.Site.Application.Features.EtkinlikFeatures.CreateEtkinlik
         public async Task<ServiceResult<CreateEtkinlikResponse>> Handle(CreateEtkinlikCommand request, CancellationToken cancellationToken)
         {
             var newEtkinlik = new Etkinlik {
+                PageTypeId = request.PageTypeId,
                 Baslik = request.Baslik,
                 KisaAciklama = request.KisaAciklama,
                 IcerikMetni = request.IcerikMetni,

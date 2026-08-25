@@ -8,27 +8,24 @@ namespace Mikroservice.Site.Application.Features.SiteFeatures.GetSiteByHost
 {
     public class GetSiteByHostQueryHandler(
         ISiteRepository siteRepository,
-        IMapper mapper) : IRequestHandler<GetSiteByHostQuery, ServiceResult<PageRouteDto>>
+        IMapper mapper) : IRequestHandler<GetSiteByHostQuery, ServiceResult<SiteDetailDto>>
     {
-        public Task<ServiceResult<PageRouteDto>> Handle(GetSiteByHostQuery request, CancellationToken cancellationToken)
+        public Task<ServiceResult<SiteDetailDto>> Handle(GetSiteByHostQuery request, CancellationToken cancellationToken)
         {
             var host = request.Host.Trim().ToLowerInvariant();
-            if (host.StartsWith("www."))
-            {
-                host = host[4..];
-            }
+         
 
             var site = siteRepository.GetAll()
                 .Where(x => !x.IsDeleted)
-                .FirstOrDefault(x => x.SiteAlanAdi.ToLower() == host || x.SiteAlanAdi.ToLower() == "www." + host);
+                .FirstOrDefault(x => x.SiteAlanAdi.ToLower()+".sivas.edu.tr" == host);
 
             if (site is null)
             {
-                return Task.FromResult(ServiceResult<PageRouteDto>.Error("Site not found", System.Net.HttpStatusCode.NotFound));
+                return Task.FromResult(ServiceResult<SiteDetailDto>.Error("Site not found", System.Net.HttpStatusCode.NotFound));
             }
 
-            var dto = mapper.Map<PageRouteDto>(site);
-            return Task.FromResult(ServiceResult<PageRouteDto>.SuccessAsOK(dto));
+            var dto = mapper.Map<SiteDetailDto>(site);
+            return Task.FromResult(ServiceResult<SiteDetailDto>.SuccessAsOK(dto));
         }
     }
 }

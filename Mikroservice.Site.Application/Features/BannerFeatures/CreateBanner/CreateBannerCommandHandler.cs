@@ -16,6 +16,7 @@ namespace Mikroservice.Site.Application.Features.BannerFeatures.CreateBanner
         public async Task<ServiceResult<CreateBannerResponse>> Handle(CreateBannerCommand request, CancellationToken cancellationToken)
         {
             var newBanner = new Banner {
+                PageTypeId = request.PageTypeId,
                 Baslik = request.Baslik,
                 KisaAciklama = request.KisaAciklama,
                 IcerikMetni = request.IcerikMetni,

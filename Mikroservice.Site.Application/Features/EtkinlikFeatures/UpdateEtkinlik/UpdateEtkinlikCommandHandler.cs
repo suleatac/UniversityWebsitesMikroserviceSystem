@@ -34,6 +34,7 @@ namespace Mikroservice.Site.Application.Features.EtkinlikFeatures.UpdateEtkinlik
             etkinlik.SiteId = request.SiteId;
             etkinlik.DilId = request.DilId;
             etkinlik.HedefId = request.HedefId;
+            etkinlik.PageTypeId = request.PageTypeId;
             await unitOfWork.SaveChangesAsync(cancellationToken);
 
             //Cache temizleme işlemi.

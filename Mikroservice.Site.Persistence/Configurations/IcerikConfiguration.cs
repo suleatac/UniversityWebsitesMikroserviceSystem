@@ -44,6 +44,14 @@ namespace Mikroservice.Site.Persistence.Configurations
             builder.Property(x => x.GosterimSayisi)
                 .HasDefaultValue(0);
 
+            builder.Property(x => x.PageTypeId)
+                .IsRequired();
+
+            builder.HasOne(x => x.PageType)
+                .WithMany(x => x.Icerikler)
+                .HasForeignKey(x => x.PageTypeId)
+                .OnDelete(DeleteBehavior.Restrict);
+
 
             builder.Property(x => x.EklemeTarihi).HasDefaultValueSql("NOW()").HasColumnType("timestamp without time zone");
             builder.Property(x => x.YayimTarihi).IsRequired().HasColumnType("timestamp without time zone");

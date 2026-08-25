@@ -35,6 +35,7 @@ namespace Mikroservice.Site.Application.Features.BannerFeatures.UpdateBanner
             banner.SiteId = request.SiteId;
             banner.DilId = request.DilId;
             banner.HedefId = request.HedefId;
+            banner.PageTypeId = request.PageTypeId;
             await unitOfWork.SaveChangesAsync(cancellationToken);
 
             //Cache temizleme işlemi.

@@ -3,6 +3,7 @@
     public class Menu
     {
         public int Id { get; set; }
+        public int PageTypeId { get; set; }
 
         public int SiteId { get; set; }
         public int DilId { get; set; }
@@ -26,5 +27,6 @@
         public Menu? Parent { get; set; }
 
         public ICollection<Menu> Children { get; set; } = new List<Menu>();
+        public PageType PageType { get; set; } = default!;
     }
 }

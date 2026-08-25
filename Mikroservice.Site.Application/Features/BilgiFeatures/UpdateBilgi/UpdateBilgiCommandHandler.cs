@@ -39,6 +39,7 @@ namespace Mikroservice.Site.Application.Features.BilgiFeatures.UpdateBilgi
             bilgi.SiteId = request.SiteId;
             bilgi.DilId = request.DilId;
             bilgi.HedefId = request.HedefId;
+            bilgi.PageTypeId = request.PageTypeId;
             await unitOfWork.SaveChangesAsync(cancellationToken);
 
             //Cache temizleme işlemi.

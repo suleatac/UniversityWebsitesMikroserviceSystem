@@ -8,5 +8,6 @@
         public bool IsDeleted { get; set; } = false;
         public DateTime CreatedAt { get; set; } = DateTime.Now;
         public ICollection<Site> Sites { get; set; } = new List<Site>();
+        public ICollection<PageType> PageTypes { get; set; } = new List<PageType>();
     }
 }

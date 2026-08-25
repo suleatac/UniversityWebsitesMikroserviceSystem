@@ -20,6 +20,7 @@ namespace Microservice.Admin.Services.ServicesExtentions
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<ISiteService, SiteService>();
             services.AddScoped<ITemplateService, TemplateService>();
+            services.AddScoped<IPageTypeService, PageTypeService>();
             services.AddScoped<IDilService, DilService>();
             services.AddScoped<IHedefService, HedefService>();
             services.AddScoped<IHaberService, HaberService>();

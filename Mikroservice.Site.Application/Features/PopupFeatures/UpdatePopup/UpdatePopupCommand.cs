@@ -6,6 +6,7 @@ namespace Mikroservice.Site.Application.Features.PopupFeatures.UpdatePopup
     {
         public int Id { get; init; }
         public int SiteId { get; init; }
+        public int PageTypeId { get; init; }
         public string Baslik { get; init; } = default!;
         public string KisaAciklama { get; init; } = default!;
         public string IcerikMetni { get; init; } = default!;

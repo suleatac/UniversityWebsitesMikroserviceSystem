@@ -16,6 +16,7 @@ namespace Mikroservice.Site.Application.Features.DuyuruFeatures.CreateDuyuru
         public async Task<ServiceResult<CreateDuyuruResponse>> Handle(CreateDuyuruCommand request, CancellationToken cancellationToken)
         {
             var newDuyuru = new Duyuru {
+                PageTypeId = request.PageTypeId,
                 Baslik = request.Baslik,
                 KisaAciklama = request.KisaAciklama,
                 IcerikMetni = request.IcerikMetni,

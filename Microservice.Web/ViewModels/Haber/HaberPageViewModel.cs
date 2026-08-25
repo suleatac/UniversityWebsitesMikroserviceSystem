@@ -1,5 +1,4 @@
 ﻿using Microservice.Web.ViewModels.Menu;
-using Microservice.Web.ViewModels.SeoMetadata;
 using Microservice.Web.ViewModels.Site;
 
 namespace Microservice.Web.ViewModels.Haber
@@ -14,7 +13,5 @@ namespace Microservice.Web.ViewModels.Haber
         public MenuGetVm? CurrentMenu { get; set; }
 
         public HaberDetailVm Haber { get; set; } = null!;
-
-        public SeoMetadataVm Seo { get; set; } = null!;
     }
 }

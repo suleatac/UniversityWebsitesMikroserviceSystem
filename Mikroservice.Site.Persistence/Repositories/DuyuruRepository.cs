@@ -17,5 +17,11 @@ namespace Microservice.Site.Persistence.Repositories
         {
             return await _appDbContext.Set<Duyuru>().AnyAsync(cancellationToken);
         }
+
+        public Task<Duyuru?> GetBySeoUrlAsync(int siteId, int dilId, string seoUrl, CancellationToken cancellationToken = default)
+        {
+            return _appDbContext.Set<Duyuru>()
+                .FirstOrDefaultAsync(x => x.SiteId == siteId && x.DilId == dilId && x.SeoUrl == seoUrl, cancellationToken);
+        }
     }
 }

@@ -9,6 +9,7 @@ namespace Microservice.Web.ViewModels.Haber
         public int DilId { get; set; }
         public int? HedefId { get; set; }
         public string Baslik { get; set; } = default!;
+        public string? SeoUrl { get; set; }
         public string KisaAciklama { get; set; } = default!;
         public string? ResimUrl { get; set; }
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-ddTHH:mm}", ApplyFormatInEditMode = true)]

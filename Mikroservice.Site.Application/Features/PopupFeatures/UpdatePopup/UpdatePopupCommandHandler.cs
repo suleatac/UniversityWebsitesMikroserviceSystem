@@ -35,6 +35,7 @@ namespace Mikroservice.Site.Application.Features.PopupFeatures.UpdatePopup
             popup.TamEkranMi = request.TamEkranMi;
             popup.GosterimSuresiSaniye = request.GosterimSuresiSaniye;
             popup.CookieIleTekrarGosterme = request.CookieIleTekrarGosterme;
+            popup.PageTypeId = request.PageTypeId;
 
             await unitOfWork.SaveChangesAsync(cancellationToken);
 

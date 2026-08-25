@@ -9,6 +9,7 @@ namespace Mikroservice.Site.Api.SeedDataInitializers
             using var scope = app.Services.CreateScope();
             var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
 
+
             //var seedServices = scope.ServiceProvider.GetServices<ISeedService>();
             var seedServices = scope.ServiceProvider.GetServices<ISeedService>().OrderBy(x => x.Sira);
 
@@ -39,5 +40,7 @@ namespace Mikroservice.Site.Api.SeedDataInitializers
                 }
             }
         }
+
+       
     }
 }

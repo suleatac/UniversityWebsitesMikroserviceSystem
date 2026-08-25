@@ -16,6 +16,7 @@ namespace Mikroservice.Site.Application.Features.BilgiFeatures.CreateBilgi
         public async Task<ServiceResult<CreateBilgiResponse>> Handle(CreateBilgiCommand request, CancellationToken cancellationToken)
         {
             var newBilgi = new Bilgi {
+                PageTypeId = request.PageTypeId,
                 Baslik = request.Baslik,
                 KisaAciklama = request.KisaAciklama,
                 IcerikMetni = request.IcerikMetni,

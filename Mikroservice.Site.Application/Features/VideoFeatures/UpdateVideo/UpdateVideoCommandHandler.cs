@@ -8,7 +8,7 @@ namespace Mikroservice.Site.Application.Features.VideoFeatures.UpdateVideo
     public class UpdateVideoCommandHandler(
        IVideoRepository repository,
        IUnitOfWork unitOfWork,
-       IRedisCacheService redisCache
+    IRedisCacheService redisCache
    ) : IRequestHandler<UpdateVideoCommand, ServiceResult>
     {
         public async Task<ServiceResult> Handle(UpdateVideoCommand request, CancellationToken cancellationToken)
@@ -35,6 +35,7 @@ namespace Mikroservice.Site.Application.Features.VideoFeatures.UpdateVideo
             entity.SeoDescription = request.SeoDescription;
 
             entity.VideoUrl = request.VideoUrl;
+            entity.PageTypeId = request.PageTypeId;
 
             await unitOfWork.SaveChangesAsync(cancellationToken);
 

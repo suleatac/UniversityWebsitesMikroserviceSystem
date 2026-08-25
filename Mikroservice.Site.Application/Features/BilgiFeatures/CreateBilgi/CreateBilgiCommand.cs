@@ -6,6 +6,7 @@ namespace Mikroservice.Site.Application.Features.BilgiFeatures.CreateBilgi
     public record CreateBilgiCommand : IRequestByServiceResult<CreateBilgiResponse>
     {
         public int SiteId { get; init; }
+        public int PageTypeId { get; init; }
         public int DilId { get; init; }
         public int? HedefId { get; init; }
 

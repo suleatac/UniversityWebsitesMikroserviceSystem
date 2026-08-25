@@ -6,6 +6,7 @@ namespace Mikroservice.Site.Application.Features.VideoFeatures.UpdateVideo
     {
         public int Id { get; set; }
         public int SiteId { get; init; }
+        public int PageTypeId { get; init; }
         public int DilId { get; init; }
         public int? HedefId { get; init; }
 

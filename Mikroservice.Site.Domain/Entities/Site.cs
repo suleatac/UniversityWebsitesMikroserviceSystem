@@ -16,7 +16,9 @@ namespace Mikroservice.Site.Domain.Entities
         public int TemplateId { get; set; }
         public bool IsDeleted { get; set; } = false;
         public string SiteEPosta { get; set; } = default!;
+        public int DefaultLanguageId { get; set; } = 1;
 
+        public Dil DefaultLanguage { get; set; } = default!;
         public Template Template { get; set; } = default!;
         public Birim Birim { get; set; } = default!;
         public SiteOzellikleri SiteOzellikleri { get; set; } = default!;
@@ -29,6 +31,6 @@ namespace Mikroservice.Site.Domain.Entities
         public ICollection<MediaFile> MediaFiles { get; set; } = new List<MediaFile>();
         public ICollection<SikcaSorulanSoru> SikcaSorulanSorus { get; set; } = new List<SikcaSorulanSoru>();
         public Popup? Popup { get; set; }
-        public ICollection<PageRoute> PageRoutes { get; set; } =new List<PageRoute>();
+        public ICollection<PageType> PageTypes { get; set; } = new List<PageType>();
     }
 }

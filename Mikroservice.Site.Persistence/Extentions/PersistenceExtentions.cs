@@ -40,6 +40,7 @@ namespace Microservice.Site.Persistence.Extentions
             services.AddScoped<IEtkinlikRepository, EtkinlikRepository>();
             services.AddScoped<IHaberRepository, HaberRepository>();
             services.AddScoped<IHedefRepository, HedefRepository>();
+            services.AddScoped<IPageTypeRepository, PageTypeRepository>();
             services.AddScoped<IIcerikRepository, IcerikRepository>();
             services.AddScoped<IMediaFileRepository, MediaFileRepository>();
             services.AddScoped<IMenuRepository, MenuRepository>();
@@ -56,7 +57,6 @@ namespace Microservice.Site.Persistence.Extentions
             services.AddScoped<IYoneticiSiteRepository, YoneticiSiteRepository>();
             services.AddScoped<IYonetimDuyuruRepository, YonetimDuyuruRepository>();
             services.AddScoped<IYonetimDuyuruOkunduRepository, YonetimDuyuruOkunduRepository>();
-            services.AddScoped<IPageRouteRepository, PageRouteRepository>();
             services.AddScoped<SiteNginxConfigService>();
             services.Configure<SiteNginxConfigOption>(configuration.GetSection(SiteNginxConfigOption.Key));
 

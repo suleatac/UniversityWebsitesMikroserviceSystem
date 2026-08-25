@@ -5,6 +5,7 @@ namespace Mikroservice.Site.Application.Features.MenuFeatures.CreateMenu
     public record CreateMenuCommand : IRequestByServiceResult<CreateMenuResponse>
     {
         public int SiteId { get; init; }
+        public int PageTypeId { get; init; }
 
         public int DilId { get; init; }
 

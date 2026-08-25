@@ -34,6 +34,7 @@ namespace Mikroservice.Site.Application.Features.HaberFeatures.UpdateHaber
             haber.SiteId = request.SiteId;
             haber.DilId = request.DilId;
             haber.HedefId = request.HedefId;
+            haber.PageTypeId = request.PageTypeId;
             await unitOfWork.SaveChangesAsync(cancellationToken);
 
             //Cache temizleme işlemini yapabilsin diye bu event eklendi.

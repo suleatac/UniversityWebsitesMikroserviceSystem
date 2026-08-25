@@ -14,7 +14,7 @@ namespace Mikroservice.Site.Application.Features.MenuFeatures.UpdateMenu
     public class UpdateMenuCommandHandler(
      IMenuRepository menuRepository,
      IUnitOfWork unitOfWork,
-     IRedisCacheService redisCache
+    IRedisCacheService redisCache
  ) : IRequestHandler<UpdateMenuCommand, ServiceResult>
     {
         public async Task<ServiceResult> Handle(UpdateMenuCommand request, CancellationToken cancellationToken)
@@ -50,6 +50,7 @@ namespace Mikroservice.Site.Application.Features.MenuFeatures.UpdateMenu
 
             // 🔹 (Opsiyonel) hedef değiştirilebilir
             menu.HedefId = request.HedefId;
+            menu.PageTypeId = request.PageTypeId;
 
             await unitOfWork.SaveChangesAsync(cancellationToken);
 

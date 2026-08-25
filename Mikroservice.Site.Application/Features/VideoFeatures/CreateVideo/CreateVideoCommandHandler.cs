@@ -9,13 +9,14 @@ namespace Mikroservice.Site.Application.Features.VideoFeatures.CreateVideo
     public class CreateVideoCommandHandler(
      IVideoRepository repository,
      IUnitOfWork unitOfWork,
-     IRedisCacheService redisCache
+    IRedisCacheService redisCache
  ) : IRequestHandler<CreateVideoCommand, ServiceResult<CreateVideoResponse>>
     {
         public async Task<ServiceResult<CreateVideoResponse>> Handle(CreateVideoCommand request, CancellationToken cancellationToken)
         {
             var entity = new Video
             {
+                PageTypeId = request.PageTypeId,
                 SiteId = request.SiteId,
                 DilId = request.DilId,
                 HedefId = request.HedefId,

@@ -1,0 +1,29 @@
+@model Microservice.Web.ViewModels.Content.ContentPageViewModel
+@{
+    ViewData["Title"] =  Model.Content.Baslik;
+}
+
+<div class="container py-5">
+    <div class="row g-5 align-items-start">
+        <div class="col-md-4">
+            @if (!string.IsNullOrWhiteSpace(Model.Content.ResimUrl))
+            {
+                <img class="img-fluid rounded-3 shadow-sm" src="@Model.Content.ResimUrl" alt="@Model.Content.Baslik" />
+            }
+            else
+            {
+                <div class="ratio ratio-4x3 bg-dark rounded-3"></div>
+            }
+        </div>
+        <div class="col-md-8">
+            <p class="small text-uppercase text-muted">@Model.ContentType</p>
+            <h1 class="fw-bold">@Model.Content.Baslik</h1>
+            <p class="fs-5 text-secondary">@Model.Content.KisaAciklama</p>
+            <div class="mt-4">@Html.Raw(Model.Content.IcerikMetni)</div>
+            @if (!string.IsNullOrWhiteSpace(Model.Content.VideoUrl))
+            {
+                <video class="w-100 rounded-3 mt-4" controls src="@Model.Content.VideoUrl"></video>
+            }
+        </div>
+    </div>
+</div>

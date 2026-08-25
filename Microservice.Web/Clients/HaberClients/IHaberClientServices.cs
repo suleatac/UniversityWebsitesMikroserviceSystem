@@ -11,6 +11,9 @@ namespace Microservice.Web.Clients.HaberClients
         [Get("/api/v1/habers/{id}")]
         Task<ApiResponse<HaberDetailVm>> GetHaberByIdAsync(int id);
 
+        [Get("/api/v1/habers/seo/{siteId}/{dilId}/{seoUrl}")]
+        Task<ApiResponse<HaberDetailVm>> GetHaberBySeoUrlAsync(int siteId, int dilId, string seoUrl);
+
       
     }
 }

@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Mikroservice.Site.Domain.Entities;
 
@@ -8,27 +8,31 @@ namespace Mikroservice.Site.Persistence.Configurations
     {
         public void Configure(EntityTypeBuilder<PageType> builder)
         {
-            // Primary key
-            builder.HasKey(pt => pt.Id);
+            builder.HasKey(x => x.Id);
+            builder.Property(x => x.PageTypeId)
+                .HasConversion<int>()
+                .IsRequired();
+            builder.Property(x => x.Name).IsRequired().HasMaxLength(200);
+            builder.Property(x => x.Slug).IsRequired().HasMaxLength(200);
+            builder.Property(x => x.ViewName).HasMaxLength(200);
 
-            // Properties
-            builder.Property(pt => pt.Code)
-                   .IsRequired()
-                   .HasMaxLength(100);
+            builder.HasOne(x => x.Dil)
+                .WithMany()
+                .HasForeignKey(x => x.DilId)
+                .OnDelete(DeleteBehavior.Restrict);
 
-            builder.Property(pt => pt.Name)
-                   .IsRequired()
-                   .HasMaxLength(200);
+            builder.HasOne(x => x.Site)
+                .WithMany(x => x.PageTypes)
+                .HasForeignKey(x => x.SiteId)
+                .OnDelete(DeleteBehavior.Cascade);
 
-            // Unique constraint on Code
-            builder.HasIndex(pt => pt.Code)
-                   .IsUnique();
+            builder.HasOne(x => x.Template)
+                .WithMany(x => x.PageTypes)
+                .HasForeignKey(x => x.TemplateId)
+                .OnDelete(DeleteBehavior.Restrict);
 
-            // Relationships
-            builder.HasMany(pt => pt.PageRoutes)
-                   .WithOne(pr => pr.PageType)
-                   .HasForeignKey(pr => pr.PageTypeId)
-                   .OnDelete(DeleteBehavior.Restrict);
+            builder.HasIndex(x => new { x.SiteId, x.DilId, x.Slug }).IsUnique();
+            builder.HasQueryFilter(x => !x.IsDeleted);
         }
     }
 }

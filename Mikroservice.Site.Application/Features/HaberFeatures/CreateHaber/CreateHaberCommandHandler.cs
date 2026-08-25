@@ -9,12 +9,13 @@ namespace Mikroservice.Site.Application.Features.HaberFeatures.CreateHaber
     public class CreateHaberCommandHandler(
      IHaberRepository haberRepository,
      IUnitOfWork unitOfWork,
-      IRedisCacheService redisCache
+        IRedisCacheService redisCache
  ) : IRequestHandler<CreateHaberCommand, ServiceResult<CreateHaberResponse>>
     {
         public async Task<ServiceResult<CreateHaberResponse>> Handle(CreateHaberCommand request, CancellationToken cancellationToken)
         {
             var newHaber = new Haber {
+                PageTypeId = request.PageTypeId,
                 Baslik = request.Baslik,
                 KisaAciklama = request.KisaAciklama,
                 IcerikMetni = request.IcerikMetni,

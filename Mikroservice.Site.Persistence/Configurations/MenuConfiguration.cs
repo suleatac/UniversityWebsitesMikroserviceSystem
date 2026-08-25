@@ -29,6 +29,14 @@ namespace Mikroservice.Site.Persistence.Configurations
             builder.Property(x => x.OlusturulmaTarihi)
                 .IsRequired().HasColumnType("timestamp without time zone");
 
+            builder.Property(x => x.PageTypeId)
+                .IsRequired();
+
+            builder.HasOne(x => x.PageType)
+                .WithMany(x => x.Menuler)
+                .HasForeignKey(x => x.PageTypeId)
+                .OnDelete(DeleteBehavior.Restrict);
+
             builder.HasQueryFilter(b => !b.IsDeleted);
             // =========================
             // SITE
@@ -67,6 +75,7 @@ namespace Mikroservice.Site.Persistence.Configurations
             builder.HasIndex(x => new { x.SiteId, x.DilId });
 
             builder.HasIndex(x => new { x.ParentId, x.Sira });
+
         }
     }
 }

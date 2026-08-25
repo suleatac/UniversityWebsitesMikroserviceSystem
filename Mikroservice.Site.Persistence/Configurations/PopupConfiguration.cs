@@ -48,11 +48,20 @@ namespace Mikroservice.Site.Persistence.Configurations
             builder.Property(x => x.CookieIleTekrarGosterme)
                 .HasDefaultValue(true);
 
+            builder.Property(x => x.PageTypeId)
+                .IsRequired();
+
+            builder.HasOne(x => x.PageType)
+                .WithMany(x => x.Popuplar)
+                .HasForeignKey(x => x.PageTypeId)
+                .OnDelete(DeleteBehavior.Restrict);
+
             // Soft delete filter
             builder.HasQueryFilter(b => !b.IsDeleted);
 
             // Unique index on SiteId (one-to-one)
             builder.HasIndex(x => x.SiteId).IsUnique();
+
         }
     }
 }

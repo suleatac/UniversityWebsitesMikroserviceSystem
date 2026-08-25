@@ -1,0 +1,12 @@
+@model Microservice.Web.ViewModels.Template.TemplatePageViewModel
+@{
+    ViewData["Title"] = Model.Site.SiteAdi;
+}
+
+<main class="container py-5">
+    <div class="p-5 bg-dark text-white rounded-3">
+        <p class="text-uppercase small opacity-75">Template 3</p>
+        <h1 class="display-4">@Model.Site.SiteAdi</h1>
+        <p class="lead">Üniversitenizin güncel içeriklerine ve duyurularına buradan ulaşın.</p>
+    </div>
+</main>

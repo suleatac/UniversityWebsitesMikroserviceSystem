@@ -17,6 +17,7 @@ namespace Mikroservice.Site.Application.Features.MenuFeatures.CreateMenu
          
 
             var menu = new Menu {
+                PageTypeId = request.PageTypeId,
                 SiteId = request.SiteId,
                 DilId = request.DilId,
                 HedefId = request.HedefId,

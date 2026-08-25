@@ -34,6 +34,7 @@ namespace Mikroservice.Site.Application.Features.DuyuruFeatures.UpdateDuyuru
             duyuru.SiteId = request.SiteId;
             duyuru.DilId = request.DilId;
             duyuru.HedefId = request.HedefId;
+            duyuru.PageTypeId = request.PageTypeId;
             await unitOfWork.SaveChangesAsync(cancellationToken);
 
             //Cache temizleme işlemi.

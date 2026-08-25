@@ -20,6 +20,7 @@ using Mikroservice.Site.Api.Endpoints.MediaFileEndPoints;
 using Mikroservice.Site.Api.Endpoints.MenuEndPoints;
 using Mikroservice.Site.Api.Endpoints.PersonelTipEndPoints;
 using Mikroservice.Site.Api.Endpoints.PopupEndPoints;
+using Mikroservice.Site.Api.Endpoints.PageTypeEndPoints;
 using Mikroservice.Site.Api.Endpoints.SikcaSorulanSoruEndPoints;
 using Mikroservice.Site.Api.Endpoints.SiteEndPoints;
 using Mikroservice.Site.Api.Endpoints.SiteOzellikleriEndPoints;
@@ -126,6 +127,7 @@ app.AddMediaFileGroupsEndpointExt(apiVersionSet);
 app.AddMenuGroupsEndpointExt(apiVersionSet);
 app.AddPersonelTipGroupsEndpointExt(apiVersionSet);
 app.AddPopupGroupsEndpointExt(apiVersionSet);
+app.AddPageTypeGroupsEndpointExt(apiVersionSet);
 app.AddSikcaSorulanSoruGroupsEndpointExt(apiVersionSet);
 app.AddSiteGroupsEndpointExt(apiVersionSet);
 app.AddSiteOzellikleriGroupsEndpointExt(apiVersionSet);
@@ -135,7 +137,6 @@ app.AddUnvanGroupsEndpointExt(apiVersionSet);
 app.AddVideoGroupsEndpointExt(apiVersionSet);
 app.AddYoneticiSiteGroupsEndpointExt(apiVersionSet);
 app.AddYonetimDuyuruGroupsEndpointExt(apiVersionSet);
-app.AddPageRouteGroupsEndpointExt(apiVersionSet);
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {

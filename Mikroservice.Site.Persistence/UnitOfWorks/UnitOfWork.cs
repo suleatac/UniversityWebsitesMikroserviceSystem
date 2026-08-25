@@ -9,12 +9,14 @@ namespace Microservice.Site.Persistence.UnitOfWorks
     {
         private IDbContextTransaction? _transaction;
         private readonly AppDbContext _dbContext;
+       
 
         public IDbTransaction? Transaction => _transaction?.GetDbTransaction();
 
         public UnitOfWork(AppDbContext dbContext)
         {
             _dbContext = dbContext;
+          
         }
 
         public async Task<IDbTransaction> BeginTransactionAsync(
@@ -68,8 +70,32 @@ namespace Microservice.Site.Persistence.UnitOfWorks
 
         public async Task SaveChangesAsync(CancellationToken cancellationToken = default)
         {
+     
+            var ownsTransaction = _transaction is null;
 
-            await _dbContext.SaveChangesAsync(cancellationToken);
+            if (ownsTransaction)
+            {
+                await BeginTransactionAsync(cancellationToken: cancellationToken);
+            }
+
+            try
+            {
+                await _dbContext.SaveChangesAsync(cancellationToken);
+
+                if (ownsTransaction)
+                {
+                    await CommitAsync(cancellationToken);
+                }
+            }
+            catch
+            {
+                if (ownsTransaction)
+                {
+                    await RollbackAsync(cancellationToken);
+                }
+
+                throw;
+            }
         }
 
 

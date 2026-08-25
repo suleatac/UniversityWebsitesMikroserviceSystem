@@ -3,6 +3,7 @@
     public class Popup
     {
         public int Id { get; set; }
+        public int PageTypeId { get; set; }
 
         public int SiteId { get; set; }
 
@@ -34,5 +35,6 @@
 
         // Navigation
         public Site Site { get; set; } = default!;
+        public PageType PageType { get; set; } = default!;
     }
 }

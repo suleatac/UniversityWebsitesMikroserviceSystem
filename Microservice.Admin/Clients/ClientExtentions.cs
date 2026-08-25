@@ -15,6 +15,7 @@ using Microservice.Admin.Clients.SiteClients;
 using Microservice.Admin.Clients.SiteOzellikleriClients;
 using Microservice.Admin.Clients.SitePersonelClients;
 using Microservice.Admin.Clients.TemplateClients;
+using Microservice.Admin.Clients.PageTypeClients;
 using Microservice.Admin.Clients.TumPersonelClients;
 using Microservice.Admin.Clients.UnvanClients;
 using Microservice.Admin.Clients.VideoClients;
@@ -62,6 +63,14 @@ namespace Microservice.Admin.Clients
             })
             .AddHttpMessageHandler<AuthenticatedHttpClientHandler>()//bu usertoken için istek atarken kullanmak için
             .AddHttpMessageHandler<ClientAuthenticatedHttpClientHandler>();//bu clientcredential için token alıp istek göndermek için
+
+            services.AddRefitClient<IPageTypeClientService>()
+            .ConfigureHttpClient(c => {
+                var microserviceOption = configuration.GetSection(MicroservicesSetting.SectionName).Get<MicroservicesSetting>();
+                c.BaseAddress = new Uri(microserviceOption!.Site.BaseUrl);
+            })
+            .AddHttpMessageHandler<AuthenticatedHttpClientHandler>()
+            .AddHttpMessageHandler<ClientAuthenticatedHttpClientHandler>();
 
 
 

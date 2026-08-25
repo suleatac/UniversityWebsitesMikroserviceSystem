@@ -3,7 +3,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Mikroservice.Site.Domain.Entities;
 using Mikroservice.Site.Persistence;
-using System.Collections.Concurrent;
 using System.Reflection;
 using System.Text;
 using System.Text.Json;
@@ -12,16 +11,10 @@ namespace Microservice.Site.Persistence
 {
     public class AppDbContext : DbContext
     {
-
-
-
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
         }
 
-        public DbSet<SeoMetadata> SeoMetadatas { get; set; }
-        public DbSet<PageRoute> PageRoutes { get; set; }
-        public DbSet<PageType> PageTypes { get; set; }
         public DbSet<AuditLog> AuditLogs { get; set; }
         public DbSet<BandLogo> BandLogos { get; set; }
         public DbSet<Banner> Bannerler { get; set; }
@@ -36,6 +29,7 @@ namespace Microservice.Site.Persistence
         public DbSet<PersonelTelefon> PersonelTelefonlar { get; set; }
         public DbSet<PersonelTip> PersonelTipleri { get; set; }
         public DbSet<Popup> Popuplar { get; set; }
+        public DbSet<PageType> PageTypes { get; set; }
         public DbSet<SikcaSorulanSoru> SikcaSorulanSorular { get; set; }
         public DbSet<Mikroservice.Site.Domain.Entities.Site> Siteler { get; set; }
         public DbSet<SiteOzellikleri> SiteOzellikleri { get; set; }
@@ -75,8 +69,7 @@ namespace Microservice.Site.Persistence
 
             var result = await base.SaveChangesAsync(cancellationToken);
 
-            // After successful save, Added entities now have real DB-generated IDs.
-            // Collect their audit info now.
+            // Added entities receive their database IDs after the first save.
             var postAuditEntries = CollectAddedAuditEntries(addedEntries);
 
             var allAuditEntries = new List<AuditLog>(preAuditEntries.Count + postAuditEntries.Count);

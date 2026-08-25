@@ -15,7 +15,7 @@ namespace Mikroservice.Site.Api.Endpoints.SiteEndPoints.EndPoints
             })
             .WithName("GetSiteByHost")
             .MapToApiVersion(1.0)
-            .Produces<PageRouteDto>(StatusCodes.Status200OK)
+            .Produces<SiteDetailDto>(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status404NotFound)
             .Produces(StatusCodes.Status500InternalServerError);
 

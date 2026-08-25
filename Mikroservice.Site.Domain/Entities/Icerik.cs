@@ -3,6 +3,7 @@
     public abstract class Icerik
     {
         public int Id { get; set; }
+        public int PageTypeId { get; set; }
 
         public int SiteId { get; set; }
         public int DilId { get; set; }
@@ -33,5 +34,6 @@
         public Site Site { get; set; } = default!;
         public Dil Dil { get; set; } = default!;
         public Hedef? Hedef { get; set; }
+        public PageType PageType { get; set; } = default!;
     }
 }

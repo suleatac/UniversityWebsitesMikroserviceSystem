@@ -13,7 +13,11 @@ namespace Microservice.Web.Services.ServicesExtentions
             services.AddScoped<IMenuService, MenuService>();
             services.AddScoped<IHaberService, HaberService>();
             services.AddScoped<IDuyuruService, DuyuruService>();
-            services.AddScoped<IPageRouteService, PageRouteService>();
+            services.AddScoped<IBannerService, BannerService>();
+            services.AddScoped<IBilgiService, BilgiService>();
+            services.AddScoped<IEtkinlikService, EtkinlikService>();
+            services.AddScoped<IVideoService, VideoService>();
+            services.AddScoped<IRouteService, RouteService>();
             return services;
         }
     }

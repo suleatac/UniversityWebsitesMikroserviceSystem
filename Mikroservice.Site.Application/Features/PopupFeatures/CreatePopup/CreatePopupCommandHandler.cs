@@ -23,6 +23,7 @@ namespace Mikroservice.Site.Application.Features.PopupFeatures.CreatePopup
             }
 
             var newPopup = new Popup {
+                PageTypeId = request.PageTypeId,
                 Baslik = request.Baslik,
                 KisaAciklama = request.KisaAciklama,
                 IcerikMetni = request.IcerikMetni,

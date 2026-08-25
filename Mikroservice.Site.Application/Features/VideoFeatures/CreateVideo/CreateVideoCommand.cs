@@ -5,6 +5,7 @@ namespace Mikroservice.Site.Application.Features.VideoFeatures.CreateVideo
     public record CreateVideoCommand : IRequestByServiceResult<CreateVideoResponse>
     {
         public int SiteId { get; init; }
+        public int PageTypeId { get; init; }
         public int DilId { get; init; }
         public int? HedefId { get; init; }
 
