@@ -17,7 +17,7 @@ namespace Mikroservice.Site.Application.Features.SiteFeatures.GetSiteByHost
 
             var site = siteRepository.GetAll()
                 .Where(x => !x.IsDeleted)
-                .FirstOrDefault(x => x.SiteAlanAdi.ToLower()+".sivas.edu.tr" == host);
+                .FirstOrDefault(x => x.SiteUrl == host);
 
             if (site is null)
             {

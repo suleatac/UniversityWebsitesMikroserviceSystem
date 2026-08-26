@@ -83,9 +83,7 @@ namespace Microservice.Admin.Controllers
             {
                 Id = result.Data.Id,
                 TemplateAdi = result.Data.TemplateAdi,
-                TemplateTuru = result.Data.TemplateTuru,
-                FolderName = result.Data.FolderName,
-                LayoutPath = result.Data.LayoutPath
+                TemplateTuru = result.Data.TemplateTuru
             };
 
             return View(updateModel);

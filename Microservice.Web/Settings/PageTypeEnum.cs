@@ -2,7 +2,7 @@
 {
     public enum PageType
     {
-        Menu = 1,
+        Home = 1,
         NewsList = 2,
         New = 3,
         AnnouncementList = 4,

@@ -9,7 +9,7 @@ namespace Mikroservice.Site.Application.Features.SiteFeatures.CreateSite
         public string SiteUrl { get; init; } = default!;
         public int BirimId { get; init; }
         public string SiteAlanAdi { get; init; } = default!;
-
+        public int DefaultLanguageId { get; set; } = 1;
         public string SiteEPosta { get; init; } = default!;
         public string SiteEPostaSifre { get; init; } = default!;
         public string SiteEPostaHost { get; init; } = default!;

@@ -18,6 +18,7 @@ namespace Microservice.Web.Services.ServicesExtentions
             services.AddScoped<IEtkinlikService, EtkinlikService>();
             services.AddScoped<IVideoService, VideoService>();
             services.AddScoped<IRouteService, RouteService>();
+            services.AddScoped<IDilService, DilService>();
             return services;
         }
     }

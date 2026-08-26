@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Mikroservice.Site.Persistence.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260520123342_initial")]
+    [Migration("20260826122004_initial")]
     partial class initial
     {
         /// <inheritdoc />
@@ -20,7 +20,7 @@ namespace Mikroservice.Site.Persistence.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "10.0.5")
+                .HasAnnotation("ProductVersion", "10.0.11")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -325,6 +325,9 @@ namespace Mikroservice.Site.Persistence.Migrations
                         .HasMaxLength(500)
                         .HasColumnType("character varying(500)");
 
+                    b.Property<int>("PageTypeId")
+                        .HasColumnType("integer");
+
                     b.Property<string>("ResimUrl")
                         .HasMaxLength(500)
                         .HasColumnType("character varying(500)");
@@ -353,6 +356,8 @@ namespace Mikroservice.Site.Persistence.Migrations
                     b.HasIndex("DilId");
 
                     b.HasIndex("HedefId");
+
+                    b.HasIndex("PageTypeId");
 
                     b.HasIndex("SiteId", "DilId");
 
@@ -441,6 +446,9 @@ namespace Mikroservice.Site.Persistence.Migrations
                     b.Property<DateTime>("OlusturulmaTarihi")
                         .HasColumnType("timestamp without time zone");
 
+                    b.Property<int>("PageTypeId")
+                        .HasColumnType("integer");
+
                     b.Property<int?>("ParentId")
                         .HasColumnType("integer");
 
@@ -456,11 +464,68 @@ namespace Mikroservice.Site.Persistence.Migrations
 
                     b.HasIndex("HedefId");
 
+                    b.HasIndex("PageTypeId");
+
                     b.HasIndex("ParentId", "Sira");
 
                     b.HasIndex("SiteId", "DilId");
 
                     b.ToTable("Menuler");
+                });
+
+            modelBuilder.Entity("Mikroservice.Site.Domain.Entities.PageType", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("DilId")
+                        .HasColumnType("integer");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsHomePage")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<int>("PageTypeId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("SiteId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Slug")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<int>("TemplateId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("ViewName")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DilId");
+
+                    b.HasIndex("TemplateId");
+
+                    b.HasIndex("SiteId", "DilId", "Slug")
+                        .IsUnique();
+
+                    b.ToTable("PageTypes");
                 });
 
             modelBuilder.Entity("Mikroservice.Site.Domain.Entities.PersonelTelefon", b =>
@@ -558,6 +623,9 @@ namespace Mikroservice.Site.Persistence.Migrations
                         .HasMaxLength(500)
                         .HasColumnType("character varying(500)");
 
+                    b.Property<int>("PageTypeId")
+                        .HasColumnType("integer");
+
                     b.Property<string>("ResimUrl")
                         .HasMaxLength(500)
                         .HasColumnType("character varying(500)");
@@ -584,6 +652,8 @@ namespace Mikroservice.Site.Persistence.Migrations
                         .HasColumnType("timestamp without time zone");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("PageTypeId");
 
                     b.HasIndex("SiteId")
                         .IsUnique();
@@ -651,6 +721,9 @@ namespace Mikroservice.Site.Persistence.Migrations
                     b.Property<int>("BirimId")
                         .HasColumnType("integer");
 
+                    b.Property<int>("DefaultLanguageId")
+                        .HasColumnType("integer");
+
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
 
@@ -698,6 +771,8 @@ namespace Mikroservice.Site.Persistence.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("BirimId");
+
+                    b.HasIndex("DefaultLanguageId");
 
                     b.HasIndex("TemplateId");
 
@@ -880,11 +955,11 @@ namespace Mikroservice.Site.Persistence.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("FolderName")
-                        .HasColumnType("text");
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp without time zone");
 
-                    b.Property<string>("LayoutPath")
-                        .HasColumnType("text");
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
 
                     b.Property<string>("TemplateAdi")
                         .IsRequired()
@@ -1076,9 +1151,17 @@ namespace Mikroservice.Site.Persistence.Migrations
                         .WithMany()
                         .HasForeignKey("HedefId");
 
+                    b.HasOne("Mikroservice.Site.Domain.Entities.PageType", "PageType")
+                        .WithMany("Icerikler")
+                        .HasForeignKey("PageTypeId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.Navigation("Dil");
 
                     b.Navigation("Hedef");
+
+                    b.Navigation("PageType");
                 });
 
             modelBuilder.Entity("Mikroservice.Site.Domain.Entities.MediaFile", b =>
@@ -1114,6 +1197,12 @@ namespace Mikroservice.Site.Persistence.Migrations
                         .OnDelete(DeleteBehavior.SetNull)
                         .IsRequired();
 
+                    b.HasOne("Mikroservice.Site.Domain.Entities.PageType", "PageType")
+                        .WithMany("Menuler")
+                        .HasForeignKey("PageTypeId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("Mikroservice.Site.Domain.Entities.Menu", "Parent")
                         .WithMany("Children")
                         .HasForeignKey("ParentId")
@@ -1129,9 +1218,38 @@ namespace Mikroservice.Site.Persistence.Migrations
 
                     b.Navigation("Hedef");
 
+                    b.Navigation("PageType");
+
                     b.Navigation("Parent");
 
                     b.Navigation("Site");
+                });
+
+            modelBuilder.Entity("Mikroservice.Site.Domain.Entities.PageType", b =>
+                {
+                    b.HasOne("Mikroservice.Site.Domain.Entities.Dil", "Dil")
+                        .WithMany()
+                        .HasForeignKey("DilId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Mikroservice.Site.Domain.Entities.Site", "Site")
+                        .WithMany("PageTypes")
+                        .HasForeignKey("SiteId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Mikroservice.Site.Domain.Entities.Template", "Template")
+                        .WithMany("PageTypes")
+                        .HasForeignKey("TemplateId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Dil");
+
+                    b.Navigation("Site");
+
+                    b.Navigation("Template");
                 });
 
             modelBuilder.Entity("Mikroservice.Site.Domain.Entities.PersonelTelefon", b =>
@@ -1147,11 +1265,19 @@ namespace Mikroservice.Site.Persistence.Migrations
 
             modelBuilder.Entity("Mikroservice.Site.Domain.Entities.Popup", b =>
                 {
+                    b.HasOne("Mikroservice.Site.Domain.Entities.PageType", "PageType")
+                        .WithMany("Popuplar")
+                        .HasForeignKey("PageTypeId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("Mikroservice.Site.Domain.Entities.Site", "Site")
                         .WithOne("Popup")
                         .HasForeignKey("Mikroservice.Site.Domain.Entities.Popup", "SiteId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("PageType");
 
                     b.Navigation("Site");
                 });
@@ -1190,6 +1316,12 @@ namespace Mikroservice.Site.Persistence.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Mikroservice.Site.Domain.Entities.Dil", "DefaultLanguage")
+                        .WithMany()
+                        .HasForeignKey("DefaultLanguageId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Mikroservice.Site.Domain.Entities.Template", "Template")
                         .WithMany("Sites")
                         .HasForeignKey("TemplateId")
@@ -1197,6 +1329,8 @@ namespace Mikroservice.Site.Persistence.Migrations
                         .IsRequired();
 
                     b.Navigation("Birim");
+
+                    b.Navigation("DefaultLanguage");
 
                     b.Navigation("Template");
                 });
@@ -1351,6 +1485,15 @@ namespace Mikroservice.Site.Persistence.Migrations
                     b.Navigation("Children");
                 });
 
+            modelBuilder.Entity("Mikroservice.Site.Domain.Entities.PageType", b =>
+                {
+                    b.Navigation("Icerikler");
+
+                    b.Navigation("Menuler");
+
+                    b.Navigation("Popuplar");
+                });
+
             modelBuilder.Entity("Mikroservice.Site.Domain.Entities.PersonelTip", b =>
                 {
                     b.Navigation("SitePersonels");
@@ -1375,6 +1518,8 @@ namespace Mikroservice.Site.Persistence.Migrations
 
                     b.Navigation("Menus");
 
+                    b.Navigation("PageTypes");
+
                     b.Navigation("Popup");
 
                     b.Navigation("SikcaSorulanSorus");
@@ -1394,6 +1539,8 @@ namespace Mikroservice.Site.Persistence.Migrations
 
             modelBuilder.Entity("Mikroservice.Site.Domain.Entities.Template", b =>
                 {
+                    b.Navigation("PageTypes");
+
                     b.Navigation("Sites");
                 });
 

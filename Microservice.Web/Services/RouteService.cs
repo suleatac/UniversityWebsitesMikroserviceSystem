@@ -14,6 +14,7 @@ namespace Microservice.Web.Services
         private readonly ISiteService _siteService;
         private readonly IHaberClientServices _haberClient;
         private readonly IDuyuruClientServices _duyuruClient;
+        private readonly IDilService _dilService;
         private readonly ILogger<RouteService> _logger;
 
         public RouteService(
@@ -21,6 +22,7 @@ namespace Microservice.Web.Services
             ISiteService siteService,
             IHaberClientServices haberClient,
             IDuyuruClientServices duyuruClient,
+            IDilService dilService,
             ILogger<RouteService> logger)
         {
             _pageClient = pageClient
@@ -31,6 +33,9 @@ namespace Microservice.Web.Services
 
             _haberClient = haberClient
                 ?? throw new ArgumentNullException(nameof(haberClient));
+
+            _dilService = dilService
+                ?? throw new ArgumentNullException(nameof(dilService));
 
             _duyuruClient = duyuruClient
                 ?? throw new ArgumentNullException(nameof(duyuruClient));
@@ -74,7 +79,7 @@ namespace Microservice.Web.Services
 
             if (segments.Length == 0)
             {
-                return null;
+                return await ResolveDefaultHomePageAsync(site);
             }
 
             // =========================================================
@@ -190,7 +195,45 @@ namespace Microservice.Web.Services
         // =============================================================
         // HOME PAGE
         // =============================================================
+        private async Task<RouteResolveResult?> ResolveDefaultHomePageAsync(dynamic site)
+        {
+            var defaultLanguageId = (int)site.defaultLanguageId;
 
+            var dilResult = await _dilService
+               .GetDilByIdAsync(defaultLanguageId);
+
+            if (!dilResult.IsSuccess || dilResult.Data is null)
+            {
+                _logger.LogWarning(
+                    "Dil bulunamadı. defaultLanguageId: {DefaultLanguageId}",
+                    defaultLanguageId);
+
+                return null;
+            }
+
+            string defaultLanguageCode = dilResult.Data.Kod;
+
+            var response = await _pageClient
+                .HomePageControlAsync(
+                    site.Id,
+                    defaultLanguageId);
+
+            if (!response.IsSuccessful || response.Content is null)
+            {
+                _logger.LogWarning(
+                    "Ana sayfa bulunamadı. SiteId: {SiteId}, LanguageId: {LanguageId}",
+                    (int)site.Id,
+                    defaultLanguageId);
+
+                return null;
+            }
+
+            return new RouteResolveResult {
+                Page = response.Content,
+                LanguageId = defaultLanguageId,
+                LanguageCode = defaultLanguageCode
+            };
+        }
         private async Task<RouteResolveResult?> ResolveHomePageAsync(
             int siteId,
             int languageId,

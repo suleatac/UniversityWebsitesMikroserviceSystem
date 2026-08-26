@@ -9,7 +9,6 @@ namespace Mikroservice.Site.Domain.SeedDatas
         {
             new Template 
               { 
-                Id = 1, 
                 TemplateAdi = "Default", 
                 TemplateTuru = "İdari",
 

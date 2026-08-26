@@ -6,8 +6,8 @@ namespace Mikroservice.Site.Domain.SeedDatas
     {
         public static List<PersonelTip> PersonelTipler => new List<PersonelTip>
 {
-            new PersonelTip { Id = 1, Ad = "İdari"},
-            new PersonelTip { Id = 2, Ad = "Akademik"}
+            new PersonelTip {  Ad = "İdari"},
+            new PersonelTip {  Ad = "Akademik"}
         };
 
         public static List<PersonelTip> GetYoneticiTipiSeedDatas()

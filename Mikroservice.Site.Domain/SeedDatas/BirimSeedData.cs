@@ -6,8 +6,8 @@ namespace Mikroservice.Site.Domain.SeedDatas
     {
         public static List<Birim> YoneticiTipleri => new List<Birim>
  {
-            new Birim { Id = 1, ParentId = null, Ad = "Rektörlük", Sira=1 },
-            new Birim { Id = 2, ParentId = 1, Ad = "Bilgi İşlem Daire Başkanlığı", Sira=2}
+            new Birim { ParentId = null, Ad = "Rektörlük", Sira=1 },
+            new Birim { ParentId = 1, Ad = "Bilgi İşlem Daire Başkanlığı", Sira=2}
         };
 
         public static List<Birim> GetBirimSeedDatas()

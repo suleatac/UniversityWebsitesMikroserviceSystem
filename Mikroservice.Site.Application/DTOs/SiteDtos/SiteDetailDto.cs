@@ -14,5 +14,6 @@
         public int SiteEPostaPort { get; set; }
         public string SiteEPostaSifre { get; init; } = default!;
         public int SertifikaParmakIziId { get; init; }
+        public int DefaultLanguageId { get; set; } = 1;
     }
 }

@@ -104,6 +104,7 @@ namespace Microservice.Admin.Middleware
                 "/User",
                 "/YoneticiSite/",
                 "/Template/",
+                "/PageType/",
                 "/Profile"
             };
 

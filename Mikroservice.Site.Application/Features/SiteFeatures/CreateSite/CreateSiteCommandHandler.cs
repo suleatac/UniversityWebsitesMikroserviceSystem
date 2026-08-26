@@ -23,7 +23,7 @@ namespace Mikroservice.Site.Application.Features.SiteFeatures.CreateSite
                 SiteUrl = request.SiteUrl,
                 BirimId = request.BirimId,
                 SiteAlanAdi = request.SiteAlanAdi,
-
+                DefaultLanguageId = request.DefaultLanguageId,
                 SiteEPosta = request.SiteEPosta,
                 SiteEPostaSifre = request.SiteEPostaSifre,
                 SiteEPostaHost = request.SiteEPostaHost,

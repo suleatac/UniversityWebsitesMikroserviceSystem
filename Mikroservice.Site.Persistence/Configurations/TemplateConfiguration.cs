@@ -11,7 +11,7 @@ namespace Mikroservice.Site.Persistence.Configurations
             builder.HasKey(o => o.Id);
             builder.Property(b => b.TemplateAdi).IsRequired().HasMaxLength(200);
             builder.Property(b => b.TemplateTuru).IsRequired().HasMaxLength(100);
-
+            builder.Property(x => x.CreatedAt).HasColumnType("timestamp without time zone");
             // 1 Template → N Site
             builder.HasMany(x => x.Sites)
                 .WithOne(x => x.Template)

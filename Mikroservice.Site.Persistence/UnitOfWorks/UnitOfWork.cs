@@ -70,32 +70,7 @@ namespace Microservice.Site.Persistence.UnitOfWorks
 
         public async Task SaveChangesAsync(CancellationToken cancellationToken = default)
         {
-     
-            var ownsTransaction = _transaction is null;
-
-            if (ownsTransaction)
-            {
-                await BeginTransactionAsync(cancellationToken: cancellationToken);
-            }
-
-            try
-            {
-                await _dbContext.SaveChangesAsync(cancellationToken);
-
-                if (ownsTransaction)
-                {
-                    await CommitAsync(cancellationToken);
-                }
-            }
-            catch
-            {
-                if (ownsTransaction)
-                {
-                    await RollbackAsync(cancellationToken);
-                }
-
-                throw;
-            }
+            await _dbContext.SaveChangesAsync(cancellationToken);
         }
 
 

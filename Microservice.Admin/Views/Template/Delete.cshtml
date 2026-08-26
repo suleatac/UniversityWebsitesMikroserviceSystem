@@ -51,21 +51,7 @@
                     </div>
                 </div>
 
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="mb-3">
-                            <label class="form-label text-muted small">Folder Name</label>
-                            <div class="form-control-plaintext fw-semibold">@Model.FolderName</div>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="mb-3">
-                            <label class="form-label text-muted small">Layout Path</label>
-                            <div class="form-control-plaintext fw-semibold">@Model.LayoutPath</div>
-                        </div>
-                    </div>
-                </div>
-
+               
                 <form asp-action="DeleteConfirmed" method="post">
                     @Html.AntiForgeryToken()
                     <input type="hidden" asp-for="Id" />
