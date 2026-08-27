@@ -41,6 +41,11 @@ namespace Mikroservice.Site.Persistence.Configurations
                    .WithOne(p => p.Site)
                    .HasForeignKey<Popup>(p => p.SiteId)
                    .OnDelete(DeleteBehavior.Cascade);
+
+            builder.HasOne(s => s.DefaultLanguage)
+                   .WithMany()
+                   .HasForeignKey(s => s.DefaultLanguageId)
+                   .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

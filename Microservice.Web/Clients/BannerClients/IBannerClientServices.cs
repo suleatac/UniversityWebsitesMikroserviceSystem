@@ -7,5 +7,8 @@ namespace Microservice.Web.Clients.BannerClients
     {
         [Get("/api/v1/banners/{id}")]
         Task<ApiResponse<ContentDetailVm>> GetBannerByIdAsync(int id);
+
+        [Get("/api/v1/banners")]
+        Task<ApiResponse<List<ContentDetailVm>>> GetBannersAsync(int siteId, int dilId);
     }
 }

@@ -18,9 +18,7 @@ namespace Mikroservice.Site.Api.Endpoints.DilEndPoints
             group.MapToApiVersion(1.0);
             group.GetDilsEndpointGroupItem();
             group.GetDilByIdEndpointGroupItem();
-
-
-            group.RequireAuthorization("Password");
+            group.RequireAuthorization("ClientCredential");
         }
     }
 }

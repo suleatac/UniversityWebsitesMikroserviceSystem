@@ -1,4 +1,6 @@
-﻿namespace Mikroservice.Site.Application.DTOs.SiteDtos
+﻿using Mikroservice.Site.Domain.Entities;
+
+namespace Mikroservice.Site.Application.DTOs.SiteDtos
 {
     public class SiteDetailDto
     {
@@ -15,5 +17,6 @@
         public string SiteEPostaSifre { get; init; } = default!;
         public int SertifikaParmakIziId { get; init; }
         public int DefaultLanguageId { get; set; } = 1;
+        public Dil DefaultLanguage { get; set; } = new Dil();
     }
 }

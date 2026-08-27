@@ -17,5 +17,46 @@
                 </div>
             }
         </div>
+
+        @if (Model.Banners.Count > 0)
+        {
+            <div class="row g-3 mt-4">
+                @foreach (var banner in Model.Banners)
+                {
+                    <div class="col-md-4">
+                        <div class="card border-0 shadow-sm h-100">
+                            @if (!string.IsNullOrWhiteSpace(banner.ResimUrl))
+                            {
+                                <img src="@banner.ResimUrl" class="card-img-top" alt="@banner.Baslik" />
+                            }
+                            <div class="card-body">
+                                <h6 class="card-title">@banner.Baslik</h6>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+
+        <div class="row mt-4 g-4">
+            <div class="col-md-6">
+                <h5 class="fw-bold">Güncel Haberler</h5>
+                <ul class="list-group list-group-flush">
+                    @foreach (var haber in Model.Haberler)
+                    {
+                        <li class="list-group-item">@haber.Baslik</li>
+                    }
+                </ul>
+            </div>
+            <div class="col-md-6">
+                <h5 class="fw-bold">Güncel Duyurular</h5>
+                <ul class="list-group list-group-flush">
+                    @foreach (var duyuru in Model.Duyurular)
+                    {
+                        <li class="list-group-item">@duyuru.Baslik</li>
+                    }
+                </ul>
+            </div>
+        </div>
     </div>
 </section>

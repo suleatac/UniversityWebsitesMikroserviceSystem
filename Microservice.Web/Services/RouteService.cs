@@ -5,16 +5,19 @@ using Microservice.Web.Services.Interfaces;
 using Microservice.Web.Settings;
 using Microservice.Web.ViewModels.PageRoute;
 using Microservice.Web.ViewModels.Pages;
+using Microservice.Web.ViewModels.Site;
 
 namespace Microservice.Web.Services
 {
     public class RouteService : IRouteService
     {
+        private static readonly TimeSpan CacheDuration = TimeSpan.FromMinutes(5);
+
         private readonly IPageTypeClientServices _pageClient;
         private readonly ISiteService _siteService;
         private readonly IHaberClientServices _haberClient;
         private readonly IDuyuruClientServices _duyuruClient;
-        private readonly IDilService _dilService;
+        private readonly IRedisCacheService _redisCacheService;
         private readonly ILogger<RouteService> _logger;
 
         public RouteService(
@@ -22,7 +25,7 @@ namespace Microservice.Web.Services
             ISiteService siteService,
             IHaberClientServices haberClient,
             IDuyuruClientServices duyuruClient,
-            IDilService dilService,
+            IRedisCacheService redisCacheService,
             ILogger<RouteService> logger)
         {
             _pageClient = pageClient
@@ -34,17 +37,40 @@ namespace Microservice.Web.Services
             _haberClient = haberClient
                 ?? throw new ArgumentNullException(nameof(haberClient));
 
-            _dilService = dilService
-                ?? throw new ArgumentNullException(nameof(dilService));
-
             _duyuruClient = duyuruClient
                 ?? throw new ArgumentNullException(nameof(duyuruClient));
+
+            _redisCacheService = redisCacheService
+                ?? throw new ArgumentNullException(nameof(redisCacheService));
 
             _logger = logger
                 ?? throw new ArgumentNullException(nameof(logger));
         }
 
         public async Task<RouteResolveResult?> ResolveAsync(
+            string host,
+            string path)
+        {
+            var cacheKey = $"route:{host.ToLowerInvariant()}:{path.Trim('/').ToLowerInvariant()}";
+
+            var cached = await _redisCacheService.GetAsync<RouteResolveResult>(cacheKey);
+            if (cached is not null)
+            {
+                _logger.LogInformation("Route cache'den alındı. Host: {Host}, Path: {Path}", host, path);
+                return cached;
+            }
+
+            var result = await ResolveInternalAsync(host, path);
+
+            if (result is not null)
+            {
+                await _redisCacheService.SetAsync(cacheKey, result, CacheDuration);
+            }
+
+            return result;
+        }
+
+        private async Task<RouteResolveResult?> ResolveInternalAsync(
             string host,
             string path)
         {
@@ -195,23 +221,23 @@ namespace Microservice.Web.Services
         // =============================================================
         // HOME PAGE
         // =============================================================
-        private async Task<RouteResolveResult?> ResolveDefaultHomePageAsync(dynamic site)
+        private async Task<RouteResolveResult?> ResolveDefaultHomePageAsync(SiteDetailGetVm site)
         {
-            var defaultLanguageId = (int)site.defaultLanguageId;
+            var defaultLanguageId = site.DefaultLanguageId;
 
-            var dilResult = await _dilService
-               .GetDilByIdAsync(defaultLanguageId);
+            //var dilResult = await _dilService
+            //   .GetDilByIdAsync(defaultLanguageId);
 
-            if (!dilResult.IsSuccess || dilResult.Data is null)
-            {
-                _logger.LogWarning(
-                    "Dil bulunamadı. defaultLanguageId: {DefaultLanguageId}",
-                    defaultLanguageId);
+            //if (!dilResult.IsSuccess || dilResult.Data is null)
+            //{
+            //    _logger.LogWarning(
+            //        "Dil bulunamadı. defaultLanguageId: {DefaultLanguageId}",
+            //        defaultLanguageId);
 
-                return null;
-            }
+            //    return null;
+            //}
 
-            string defaultLanguageCode = dilResult.Data.Kod;
+            string defaultLanguageCode = site.DefaultLanguage.Kod.ToLower();
 
             var response = await _pageClient
                 .HomePageControlAsync(

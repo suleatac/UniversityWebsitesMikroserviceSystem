@@ -16,5 +16,13 @@ namespace Microservice.Site.Persistence.Repositories
         {
             return await _appDbContext.Set<Mikroservice.Site.Domain.Entities.Site>().AnyAsync(cancellationToken);
         }
+
+        public Task<Mikroservice.Site.Domain.Entities.Site?> GetSiteByHostAsync(string host, CancellationToken cancellationToken = default)
+        {
+            return _appDbContext.Set<Mikroservice.Site.Domain.Entities.Site>()
+            .Include(x => x.DefaultLanguage)
+            .FirstOrDefaultAsync( x => x.SiteUrl == host, cancellationToken);
+        }
+
     }
 }

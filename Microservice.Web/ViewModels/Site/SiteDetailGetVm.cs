@@ -1,4 +1,6 @@
-﻿namespace Microservice.Web.ViewModels.Site
+﻿using Microservice.Web.ViewModels.Dil;
+
+namespace Microservice.Web.ViewModels.Site
 {
     public class SiteDetailGetVm
     {
@@ -12,6 +14,8 @@
         public int BirimId { get; set; }
         public string SiteEPostaHost { get; set; } = default!;
         public int SiteEPostaPort { get; set; }
+        public int DefaultLanguageId { get; set; }
         public string SiteEPostaSifre { get; init; } = default!;
+        public GetDilVm DefaultLanguage { get; set; } = null!;
     }
 }

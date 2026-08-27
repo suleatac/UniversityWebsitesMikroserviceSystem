@@ -10,22 +10,20 @@ namespace Mikroservice.Site.Application.Features.SiteFeatures.GetSiteByHost
         ISiteRepository siteRepository,
         IMapper mapper) : IRequestHandler<GetSiteByHostQuery, ServiceResult<SiteDetailDto>>
     {
-        public Task<ServiceResult<SiteDetailDto>> Handle(GetSiteByHostQuery request, CancellationToken cancellationToken)
+        public async Task<ServiceResult<SiteDetailDto>> Handle(GetSiteByHostQuery request, CancellationToken cancellationToken)
         {
             var host = request.Host.Trim().ToLowerInvariant();
          
 
-            var site = siteRepository.GetAll()
-                .Where(x => !x.IsDeleted)
-                .FirstOrDefault(x => x.SiteUrl == host);
+            var site = await siteRepository.GetSiteByHostAsync(host, cancellationToken);
 
             if (site is null)
             {
-                return Task.FromResult(ServiceResult<SiteDetailDto>.Error("Site not found", System.Net.HttpStatusCode.NotFound));
+                return ServiceResult<SiteDetailDto>.Error("Site not found", System.Net.HttpStatusCode.NotFound);
             }
 
             var dto = mapper.Map<SiteDetailDto>(site);
-            return Task.FromResult(ServiceResult<SiteDetailDto>.SuccessAsOK(dto));
+            return ServiceResult<SiteDetailDto>.SuccessAsOK(dto);
         }
     }
 }

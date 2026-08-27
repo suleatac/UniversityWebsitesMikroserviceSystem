@@ -8,17 +8,30 @@ namespace Microservice.Web.Services
 {
     public class MenuService : IMenuService
     {
+        private static readonly TimeSpan CacheDuration = TimeSpan.FromMinutes(10);
+
         private readonly IMenuClientServices _menuClient;
+        private readonly IRedisCacheService _redisCacheService;
         private readonly ILogger<MenuService> _logger;
 
-        public MenuService(IMenuClientServices menuClient, ILogger<MenuService> logger)
+        public MenuService(IMenuClientServices menuClient, IRedisCacheService redisCacheService, ILogger<MenuService> logger)
         {
             _menuClient = menuClient;
+            _redisCacheService = redisCacheService;
             _logger = logger;
         }
 
         public async Task<ServiceResult<List<MenuGetVm>>> GetMenusAsync(int siteId, int dilId)
         {
+            var cacheKey = $"menu:list:{siteId}:{dilId}";
+
+            var cached = await _redisCacheService.GetListAsync<MenuGetVm>(cacheKey);
+            if (cached is not null)
+            {
+                _logger.LogInformation("Menuler cache'den al\u0131nd\u0131. SiteId: {SiteId}, DilId: {DilId}", siteId, dilId);
+                return ServiceResult<List<MenuGetVm>>.Success(cached);
+            }
+
             _logger.LogInformation("Menuler çekiliyor. SiteId: {SiteId}, DilId: {DilId}", siteId, dilId);
 
             var response = await _menuClient.GetMenusAsync(siteId, dilId);
@@ -34,7 +47,10 @@ namespace Microservice.Web.Services
                 return ServiceResult<List<MenuGetVm>>.Error(problemDetails?.Detail ?? problemDetails?.Title ?? "Menuler alınamadı");
             }
 
-            return ServiceResult<List<MenuGetVm>>.Success(response.Content ?? new List<MenuGetVm>());
+            var menus = response.Content ?? new List<MenuGetVm>();
+            await _redisCacheService.SetListAsync(cacheKey, menus, CacheDuration);
+
+            return ServiceResult<List<MenuGetVm>>.Success(menus);
         }
     }
 }

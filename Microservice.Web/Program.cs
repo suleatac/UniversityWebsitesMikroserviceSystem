@@ -47,7 +47,7 @@ app.UseRequestLocalization(new RequestLocalizationOptions {
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
-    app.UseExceptionHandler("/Home/Error");
+    app.UseExceptionHandler("/Error");
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
@@ -58,6 +58,15 @@ app.UseRouting();
 
 
 app.MapStaticAssets();
+
+// catch-all'dan önce eşleşmeli, yoksa her zaman Template/Index'e düşer
+app.MapControllerRoute(
+    name: "error",
+    pattern: "/Error",
+    defaults: new {
+        controller = "Template",
+        action = "Error"
+    });
 
 app.MapControllerRoute(
     name: "template",
