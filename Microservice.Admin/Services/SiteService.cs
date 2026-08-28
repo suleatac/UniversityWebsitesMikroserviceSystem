@@ -27,8 +27,8 @@ namespace Microservice.Admin.Services
 
             if (!response.IsSuccessStatusCode)
             {
-                var problemDetails = response.Error != null
-                    ? JsonSerializer.Deserialize<Microsoft.AspNetCore.Mvc.ProblemDetails>(response.Error.Content!)
+                var problemDetails = !string.IsNullOrWhiteSpace(response.Error?.Content)
+                    ? JsonSerializer.Deserialize<Microsoft.AspNetCore.Mvc.ProblemDetails>(response.Error!.Content!)
                     : null;
 
                 _logger.LogError(

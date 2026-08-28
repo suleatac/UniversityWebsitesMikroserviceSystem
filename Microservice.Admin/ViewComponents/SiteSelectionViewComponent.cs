@@ -43,21 +43,31 @@ namespace Microservice.Admin.ViewComponents
             {
                 // Admin tüm siteleri görebilir
                 model.IsAdmin = true;
-                var sitesResult = await _siteService.GetSitesAsync();
-                if (sitesResult.IsSuccess && sitesResult.Data != null)
+                try
                 {
-                    model.Sites = sitesResult.Data;
-
-                    // Sistemde hiç site yoksa NoSitesAvailable flag'ini set et
-                    if (!model.Sites.Any())
+                    var sitesResult = await _siteService.GetSitesAsync();
+                    if (sitesResult.IsSuccess && sitesResult.Data != null)
                     {
+                        model.Sites = sitesResult.Data;
+
+                        // Sistemde hiç site yoksa NoSitesAvailable flag'ini set et
+                        if (!model.Sites.Any())
+                        {
+                            model.NoSitesAvailable = true;
+                            _logger.LogWarning("Sistemde kayıtlı hiç site bulunmamaktadır. Admin kullanıcı site eklemeli.");
+                        }
+                    }
+                    else
+                    {
+                        _logger.LogWarning("Site listesi yüklenemedi. Varsayılan boş liste kullanılıyor.");
+                        model.Sites = new List<ViewModels.Site.SiteGetVm>();
                         model.NoSitesAvailable = true;
-                        _logger.LogWarning("Sistemde kayıtlı hiç site bulunmamaktadır. Admin kullanıcı site eklemeli.");
                     }
                 }
-                else
+                catch (Exception ex)
                 {
-                    _logger.LogWarning("Site listesi yüklenemedi. Varsayılan boş liste kullanılıyor.");
+                    // Site mikroservisine ulaşılamadığında topbar'ın çökmesini engelle
+                    _logger.LogError(ex, "Site listesi yüklenirken beklenmeyen hata oluştu.");
                     model.Sites = new List<ViewModels.Site.SiteGetVm>();
                     model.NoSitesAvailable = true;
                 }
@@ -129,14 +139,22 @@ namespace Microservice.Admin.ViewComponents
             }
 
             // Dilleri API'den çek
-            var dillerResult = await _dilService.GetDilsAsync();
-            if (dillerResult.IsSuccess && dillerResult.Data != null)
+            try
             {
-                model.Diller = dillerResult.Data;
+                var dillerResult = await _dilService.GetDilsAsync();
+                if (dillerResult.IsSuccess && dillerResult.Data != null)
+                {
+                    model.Diller = dillerResult.Data;
+                }
+                else
+                {
+                    _logger.LogWarning("Dil listesi yüklenemedi. Varsayılan boş liste kullanılıyor.");
+                    model.Diller = new List<ViewModels.Dil.GetDilVm>();
+                }
             }
-            else
+            catch (Exception ex)
             {
-                _logger.LogWarning("Dil listesi yüklenemedi. Varsayılan boş liste kullanılıyor.");
+                _logger.LogError(ex, "Dil listesi yüklenirken beklenmeyen hata oluştu.");
                 model.Diller = new List<ViewModels.Dil.GetDilVm>();
             }
 
