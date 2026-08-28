@@ -24,7 +24,7 @@ namespace Mikroservice.Site.Api.Endpoints.SiteEndPoints
             group.GetSiteByIdEndpointGroupItem();
             group.GetSiteByHostEndpointGroupItem();
             group.GetPaginatedSiteEndpointGroupItem();
-            group.RequireAuthorization("ClientCredential");
+            group.RequireAuthorization("Password");
         }
     }
 }
