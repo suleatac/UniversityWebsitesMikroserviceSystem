@@ -124,6 +124,12 @@ app.UseMiddleware<SiteSelectionMiddleware>();
 
 app.MapStaticAssets();
 
+// Default route'tan önce eşleşmeli, yoksa /Error -> Error/SignIn'e düşer ve 404 verir
+app.MapControllerRoute(
+    name: "error",
+    pattern: "/Error",
+    defaults: new { controller = "Error", action = "Index" });
+
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Auth}/{action=SignIn}/{id?}")
