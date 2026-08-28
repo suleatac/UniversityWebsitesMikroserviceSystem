@@ -253,27 +253,36 @@ namespace Microservice.Admin.Services
         {
             _logger.LogInformation("Okunmamis yonetim duyuru sayisi getiriliyor.");
 
-            var response = await _yonetimDuyuruRefitService.GetUnreadYonetimDuyuruCountAsync();
-
-            if (!response.IsSuccessStatusCode)
+            try
             {
-                var problemDetails = response.Error != null
-                   ? JsonSerializer.Deserialize<Microsoft.AspNetCore.Mvc.ProblemDetails>(response.Error.Content!)
-                   : null;
+                var response = await _yonetimDuyuruRefitService.GetUnreadYonetimDuyuruCountAsync();
 
-                _logger.LogError(
-                    "API Error -> StatusCode: {StatusCode}, Title: {Title}, Detail: {Detail}",
-                    response.StatusCode,
-                    problemDetails?.Title,
-                    problemDetails?.Detail
-                );
+                if (!response.IsSuccessStatusCode)
+                {
+                    var problemDetails = !string.IsNullOrWhiteSpace(response.Error?.Content)
+                       ? JsonSerializer.Deserialize<Microsoft.AspNetCore.Mvc.ProblemDetails>(response.Error!.Content!)
+                       : null;
 
-                return ServiceResult<int>
-                    .Error(problemDetails?.Detail ?? problemDetails?.Title ?? "Okunmamis duyuru sayisi alinamadi");
+                    _logger.LogError(
+                        "API Error -> StatusCode: {StatusCode}, Title: {Title}, Detail: {Detail}",
+                        response.StatusCode,
+                        problemDetails?.Title,
+                        problemDetails?.Detail
+                    );
 
+                    return ServiceResult<int>
+                        .Error(problemDetails?.Detail ?? problemDetails?.Title ?? "Okunmamis duyuru sayisi alinamadi");
+
+                }
+
+                return ServiceResult<int>.Success(response.Content);
             }
-
-            return ServiceResult<int>.Success(response.Content);
+            catch (Exception ex)
+            {
+                // Mikroservise ulaşılamadığında topbar'ın çökmesini engelle
+                _logger.LogError(ex, "Okunmamis yonetim duyuru sayisi alinirken beklenmeyen hata olustu.");
+                return ServiceResult<int>.Error("Okunmamis duyuru sayisi alinamadi");
+            }
         }
 
     }
