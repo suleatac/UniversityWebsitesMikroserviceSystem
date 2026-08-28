@@ -195,7 +195,7 @@ namespace Mikroservice.Site.Persistence.Migrations
                         column: x => x.DefaultLanguageId,
                         principalTable: "Diller",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Siteler_Templateler_TemplateId",
                         column: x => x.TemplateId,

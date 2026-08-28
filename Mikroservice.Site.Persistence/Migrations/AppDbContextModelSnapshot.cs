@@ -1316,7 +1316,7 @@ namespace Mikroservice.Site.Persistence.Migrations
                     b.HasOne("Mikroservice.Site.Domain.Entities.Dil", "DefaultLanguage")
                         .WithMany()
                         .HasForeignKey("DefaultLanguageId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("Mikroservice.Site.Domain.Entities.Template", "Template")

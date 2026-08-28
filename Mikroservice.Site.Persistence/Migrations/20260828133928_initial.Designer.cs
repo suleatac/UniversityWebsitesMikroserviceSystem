@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Mikroservice.Site.Persistence.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260826122004_initial")]
+    [Migration("20260828133928_initial")]
     partial class initial
     {
         /// <inheritdoc />
@@ -1319,7 +1319,7 @@ namespace Mikroservice.Site.Persistence.Migrations
                     b.HasOne("Mikroservice.Site.Domain.Entities.Dil", "DefaultLanguage")
                         .WithMany()
                         .HasForeignKey("DefaultLanguageId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("Mikroservice.Site.Domain.Entities.Template", "Template")
