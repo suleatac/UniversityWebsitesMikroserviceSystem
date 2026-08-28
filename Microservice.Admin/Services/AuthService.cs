@@ -45,11 +45,11 @@ namespace Microservice.Admin.Services
                     );
                 }
 
-    
+
 
                 // LDAP doğrulama
-                var ldapResult = true;
-                //var ldapResult = await LdapAuthenticationAsync(signInViewModel.Username, signInViewModel.Password);
+                //var ldapResult = true;
+                var ldapResult = await LdapAuthenticationAsync(signInViewModel.Username, signInViewModel.Password);
 
                 if (!ldapResult)
                 {
@@ -58,7 +58,7 @@ namespace Microservice.Admin.Services
                         signInViewModel.Username);
 
                     return ServiceResult.Error(
-                        "Authentication Error",
+                        "LDAP Authentication Error",
                         "Kullanıcı adı veya şifre hatalı."
                     );
                 }
