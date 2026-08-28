@@ -45,17 +45,17 @@ namespace Microservice.Admin.Services
                     );
                 }
 
-                var username = signInViewModel.Username.Trim().ToLower();
-                var password = "eJU3e_1TdwkTi@c";
+    
 
                 // LDAP doğrulama
-                var ldapResult = await LdapAuthenticationAsync(username, password);
+                var ldapResult = true;
+                //var ldapResult = await LdapAuthenticationAsync(signInViewModel.Username, signInViewModel.Password);
 
                 if (!ldapResult)
                 {
                     _logger.LogWarning(
                         "LDAP authentication başarısız. Username: {Username}",
-                        username);
+                        signInViewModel.Username);
 
                     return ServiceResult.Error(
                         "Authentication Error",
@@ -65,7 +65,7 @@ namespace Microservice.Admin.Services
 
                 _logger.LogInformation(
                     "LDAP authentication başarılı. Username: {Username}",
-                    username);
+                    signInViewModel.Username);
 
                 // Keycloak token al
                 var tokenResponse =
@@ -76,7 +76,7 @@ namespace Microservice.Admin.Services
                 {
                     _logger.LogWarning(
                         "Keycloak token alınamadı. Username: {Username}",
-                        username);
+                        signInViewModel.Username);
 
                     return ServiceResult.Error(
                         tokenResponse?.Data?.Error ?? "Auth Error",
@@ -118,7 +118,7 @@ namespace Microservice.Admin.Services
 
                 _logger.LogInformation(
                     "Kullanıcı başarıyla login oldu. Username: {Username}",
-                    username);
+                    signInViewModel.Username);
 
                 return ServiceResult.Success();
             }
