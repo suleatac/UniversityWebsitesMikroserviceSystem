@@ -82,7 +82,8 @@ namespace Microservice.Admin.Middleware
             {
                 "/Auth",
                 "/SiteSelection/",
-                "/Site"
+                "/Site",
+                "/Error"
             };
 
             return excludedPrefixes.Any(prefix => path.StartsWith(prefix, StringComparison.OrdinalIgnoreCase));
