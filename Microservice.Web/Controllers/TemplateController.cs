@@ -59,6 +59,7 @@ namespace Microservice.Web.Controllers
 
             var host = Request.Host.Host;
             var path = Request.Path.Value ?? "/";
+
             //return View("~/Views/Templates/Template4/Index.cshtml");
 
             var route = await _routeService.ResolveAsync(
