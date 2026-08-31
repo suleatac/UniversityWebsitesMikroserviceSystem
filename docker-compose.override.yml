@@ -90,7 +90,7 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_HTTP_PORTS=8080
       - ConnectionStrings:Redis=redis.db.api:6379,password=Password12
-      - IdentityOption:Adress=http://keycloak:8080/realms/UniversityRealm
+      - IdentityOption:Address=http://keycloak:8080/realms/UniversityRealm
       - Identity:BaseAddress=http://keycloak:8080
       - IdentityOption:Issuer=http://keycloak:8080/realms/UniversityRealm
       - ElasticSearch:BaseUrl=http://elasticsearch.db.log:9200
