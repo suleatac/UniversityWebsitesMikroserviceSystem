@@ -54,11 +54,11 @@ namespace Microservice.Web.Controllers
         {
             //var host = Request.Host.Host;
             //var path = Request.Path.Value ?? "/";
-            var host = "default.sivas.edu.tr";
-            var path =  "/";
+            //var host = "default.sivas.edu.tr";
+            //var path =  "/";
 
-            //var host = Request.Host.Host;
-            //var path = Request.Path.Value ?? "/";
+            var host = Request.Host.Host;
+            var path = Request.Path.Value ?? "/";
             //return View("~/Views/Templates/Template4/Index.cshtml");
 
             var route = await _routeService.ResolveAsync(
