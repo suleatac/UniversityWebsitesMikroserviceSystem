@@ -22,7 +22,7 @@ namespace Mikroservice.Site.Api.Endpoints.MediaFileEndPoints
             group.DeleteMediaFileEndpointGroupItem();
             group.GetMediaFileEndpointGroupItem();
 
-            group.RequireAuthorization("Password");
+            group.RequireAuthorization("ClientCredential");
         }
     }
 }

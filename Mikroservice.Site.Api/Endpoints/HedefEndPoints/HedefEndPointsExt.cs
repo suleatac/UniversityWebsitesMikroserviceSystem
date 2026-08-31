@@ -19,7 +19,7 @@ namespace Mikroservice.Site.Api.Endpoints.HedefEndPoints
             group.GetHedefsEndpointGroupItem();
 
 
-            group.RequireAuthorization("Password");
+            group.RequireAuthorization("ClientCredential");
         }
     }
 }

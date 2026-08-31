@@ -21,7 +21,7 @@ namespace Mikroservice.Site.Api.Endpoints.TemplateEndPoints
             group.UpdateTemplateEndpointGroupItem();
             group.DeleteTemplateEndpointGroupItem();
             group.GetTemplateByIdEndpointGroupItem();
-            group.RequireAuthorization("Password");
+            group.RequireAuthorization("ClientCredential");
         }
     }
 }

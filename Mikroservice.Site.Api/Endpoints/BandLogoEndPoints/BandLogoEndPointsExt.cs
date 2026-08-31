@@ -22,7 +22,7 @@ namespace Mikroservice.Site.Api.Endpoints.BandLogoEndPoints
             group.DeleteBandLogoEndpointGroupItem();
             group.GetBandLogosEndpointGroupItem();
 
-            group.RequireAuthorization("Password");
+            group.RequireAuthorization("ClientCredential");
         }
     }
 }

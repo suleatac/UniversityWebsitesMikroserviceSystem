@@ -12,7 +12,7 @@ namespace Mikroservice.Site.Persistence.Services
         ILogger<SiteNginxConfigService> logger
     )
     {
-        private const string ConfDirectory = "/home/suleatac/docker/nginx/conf.d";
+        private const string ConfDirectory = "/nginx-conf";
         private const string CertificateDirectory = "/etc/nginx/ssl";
         private const string CertificateBaseName = "sivas.edu.tr";
 

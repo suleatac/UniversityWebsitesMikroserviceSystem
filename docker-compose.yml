@@ -299,6 +299,8 @@ services:
     build:
       context: .
       dockerfile: Mikroservice.Site.Api/Dockerfile
+    volumes:
+      - /home/suleatac/docker/nginx/conf.d:/nginx-conf
     networks:
       - university-network
   microservice.admin:

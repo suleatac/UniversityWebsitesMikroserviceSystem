@@ -22,7 +22,7 @@ namespace Mikroservice.Site.Api.Endpoints.PopupEndPoints
             group.DeletePopupEndpointGroupItem();
             group.GetPopupsEndpointGroupItem();
             group.GetPopupByIdEndpointGroupItem();
-            group.RequireAuthorization("Password");
+            group.RequireAuthorization("ClientCredential");
         }
     }
 }
