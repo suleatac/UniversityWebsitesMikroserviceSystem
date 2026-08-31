@@ -35,25 +35,6 @@ namespace Microservice.Admin.SeriLog
                             return !pathValue.Contains("9200", StringComparison.InvariantCulture);
                         };
 
-                        httpOptions.EnrichWithHttpRequestMessage = async (activity, request) => {
-                            var requestContent = "empty";
-
-                            if (request.Content != null)
-                            {
-                                requestContent = await request.Content.ReadAsStringAsync();
-                            }
-
-                            activity.SetTag("http.request.body", requestContent);
-                        };
-
-                        httpOptions.EnrichWithHttpResponseMessage = async (activity, response) => {
-
-                            if (response.Content != null)
-                            {
-                                activity.SetTag("http.response.body", await response.Content.ReadAsStringAsync());
-                            }
-
-                        };
 
                     })
                     .AddRedisInstrumentation(options => {
