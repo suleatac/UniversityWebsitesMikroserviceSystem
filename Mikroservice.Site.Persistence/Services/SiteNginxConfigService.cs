@@ -42,7 +42,7 @@ namespace Mikroservice.Site.Persistence.Services
             await File.WriteAllTextAsync(
                 currentPath,
                 content,
-                Encoding.UTF8,
+                new UTF8Encoding(encoderShouldEmitUTF8Identifier: false),
                 cancellationToken);
 
             logger.LogInformation(
