@@ -11,7 +11,6 @@
 
   <ItemGroup>
     <Folder Include="Views\Templates\Template2\" />
-    <Folder Include="Views\Templates\Template1\" />
   </ItemGroup>
 
   <ItemGroup>
