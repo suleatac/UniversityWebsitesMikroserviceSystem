@@ -74,11 +74,7 @@ namespace Microservice.Web.Controllers
      
             }
 
-            ViewData["Route"] = route.LanguageCode;
-
-            var viewPath2 = GetTemplateViewPath(1, "test");
-            return View(viewPath2);
-            //return await RenderPageAsync(route);
+            return await RenderPageAsync(route);
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
