@@ -40,10 +40,10 @@ namespace Mikroservice.Site.Persistence.Services
             Directory.CreateDirectory(ConfDirectory);
 
             await File.WriteAllTextAsync(
-                currentPath,
-                content,
-                new UTF8Encoding(encoderShouldEmitUTF8Identifier: false),
-                cancellationToken);
+           currentPath,
+           content,
+           new UTF8Encoding(false),
+           cancellationToken);
 
             logger.LogInformation(
                 "Nginx conf yazıldı: {ConfPath}",
