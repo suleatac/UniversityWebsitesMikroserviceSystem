@@ -52,10 +52,10 @@ namespace Microservice.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            //var host = Request.Host.Host;
-            //var path = Request.Path.Value ?? "/";
-            var host = "default.sivas.edu.tr";
-            var path = "/";
+            var host = Request.Host.Host;
+            var path = Request.Path.Value ?? "/";
+            //var host = "default.sivas.edu.tr";
+            //var path = "/";
 
             //var host = Request.Host.Host;
             //var path = Request.Path.Value ?? "/";
