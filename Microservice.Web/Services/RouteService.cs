@@ -92,7 +92,13 @@ namespace Microservice.Web.Services
                     "Host için site bulunamadı. Host: {Host}",
                     host);
 
-                return null;
+                //return null;
+                var result2 = new RouteResolveResult {
+                    Page = null,
+                    LanguageId = 1,
+                    LanguageCode = "Host için site bulunamadı."
+                };
+                return result2;
             }
 
             var site = siteResult.Data;
@@ -126,7 +132,13 @@ namespace Microservice.Web.Services
                     host,
                     languageCode);
 
-                return null;
+                //return null;
+                var result3 = new RouteResolveResult {
+                    Page = null,
+                    LanguageId = 1,
+                    LanguageCode = "Desteklenmeyen dil kodu.."
+                };
+                return result3;
             }
 
             // =========================================================
@@ -162,7 +174,12 @@ namespace Microservice.Web.Services
 
             if (page is null)
             {
-                return null;
+                var result4 = new RouteResolveResult {
+                    Page = null,
+                    LanguageId = 1,
+                    LanguageCode = "Page null geldi"
+                };
+                return result4;
             }
 
             var result = new RouteResolveResult {
@@ -196,15 +213,27 @@ namespace Microservice.Web.Services
                     "Geçersiz URL yapısı. Host: {Host}, Path: {Path}",
                     host,
                     path);
-
-                return null;
+                var result4 = new RouteResolveResult {
+                    Page = null,
+                    LanguageId = 1,
+                    LanguageCode = "Geçersiz URL yapısı."
+                };
+                return result4;
+                //return null;
             }
 
             var detailSlug = Normalize(segments[2]);
 
             if (string.IsNullOrWhiteSpace(detailSlug))
             {
-                return null;
+                var result5 = new RouteResolveResult {
+                    Page = null,
+                    LanguageId = 1,
+                    LanguageCode = "detailSlug hatası."
+                };
+                return result5;
+
+                //return null;
             }
 
             result.DetailSlug = detailSlug;
@@ -251,7 +280,15 @@ namespace Microservice.Web.Services
                     (int)site.Id,
                     defaultLanguageId);
 
-                return null;
+
+                var result5 = new RouteResolveResult {
+                    Page = null,
+                    LanguageId = 1,
+                    LanguageCode = "Default Ana sayfa bulunamadı."
+                };
+                return result5;
+
+                //return null;
             }
 
             return new RouteResolveResult {
@@ -276,8 +313,15 @@ namespace Microservice.Web.Services
                     "Ana sayfa bulunamadı. SiteId: {SiteId}, LanguageId: {LanguageId}",
                     siteId,
                     languageId);
+                var result5 = new RouteResolveResult {
+                    Page = null,
+                    LanguageId = 1,
+                    LanguageCode = "Ana sayfa bulunamadı."
+                };
+                return result5;
 
-                return null;
+                //return null;
+           
             }
 
             return new RouteResolveResult {
@@ -310,6 +354,9 @@ namespace Microservice.Web.Services
                     languageId,
                     slug);
 
+           
+
+                //return null;
                 return null;
             }
 
@@ -361,7 +408,12 @@ namespace Microservice.Web.Services
                     result.LanguageId,
                     detailSlug);
 
-                return null;
+                var result5 = new RouteResolveResult {
+                    Page = null,
+                    LanguageId = 1,
+                    LanguageCode = "haber bulunamadı."
+                };
+                return result5;
             }
 
             result.New = response.Content;
@@ -388,7 +440,12 @@ namespace Microservice.Web.Services
                     result.LanguageId,
                     detailSlug);
 
-                return null;
+                var result5 = new RouteResolveResult {
+                    Page = null,
+                    LanguageId = 1,
+                    LanguageCode = "duyuru bulunamadı."
+                };
+                return result5;
             }
 
             result.Announcement = response.Content;
