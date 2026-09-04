@@ -481,9 +481,6 @@ namespace Mikroservice.Site.Persistence.Migrations
                     b.Property<int>("DilId")
                         .HasColumnType("integer");
 
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("boolean");
-
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
 
@@ -495,10 +492,7 @@ namespace Mikroservice.Site.Persistence.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("character varying(200)");
 
-                    b.Property<int>("PageTypeId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("SiteId")
+                    b.Property<int>("PageTypeKind")
                         .HasColumnType("integer");
 
                     b.Property<string>("Slug")
@@ -518,9 +512,6 @@ namespace Mikroservice.Site.Persistence.Migrations
                     b.HasIndex("DilId");
 
                     b.HasIndex("TemplateId");
-
-                    b.HasIndex("SiteId", "DilId", "Slug")
-                        .IsUnique();
 
                     b.ToTable("PageTypes");
                 });
@@ -1230,12 +1221,6 @@ namespace Mikroservice.Site.Persistence.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("Mikroservice.Site.Domain.Entities.Site", "Site")
-                        .WithMany("PageTypes")
-                        .HasForeignKey("SiteId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("Mikroservice.Site.Domain.Entities.Template", "Template")
                         .WithMany("PageTypes")
                         .HasForeignKey("TemplateId")
@@ -1243,8 +1228,6 @@ namespace Mikroservice.Site.Persistence.Migrations
                         .IsRequired();
 
                     b.Navigation("Dil");
-
-                    b.Navigation("Site");
 
                     b.Navigation("Template");
                 });
@@ -1514,8 +1497,6 @@ namespace Mikroservice.Site.Persistence.Migrations
                     b.Navigation("MediaFiles");
 
                     b.Navigation("Menus");
-
-                    b.Navigation("PageTypes");
 
                     b.Navigation("Popup");
 

@@ -232,6 +232,22 @@
                         <div class="row">
 
                             <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label asp-for="Menu.PageTypeId" class="form-label">Sayfa Türü <span class="text-danger">*</span></label>
+                                    <select asp-for="Menu.PageTypeId" class="form-select"
+                                            asp-items="@(new SelectList(ViewBag.PageTypeler, "Id", "Ad"))">
+                                        <option value="">-- Seçiniz --</option>
+                                    </select>
+                                    <span asp-validation-for="Menu.PageTypeId"
+                                          class="text-danger small"></span>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="row">
+
+                            <div class="col-md-6">
 
                                 <div class="mb-3">
 

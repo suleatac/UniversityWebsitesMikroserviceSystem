@@ -1,54 +1,87 @@
 @model Microservice.Admin.ViewModels.PageType.CreatePageTypeVm
 @{
-    ViewBag.pTitle = "PageType"; ViewBag.Title = "Yeni PageType"; Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.pTitle = "PageType";
+    ViewBag.Title = "Yeni PageType";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
+
 <div class="row justify-content-center">
     <div class="col-xxl-10">
         <div class="card shadow-lg border-0">
             <div class="card-header bg-primary bg-opacity-10">
-                <h5 class="mb-1"><i class="mdi mdi-file-tree me-2"></i>PageType Bilgileri</h5><p class="text-muted mb-0">Yeni sayfa türü oluşturun</p>
-            </div><div class="card-body p-4">
-            <form asp-action="Create" method="post">
-                <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div><div class="row">
-                <div class="col-md-4 mb-3">
-                    <label asp-for="PageTypeId" class="form-label">PageType Enum Değeri</label>
-                    <input asp-for="PageTypeId" class="form-control" />
-                    <span asp-validation-for="PageTypeId" class="text-danger"></span>
-                </div>
-                <div class="col-md-4 mb-3">
-                    <label asp-for="SiteId" class="form-label">Site ID</label><input asp-for="SiteId" class="form-control" />
-                    <span asp-validation-for="SiteId" class="text-danger"></span>
-                </div>
-                <div class="col-md-4 mb-3">
-                    <label asp-for="DilId" class="form-label">Dil ID</label>
-                    <input asp-for="DilId" class="form-control" />
-                    <span asp-validation-for="DilId" class="text-danger"></span>
-                </div>
-                <div class="col-md-4 mb-3">
-                    <label asp-for="TemplateId" class="form-label">Template ID</label>
-                    <input asp-for="TemplateId" class="form-control" />
-                    <span asp-validation-for="TemplateId" class="text-danger"></span>
-                </div>
-                <div class="col-md-6 mb-3">
-                    <label asp-for="Name" class="form-label">Ad</label><input asp-for="Name" class="form-control" />
-                    <span asp-validation-for="Name" class="text-danger"></span>
-                </div>
-                <div class="col-md-6 mb-3"><label asp-for="Slug" class="form-label">Slug</label><input asp-for="Slug" class="form-control" /><span asp-validation-for="Slug" class="text-danger"></span></div>
-                <div class="col-md-6 mb-3"><label asp-for="ViewName" class="form-label">View adı</label><input asp-for="ViewName" class="form-control" /></div>
-                <div class="col-md-3 mb-3 form-check mt-4">
-                    <input asp-for="IsHomePage" class="form-check-input" />
-                    <label asp-for="IsHomePage" class="form-check-label">Ana sayfa</label>
-                </div>
-                <div class="col-md-3 mb-3 form-check mt-4"><input asp-for="IsActive" class="form-check-input" /><label asp-for="IsActive" class="form-check-label">Aktif</label></div>
-            </div><div class="d-flex justify-content-end gap-2">
-            <a asp-action="Index" class="btn btn-secondary">İptal</a>
-            <button type="submit" class="btn btn-primary"><i class="mdi mdi-check me-1"></i>Kaydet</button>
+                <h5 class="mb-1"><i class="mdi mdi-file-tree me-2"></i>PageType Bilgileri</h5>
+                <p class="text-muted mb-0">Yeni sayfa türü oluşturun</p>
+            </div>
+            <div class="card-body p-4">
+                <form asp-action="Create" method="post">
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label asp-for="PageTypeKind" class="form-label">PageType <span class="text-danger">*</span></label>
+                            <select asp-for="PageTypeKind" class="form-select"
+                                    asp-items="@(new SelectList(ViewBag.PageTypeler, "Id", "Ad"))">
+                                <option value="">-- Seçiniz --</option>
+                            </select>
+                            <span asp-validation-for="PageTypeKind" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-md-4 mb-3">
+                            <label asp-for="DilId" class="form-label">Dil <span class="text-danger">*</span></label>
+                            <select asp-for="DilId" class="form-select"
+                                    asp-items="@(new SelectList(ViewBag.Diller, "Id", "Ad"))">
+                                <option value="">-- Seçiniz --</option>
+                            </select>
+                            <span asp-validation-for="DilId" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-md-4 mb-3">
+                            <label asp-for="TemplateId" class="form-label">Template <span class="text-danger">*</span></label>
+                            <select asp-for="TemplateId" class="form-select"
+                                    asp-items="@(new SelectList(ViewBag.Templates, "Id", "TemplateAdi"))">
+                                <option value="">-- Seçiniz --</option>
+                            </select>
+                            <span asp-validation-for="TemplateId" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Name" class="form-label">Ad</label>
+                            <input asp-for="Name" class="form-control" />
+                            <span asp-validation-for="Name" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Slug" class="form-label">Slug</label>
+                            <input asp-for="Slug" class="form-control" />
+                            <span asp-validation-for="Slug" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="ViewName" class="form-label">View adı</label>
+                            <input asp-for="ViewName" class="form-control" />
+                        </div>
+
+                        <div class="col-md-3 mb-3 form-check mt-4">
+                            <input asp-for="IsHomePage" class="form-check-input" />
+                            <label asp-for="IsHomePage" class="form-check-label">Ana sayfa</label>
+                        </div>
+
+                        <div class="col-md-3 mb-3 form-check mt-4">
+                            <input asp-for="IsActive" class="form-check-input" />
+                            <label asp-for="IsActive" class="form-check-label">Aktif</label>
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-end gap-2">
+                        <a asp-action="Index" class="btn btn-secondary">İptal</a>
+                        <button type="submit" class="btn btn-primary"><i class="mdi mdi-check me-1"></i>Kaydet</button>
+                    </div>
+                </form>
+            </div>
         </div>
-    </form>
+    </div>
 </div>
-</div>
-</div>
-</div>
+
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
 }

@@ -1,37 +1,158 @@
 @model List<Microservice.Web.ViewModels.Menu.MenuGetVm>
 
-<ul class="navbar-nav flex-grow-1">
-    @if (Model.Count == 0)
-    {
-        <li class="nav-item"><span class="nav-link text-muted">Menü bulunamadı</span></li>
-    }
-    else
-    {
-        @foreach (var menu in Model)
-        {
-            var href = string.IsNullOrWhiteSpace(menu.Link) ? "#" : "/" + menu.Link.Trim('/');
+@{
+    string BuildHref(string? link) => string.IsNullOrWhiteSpace(link) ? "#" : "/" + link.Trim('/');
+}
 
-            if (menu.Children.Count == 0)
-            {
-                <li class="nav-item">
-                    <a class="nav-link" href="@href">@menu.Ad</a>
-                </li>
-            }
-            else
-            {
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="@href" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        @menu.Ad
+
+
+
+
+
+<div class="menu-hover">
+    <div class="btn-menu">
+        <span></span>
+    </div><!-- //mobile menu button -->
+</div>
+
+<div class="header-inner-pages">
+    <div class="top">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <nav class="navbar menu-top">
+                        <ul class="menu clearfix">
+                            <li class="home">
+                                <a href="blog.html">Blog</a>
+                                <ul class="submenu">
+                                    <li><a href="blog-single.html">Blog Single</a></li>
+                                </ul><!-- /.submenu -->
+                            </li>
+                            <li>
+                                <a href="portfolio.html">Portfolio</a>
+                                <ul class="submenu">
+                                    <li><a href="portfolio-single.html">Portfolio Single</a></li>
+                                </ul><!-- /.submenu -->
+                            </li>
+                            <li>
+                                <a href="event-grid.html">Events</a>
+                                <ul class="submenu">
+                                    <li><a href="event-list.html">Events List</a></li>
+                                    <li><a href="event-single.html">Events Single</a></li>
+                                </ul><!-- /.submenu -->
+                            </li>
+                            <li>
+                                <a href="course-grid.html">Courses</a>
+                                <ul class="submenu">
+                                    <li><a href="course-list.html">Courses List</a></li>
+                                    <li><a href="course-single.html">Courses Single</a></li>
+                                </ul><!-- /.submenu -->
+                            </li>
+                            <li>
+                                <a href="member.html">Member</a>
+                                <ul class="submenu">
+                                    <li><a href="member-single.html">Members Single</a></li>
+                                    <li><a href="contact.html">Contact</a></li>
+                                </ul><!-- /.submenu -->
+                            </li>
+                        </ul><!-- /.menu -->
+                    </nav><!-- /.mainnav -->
+
+                    <a class="navbar-right search-toggle show-search" href="#">
+                        <i class="fa fa-search"></i>
                     </a>
-                    <ul class="dropdown-menu">
-                        @foreach (var child in menu.Children.OrderBy(c => c.Sira))
-                        {
-                            var childHref = string.IsNullOrWhiteSpace(child.Link) ? "#" : "/" + child.Link.Trim('/');
-                            <li><a class="dropdown-item" href="@childHref">@child.Ad</a></li>
-                        }
-                    </ul>
-                </li>
-            }
-        }
-    }
-</ul>
+
+                    <div class="submenu top-search">
+                        <form class="search-form">
+                            <div class="input-group">
+                                <input type="search" class="search-field" placeholder="Search Here">
+                                <span class="input-group-btn">
+                                    <button type="submit"><i class="fa fa-search fa-4x"></i></button>
+                                </span>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="navbar-right topnav-sidebar">
+                        <ul class="textwidget">
+                            <li>
+                                <a href="#"><i class="fa fa-facebook"></i></a>
+                            </li>
+                            <li>
+                                <a href="#"><i class="fa fa-youtube"></i></a>
+                            </li>
+                            <li>
+                                <a href="#"><i class="fa fa-twitter"></i></a>
+                            </li>
+                        </ul>
+                    </div>
+                </div><!-- col-md-12 -->
+            </div><!-- row -->
+        </div><!-- container -->
+    </div><!-- Top -->
+</div><!-- header-inner-pages -->
+<!-- Header -->
+<header id="header" class="header">
+    <div class="header-wrap">
+        <div class="container">
+            <div class="header-wrap clearfix">
+                <div id="logo" class="logo">
+                    <a href="/" rel="home">
+                        <img src="~/template1/images/logo.png" alt="image">
+                    </a>
+                </div><!-- /.logo -->
+
+
+                <div class="nav-wrap">
+
+                    <nav id="mainnav" class="mainnav">
+                        <ul class="menu">
+                            <li class="home">
+                                <a href="/">Anasayfa</a>
+                            </li>
+                            @foreach (var menu in Model)
+                            {
+                                var href = BuildHref(menu.Link);
+
+                                if (menu.Children.Count == 0)
+                                {
+                                    <li><a href="@href">@menu.Ad</a></li>
+                                }
+                                else
+                                {
+                                    <li>
+                                        <a href="@href">@menu.Ad</a>
+                                        <ul class="submenu">
+                                            @foreach (var child in menu.Children.OrderBy(c => c.Sira))
+                                            {
+                                                var childHref = BuildHref(child.Link);
+                                                <li><a href="@childHref">@child.Ad</a></li>
+                                            }
+                                        </ul><!-- /.submenu -->
+                                    </li>
+                                }
+                            }
+                        </ul><!-- /.menu -->
+                    </nav><!-- /.mainnav -->
+                </div><!-- /.nav-wrap -->
+            </div><!-- /.header-wrap -->
+        </div><!-- /.container-->
+    </div><!-- /.header-wrap-->
+</header><!-- /.header -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

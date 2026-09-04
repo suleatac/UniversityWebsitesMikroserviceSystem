@@ -447,6 +447,30 @@
 
                             </div>
 
+                            <div class="col-md-3">
+
+                                <div class="mb-3">
+
+                                    <label asp-for="PageTypeId"
+                                           class="form-label">
+
+                                        Sayfa Türü <span class="text-danger">*</span>
+
+                                    </label>
+
+                                    <select asp-for="PageTypeId"
+                                            class="form-select select2"
+                                            asp-items="@(new SelectList(ViewBag.PageTypeler, "Id", "Ad"))">
+                                        <option value="">-- Sayfa Türü Seçin --</option>
+                                    </select>
+
+                                    <span asp-validation-for="PageTypeId"
+                                          class="text-danger small"></span>
+
+                                </div>
+
+                            </div>
+
                         </div>
 
                     </div>

@@ -2,6 +2,7 @@ using Microservice.Admin.Services.Interfaces;
 using Microservice.Admin.ViewModels.Dil;
 using Microservice.Admin.ViewModels.Hedef;
 using Microservice.Admin.ViewModels.Menu;
+using Microservice.Admin.ViewModels.PageType;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
@@ -157,6 +158,7 @@ namespace Microservice.Admin.Controllers
             var updateVm = new MenuVm
             {
                 Id = result.Data.Id,
+                PageTypeId = result.Data.PageTypeId,
                 SiteId = result.Data.SiteId,
                 DilId = result.Data.DilId,
                 HedefId = result.Data.HedefId,

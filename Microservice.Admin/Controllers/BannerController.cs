@@ -1,5 +1,6 @@
 using Microservice.Admin.Services.Interfaces;
 using Microservice.Admin.ViewModels.Banner;
+using Microservice.Admin.ViewModels.PageType;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,6 +11,7 @@ namespace Microservice.Admin.Controllers
     {
         private readonly IBannerService _bannerService;
         private readonly ISiteService _siteService;
+        private readonly IPageTypeService _pageTypeService;
         private readonly IDilService _dilService;
         private readonly IHedefService _hedefService;
         private readonly ILogger<BannerController> _logger;
@@ -17,12 +19,14 @@ namespace Microservice.Admin.Controllers
         public BannerController(
             IBannerService bannerService,
             ISiteService siteService,
+            IPageTypeService pageTypeService,
             IDilService dilService,
             IHedefService hedefService,
             ILogger<BannerController> logger)
         {
             _bannerService = bannerService;
             _siteService = siteService;
+            _pageTypeService = pageTypeService;
             _dilService = dilService;
             _hedefService = hedefService;
             _logger = logger;
@@ -77,11 +81,11 @@ namespace Microservice.Admin.Controllers
             var currentDilId = HttpContext.Session.GetInt32("CurrentDilId") ?? 1;
 
             var hedefler = await _hedefService.GetHedefsAsync();
-
             var viewModel = new BannerCreateIndexVm
             {
                 CreateBanner = new CreateBannerVm { SiteId = currentSiteId, DilId = currentDilId },
                 Hedefler = hedefler.Data ?? new List<ViewModels.Hedef.GetHedefVm>(),
+             
             };
 
             return View(viewModel);

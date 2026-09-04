@@ -42,7 +42,7 @@ namespace Mikroservice.Site.Application.Features.DuyuruFeatures.CreateDuyuru
 
 
             //Cache temizleme işlemi.
-            var cacheKey = $"duyurus:list:{newDuyuru.SiteId}:*";
+            var cacheKey = $"duyuru:list:{newDuyuru.SiteId}:*";
             await redisCache.RemoveByPatternAsync(cacheKey, cancellationToken);
 
             var response = new CreateDuyuruResponse(newDuyuru.Id);

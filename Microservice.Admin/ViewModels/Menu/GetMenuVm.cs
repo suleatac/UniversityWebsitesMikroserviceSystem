@@ -3,6 +3,7 @@ namespace Microservice.Admin.ViewModels.Menu
     public class GetMenuVm
     {
         public int Id { get; set; }
+        public int PageTypeId { get; set; }
         public string Ad { get; set; } = default!;
         public string? Link { get; set; } = default!;
         public string? IconUrl { get; set; }

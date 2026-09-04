@@ -15,6 +15,7 @@ namespace Mikroservice.Site.Api.Endpoints.PageTypeEndPoints
             group.MapToApiVersion(1.0);
             group.GetPageTypesEndpointGroupItem();
             group.GetPageTypeByIdEndpointGroupItem();
+            group.GetPageTypeByTemplateIdAndPageTypeKindEndpointGroupItem();
             group.CreatePageTypeEndpointGroupItem();
             group.GetPageTypeBySlugEndpointGroupItem();
             group.GetHomePageTypeEndpointGroupItem();

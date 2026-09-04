@@ -4,6 +4,7 @@ namespace Microservice.Admin.ViewModels.Duyuru
 {
     public class CreateDuyuruVm
     {
+        public int PageTypeId { get; set; }
         public int SiteId { get; set; }
         public int DilId { get; set; }
         public int? HedefId { get; set; }

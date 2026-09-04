@@ -3,16 +3,25 @@
     ViewData["Title"] = Model.CurrentMenu?.Ad ?? "Menu";
 }
 
-<div class="container py-4">
-    <p class="text-muted">Template 1</p>
-    <h1>@(Model.CurrentMenu?.Ad ?? "Menu")</h1>
+<div class="page-title parallax parallax1">
+    <div class="container">
+        <div class="flat-university">
+            <div class="post">
+                <h1 class="title">@(Model.CurrentMenu?.Ad ?? "Menu")</h1>
+            </div><!--/post -->
+        </div><!--/flat-university -->
+    </div><!--/container -->
+</div><!--/page-title -->
 
-    @if (!string.IsNullOrWhiteSpace(Model.CurrentMenu?.Icerik))
-    {
-        <div>@Model.CurrentMenu!.Icerik</div>
-    }
-    else
-    {
-        <p>Bu menü için içerik girilmemiş.</p>
-    }
-</div>
+<section class="flat-row">
+    <div class="container">
+        @if (!string.IsNullOrWhiteSpace(Model.CurrentMenu?.Icerik))
+        {
+            <div>@Html.Raw(Model.CurrentMenu!.Icerik)</div>
+        }
+        else
+        {
+            <p>Bu menü için içerik girilmemiş.</p>
+        }
+    </div>
+</section>

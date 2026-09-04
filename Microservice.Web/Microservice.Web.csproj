@@ -11,6 +11,9 @@
 
   <ItemGroup>
     <Folder Include="Views\Templates\Template2\" />
+    <Folder Include="wwwroot\Template2\css\" />
+    <Folder Include="wwwroot\Template2\js\" />
+    <Folder Include="wwwroot\Template2\lib\" />
   </ItemGroup>
 
   <ItemGroup>

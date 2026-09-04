@@ -163,6 +163,38 @@ namespace Mikroservice.Site.Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "PageTypes",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    PageTypeKind = table.Column<int>(type: "integer", nullable: false),
+                    Name = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
+                    Slug = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
+                    TemplateId = table.Column<int>(type: "integer", nullable: false),
+                    ViewName = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: true),
+                    DilId = table.Column<int>(type: "integer", nullable: false),
+                    IsHomePage = table.Column<bool>(type: "boolean", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PageTypes", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_PageTypes_Diller_DilId",
+                        column: x => x.DilId,
+                        principalTable: "Diller",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_PageTypes_Templateler_TemplateId",
+                        column: x => x.TemplateId,
+                        principalTable: "Templateler",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Siteler",
                 columns: table => new
                 {
@@ -256,6 +288,62 @@ namespace Mikroservice.Site.Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Icerik",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    PageTypeId = table.Column<int>(type: "integer", nullable: false),
+                    SiteId = table.Column<int>(type: "integer", nullable: false),
+                    DilId = table.Column<int>(type: "integer", nullable: false),
+                    HedefId = table.Column<int>(type: "integer", nullable: true),
+                    Baslik = table.Column<string>(type: "character varying(300)", maxLength: 300, nullable: false),
+                    KisaAciklama = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: false),
+                    IcerikMetni = table.Column<string>(type: "text", nullable: false),
+                    Link = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
+                    ResimUrl = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
+                    GosterimSayisi = table.Column<int>(type: "integer", nullable: false, defaultValue: 0),
+                    YayimTarihi = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    EklemeTarihi = table.Column<DateTime>(type: "timestamp without time zone", nullable: false, defaultValueSql: "NOW()"),
+                    BaslamaTarihi = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
+                    BitisTarihi = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
+                    SeoUrl = table.Column<string>(type: "character varying(300)", maxLength: 300, nullable: true),
+                    SeoTitle = table.Column<string>(type: "text", nullable: true),
+                    SeoDescription = table.Column<string>(type: "text", nullable: true),
+                    Tip = table.Column<int>(type: "integer", nullable: false),
+                    Sira = table.Column<int>(type: "integer", nullable: true),
+                    VideoUrl = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Icerik", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Icerik_Diller_DilId",
+                        column: x => x.DilId,
+                        principalTable: "Diller",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Icerik_Hedefler_HedefId",
+                        column: x => x.HedefId,
+                        principalTable: "Hedefler",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Icerik_PageTypes_PageTypeId",
+                        column: x => x.PageTypeId,
+                        principalTable: "PageTypes",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Icerik_Siteler_SiteId",
+                        column: x => x.SiteId,
+                        principalTable: "Siteler",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "MediaFile",
                 columns: table => new
                 {
@@ -285,43 +373,101 @@ namespace Mikroservice.Site.Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "PageTypes",
+                name: "Menuler",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     PageTypeId = table.Column<int>(type: "integer", nullable: false),
                     SiteId = table.Column<int>(type: "integer", nullable: false),
-                    Name = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
-                    Slug = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
-                    TemplateId = table.Column<int>(type: "integer", nullable: false),
-                    ViewName = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: true),
                     DilId = table.Column<int>(type: "integer", nullable: false),
-                    IsHomePage = table.Column<bool>(type: "boolean", nullable: false),
-                    IsActive = table.Column<bool>(type: "boolean", nullable: false),
+                    HedefId = table.Column<int>(type: "integer", nullable: false),
+                    ParentId = table.Column<int>(type: "integer", nullable: true),
+                    Ad = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
+                    Link = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
+                    IconUrl = table.Column<string>(type: "character varying(300)", maxLength: 300, nullable: true),
+                    Icerik = table.Column<string>(type: "text", nullable: true),
+                    Sira = table.Column<int>(type: "integer", nullable: false),
+                    MegaMenu = table.Column<bool>(type: "boolean", nullable: false),
+                    OlusturulmaTarihi = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
                     IsDeleted = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_PageTypes", x => x.Id);
+                    table.PrimaryKey("PK_Menuler", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_PageTypes_Diller_DilId",
+                        name: "FK_Menuler_Diller_DilId",
                         column: x => x.DilId,
                         principalTable: "Diller",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_PageTypes_Siteler_SiteId",
+                        name: "FK_Menuler_Hedefler_HedefId",
+                        column: x => x.HedefId,
+                        principalTable: "Hedefler",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.SetNull);
+                    table.ForeignKey(
+                        name: "FK_Menuler_Menuler_ParentId",
+                        column: x => x.ParentId,
+                        principalTable: "Menuler",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Menuler_PageTypes_PageTypeId",
+                        column: x => x.PageTypeId,
+                        principalTable: "PageTypes",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Menuler_Siteler_SiteId",
                         column: x => x.SiteId,
                         principalTable: "Siteler",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Popuplar",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    PageTypeId = table.Column<int>(type: "integer", nullable: false),
+                    SiteId = table.Column<int>(type: "integer", nullable: false),
+                    Baslik = table.Column<string>(type: "text", nullable: true),
+                    KisaAciklama = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
+                    IcerikMetni = table.Column<string>(type: "text", nullable: true),
+                    Link = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
+                    ResimUrl = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
+                    GosterimSayisi = table.Column<int>(type: "integer", nullable: false, defaultValue: 0),
+                    YayimTarihi = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    EklemeTarihi = table.Column<DateTime>(type: "timestamp without time zone", nullable: false, defaultValueSql: "NOW()"),
+                    BaslamaTarihi = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
+                    BitisTarihi = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
+                    SeoUrl = table.Column<string>(type: "character varying(300)", maxLength: 300, nullable: true),
+                    SeoTitle = table.Column<string>(type: "text", nullable: true),
+                    SeoDescription = table.Column<string>(type: "text", nullable: true),
+                    TamEkranMi = table.Column<bool>(type: "boolean", nullable: false, defaultValue: false),
+                    GosterimSuresiSaniye = table.Column<int>(type: "integer", nullable: false, defaultValue: 5),
+                    CookieIleTekrarGosterme = table.Column<bool>(type: "boolean", nullable: false, defaultValue: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Popuplar", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_PageTypes_Templateler_TemplateId",
-                        column: x => x.TemplateId,
-                        principalTable: "Templateler",
+                        name: "FK_Popuplar_PageTypes_PageTypeId",
+                        column: x => x.PageTypeId,
+                        principalTable: "PageTypes",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Popuplar_Siteler_SiteId",
+                        column: x => x.SiteId,
+                        principalTable: "Siteler",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -460,160 +606,6 @@ namespace Mikroservice.Site.Persistence.Migrations
                     table.PrimaryKey("PK_YoneticiSiteler", x => x.Id);
                     table.ForeignKey(
                         name: "FK_YoneticiSiteler_Siteler_SiteId",
-                        column: x => x.SiteId,
-                        principalTable: "Siteler",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Icerik",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    PageTypeId = table.Column<int>(type: "integer", nullable: false),
-                    SiteId = table.Column<int>(type: "integer", nullable: false),
-                    DilId = table.Column<int>(type: "integer", nullable: false),
-                    HedefId = table.Column<int>(type: "integer", nullable: true),
-                    Baslik = table.Column<string>(type: "character varying(300)", maxLength: 300, nullable: false),
-                    KisaAciklama = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: false),
-                    IcerikMetni = table.Column<string>(type: "text", nullable: false),
-                    Link = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
-                    ResimUrl = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
-                    GosterimSayisi = table.Column<int>(type: "integer", nullable: false, defaultValue: 0),
-                    YayimTarihi = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
-                    EklemeTarihi = table.Column<DateTime>(type: "timestamp without time zone", nullable: false, defaultValueSql: "NOW()"),
-                    BaslamaTarihi = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
-                    BitisTarihi = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
-                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
-                    SeoUrl = table.Column<string>(type: "character varying(300)", maxLength: 300, nullable: true),
-                    SeoTitle = table.Column<string>(type: "text", nullable: true),
-                    SeoDescription = table.Column<string>(type: "text", nullable: true),
-                    Tip = table.Column<int>(type: "integer", nullable: false),
-                    Sira = table.Column<int>(type: "integer", nullable: true),
-                    VideoUrl = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Icerik", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Icerik_Diller_DilId",
-                        column: x => x.DilId,
-                        principalTable: "Diller",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Icerik_Hedefler_HedefId",
-                        column: x => x.HedefId,
-                        principalTable: "Hedefler",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_Icerik_PageTypes_PageTypeId",
-                        column: x => x.PageTypeId,
-                        principalTable: "PageTypes",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_Icerik_Siteler_SiteId",
-                        column: x => x.SiteId,
-                        principalTable: "Siteler",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Menuler",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    PageTypeId = table.Column<int>(type: "integer", nullable: false),
-                    SiteId = table.Column<int>(type: "integer", nullable: false),
-                    DilId = table.Column<int>(type: "integer", nullable: false),
-                    HedefId = table.Column<int>(type: "integer", nullable: false),
-                    ParentId = table.Column<int>(type: "integer", nullable: true),
-                    Ad = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
-                    Link = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
-                    IconUrl = table.Column<string>(type: "character varying(300)", maxLength: 300, nullable: true),
-                    Icerik = table.Column<string>(type: "text", nullable: true),
-                    Sira = table.Column<int>(type: "integer", nullable: false),
-                    MegaMenu = table.Column<bool>(type: "boolean", nullable: false),
-                    OlusturulmaTarihi = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
-                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Menuler", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Menuler_Diller_DilId",
-                        column: x => x.DilId,
-                        principalTable: "Diller",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_Menuler_Hedefler_HedefId",
-                        column: x => x.HedefId,
-                        principalTable: "Hedefler",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.SetNull);
-                    table.ForeignKey(
-                        name: "FK_Menuler_Menuler_ParentId",
-                        column: x => x.ParentId,
-                        principalTable: "Menuler",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_Menuler_PageTypes_PageTypeId",
-                        column: x => x.PageTypeId,
-                        principalTable: "PageTypes",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_Menuler_Siteler_SiteId",
-                        column: x => x.SiteId,
-                        principalTable: "Siteler",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Popuplar",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    PageTypeId = table.Column<int>(type: "integer", nullable: false),
-                    SiteId = table.Column<int>(type: "integer", nullable: false),
-                    Baslik = table.Column<string>(type: "text", nullable: true),
-                    KisaAciklama = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
-                    IcerikMetni = table.Column<string>(type: "text", nullable: true),
-                    Link = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
-                    ResimUrl = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
-                    GosterimSayisi = table.Column<int>(type: "integer", nullable: false, defaultValue: 0),
-                    YayimTarihi = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
-                    EklemeTarihi = table.Column<DateTime>(type: "timestamp without time zone", nullable: false, defaultValueSql: "NOW()"),
-                    BaslamaTarihi = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
-                    BitisTarihi = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
-                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
-                    SeoUrl = table.Column<string>(type: "character varying(300)", maxLength: 300, nullable: true),
-                    SeoTitle = table.Column<string>(type: "text", nullable: true),
-                    SeoDescription = table.Column<string>(type: "text", nullable: true),
-                    TamEkranMi = table.Column<bool>(type: "boolean", nullable: false, defaultValue: false),
-                    GosterimSuresiSaniye = table.Column<int>(type: "integer", nullable: false, defaultValue: 5),
-                    CookieIleTekrarGosterme = table.Column<bool>(type: "boolean", nullable: false, defaultValue: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Popuplar", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Popuplar_PageTypes_PageTypeId",
-                        column: x => x.PageTypeId,
-                        principalTable: "PageTypes",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_Popuplar_Siteler_SiteId",
                         column: x => x.SiteId,
                         principalTable: "Siteler",
                         principalColumn: "Id",
@@ -760,12 +752,6 @@ namespace Mikroservice.Site.Persistence.Migrations
                 name: "IX_PageTypes_DilId",
                 table: "PageTypes",
                 column: "DilId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_PageTypes_SiteId_DilId_Slug",
-                table: "PageTypes",
-                columns: new[] { "SiteId", "DilId", "Slug" },
-                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_PageTypes_TemplateId",
@@ -937,13 +923,10 @@ namespace Mikroservice.Site.Persistence.Migrations
                 name: "YonetimDuyurular");
 
             migrationBuilder.DropTable(
-                name: "Unvanlar");
-
-            migrationBuilder.DropTable(
                 name: "Siteler");
 
             migrationBuilder.DropTable(
-                name: "PersonelTipleri");
+                name: "Unvanlar");
 
             migrationBuilder.DropTable(
                 name: "Birimler");
@@ -953,6 +936,9 @@ namespace Mikroservice.Site.Persistence.Migrations
 
             migrationBuilder.DropTable(
                 name: "Templateler");
+
+            migrationBuilder.DropTable(
+                name: "PersonelTipleri");
         }
     }
 }

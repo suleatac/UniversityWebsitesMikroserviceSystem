@@ -1,6 +1,7 @@
 using Microservice.Admin.Services.Interfaces;
 using Microservice.Admin.ViewModels;
 using Microservice.Admin.ViewModels.Etkinlik;
+using Microservice.Admin.ViewModels.PageType;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

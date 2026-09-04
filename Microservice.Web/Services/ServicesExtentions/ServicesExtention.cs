@@ -1,4 +1,6 @@
-﻿using Microservice.Web.Services.Interfaces;
+﻿using Microservice.Web.Services.PageDetailResolvers;
+using Microservice.Web.Services.PageResolvers;
+using Microservice.Web.Services.Interfaces;
 
 namespace Microservice.Web.Services.ServicesExtentions
 {
@@ -19,6 +21,14 @@ namespace Microservice.Web.Services.ServicesExtentions
             services.AddScoped<IVideoService, VideoService>();
             services.AddScoped<IRouteService, RouteService>();
             services.AddScoped<IDilService, DilService>();
+
+            services.AddScoped<IPageDetailResolver, NewsDetailResolver>();
+            services.AddScoped<IPageDetailResolver, AnnouncementDetailResolver>();
+
+            services.AddScoped<IPageResolver, NewsListPageResolver>();
+
+
+
             return services;
         }
     }

@@ -18,15 +18,13 @@ namespace Mikroservice.Site.Application.Features.PageTypeFeatures.GetPageTypeByI
             return ServiceResult<PageTypeDto>.SuccessAsOK(new PageTypeDto
             {
                 Id = entity.Id,
-                PageTypeId = entity.PageTypeId,
-                SiteId = entity.SiteId,
+                PageTypeKind = entity.PageTypeKind,
                 DilId = entity.DilId,
                 Name = entity.Name,
                 Slug = entity.Slug,
                 TemplateId = entity.TemplateId,
                 ViewName = entity.ViewName,
-                IsHomePage = entity.IsHomePage,
-                IsActive = entity.IsActive
+                IsHomePage = entity.IsHomePage
             });
         }
     }

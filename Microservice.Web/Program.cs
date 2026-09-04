@@ -55,9 +55,9 @@ if (!app.Environment.IsDevelopment())
 
 app.UseRouting();
 
-
-
 app.MapStaticAssets();
+
+
 
 // catch-all'dan önce eşleşmeli, yoksa her zaman Template/Index'e düşer
 app.MapControllerRoute(

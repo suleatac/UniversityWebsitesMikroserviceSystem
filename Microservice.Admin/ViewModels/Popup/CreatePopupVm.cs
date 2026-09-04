@@ -4,6 +4,9 @@ namespace Microservice.Admin.ViewModels.Popup
 {
     public class CreatePopupVm
     {
+        [Range(1, int.MaxValue, ErrorMessage = "Sayfa türü seçimi zorunludur.")]
+        public int PageTypeId { get; set; }
+
         public int SiteId { get; set; }
 
    

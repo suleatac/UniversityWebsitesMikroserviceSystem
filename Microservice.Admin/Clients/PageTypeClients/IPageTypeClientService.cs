@@ -11,6 +11,10 @@ namespace Microservice.Admin.Clients.PageTypeClients
         [Get("/api/v1/page-types/{id}")]
         Task<ApiResponse<GetPageTypeVm>> GetPageTypeByIdAsync(int id);
 
+        [Get("/api/v1/page-types/by-kind/{templateId}/{dilId}/{pageTypeKind}")]
+        Task<ApiResponse<GetPageTypeVm>> GetPageTypeByTemplateIdAndPageTypeKindAsync(
+            int templateId, int dilId, int pageTypeKind);
+
         [Post("/api/v1/page-types")]
         Task<ApiResponse<object>> CreatePageTypeAsync(CreatePageTypeVm model);
 

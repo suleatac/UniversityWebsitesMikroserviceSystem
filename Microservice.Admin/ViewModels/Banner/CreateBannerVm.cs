@@ -4,6 +4,9 @@ namespace Microservice.Admin.ViewModels.Banner
 {
     public class CreateBannerVm
     {
+        // PageTypeId, BannerService.CreateBannerAsync içinde site şablonuna göre otomatik belirlenir.
+        public int PageTypeId { get; set; }
+
         public int SiteId { get; set; }
         public int DilId { get; set; }
         public int HedefId { get; set; }

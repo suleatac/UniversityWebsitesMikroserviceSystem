@@ -38,7 +38,7 @@ namespace Mikroservice.Site.Application.Features.DuyuruFeatures.UpdateDuyuru
             await unitOfWork.SaveChangesAsync(cancellationToken);
 
             //Cache temizleme işlemi.
-            var cacheKey = $"duyurus:list:{duyuru.SiteId}:*";
+            var cacheKey = $"duyuru:list:{duyuru.SiteId}:*";
             await redisCache.RemoveByPatternAsync(cacheKey, cancellationToken);
 
             return ServiceResult.Success();

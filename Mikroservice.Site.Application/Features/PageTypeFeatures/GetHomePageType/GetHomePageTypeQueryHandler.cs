@@ -12,7 +12,7 @@ namespace Mikroservice.Site.Application.Features.PageTypeFeatures.GetHomePageTyp
         public Task<ServiceResult<PageTypeDto>> Handle(GetHomePageTypeQuery request, CancellationToken cancellationToken)
         {
             var pageType = repository.GetAll()
-                .FirstOrDefault(x => x.SiteId == request.SiteId && x.DilId == request.DilId && x.IsActive && x.IsHomePage);
+                .FirstOrDefault(x => x.TemplateId == request.SiteTemplateId && x.DilId == request.DilId && x.IsHomePage);
 
             if (pageType is null)
                 return Task.FromResult(ServiceResult<PageTypeDto>.Error("Ana PageType bulunamadı", HttpStatusCode.NotFound));
@@ -20,15 +20,13 @@ namespace Mikroservice.Site.Application.Features.PageTypeFeatures.GetHomePageTyp
             return Task.FromResult(ServiceResult<PageTypeDto>.SuccessAsOK(new PageTypeDto
             {
                 Id = pageType.Id,
-                PageTypeId = pageType.PageTypeId,
-                SiteId = pageType.SiteId,
+                PageTypeKind = pageType.PageTypeKind,
+                TemplateId = pageType.TemplateId,
                 DilId = pageType.DilId,
                 Name = pageType.Name,
                 Slug = pageType.Slug,
-                TemplateId = pageType.TemplateId,
                 ViewName = pageType.ViewName,
-                IsHomePage = pageType.IsHomePage,
-                IsActive = pageType.IsActive
+                IsHomePage = pageType.IsHomePage
             }));
         }
     }

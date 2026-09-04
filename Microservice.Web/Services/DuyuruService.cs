@@ -1,7 +1,6 @@
 using Microservice.Web.Clients.DuyuruClients;
 using Microservice.Web.Services.Interfaces;
 using Microservice.Web.Services.ServiceResults;
-using Microservice.Web.ViewModels;
 using Microservice.Web.ViewModels.Duyuru;
 using System.Text.Json;
 

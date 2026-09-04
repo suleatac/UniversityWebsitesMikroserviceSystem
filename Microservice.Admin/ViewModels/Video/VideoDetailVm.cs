@@ -6,6 +6,9 @@ namespace Microservice.Admin.ViewModels.Video
     {
         public int Id { get; set; }
 
+        [Range(1, int.MaxValue, ErrorMessage = "Sayfa türü seçimi zorunludur.")]
+        public int PageTypeId { get; set; }
+
         public int SiteId { get; set; }
         public int DilId { get; set; }
         public int? HedefId { get; set; }

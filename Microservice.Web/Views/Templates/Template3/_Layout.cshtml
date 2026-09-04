@@ -16,7 +16,7 @@
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    @await Component.InvokeAsync("MenuNavbar", new { siteId = (int)(ViewData["SiteId"] ?? 0), dilId = (int)(ViewData["DilId"] ?? 0) })
+                    @await Component.InvokeAsync("MenuNavbar", new { siteId = (int)(ViewData["SiteId"] ?? 0), dilId = (int)(ViewData["DilId"] ?? 0), preloadedMenus = ViewData["Menus"] as List<Microservice.Web.ViewModels.Menu.MenuGetVm> })
                 </div>
             </div>
         </nav>

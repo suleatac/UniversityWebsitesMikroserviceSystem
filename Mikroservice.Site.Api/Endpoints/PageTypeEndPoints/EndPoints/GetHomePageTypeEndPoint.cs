@@ -8,8 +8,8 @@ namespace Mikroservice.Site.Api.Endpoints.PageTypeEndPoints.EndPoints
     {
         public static RouteGroupBuilder GetHomePageTypeEndpointGroupItem(this RouteGroupBuilder group)
         {
-            group.MapGet("/home/{siteId:int}/{dilId:int}", async (IMediator mediator, int siteId, int dilId) =>
-                (await mediator.Send(new GetHomePageTypeQuery(siteId, dilId))).ToGenericResult())
+            group.MapGet("/home/{siteTemplateId:int}/{dilId:int}", async (IMediator mediator, int siteTemplateId, int dilId) =>
+                (await mediator.Send(new GetHomePageTypeQuery(siteTemplateId, dilId))).ToGenericResult())
                 .WithName("GetHomePageType")
                 .MapToApiVersion(1.0)
                 .Produces(StatusCodes.Status200OK)

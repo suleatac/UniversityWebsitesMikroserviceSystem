@@ -15,7 +15,6 @@ namespace Mikroservice.Site.Application.Features.PageTypeFeatures.DeletePageType
                 return ServiceResult.ErrorAsNotFound();
 
             pageType.IsDeleted = true;
-            pageType.IsActive = false;
             pageTypeRepository.Update(pageType);
             await unitOfWork.SaveChangesAsync(cancellationToken);
             return ServiceResult.Success();

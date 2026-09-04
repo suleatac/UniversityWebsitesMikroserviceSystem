@@ -15,10 +15,15 @@ namespace Microservice.Web.Services
 
         private readonly IPageTypeClientServices _pageClient;
         private readonly ISiteService _siteService;
-        private readonly IHaberClientServices _haberClient;
-        private readonly IDuyuruClientServices _duyuruClient;
         private readonly IRedisCacheService _redisCacheService;
         private readonly ILogger<RouteService> _logger;
+
+        private readonly IEnumerable<IPageDetailResolver> _detailResolvers;
+
+        private readonly IEnumerable<IPageResolver> _pageResolvers;
+
+
+
 
         public RouteService(
             IPageTypeClientServices pageClient,
@@ -26,6 +31,8 @@ namespace Microservice.Web.Services
             IHaberClientServices haberClient,
             IDuyuruClientServices duyuruClient,
             IRedisCacheService redisCacheService,
+            IEnumerable<IPageDetailResolver> detailResolvers,
+            IEnumerable<IPageResolver> pageResolvers,
             ILogger<RouteService> logger)
         {
             _pageClient = pageClient
@@ -33,15 +40,14 @@ namespace Microservice.Web.Services
 
             _siteService = siteService
                 ?? throw new ArgumentNullException(nameof(siteService));
-
-            _haberClient = haberClient
-                ?? throw new ArgumentNullException(nameof(haberClient));
-
-            _duyuruClient = duyuruClient
-                ?? throw new ArgumentNullException(nameof(duyuruClient));
+            _pageResolvers = pageResolvers
+                            ?? throw new ArgumentNullException(nameof(pageResolvers));
 
             _redisCacheService = redisCacheService
                 ?? throw new ArgumentNullException(nameof(redisCacheService));
+
+            _detailResolvers = detailResolvers
+                ?? throw new ArgumentNullException(nameof(detailResolvers));
 
             _logger = logger
                 ?? throw new ArgumentNullException(nameof(logger));
@@ -83,8 +89,7 @@ namespace Microservice.Web.Services
             // 1. SITE
             // =========================================================
 
-            var siteResult = await _siteService
-                .GetSiteByHostAsync(host);
+            var siteResult = await _siteService.GetSiteByHostAsync(host);
 
             if (siteResult.IsFail || siteResult.Data is null)
             {
@@ -141,7 +146,8 @@ namespace Microservice.Web.Services
             if (segments.Length == 1)
             {
                 return await ResolveHomePageAsync(
-                    site.Id,
+                    site,
+                    site.TemplateId,
                     languageId.Value,
                     languageCode);
             }
@@ -156,7 +162,7 @@ namespace Microservice.Web.Services
             var pageSlug = Normalize(segments[1]);
 
             var page = await GetPageAsync(
-                site.Id,
+                site.TemplateId,
                 languageId.Value,
                 pageSlug);
 
@@ -180,7 +186,7 @@ namespace Microservice.Web.Services
 
             if (segments.Length == 2)
             {
-                return result;
+                return await ResolvePageAsync(result);
             }
 
             // =========================================================
@@ -225,24 +231,9 @@ namespace Microservice.Web.Services
         {
             var defaultLanguageId = site.DefaultLanguageId;
 
-            //var dilResult = await _dilService
-            //   .GetDilByIdAsync(defaultLanguageId);
-
-            //if (!dilResult.IsSuccess || dilResult.Data is null)
-            //{
-            //    _logger.LogWarning(
-            //        "Dil bulunamadı. defaultLanguageId: {DefaultLanguageId}",
-            //        defaultLanguageId);
-
-            //    return null;
-            //}
-
             string defaultLanguageCode = site.DefaultLanguage.Kod.ToLower();
 
-            var response = await _pageClient
-                .HomePageControlAsync(
-                    site.Id,
-                    defaultLanguageId);
+            var response = await _pageClient.HomePageControlAsync(site.TemplateId,defaultLanguageId);
 
             if (!response.IsSuccessful || response.Content is null)
             {
@@ -255,32 +246,32 @@ namespace Microservice.Web.Services
             }
 
             return new RouteResolveResult {
+                Site = site,
                 Page = response.Content,
                 LanguageId = defaultLanguageId,
                 LanguageCode = defaultLanguageCode
             };
         }
         private async Task<RouteResolveResult?> ResolveHomePageAsync(
-            int siteId,
+            SiteDetailGetVm site,
+            int siteTemplateId,
             int languageId,
             string languageCode)
         {
-            var response = await _pageClient
-                .HomePageControlAsync(
-                    siteId,
-                    languageId);
+            var response = await _pageClient.HomePageControlAsync(siteTemplateId,languageId);
 
             if (!response.IsSuccessful || response.Content is null)
             {
                 _logger.LogWarning(
-                    "Ana sayfa bulunamadı. SiteId: {SiteId}, LanguageId: {LanguageId}",
-                    siteId,
+                    "Ana sayfa bulunamadı. SiteTemplateId: {SiteTemplateId}, LanguageId: {LanguageId}",
+                    siteTemplateId,
                     languageId);
 
                 return null;
             }
 
             return new RouteResolveResult {
+                Site = site,
                 Page = response.Content,
                 LanguageId = languageId,
                 LanguageCode = languageCode
@@ -292,21 +283,21 @@ namespace Microservice.Web.Services
         // =============================================================
 
         private async Task<PagesDetailVm?> GetPageAsync(
-            int siteId,
+            int siteTemplateId,
             int languageId,
             string slug)
         {
             var response = await _pageClient
                 .GetPagesBySlugAsync(
-                    siteId,
+                    siteTemplateId,
                     languageId,
                     slug);
 
             if (!response.IsSuccessful || response.Content is null)
             {
                 _logger.LogWarning(
-                    "Page bulunamadı. SiteId: {SiteId}, LanguageId: {LanguageId}, Slug: {Slug}",
-                    siteId,
+                    "Page bulunamadı. SiteTemplateId: {SiteTemplateId}, LanguageId: {LanguageId}, Slug: {Slug}",
+                    siteTemplateId,
                     languageId,
                     slug);
 
@@ -316,85 +307,58 @@ namespace Microservice.Web.Services
             return response.Content;
         }
 
+
+        private async Task<RouteResolveResult?> ResolvePageAsync(
+    RouteResolveResult result)
+        {
+            var pageType = result.Page.PageTypeKind;
+
+            var resolver = _pageResolvers
+                .FirstOrDefault(x => x.CanResolve(pageType));
+
+            if (resolver is null)
+            {
+                // Resolver gerektirmeyen normal sayfa olabilir.
+                return result;
+            }
+
+            await resolver.ResolveAsync(result);
+
+            return result;
+        }
+
+
+
+
         // =============================================================
         // DETAIL
         // =============================================================
 
         private async Task<RouteResolveResult?> ResolveDetailAsync(
-            RouteResolveResult result,
-            string detailSlug)
+     RouteResolveResult result,
+     string detailSlug)
         {
-            var pageType = (PageType)result.Page.PageTypeId;
+            var pageType = result.Page.PageTypeKind;
 
-            return pageType switch {
-                PageType.NewsList =>
-                    await ResolveNewDetailAsync(
-                        result,
-                        detailSlug),
+            var resolver = _detailResolvers
+                .FirstOrDefault(x => x.CanResolve(pageType));
 
-                PageType.AnnouncementList =>
-                    await ResolveAnnouncementDetailAsync(
-                        result,
-                        detailSlug),
-
-                _ => null
-            };
-        }
-
-        // =============================================================
-        // NEWS
-        // =============================================================
-
-        private async Task<RouteResolveResult?> ResolveNewDetailAsync(RouteResolveResult result,string detailSlug)
-        {
-            var response = await _haberClient
-                .GetHaberBySeoUrlAsync(
-                    result.Page.SiteId,
-                    result.LanguageId,
-                    detailSlug);
-
-            if (!response.IsSuccessful || response.Content is null)
+            if (resolver is null)
             {
                 _logger.LogWarning(
-                    "Haber bulunamadı. SiteId: {SiteId}, LanguageId: {LanguageId}, SeoUrl: {SeoUrl}",
-                    result.Page.SiteId,
-                    result.LanguageId,
+                    "Detail resolver bulunamadı. PageType: {PageType}, DetailSlug: {DetailSlug}",
+                    pageType,
                     detailSlug);
 
                 return null;
             }
 
-            result.New = response.Content;
-
-            return result;
+            return await resolver.ResolveAsync(
+                result,
+                detailSlug);
         }
 
-        // =============================================================
-        // ANNOUNCEMENT
-        // =============================================================
-
-        private async Task<RouteResolveResult?> ResolveAnnouncementDetailAsync(RouteResolveResult result,string detailSlug)
-        {
-            var response = await _duyuruClient.GetDuyuruBySeoUrlAsync(
-                    result.Page.SiteId,
-                    result.LanguageId,
-                    detailSlug);
-
-            if (!response.IsSuccessful || response.Content is null)
-            {
-                _logger.LogWarning(
-                    "Duyuru bulunamadı. SiteId: {SiteId}, LanguageId: {LanguageId}, SeoUrl: {SeoUrl}",
-                    result.Page.SiteId,
-                    result.LanguageId,
-                    detailSlug);
-
-                return null;
-            }
-
-            result.Announcement = response.Content;
-
-            return result;
-        }
+       
 
         // =============================================================
         // LANGUAGE

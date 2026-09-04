@@ -10,18 +10,20 @@
         Banner = 6
     }
 
-    public enum PageType
+    public enum PageTypeKind
     {
         Home = 1,
-        NewsList = 2,
-        News = 3,
-        AnnouncementList = 4,
-        Announcement = 5,
-        StaticPage = 6,
+        Menu = 2,
+        NewsList = 3,
+        NewsDetail = 4,
+        AnnouncementList = 5,
+        AnnouncementDetail = 6,
         Banner = 7,
         Bilgi = 8,
         Etkinlik = 9,
-        Video = 10
+        VideoList = 10,
+        VideoDetail = 11,
+        StaticPage = 12,
     }
 
 }

@@ -52,12 +52,15 @@ namespace Microservice.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            var host = Request.Host.Host;
-            var path = Request.Path.Value ?? "/";
+            //var host = Request.Host.Host;
+            //var path = Request.Path.Value ?? "/";
+
+            var host = "default.sivas.edu.tr";
+            var path = "/";
+
             ViewData["Host"] = host;
             ViewData["Path"] = path;
-            //var host = "default.sivas.edu.tr";
-            //var path = "/";
+        
 
             var route = await _routeService.ResolveAsync(
                 host,
@@ -94,22 +97,22 @@ namespace Microservice.Web.Controllers
             }
 
             // Navbar menüsü her template sayfasında (Model tipinden bağımsız) bu bilgilerle üretilir.
-            ViewData["SiteId"] = page.SiteId;
+            ViewData["SiteId"] = route.Site.Id;
             ViewData["DilId"] = route.LanguageId;
             ViewData["LanguageCode"] = route.LanguageCode;
 
-            return (PageType)page.PageTypeId switch {
-                PageType.Home =>
+            return (PageTypeKindEnum)page.PageTypeKind switch {
+                PageTypeKindEnum.Home =>
                    await RenderHomeAsync(route),
-                PageType.NewsList when route.DetailSlug is null =>
+                PageTypeKindEnum.NewsList when route.DetailSlug is null =>
                     await RenderNewListAsync(route),
-                PageType.New  when route.New is not null =>
+                PageTypeKindEnum.NewsDetail  when route.NewsDetail is not null =>
                     await RenderNewDetailAsync(route),
-                PageType.AnnouncementList when route.DetailSlug is null =>
+                PageTypeKindEnum.AnnouncementList when route.DetailSlug is null =>
                     await RenderAnnouncementListAsync(route),
-                PageType.Announcement when route.Announcement is not null =>
+                PageTypeKindEnum.AnnouncementDetail when route.AnnouncementDetail is not null =>
                     await RenderAnnouncementDetailAsync(route),
-                PageType.StaticPage => RenderStaticPage(route),
+                PageTypeKindEnum.StaticPage => RenderStaticPage(route),
                 _ => NotFound()
             };
         }
@@ -124,7 +127,7 @@ namespace Microservice.Web.Controllers
         private async Task<IActionResult> RenderHomeAsync(
             RouteResolveResult route)
         {
-            var siteId = route.Page.SiteId;
+            var siteId = route.Site.Id;
             var languageId = route.LanguageId;
 
             var siteTask = _siteService.GetSiteByIdAsync(siteId);
@@ -165,6 +168,9 @@ namespace Microservice.Web.Controllers
                     .ToList()
             };
 
+            // Navbar component'inin menüleri tekrar servisten çekmesini önlemek için burada paylaşılıyor.
+            ViewData["Menus"] = model.Menus;
+
             var viewPath = GetTemplateViewPath(route.Page.TemplateId, "Index");
 
             return View(viewPath, model);
@@ -181,7 +187,7 @@ namespace Microservice.Web.Controllers
             RouteResolveResult route)
         {
             var model = await _haberService.GetHabersAsync(
-                route.Page.SiteId, 1);
+                route.Site.Id, 1);
 
             if (!model.IsSuccess || model.Data is null)
                 return NotFound();
@@ -199,20 +205,20 @@ namespace Microservice.Web.Controllers
         private async Task<IActionResult> RenderNewDetailAsync(
             RouteResolveResult route)
         {
-            if (route.New is null)
+            if (route.NewsDetail is null)
             {
                 return NotFound();
             }
 
             var model = await _haberService.GetHaberByIdAsync(
-                route.New.Id);
+                route.NewsDetail.Id);
 
             if (!model.IsSuccess || model.Data is null)
             {
                 return NotFound();
             }
 
-            var viewPath = GetTemplateViewPath(route.Page.TemplateId,"New");
+            var viewPath = GetTemplateViewPath(route.Page.TemplateId,"NewsDetail");
 
             return View(viewPath, model.Data);
         }
@@ -228,7 +234,7 @@ namespace Microservice.Web.Controllers
             RouteResolveResult route)
         {
             var model = await _duyuruService.GetDuyurularAsync(
-                route.Page.SiteId, 1);
+                route.Site.Id, 1);
 
             if (!model.IsSuccess || model.Data is null)
                 return NotFound();
@@ -246,13 +252,13 @@ namespace Microservice.Web.Controllers
         private async Task<IActionResult> RenderAnnouncementDetailAsync(
             RouteResolveResult route)
         {
-            if (route.Announcement is null)
+            if (route.AnnouncementDetail is null)
             {
                 return NotFound();
             }
 
             var model = await _duyuruService.GetDuyuruByIdAsync(
-                route.Announcement.Id);
+                route.AnnouncementDetail.Id);
 
             if (!model.IsSuccess || model.Data is null)
             {
@@ -261,7 +267,7 @@ namespace Microservice.Web.Controllers
 
             var viewPath = GetTemplateViewPath(
                 route.Page.TemplateId,
-                "Announcement");
+                "AnnouncementDetail");
 
             return View(viewPath, model.Data);
         }

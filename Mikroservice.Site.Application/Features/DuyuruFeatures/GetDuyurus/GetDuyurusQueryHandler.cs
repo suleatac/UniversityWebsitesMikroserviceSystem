@@ -18,7 +18,7 @@ namespace Mikroservice.Site.Application.Features.DuyuruFeatures.GetDuyurus
         public async Task<ServiceResult<List<Duyuru>>> Handle(GetDuyurusQuery request, CancellationToken cancellationToken)
         {
             // Önce cache'e bak
-            var cacheKey = $"duyurus:list:{request.SiteId}:{request.DilId}";
+            var cacheKey = $"duyuru:list:{request.SiteId}:{request.DilId}";
             var cached = await redisCacheService.GetListAsync<Duyuru>(cacheKey, cancellationToken);
             if (cached is not null)
             {

@@ -8,8 +8,8 @@ namespace Mikroservice.Site.Api.Endpoints.PageTypeEndPoints.EndPoints
     {
         public static RouteGroupBuilder GetPageTypeBySlugEndpointGroupItem(this RouteGroupBuilder group)
         {
-            group.MapGet("/slug/{siteId:int}/{dilId:int}/{slug}", async (IMediator mediator, int siteId, int dilId, string slug) =>
-                (await mediator.Send(new GetPageTypeBySlugQuery(siteId, dilId, slug))).ToGenericResult())
+            group.MapGet("/slug/{siteTemplateId:int}/{dilId:int}/{slug}", async (IMediator mediator, int siteTemplateId, int dilId, string slug) =>
+                (await mediator.Send(new GetPageTypeBySlugQuery(siteTemplateId, dilId, slug))).ToGenericResult())
                 .WithName("GetPageTypeBySlug")
                 .MapToApiVersion(1.0)
                 .Produces(StatusCodes.Status200OK)

@@ -3,6 +3,7 @@ using Microservice.Admin.Services.Interfaces;
 using Microservice.Admin.Services.ServiceResults;
 using Microservice.Admin.ViewModels;
 using Microservice.Admin.ViewModels.Banner;
+using Microservice.Admin.ViewModels.PageType;
 using System.Text.Json;
 
 namespace Microservice.Admin.Services
@@ -10,11 +11,19 @@ namespace Microservice.Admin.Services
     public class BannerService : IBannerService
     {
         private readonly IBannerClientServices _bannerClient;
+        private readonly IPageTypeService _pageTypeService;
+        private readonly ISiteService _siteService;
         private readonly ILogger<BannerService> _logger;
 
-        public BannerService(IBannerClientServices bannerClient, ILogger<BannerService> logger)
+        public BannerService(
+            IBannerClientServices bannerClient, 
+            IPageTypeService pageTypeService, 
+            ISiteService siteService, 
+            ILogger<BannerService> logger)
         {
             _bannerClient = bannerClient ?? throw new ArgumentNullException(nameof(bannerClient));
+            _pageTypeService = pageTypeService ?? throw new ArgumentNullException(nameof(pageTypeService));
+            _siteService = siteService ?? throw new ArgumentNullException(nameof(siteService));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -52,6 +61,19 @@ namespace Microservice.Admin.Services
 
         public async Task<ServiceResult<object>> CreateBannerAsync(CreateBannerVm dto)
         {
+            var siteResult = await _siteService.GetSiteByIdAsync(dto.SiteId);
+            if (!siteResult.IsSuccess || siteResult.Data == null)
+                return ServiceResult<object>.Error(siteResult.Fail?.Detail ?? siteResult.Fail?.Title ?? "Site bilgisi alınamadı");
+
+            var bannerPageTypeResult = await _pageTypeService.GetPageTypeByTemplateIdAndPageTypeKindAsync(
+                siteResult.Data.TemplateId,
+                dto.DilId,
+                PageTypeKind.Banner);
+
+            if (!bannerPageTypeResult.IsSuccess || bannerPageTypeResult.Data == null)
+                return ServiceResult<object>.Error(bannerPageTypeResult.Fail?.Detail ?? bannerPageTypeResult.Fail?.Title ?? "Banner sayfa türü bulunamadı");
+
+            dto.PageTypeId = bannerPageTypeResult.Data.Id;
             _logger.LogInformation("Yeni banner oluşturuluyor. Başlık: {Title}", dto.Baslik);
             var response = await _bannerClient.CreateBannerAsync(dto);
 
@@ -69,6 +91,34 @@ namespace Microservice.Admin.Services
 
         public async Task<ServiceResult<object>> UpdateBannerAsync(BannerDetailVm dto)
         {
+
+            var siteResult = await _siteService.GetSiteByIdAsync(dto.SiteId);
+
+            if (!siteResult.IsSuccess || siteResult.Data == null)
+                return ServiceResult<object>.Error(
+                    siteResult.Fail?.Detail ??
+                    siteResult.Fail?.Title ??
+                    "Site bilgisi alınamadı");
+
+            var bannerPageTypeResult =
+                await _pageTypeService.GetPageTypeByTemplateIdAndPageTypeKindAsync(
+                    siteResult.Data.TemplateId,
+                    dto.DilId,
+                    PageTypeKind.Banner);
+
+            if (!bannerPageTypeResult.IsSuccess || bannerPageTypeResult.Data == null)
+                return ServiceResult<object>.Error(
+                    bannerPageTypeResult.Fail?.Detail ??
+                    bannerPageTypeResult.Fail?.Title ??
+                    "Banner sayfa türü bulunamadı");
+
+            // PageTypeId'yi client'tan değil server'dan belirle
+            dto.PageTypeId = bannerPageTypeResult.Data.Id;
+
+
+
+
+
             _logger.LogInformation("Banner güncelleniyor. Id: {Id}", dto.Id);
             var response = await _bannerClient.UpdateBannerAsync(dto.Id, dto);
 

@@ -12,15 +12,13 @@ namespace Mikroservice.Site.Application.Features.PageTypeFeatures.CreatePageType
         {
             var pageType = new PageType
             {
-                SiteId = request.SiteId,
-                PageTypeId = request.PageTypeId,
+                PageTypeKind = request.PageTypeKind,
                 Name = request.Name,
                 Slug = request.Slug,
                 TemplateId = request.TemplateId,
                 DilId = request.DilId,
                 ViewName = request.ViewName,
-                IsHomePage = request.IsHomePage,
-                IsActive = request.IsActive
+                IsHomePage = request.IsHomePage
             };
 
             await pageTypeRepository.AddAsync(pageType);

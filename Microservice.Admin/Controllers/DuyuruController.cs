@@ -1,5 +1,3 @@
-using Microservice.Admin.Attributes;
-using Microservice.Admin.Filters;
 using Microservice.Admin.Services.Interfaces;
 using Microservice.Admin.ViewModels.Duyuru;
 using Microsoft.AspNetCore.Authorization;
@@ -81,7 +79,6 @@ namespace Microservice.Admin.Controllers
                 CreateDuyuru = new CreateDuyuruVm { SiteId = currentSiteId, DilId = currentDilId },
                 Hedefler = hedefler.Data ?? new List<ViewModels.Hedef.GetHedefVm>(),
             };
-
             return View(viewModel);
         }
 
@@ -94,6 +91,7 @@ namespace Microservice.Admin.Controllers
                 _logger.LogWarning("Create Duyuru - ModelState geçersiz.");
                 var hedefler = await _hedefService.GetHedefsAsync();
                 model.Hedefler = hedefler.Data ?? new List<ViewModels.Hedef.GetHedefVm>();
+               
                 return View(model);
             }
 

@@ -3,6 +3,7 @@ using Microservice.Admin.Services.Interfaces;
 using Microservice.Admin.Services.ServiceResults;
 using Microservice.Admin.ViewModels;
 using Microservice.Admin.ViewModels.Duyuru;
+using Microservice.Admin.ViewModels.PageType;
 using System.Text.Json;
 
 namespace Microservice.Admin.Services
@@ -11,11 +12,14 @@ namespace Microservice.Admin.Services
     {
         private readonly IDuyuruClientServices _duyuruClient;
         private readonly ILogger<DuyuruService> _logger;
-
-        public DuyuruService(IDuyuruClientServices duyuruClient, ILogger<DuyuruService> logger)
+        private readonly IPageTypeService _pageTypeService;
+        private readonly ISiteService _siteService;
+        public DuyuruService(IDuyuruClientServices duyuruClient, ILogger<DuyuruService> logger, IPageTypeService pageTypeService, ISiteService siteService)
         {
             _duyuruClient = duyuruClient ?? throw new ArgumentNullException(nameof(duyuruClient));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _pageTypeService = pageTypeService ?? throw new ArgumentNullException(nameof(pageTypeService));
+            _siteService = siteService ?? throw new ArgumentNullException(nameof(siteService));
         }
 
         public async Task<ServiceResult<List<GetDuyuruVm>>> GetDuyurularAsync(int siteId, int dilId)
@@ -52,6 +56,32 @@ namespace Microservice.Admin.Services
 
         public async Task<ServiceResult<object>> CreateDuyuruAsync(CreateDuyuruVm dto)
         {
+
+
+
+            var siteResult = await _siteService.GetSiteByIdAsync(dto.SiteId);
+
+            if (!siteResult.IsSuccess || siteResult.Data == null)
+                return ServiceResult<object>.Error(
+                    siteResult.Fail?.Detail ??
+                    siteResult.Fail?.Title ??
+                    "Site bilgisi alınamadı");
+
+            var duyuruPageTypeResult =
+                await _pageTypeService.GetPageTypeByTemplateIdAndPageTypeKindAsync(
+                    siteResult.Data.TemplateId,
+                    dto.DilId,
+                    PageTypeKind.AnnouncementDetail);
+
+            if (!duyuruPageTypeResult.IsSuccess || duyuruPageTypeResult.Data == null)
+                return ServiceResult<object>.Error(
+                    duyuruPageTypeResult.Fail?.Detail ??
+                    duyuruPageTypeResult.Fail?.Title ??
+                    "Duyuru sayfa türü bulunamadı");
+
+            // PageTypeId'yi client'tan değil server'dan belirle
+            dto.PageTypeId = duyuruPageTypeResult.Data.Id;
+
             _logger.LogInformation("Yeni duyuru oluşturuluyor. Başlık: {Title}", dto.Baslik);
             var response = await _duyuruClient.CreateDuyuruAsync(dto);
 
@@ -69,6 +99,29 @@ namespace Microservice.Admin.Services
 
         public async Task<ServiceResult<object>> UpdateDuyuruAsync(DuyuruDetailVm dto)
         {
+
+            var siteResult = await _siteService.GetSiteByIdAsync(dto.SiteId);
+
+            if (!siteResult.IsSuccess || siteResult.Data == null)
+                return ServiceResult<object>.Error(
+                    siteResult.Fail?.Detail ??
+                    siteResult.Fail?.Title ??
+                    "Site bilgisi alınamadı");
+
+            var duyuruPageTypeResult =
+                await _pageTypeService.GetPageTypeByTemplateIdAndPageTypeKindAsync(
+                    siteResult.Data.TemplateId,
+                    dto.DilId,
+                    PageTypeKind.AnnouncementDetail);
+
+            if (!duyuruPageTypeResult.IsSuccess || duyuruPageTypeResult.Data == null)
+                return ServiceResult<object>.Error(
+                    duyuruPageTypeResult.Fail?.Detail ??
+                    duyuruPageTypeResult.Fail?.Title ??
+                    "Duyuru sayfa türü bulunamadı");
+
+
+
             _logger.LogInformation("Duyuru güncelleniyor. Id: {Id}", dto.Id);
             var response = await _duyuruClient.UpdateDuyuruAsync(dto.Id, dto);
 

@@ -3,6 +3,8 @@ namespace Microservice.Admin.ViewModels.Menu
     public class MenuVm
     {
         public int Id { get; set; }
+        [System.ComponentModel.DataAnnotations.Range(1, int.MaxValue, ErrorMessage = "Sayfa türü seçimi zorunludur.")]
+        public int PageTypeId { get; init; }
         public int SiteId { get; set; }
         public int DilId { get; set; }
         public int HedefId { get; set; }

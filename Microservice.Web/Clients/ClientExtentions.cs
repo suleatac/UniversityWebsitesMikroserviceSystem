@@ -46,9 +46,11 @@ namespace Microservice.Web.Clients
             services.AddRefitClient<IBilgiClientServices>()
                 .ConfigureHttpClient(c => c.BaseAddress = GetSiteBaseAddress(configuration))
                 .AddHttpMessageHandler<ClientAuthenticatedHttpClientHandler>();
+
             services.AddRefitClient<IDuyuruClientServices>()
                .ConfigureHttpClient(c => c.BaseAddress = GetSiteBaseAddress(configuration))
                .AddHttpMessageHandler<ClientAuthenticatedHttpClientHandler>();
+
             services.AddRefitClient<IEtkinlikClientServices>()
                 .ConfigureHttpClient(c => c.BaseAddress = GetSiteBaseAddress(configuration))
                 .AddHttpMessageHandler<ClientAuthenticatedHttpClientHandler>();

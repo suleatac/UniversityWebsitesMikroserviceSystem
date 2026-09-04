@@ -12,20 +12,18 @@ namespace Mikroservice.Site.Application.Features.PageTypeFeatures.GetPageTypes
         public async Task<ServiceResult<List<PageTypeDto>>> Handle(GetPageTypesQuery request, CancellationToken cancellationToken)
         {
             var pageTypes = await repository.GetAll()
-                .OrderBy(x => x.SiteId)
+                .OrderBy(x => x.Id)
                 .ThenBy(x => x.Name)
                 .Select(x => new PageTypeDto
                 {
                     Id = x.Id,
-                    PageTypeId = x.PageTypeId,
-                    SiteId = x.SiteId,
+                    PageTypeKind = x.PageTypeKind,
                     DilId = x.DilId,
                     Name = x.Name,
                     Slug = x.Slug,
                     TemplateId = x.TemplateId,
                     ViewName = x.ViewName,
-                    IsHomePage = x.IsHomePage,
-                    IsActive = x.IsActive
+                    IsHomePage = x.IsHomePage
                 })
                 .ToListAsync(cancellationToken);
 

@@ -1,4 +1,40 @@
 @model Microservice.Admin.ViewModels.PageType.GetPageTypeVm
-@{ ViewBag.pTitle = "PageType"; ViewBag.Title = "PageType Sil"; Layout = "~/Views/Shared/_Layout.cshtml"; }
-<div class="row justify-content-center"><div class="col-xxl-8"><div class="card shadow-lg border-0"><div class="card-header bg-danger bg-opacity-10"><h5 class="mb-1"><i class="mdi mdi-delete me-2"></i>PageType Silme Onayı</h5><p class="text-muted mb-0">Bu işlem soft-delete uygular.</p></div><div class="card-body p-4"><div class="alert alert-danger">"<strong>@Model.Name</strong>" PageType kaydını silmek üzeresiniz.</div><dl class="row"><dt class="col-sm-4">PageTypeId</dt><dd class="col-sm-8">@Model.PageTypeId</dd><dt class="col-sm-4">Slug</dt><dd class="col-sm-8">@Model.Slug</dd><dt class="col-sm-4">Site / Template</dt><dd class="col-sm-8">@Model.SiteId / @Model.TemplateId</dd></dl><form asp-action="DeleteConfirmed" method="post">@Html.AntiForgeryToken()<input type="hidden" asp-for="Id" /><div class="d-flex justify-content-end gap-2"><a asp-action="Index" class="btn btn-secondary">İptal</a><button type="submit" class="btn btn-danger"><i class="mdi mdi-delete me-1"></i>Evet, Sil</button></div></form></div></div></div></div>
-@section Scripts { <script src="~/assets/js/app.js"></script> }
+@{
+    ViewBag.pTitle = "PageType";
+    ViewBag.Title = "PageType Sil";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row justify-content-center">
+    <div class="col-xxl-8">
+        <div class="card shadow-lg border-0">
+            <div class="card-header bg-danger bg-opacity-10">
+                <h5 class="mb-1"><i class="mdi mdi-delete me-2"></i>PageType Silme Onayı</h5>
+                <p class="text-muted mb-0">Bu işlem soft-delete uygular.</p>
+            </div>
+            <div class="card-body p-4">
+                <div class="alert alert-danger">"<strong>@Model.Name</strong>" PageType kaydını silmek üzeresiniz.</div>
+                <dl class="row">
+                    <dt class="col-sm-4">PageTypeKind</dt>
+                    <dd class="col-sm-8">@Model.PageTypeKind</dd>
+                    <dt class="col-sm-4">Slug</dt>
+                    <dd class="col-sm-8">@Model.Slug</dd>
+                    <dt class="col-sm-4">Template</dt>
+                    <dd class="col-sm-8">@Model.TemplateId</dd>
+                </dl>
+                <form asp-action="DeleteConfirmed" method="post">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" asp-for="Id" />
+                    <div class="d-flex justify-content-end gap-2">
+                        <a asp-action="Index" class="btn btn-secondary">İptal</a>
+                        <button type="submit" class="btn btn-danger"><i class="mdi mdi-delete me-1"></i>Evet, Sil</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/assets/js/app.js"></script>
+}

@@ -1,5 +1,6 @@
 ﻿using Microservice.Admin.Services.Interfaces;
 using Microservice.Admin.ViewModels.Haber;
+using Microservice.Admin.ViewModels.PageType;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -152,7 +153,6 @@ namespace Microservice.Admin.Controllers
                 var siteler = await _siteService.GetSitesAsync();
                 var diller = await _dilService.GetDilsAsync();
                 model.Hedefler = hedefler.Data ?? new List<ViewModels.Hedef.GetHedefVm>();
-
 
                 return View(model);
             }

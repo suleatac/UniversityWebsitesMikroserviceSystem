@@ -25,12 +25,12 @@ namespace Microservice.Web.Services
         {
             var cacheKey = $"menu:list:{siteId}:{dilId}";
 
-            var cached = await _redisCacheService.GetListAsync<MenuGetVm>(cacheKey);
-            if (cached is not null)
-            {
-                _logger.LogInformation("Menuler cache'den al\u0131nd\u0131. SiteId: {SiteId}, DilId: {DilId}", siteId, dilId);
-                return ServiceResult<List<MenuGetVm>>.Success(cached);
-            }
+            //var cached = await _redisCacheService.GetListAsync<MenuGetVm>(cacheKey);
+            //if (cached is not null)
+            //{
+            //    _logger.LogInformation("Menuler cache'den al\u0131nd\u0131. SiteId: {SiteId}, DilId: {DilId}", siteId, dilId);
+            //    return ServiceResult<List<MenuGetVm>>.Success(cached);
+            //}
 
             _logger.LogInformation("Menuler çekiliyor. SiteId: {SiteId}, DilId: {DilId}", siteId, dilId);
 

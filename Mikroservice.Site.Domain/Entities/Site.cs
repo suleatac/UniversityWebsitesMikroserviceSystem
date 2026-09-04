@@ -31,6 +31,5 @@ namespace Mikroservice.Site.Domain.Entities
         public ICollection<MediaFile> MediaFiles { get; set; } = new List<MediaFile>();
         public ICollection<SikcaSorulanSoru> SikcaSorulanSorus { get; set; } = new List<SikcaSorulanSoru>();
         public Popup? Popup { get; set; }
-        public ICollection<PageType> PageTypes { get; set; } = new List<PageType>();
     }
 }

@@ -188,6 +188,16 @@
                                     <option value="">-- Hedef Seçin --</option>
                                 </select>
                             </div>
+
+                            <div class="col-md-3">
+                                <label asp-for="CreateVideo.PageTypeId" class="form-label">Sayfa Türü <span class="text-danger">*</span></label>
+                                <select asp-for="CreateVideo.PageTypeId"
+                                        class="form-select select2"
+                                        asp-items="@(new SelectList(ViewBag.PageTypeler, "Id", "Ad"))">
+                                    <option value="">-- Sayfa Türü Seçin --</option>
+                                </select>
+                                <span asp-validation-for="CreateVideo.PageTypeId" class="text-danger small"></span>
+                            </div>
                         </div>
                     </div>
 

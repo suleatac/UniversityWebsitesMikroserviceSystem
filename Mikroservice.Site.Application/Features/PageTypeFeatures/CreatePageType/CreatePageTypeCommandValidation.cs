@@ -6,9 +6,8 @@ namespace Mikroservice.Site.Application.Features.PageTypeFeatures.CreatePageType
     {
         public CreatePageTypeCommandValidation()
         {
-            RuleFor(x => x.SiteId).GreaterThan(0);
             RuleFor(x => x.TemplateId).GreaterThan(0);
-            RuleFor(x => x.PageTypeId).IsInEnum();
+            RuleFor(x => x.PageTypeKind).IsInEnum();
             RuleFor(x => x.DilId).GreaterThan(0);
             RuleFor(x => x.Name).NotEmpty().MaximumLength(200);
             RuleFor(x => x.Slug).NotEmpty().MaximumLength(200);

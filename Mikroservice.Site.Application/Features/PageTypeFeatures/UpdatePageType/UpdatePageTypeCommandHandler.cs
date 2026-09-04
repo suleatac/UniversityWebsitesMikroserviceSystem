@@ -12,16 +12,13 @@ namespace Microservice.Site.Application.Features.PageTypeFeatures.UpdatePageType
             var pageType = await pageTypeRepository.GetByIdAsync(request.Id);
             if (pageType is null)
                 return ServiceResult.ErrorAsNotFound();
-
-            pageType.SiteId = request.SiteId;
-            pageType.PageTypeId = request.PageTypeId;
+            pageType.PageTypeKind = request.PageTypeKind;
             pageType.Name = request.Name;
             pageType.Slug = request.Slug;
             pageType.TemplateId = request.TemplateId;
             pageType.DilId = request.DilId;
             pageType.ViewName = request.ViewName;
             pageType.IsHomePage = request.IsHomePage;
-            pageType.IsActive = request.IsActive;
 
             await unitOfWork.SaveChangesAsync(cancellationToken);
             return ServiceResult.Success();

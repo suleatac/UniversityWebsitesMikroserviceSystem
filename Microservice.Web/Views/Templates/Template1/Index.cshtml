@@ -3,86 +3,663 @@
     ViewData["Title"] = Model.Site.SiteAdi;
 }
 
-<div class="container py-4">
-    <h1 class="mb-2">@Model.Site.SiteAdi</h1>
-    <p class="text-muted mb-4">Template 1</p>
-
-    <h4>Menuler</h4>
-    @if (Model.Menus.Count == 0)
-    {
-        <p>Bu site için menü bulunamadı.</p>
-    }
-    else
-    {
+<div class="tp-banner-container">
+    <div class="tp-banner">
         <ul>
-            @foreach (var menu in Model.Menus.OrderBy(x => x.Sira))
-            {
-                var href = string.IsNullOrWhiteSpace(menu.Link) ? "#" : "/" + menu.Link.Trim('/');
-                <li><a href="@href">@menu.Ad</a></li>
-            }
-        </ul>
-    }
 
-    @if (Model.Banners.Count > 0)
-    {
-        <h4 class="mt-4">Bannerlar</h4>
-        <div class="row g-3">
             @foreach (var banner in Model.Banners)
             {
-                <div class="col-md-4">
-                    <div class="card h-100">
-                        @if (!string.IsNullOrWhiteSpace(banner.ResimUrl))
-                        {
-                            <img src="@banner.ResimUrl" class="card-img-top" alt="@banner.Baslik" />
-                        }
-                        <div class="card-body">
-                            <h5 class="card-title">@banner.Baslik</h5>
-                            <p class="card-text small">@banner.KisaAciklama</p>
+
+                <li data-transition="slidedown" data-slotamount="7" data-masterspeed="100" data-saveperformance="on">
+                    <img src="@banner.ResimUrl" alt="slider-image">
+
+                    <div class="tp-caption sft desc-slide center color-white color-full" data-x="770" data-y="479" data-speed="100" data-start="100" data-easing="Power3.easeInOut">
+                        <div class="title main-color-1 font-2">@banner.Baslik</div>
+                        <div class="content">@banner.KisaAciklama</div>
+                    </div>
+
+                </li>
+
+            
+            }
+
+        </ul>
+    </div>
+</div> <!-- /.tp-banner-container -->
+
+<div class="header-overlay-content header-overlay-scroller">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-5">
+
+                <section class="un-post-scroller un-post-scroller-2901"
+                         data-delay="0">
+
+                    <div class="section-inner-no-padding">
+
+                        <div class="post-scroller-wrap verticalCarousel">
+
+                            <div class="post-scroller-carousel">
+
+                                <div class="post-scroller-carousel-inner verticalCarouselGroup vc_list">
+
+                                    @if (Model.Duyurular != null && Model.Duyurular.Any())
+                                    {
+                                        var index = 0;
+
+                                        foreach (var duyuru in Model.Duyurular)
+                                        {
+                                            <div class="item post-scroller-item @(index == 0 ? "active" : "")">
+
+                                                <div class="scroller-item-inner">
+
+                                                    <div class="scroller-item-content post-item-mini">
+
+                                                        <div class="row">
+
+                                                            <!-- Resim -->
+                                                            <div class="col-md-4 col-sm-4 col-xs-4 post-thumbnail-mini">
+
+                                                                <div class="item-thumbnail">
+
+                                                                    <a href="/duyurular/@duyuru.SeoUrl"
+                                                                       title="@duyuru.Baslik">
+
+                                                                        <img src="@duyuru.ResimUrl"
+                                                                             alt="@duyuru.Baslik"
+                                                                             loading="lazy">
+
+                                                                        <div class="thumbnail-hoverlay main-color-1-bg"></div>
+                                                                        <div class="thumbnail-hoverlay-cross"></div>
+
+                                                                    </a>
+
+                                                                </div>
+
+                                                            </div>
+
+                                                            <!-- İçerik -->
+                                                            <div class="col-md-8 col-sm-8 col-xs-8 post-content-mini">
+
+                                                                <h4>
+                                                                    <a class="post-title-mini main-color-1-hover"
+                                                                       href="/duyurular/@duyuru.SeoUrl"
+                                                                       title="@duyuru.Baslik">
+
+                                                                        @duyuru.Baslik
+
+                                                                    </a>
+                                                                </h4>
+
+                                                                @if (!string.IsNullOrWhiteSpace(duyuru.KisaAciklama))
+                                                                {
+                                                                    <div class="post-excerpt-mini">
+                                                                        @duyuru.KisaAciklama
+                                                                    </div>
+                                                                }
+
+                                                            </div>
+
+                                                        </div>
+
+                                                    </div>
+
+                                                </div>
+
+                                            </div>
+
+                                            index++;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <div class="item post-scroller-item active">
+                                            <div class="scroller-item-inner">
+                                                <div class="scroller-item-content post-item-mini">
+                                                    <div class="post-content-mini">
+                                                        <div class="post-excerpt-mini">
+                                                            Henüz duyuru bulunmamaktadır.
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+
+                                </div>
+
+                            </div>
+
+                            <!-- Carousel Kontrolleri -->
+                            <div class="verticalCarouselHeader">
+
+                                <a href="#"
+                                   class="vc_goDown btn btn-primary post-scroller-button post-scroller-down">
+                                    <i class="fa fa-angle-down"></i>
+                                </a>
+
+                                <a href="#"
+                                   class="vc_goUp btn btn-primary post-scroller-button post-scroller-up">
+                                    <i class="fa fa-angle-up"></i>
+                                </a>
+
+                            </div>
+
                         </div>
+
+                    </div>
+
+                </section>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<section class="flat-row padding-top">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="flat-icon">
+                    <div class="iconbox left v1">
+                        <div class="box-header v1">
+                            <i class="fa fa-graduation-cap"></i>
+                        </div>
+                        <div class="icon-post">
+                            <div class="box-title">
+                                <a href="#">Education Organization</a>
+                            </div>
+                            <div class="box-content">
+                                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit sed do eiusmod tempor incididunt lorem ipsum</p>
+                            </div>
+                        </div>
+                    </div><!-- /.iconbox -->
+
+                    <div class="iconbox left v1">
+                        <div class="box-header v2">
+                            <i class="fa fa-paper-plane"></i>
+                        </div>
+                        <div class="icon-post">
+                            <div class="box-title">
+                                <a href="#">Training Center</a>
+                            </div>
+                            <div class="box-content">
+                                <p>ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi</p>
+                            </div>
+                        </div>
+                    </div><!-- /.iconbox -->
+
+                    <div class="iconbox left v1">
+                        <div class="box-header v3">
+                            <i class="fa fa-ticket"></i>
+                        </div>
+                        <div class="icon-post">
+                            <div class="box-title">
+                                <a href="#">Event Tickets</a>
+                            </div>
+                            <div class="box-content">
+                                <p>You can use this theme for university, training center, non-profit organization. There is no limits to University.</p>
+                            </div>
+                        </div>
+                    </div><!-- /.iconbox -->
+
+                    <div class="iconbox left">
+                        <div class="box-header v4">
+                            <i class="fa fa-shopping-cart"></i>
+                        </div>
+                        <div class="icon-post">
+                            <div class="box-title">
+                                <a href="#">Online Shop</a>
+                            </div>
+                            <div class="box-content">
+                                <p>At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum</p>
+                            </div>
+                        </div>
+                    </div><!-- /.iconbox -->
+
+                    <div class="iconbox left">
+                        <div class="box-header v5">
+                            <i class="fa fa-cubes"></i>
+                        </div>
+                        <div class="icon-post">
+                            <div class="box-title">
+                                <a href="#">No Limitation</a>
+                            </div>
+                            <div class="box-content">
+                                <p>Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur dignissimos</p>
+                            </div>
+                        </div>
+                    </div><!-- /.iconbox -->
+
+                    <div class="iconbox left">
+                        <div class="box-header v6">
+                            <i class="fa fa-star"></i>
+                        </div>
+                        <div class="icon-post">
+                            <div class="box-title">
+                                <a href="#">Great Support</a>
+                            </div>
+                            <div class="box-content">
+                                <p>We provide free support for customers from Monday to Friday. Contact us for any issues you have</p>
+                            </div>
+                        </div>
+                    </div><!-- /.iconbox -->
+                </div><!-- /flat-icon -->
+            </div>
+        </div>
+    </div><!-- /.container -->
+</section><!--/flat-row -->
+
+<section class="flat-row no-padding">
+    <div class="flat-fluid">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="post">
+                        <h1 class="title">UNIVERISTY THEME</h1>
+                        <p>University is an simple yet complete solution for you to build an education or online course, training website. The design is innovative and supper modern so you will have a professional web page.</p>
+                        <a class="flat-button button-button_30 btn-default " href="#" data-delay="0">BUY THIS THEME <i class="fa fa-angle-right"></i></a>
                     </div>
                 </div>
-            }
-        </div>
-    }
 
-    <div class="row mt-4">
-        <div class="col-md-6">
-            <h4>Güncel Haberler</h4>
-            @if (Model.Haberler.Count == 0)
-            {
-                <p>Haber bulunamadı.</p>
-            }
-            else
-            {
-                <ul class="list-unstyled">
-                    @foreach (var haber in Model.Haberler)
-                    {
-                        <li class="mb-2">
-                            <strong>@haber.Baslik</strong>
-                            <div class="text-muted small">@haber.YayimTarihi.ToString("dd.MM.yyyy")</div>
-                        </li>
-                    }
-                </ul>
-            }
+                <div class="col-md-4">
+                    <div class="post">
+                        <h1 class="title">TOP 10 RANKED</h1>
+                        <p>Our education services ranked top 10 all over the world by most recognized organizations. We provide courses from finance, social studies, economics, enginereering to computer science and programing.</p>
+                        <a class="flat-button button-button_30 btn-default " href="#" data-delay="0">PURCHASE NOW <i class="fa fa-angle-right"></i></a>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="post">
+                        <h1 class="title">GLOBAL RECOGNIZE</h1>
+                        <p>It is the fact that this theme is loved by more than 100o customers around the world. We believe that this is the best solution for your Education Business. Please view 9 demos version for full feature list.</p>
+                        <a class="flat-button button-button_30 btn-default " href="#" data-delay="0">PURCHASE NOW <i class="fa fa-angle-right"></i></a>
+                    </div>
+                </div>
+            </div><!--/row-->
+        </div><!--/flat-fluid-->
+    </div><!--/container-->
+</section><!--/flat-row -->
+
+
+<section class="flat-row flat-ev-carousel">
+    <div class="container">
+        <div class="row">
+        
+            <div class="col-md-9 margin-small">
+                <h4 class="title">Haberler</h4>
+                <div class="flat-carousel v1 style-margin">
+                    <div class="post-wrap">
+                        <div class="posts-carousel v1 v2">
+                            <div class="flat-event">
+                                <div class="flat-blog-carousel" data-item="3" data-nav="true" data-dots="false" data-auto="true">
+                                    <div class="grid-item">
+                                        <div class="grid-item-inner">
+                                            <div class="event-item">
+                                                <div class="event-thumbnail">
+                                                    <a href="#">
+                                                        <img src="~/template1/images/about/index1/event/gril/1.jpg" alt="image">
+                                                    </a>
+                                                </div><!-- /event-thumbnail -->
+
+                                                <div class="date-block">
+                                                    <div class="month">Jun</div>
+                                                    <div class="day">22</div>
+                                                </div><!-- /date-block -->
+
+                                                <div class="event-overlay">
+                                                    <div class="cs-post-header">
+                                                        <div class="cs-category-links">
+                                                            <a class="overlay-top" href="#">
+                                                                <h4>Chicago Architecture Foundation River Cruise</h4>
+                                                            </a>
+
+                                                            <div class="overlay-footer">
+                                                                <div>At 8:00 am</div>
+                                                                <div>Bentley Campus, Perth, WA</div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div><!-- /event-overlay -->
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="grid-item">
+                                        <div class="grid-item-inner">
+                                            <div class="event-item">
+                                                <div class="event-thumbnail">
+                                                    <a href="#">
+                                                        <img src="~/template1/images/about/index1/event/gril/2.jpg" alt="image">
+                                                    </a>
+                                                </div><!-- /event-thumbnail -->
+
+                                                <div class="date-block">
+                                                    <div class="month">Jun</div>
+                                                    <div class="day">30</div>
+                                                </div><!-- /date-block -->
+
+                                                <div class="event-overlay">
+                                                    <div class="cs-post-header">
+                                                        <div class="cs-category-links">
+                                                            <a class="overlay-top" href="#">
+                                                                <h4>Good Morning America</h4>
+                                                            </a>
+
+                                                            <div class="overlay-footer">
+                                                                <div>At 7:00 am</div>
+                                                                <div>Bentley Campus, Perth, WA</div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div><!-- /event-overlay -->
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="grid-item">
+                                        <div class="grid-item-inner">
+                                            <div class="event-item">
+                                                <div class="event-thumbnail">
+                                                    <a href="#">
+                                                        <img src="~/template1/images/about/index1/event/gril/3.jpg" alt="image">
+                                                    </a>
+                                                </div><!-- /event-thumbnail -->
+
+                                                <div class="date-block">
+                                                    <div class="month">Jun</div>
+                                                    <div class="day">20</div>
+                                                </div><!-- /date-block -->
+
+                                                <div class="event-overlay">
+                                                    <div class="cs-post-header">
+                                                        <div class="cs-category-links">
+                                                            <a class="overlay-top" href="#">
+                                                                <h4>Student Exchange Program Information Sessions</h4>
+                                                            </a>
+
+                                                            <div class="overlay-footer">
+                                                                <div>At 10:00 am</div>
+                                                                <div>Bentley Campus, Perth, WA</div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div><!-- /event-overlay -->
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="grid-item">
+                                        <div class="grid-item-inner">
+                                            <div class="event-item">
+                                                <div class="event-thumbnail">
+                                                    <a href="#">
+                                                        <img src="~/template1/images/about/index1/event/gril/4.jpg" alt="image">
+                                                    </a>
+                                                </div><!-- /event-thumbnail -->
+
+                                                <div class="date-block">
+                                                    <div class="month">Jun</div>
+                                                    <div class="day">22</div>
+                                                </div><!-- /date-block -->
+
+                                                <div class="event-overlay">
+                                                    <div class="cs-post-header">
+                                                        <div class="cs-category-links">
+                                                            <a class="overlay-top" href="#">
+                                                                <h4>Vegie Garden Wednesday Workshops</h4>
+                                                            </a>
+
+                                                            <div class="overlay-footer">
+                                                                <div>At 1:00 pm</div>
+                                                                <div>Bentley Campus, Perth, WA</div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div><!-- /event-overlay -->
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="grid-item">
+                                        <div class="grid-item-inner">
+                                            <div class="event-item">
+                                                <div class="event-thumbnail">
+                                                    <a href="#">
+                                                        <img src="~/template1/images/about/index1/event/gril/5.jpg" alt="image">
+                                                    </a>
+                                                </div><!-- /event-thumbnail -->
+
+                                                <div class="date-block">
+                                                    <div class="month">Jun</div>
+                                                    <div class="day">21</div>
+                                                </div><!-- /date-block -->
+
+                                                <div class="event-overlay">
+                                                    <div class="cs-post-header">
+                                                        <div class="cs-category-links">
+                                                            <a class="overlay-top" href="#">
+                                                                <h4>The Ecosystem Within Us</h4>
+                                                            </a>
+
+                                                            <div class="overlay-footer">
+                                                                <div>At 7:00 am</div>
+                                                                <div>Bentley Campus, Perth, WA</div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div><!-- /event-overlay -->
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="grid-item">
+                                        <div class="grid-item-inner">
+                                            <div class="event-item">
+                                                <div class="event-thumbnail">
+                                                    <a href="#">
+                                                        <img src="~/template1/images/about/index1/event/gril/6.jpg" alt="image">
+                                                    </a>
+                                                </div><!-- /event-thumbnail -->
+
+                                                <div class="date-block">
+                                                    <div class="month">Jun</div>
+                                                    <div class="day">20</div>
+                                                </div><!-- /date-block -->
+
+                                                <div class="event-overlay">
+                                                    <div class="cs-post-header">
+                                                        <div class="cs-category-links">
+                                                            <a class="overlay-top" href="#">
+                                                                <h4>Science In The New Era</h4>
+                                                            </a>
+
+                                                            <div class="overlay-footer">
+                                                                <div>At 4:00 pm</div>
+                                                                <div>Bentley Campus, Perth, WA</div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div><!-- /event-overlay -->
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div><!-- /flat-blog-carousel -->
+                            </div><!-- /flat-event -->
+                        </div><!-- /posts-carousel -->
+                    </div><!-- /post-wrap -->
+                </div><!-- /flat-carousel -->
+
+           
+            </div><!-- /col-md-9 -->
+
+            <div class="col-md-3">
+                <h4 class="title">Etkinlikler</h4>
+                <div class="flat-carousel v3">
+                    <div class="post-wrap">
+                        <div class="posts-carousel v1 v4">
+                            <div class="flat-event">
+                                <div class="flat-blog-carousel" data-item="3" data-nav="true" data-dots="false" data-auto="true">
+                                    <div class="grid-item">
+                                        <div class="grid-item-inner">
+                                            <div class="event-item">
+                                                <div class="event-thumbnail">
+                                                    <a href="#">
+                                                        <img src="~/template1/images/about/index1/event/gril/7.jpg" alt="image">
+                                                    </a>
+                                                </div><!-- /event-thumbnail -->
+
+                                                <div class="date-block">
+                                                    <div class="month">Jun</div>
+                                                    <div class="day">19</div>
+                                                </div><!-- /date-block -->
+
+                                                <div class="event-overlay">
+                                                    <div class="cs-post-header">
+                                                        <div class="cs-category-links">
+                                                            <a class="overlay-top" href="#">
+                                                                <h4>How To Sell Anything</h4>
+                                                            </a>
+
+                                                            <div class="overlay-footer">
+                                                                <div>At 9:30 am</div>
+                                                                <div>Bentley Campus, Perth, WA</div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div><!-- /event-overlay -->
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="grid-item">
+                                        <div class="grid-item-inner">
+                                            <div class="event-item">
+                                                <div class="event-thumbnail">
+                                                    <a href="#">
+                                                        <img src="~/template1/images/about/index1/event/gril/6.jpg" alt="image">
+                                                    </a>
+                                                </div><!-- /event-thumbnail -->
+
+                                                <div class="date-block">
+                                                    <div class="month">Jun</div>
+                                                    <div class="day">20</div>
+                                                </div><!-- /date-block -->
+
+                                                <div class="event-overlay">
+                                                    <div class="cs-post-header">
+                                                        <div class="cs-category-links">
+                                                            <a class="overlay-top" href="#">
+                                                                <h4>Science In The New Era</h4>
+                                                            </a>
+
+                                                            <div class="overlay-footer">
+                                                                <div>At 4:00 pm</div>
+                                                                <div>Bentley Campus, Perth, WA</div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div><!-- /event-overlay -->
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="grid-item">
+                                        <div class="grid-item-inner">
+                                            <div class="event-item">
+                                                <div class="event-thumbnail">
+                                                    <a href="#">
+                                                        <img src="~/template1/images/about/index1/event/gril/5.jpg" alt="image">
+                                                    </a>
+                                                </div><!-- /event-thumbnail -->
+
+                                                <div class="date-block">
+                                                    <div class="month">Jun</div>
+                                                    <div class="day">21</div>
+                                                </div><!-- /date-block -->
+
+                                                <div class="event-overlay">
+                                                    <div class="cs-post-header">
+                                                        <div class="cs-category-links">
+                                                            <a class="overlay-top" href="#">
+                                                                <h4>The Ecosystem Within Us</h4>
+                                                            </a>
+
+                                                            <div class="overlay-footer">
+                                                                <div>At 7:00 am</div>
+                                                                <div>Bentley Campus, Perth, WA</div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div><!-- /event-overlay -->
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div><!-- /flat-blog-carousel -->
+                            </div><!-- /flat-event -->
+                        </div><!-- /posts-carousel -->
+                    </div><!-- /post-wrap -->
+                </div><!-- /flat-carousel v2 -->
+            </div>
+        </div><!-- /row -->
+    </div><!-- /container -->
+</section><!-- /page-title -->
+
+
+
+
+
+
+<section class="flat-row no-padding">
+    <div class="container">
+        <div class="flat-information">
+            <div class="row">
+                <div class="col-md-6">
+                    <h4 class="title">Sivas Teknoloji ve Transfer Ofisi Hakkında</h4>
+                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+                    <a class="flat-button" href="#"><i class="fa fa-leaf"></i>DETAILS</a>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="thumb-information">
+                        <img src="http://localhost:9000/site-media/site/1/duyuru/WhatsApp%20Image%202026-07-22%20at%2016.32.14.jpeg" alt="image">
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="col-md-6">
-            <h4>Güncel Duyurular</h4>
-            @if (Model.Duyurular.Count == 0)
-            {
-                <p>Duyuru bulunamadı.</p>
-            }
-            else
-            {
-                <ul class="list-unstyled">
-                    @foreach (var duyuru in Model.Duyurular)
-                    {
-                        <li class="mb-2">
-                            <strong>@duyuru.Baslik</strong>
-                            <div class="text-muted small">@duyuru.YayimTarihi.ToString("dd.MM.yyyy")</div>
-                        </li>
-                    }
-                </ul>
-            }
+  
+    </div>
+</section>
+
+
+
+
+
+<section class="flat-row no-padding">
+    <div class="container-fluid">
+        <div class="new-bottom">
+            <div class="row">
+                <div class="news-letter">
+                    <h1 class="title">WE BELIEVE THAT EDUCATION IS FOR EVERYONE</h1>
+                    <h4>There are many features available to help you complete your project</h4>
+                </div>
+                <div class="img-news">
+                    <img src="http://localhost:9000/site-media/site/1/duyuru/WhatsApp%20Image%202026-07-22%20at%2016.32.14.jpeg" alt="image" style="height:200px; width:100%;">
+                </div>
+            </div>
         </div>
+    </div>
+</section>
+
+
+<div class="page-title parallax parallax7">
+    <div class="flat-video-fancybox">
+        <a class="fancybox overlay" data-type="iframe" href="https://www.youtube.com/watch?v=KjIdQOY86TE">
+            <div class="overlay-inner">
+                <i class="fa fa-play"></i>
+                <h3 class="title">Not Impressed Yet? View Our Promotion Video.</h3>
+            </div>
+        </a>
     </div>
 </div>

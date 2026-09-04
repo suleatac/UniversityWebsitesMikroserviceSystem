@@ -1,5 +1,6 @@
 using Microservice.Admin.Services.Interfaces;
 using Microservice.Admin.ViewModels;
+using Microservice.Admin.ViewModels.PageType;
 using Microservice.Admin.ViewModels.Video;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

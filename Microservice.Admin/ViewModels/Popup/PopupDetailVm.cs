@@ -5,6 +5,10 @@ namespace Microservice.Admin.ViewModels.Popup
     public class PopupDetailVm
     {
         public int Id { get; set; }
+
+        [Range(1, int.MaxValue, ErrorMessage = "Sayfa türü seçimi zorunludur.")]
+        public int PageTypeId { get; set; }
+
         public int SiteId { get; set; }
         public string? Baslik { get; set; } = default!;
         public string? KisaAciklama { get; set; } = default!;

@@ -125,6 +125,18 @@
                                     <span asp-validation-for="CreateHaber.HedefId" class="text-danger small"></span>
                                 </div>
                             </div>
+                            <div class="col-md-2">
+                                <div class="mb-3">
+                                    <label asp-for="CreateHaber.PageTypeId" class="form-label">
+                                        Sayfa Türü <span class="text-danger">*</span>
+                                    </label>
+                                    <select asp-for="CreateHaber.PageTypeId" class="form-select"
+                                            asp-items="@(new SelectList(ViewBag.PageTypeler, "Id", "Ad"))">
+                                        <option value="">-- Seçiniz --</option>
+                                    </select>
+                                    <span asp-validation-for="CreateHaber.PageTypeId" class="text-danger small"></span>
+                                </div>
+                            </div>
                         </div>
                     </div>
 

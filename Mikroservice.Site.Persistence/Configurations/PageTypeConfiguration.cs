@@ -9,7 +9,7 @@ namespace Mikroservice.Site.Persistence.Configurations
         public void Configure(EntityTypeBuilder<PageType> builder)
         {
             builder.HasKey(x => x.Id);
-            builder.Property(x => x.PageTypeId)
+            builder.Property(x => x.PageTypeKind)
                 .HasConversion<int>()
                 .IsRequired();
             builder.Property(x => x.Name).IsRequired().HasMaxLength(200);
@@ -21,17 +21,12 @@ namespace Mikroservice.Site.Persistence.Configurations
                 .HasForeignKey(x => x.DilId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            builder.HasOne(x => x.Site)
-                .WithMany(x => x.PageTypes)
-                .HasForeignKey(x => x.SiteId)
-                .OnDelete(DeleteBehavior.Cascade);
-
             builder.HasOne(x => x.Template)
                 .WithMany(x => x.PageTypes)
                 .HasForeignKey(x => x.TemplateId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            builder.HasIndex(x => new { x.SiteId, x.DilId, x.Slug }).IsUnique();
+
             builder.HasQueryFilter(x => !x.IsDeleted);
         }
     }

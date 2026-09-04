@@ -7,9 +7,9 @@ namespace Microservice.Web.Clients.PageTypeClients
     {
   
 
-        [Get("/api/v1/page-types/slug/{siteId}/{slug}")]
-        Task<ApiResponse<PagesDetailVm>> GetPagesBySlugAsync(int siteId, int dilId, string slug);
-        [Get("/api/v1/page-types/home/{siteId}/{dilId}")]
-        Task<ApiResponse<PagesDetailVm>> HomePageControlAsync(int siteId, int dilId);
+        [Get("/api/v1/page-types/slug/{siteTemplateId}/{slug}")]
+        Task<ApiResponse<PagesDetailVm>> GetPagesBySlugAsync(int siteTemplateId, int dilId, string slug);
+        [Get("/api/v1/page-types/home/{siteTemplateId}/{dilId}")]
+        Task<ApiResponse<PagesDetailVm>> HomePageControlAsync(int siteTemplateId, int dilId);
     }
 }

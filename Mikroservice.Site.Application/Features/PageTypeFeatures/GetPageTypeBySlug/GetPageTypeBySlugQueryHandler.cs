@@ -12,7 +12,7 @@ namespace Mikroservice.Site.Application.Features.PageTypeFeatures.GetPageTypeByS
         public Task<ServiceResult<PageTypeDto>> Handle(GetPageTypeBySlugQuery request, CancellationToken cancellationToken)
         {
             var pageType = repository.GetAll()
-                .FirstOrDefault(x => x.SiteId == request.SiteId && x.DilId == request.DilId && x.IsActive &&
+                .FirstOrDefault(x => x.TemplateId == request.TemplateId && x.DilId == request.DilId &&
                     x.Slug.ToLower() == request.Slug.ToLower());
 
             if (pageType is null)
@@ -21,15 +21,13 @@ namespace Mikroservice.Site.Application.Features.PageTypeFeatures.GetPageTypeByS
             return Task.FromResult(ServiceResult<PageTypeDto>.SuccessAsOK(new PageTypeDto
             {
                 Id = pageType.Id,
-                PageTypeId = pageType.PageTypeId,
-                SiteId = pageType.SiteId,
+                PageTypeKind = pageType.PageTypeKind,
                 DilId = pageType.DilId,
                 Name = pageType.Name,
                 Slug = pageType.Slug,
                 TemplateId = pageType.TemplateId,
                 ViewName = pageType.ViewName,
                 IsHomePage = pageType.IsHomePage,
-                IsActive = pageType.IsActive
             }));
         }
     }

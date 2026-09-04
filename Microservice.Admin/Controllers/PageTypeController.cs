@@ -1,12 +1,18 @@
 using Microservice.Admin.Services.Interfaces;
+using Microservice.Admin.ViewModels.Dil;
 using Microservice.Admin.ViewModels.PageType;
+using Microservice.Admin.ViewModels.Template;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Microservice.Admin.Controllers
 {
     [Authorize]
-    public class PageTypeController(IPageTypeService pageTypeService, ILogger<PageTypeController> logger) : Controller
+    public class PageTypeController(
+        IPageTypeService pageTypeService,
+        IDilService dilService,
+        ITemplateService templateService,
+        ILogger<PageTypeController> logger) : Controller
     {
         [HttpGet]
         public async Task<IActionResult> Index()
@@ -22,19 +28,27 @@ namespace Microservice.Admin.Controllers
         }
 
         [HttpGet]
-        public IActionResult Create() => View(new CreatePageTypeVm { SiteId = 1, DilId = 1, TemplateId = 1 });
+        public async Task<IActionResult> Create()
+        {
+            await PopulatePageTypeViewBagsAsync();
+            return View(new CreatePageTypeVm ());
+        }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(CreatePageTypeVm model)
         {
             if (!ModelState.IsValid)
+            {
+                await PopulatePageTypeViewBagsAsync();
                 return View(model);
+            }
 
             var result = await pageTypeService.CreatePageTypeAsync(model);
             if (!result.IsSuccess)
             {
                 ModelState.AddModelError("", result.Fail?.Detail ?? result.Fail?.Title ?? "PageType oluşturulamadı.");
+                await PopulatePageTypeViewBagsAsync();
                 return View(model);
             }
 
@@ -52,11 +66,11 @@ namespace Microservice.Admin.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
+            await PopulatePageTypeViewBagsAsync();
             return View(new UpdatePageTypeVm
             {
                 Id = result.Data.Id,
-                PageTypeId = result.Data.PageTypeId,
-                SiteId = result.Data.SiteId,
+                PageTypeKind = result.Data.PageTypeKind,
                 DilId = result.Data.DilId,
                 Name = result.Data.Name,
                 Slug = result.Data.Slug,
@@ -73,12 +87,16 @@ namespace Microservice.Admin.Controllers
         public async Task<IActionResult> Edit(UpdatePageTypeVm model)
         {
             if (!ModelState.IsValid)
+            {
+                await PopulatePageTypeViewBagsAsync();
                 return View(model);
+            }
 
             var result = await pageTypeService.UpdatePageTypeAsync(model);
             if (!result.IsSuccess)
             {
                 ModelState.AddModelError("", result.Fail?.Detail ?? result.Fail?.Title ?? "PageType güncellenemedi.");
+                await PopulatePageTypeViewBagsAsync();
                 return View(model);
             }
 
@@ -112,6 +130,19 @@ namespace Microservice.Admin.Controllers
 
             TempData["Success"] = "PageType başarıyla silindi.";
             return RedirectToAction(nameof(Index));
+        }
+
+        private async Task PopulatePageTypeViewBagsAsync()
+        {
+            ViewBag.PageTypeler = Enum.GetValues<PageTypeKind>()
+                .Select(kind => new { Id = (int)kind, Ad = kind.ToString() })
+                .ToList();
+
+            var dillerResult = await dilService.GetDilsAsync();
+            ViewBag.Diller = dillerResult.IsSuccess ? dillerResult.Data! : new List<GetDilVm>();
+
+            var templatesResult = await templateService.GetTemplatesAsync();
+            ViewBag.Templates = templatesResult.IsSuccess ? templatesResult.Data! : new List<GetTemplateVm>();
         }
     }
 }

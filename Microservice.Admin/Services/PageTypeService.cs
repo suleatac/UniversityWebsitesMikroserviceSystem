@@ -24,6 +24,16 @@ namespace Microservice.Admin.Services
             return ServiceResult<GetPageTypeVm>.Success(response.Content!);
         }
 
+        public async Task<ServiceResult<GetPageTypeVm>> GetPageTypeByTemplateIdAndPageTypeKindAsync(
+            int templateId, int dilId, PageTypeKind pageTypeKind)
+        {
+            var response = await client.GetPageTypeByTemplateIdAndPageTypeKindAsync(
+                templateId, dilId, (int)pageTypeKind);
+            if (!response.IsSuccessStatusCode)
+                return ServiceResult<GetPageTypeVm>.Error(GetError(response.Error?.Content, "PageType bulunamadı."));
+            return ServiceResult<GetPageTypeVm>.Success(response.Content!);
+        }
+
         public async Task<ServiceResult<bool>> CreatePageTypeAsync(CreatePageTypeVm model)
         {
             var response = await client.CreatePageTypeAsync(model);

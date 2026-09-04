@@ -1,6 +1,7 @@
 using Microservice.Admin.Services.Interfaces;
 using Microservice.Admin.ViewModels;
 using Microservice.Admin.ViewModels.Bilgi;
+using Microservice.Admin.ViewModels.PageType;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -125,7 +126,6 @@ namespace Microservice.Admin.Controllers
                 TempData["Error"] = "Kayıt bulunamadı.";
                 return RedirectToAction(nameof(Index));
             }
-
             return View(result.Data);
         }
 
