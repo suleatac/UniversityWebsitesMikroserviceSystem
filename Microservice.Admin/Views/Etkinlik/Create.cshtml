@@ -85,6 +85,7 @@
 
                     <div asp-validation-summary="ModelOnly"
                          class="alert alert-danger d-none"
+                         role="alert"
                          id="validationSummary"></div>
 
                     <input type="hidden" asp-for="CreateEtkinlik.SiteId" />
@@ -100,11 +101,13 @@
                             <div class="col-md-8">
                                 <label class="form-label">Başlık</label>
                                 <input asp-for="CreateEtkinlik.Baslik" class="form-control" />
+                                <span asp-validation-for="CreateEtkinlik.Baslik" class="text-danger small"></span>
                             </div>
 
                             <div class="col-md-4">
                                 <label class="form-label">Kısa Açıklama</label>
                                 <input asp-for="CreateEtkinlik.KisaAciklama" class="form-control" />
+                                <span asp-validation-for="CreateEtkinlik.KisaAciklama" class="text-danger small"></span>
                             </div>
                         </div>
                     </div>
@@ -121,6 +124,7 @@
                                       id="IcerikMetniEditor"
                                       class="form-control"
                                       rows="10"></textarea>
+                            <span asp-validation-for="CreateEtkinlik.IcerikMetni" class="text-danger small"></span>
                         </div>
 
                         <div class="row">
@@ -171,15 +175,28 @@
                                 <input asp-for="CreateEtkinlik.BitisTarihi" type="datetime-local" class="form-control" />
                             </div>
 
+                  
                             <div class="col-md-3">
-                                <select asp-for="CreateEtkinlik.HedefId"
-                                        class="form-select select2"
-                                        asp-items="@(new SelectList(Model.Hedefler, "Id", "Aciklama"))">
-                     
-                                </select>
+
+                               
+
+                                    <label asp-for="CreateEtkinlik.HedefId" class="form-label">
+                                        Hedef
+                                    </label>
+
+                                    <select asp-for="CreateEtkinlik.HedefId" class="form-select select2">
+                                        @foreach (var hedef in Model.Hedefler)
+                                        {
+                                            <option value="@hedef.Id">@hedef.Aciklama</option>
+                                        }
+                                    </select>
+
+                                    <span asp-validation-for="CreateEtkinlik.HedefId"
+                                          class="text-danger small"></span>
+
+
                             </div>
 
-                            
                         </div>
                     </div>
 
@@ -238,50 +255,56 @@
     <script src="~/assets/libs/tinymce/tinymce.min.js"></script>
 
     <script>
-        $(function () {
+        $(function() {
 
-        $('.select2').select2({ width: '100%', language: 'tr' });
+            // Validation summary gösterimi
+            const validationSummary = $('#validationSummary');
+            if (validationSummary.find('li').length > 0 || validationSummary.find('span').length > 0) {
+                validationSummary.removeClass('d-none');
+            }
 
-        $('#ResimUrlInput').on('input', function () {
-        const url = $(this).val();
-        if (url) {
-        $('#imagePreview').attr('src', url);
-        $('#imagePreviewWrapper').removeClass('d-none');
-        } else {
-        $('#imagePreviewWrapper').addClass('d-none');
-        }
-        });
+            $('.select2').select2({ width: '100%', language: 'tr' });
 
-        $('#openFileManagerBtn').click(function () {
-        $('#fileManagerFrame').attr('src', '/File?mode=picker&type=image');
-        $('#fileManagerModal').modal('show');
-        });
+            $('#ResimUrlInput').on('input', function() {
+                const url = $(this).val();
+                if (url) {
+                    $('#imagePreview').attr('src', url);
+                    $('#imagePreviewWrapper').removeClass('d-none');
+                } else {
+                    $('#imagePreviewWrapper').addClass('d-none');
+                }
+            });
 
-        window.addEventListener('message', function (event) {
-        if (event.data.type === 'file-selected') {
-        $('#ResimUrlInput').val(event.data.url).trigger('input');
-        $('#fileManagerModal').modal('hide');
-        }
-        });
+            $('#openFileManagerBtn').click(function() {
+                $('#fileManagerFrame').attr('src', '/File?mode=picker&type=image');
+                $('#fileManagerModal').modal('show');
+            });
 
-        tinymce.init({
-        selector: '#IcerikMetniEditor',
-        height: 450,
-        language: 'tr_TR',
-        plugins: 'lists link image code table fullscreen',
-        toolbar: 'undo redo | bold italic | alignleft aligncenter alignright | bullist numlist | link image | code fullscreen',
+            window.addEventListener('message', function(event) {
+                if (event.data.type === 'file-selected') {
+                    $('#ResimUrlInput').val(event.data.url).trigger('input');
+                    $('#fileManagerModal').modal('hide');
+                }
+            });
 
-        setup: function (editor) {
-        editor.on('change', function () {
-        editor.save();
-        });
-        }
-        });
+            tinymce.init({
+                selector: '#IcerikMetniEditor',
+                height: 450,
+                language: 'tr_TR',
+                plugins: 'lists link image code table fullscreen',
+                toolbar: 'undo redo | bold italic | alignleft aligncenter alignright | bullist numlist | link image | code fullscreen',
 
-        $('#etkinlikCreateForm').on('submit', function () {
-        const editor = tinymce.get('IcerikMetniEditor');
-        if (editor) editor.save();
-        });
+                setup: function(editor) {
+                    editor.on('change', function() {
+                        editor.save();
+                    });
+                }
+            });
+
+            $('#etkinlikCreateForm').on('submit', function() {
+                const editor = tinymce.get('IcerikMetniEditor');
+                if (editor) editor.save();
+            });
 
         });
     </script>

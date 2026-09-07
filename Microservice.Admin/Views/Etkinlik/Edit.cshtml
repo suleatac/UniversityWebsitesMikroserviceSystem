@@ -192,7 +192,27 @@
                              
                                 </select>
                             </div>
+                            <div class="col-md-3">
 
+                                <div class="mb-3">
+
+                                    <label asp-for="HedefId" class="form-label">
+                                        Hedef
+                                    </label>
+
+                                    <select asp-for="HedefId" class="form-select select2">
+                                        @foreach (var hedef in ViewBag.Hedefler)
+                                        {
+                                            <option value="@hedef.Id">@hedef.Aciklama</option>
+                                        }
+                                    </select>
+
+                                    <span asp-validation-for="HedefId"
+                                          class="text-danger small"></span>
+
+                                </div>
+
+                            </div>
                             
                         </div>
                     </div>

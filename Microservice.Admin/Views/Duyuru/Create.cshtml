@@ -305,7 +305,7 @@
                                     <select asp-for="CreateDuyuru.HedefId"
                                             class="form-select select2"
                                             asp-items="@(new SelectList(Model.Hedefler, "Id", "Aciklama"))">
-                                        <option value="">-- Hedef Seçin --</option>
+                  
                                     </select>
 
                                     <span asp-validation-for="CreateDuyuru.HedefId"
