@@ -2,7 +2,10 @@ using Microservice.Web.ViewModels.Content;
 using Microservice.Web.ViewModels.Duyuru;
 using Microservice.Web.ViewModels.Haber;
 using Microservice.Web.ViewModels.Menu;
+using Microservice.Web.ViewModels.Bilgi;
+using Microservice.Web.ViewModels.ShortcutButton;
 using Microservice.Web.ViewModels.Site;
+using Microservice.Web.ViewModels.Etkinlik;
 
 namespace Microservice.Web.ViewModels.Template
 {
@@ -19,5 +22,8 @@ namespace Microservice.Web.ViewModels.Template
         public List<ContentDetailVm> Banners { get; set; } = new();
         public List<GetHaberVm> Haberler { get; set; } = new();
         public List<GetDuyuruVm> Duyurular { get; set; } = new();
+        public List<BilgiVm> Bilgiler { get; set; } = new();
+        public List<EtkinlikVm> Etkinlikler { get; set; } = new();
+        public List<GetShortcutButtonVm> ShortcutButtons { get; set; } = new();
     }
 }

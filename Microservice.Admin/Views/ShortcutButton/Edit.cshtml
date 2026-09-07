@@ -1,0 +1,741 @@
+@model Microservice.Admin.ViewModels.ShortcutButton.ShortcutButtonEditIndexVm
+
+@{
+    ViewBag.pTitle = "Kısayol Butonlar";
+    ViewBag.Title = "Kısayol Butonunu Düzenle";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section styles {
+    <link href="~/assets/libs/select2/css/select2.min.css" rel="stylesheet" />
+    <!-- Font Awesome 4.2.0 (site template1 icon set), scoped to icon picker -->
+    <link href="~/assets/css/font-awesome4-scoped.css" rel="stylesheet" />
+
+    <style>
+        .select2-container--default .select2-selection--single {
+            height: calc(1.5em + 0.9rem + 2px) !important;
+            border: 1px solid #ced4da !important;
+            border-radius: 0.3rem !important;
+            padding: 0.45rem 0.9rem !important;
+        }
+
+            .select2-container--default .select2-selection--single .select2-selection__rendered {
+                line-height: 1.5 !important;
+                padding-left: 0 !important;
+                color: #495057;
+            }
+
+            .select2-container--default .select2-selection--single .select2-selection__arrow {
+                height: calc(1.5em + 0.9rem + 2px) !important;
+            }
+
+            .select2-container--default .select2-selection--single .select2-selection__clear {
+                display: none !important;
+            }
+
+        .select2-container--default.select2-container--focus .select2-selection--single,
+        .select2-container--default.select2-container--open .select2-selection--single {
+            border-color: #80bdff !important;
+            box-shadow: 0 0 0 0.2rem rgba(0,123,255,0.25) !important;
+        }
+
+        .select2-container--default .select2-results__option--highlighted[aria-selected] {
+            background-color: #556ee6 !important;
+        }
+
+        .select2-dropdown {
+            border-color: #ced4da !important;
+        }
+
+        /* Görsel türü seçim kartları */
+        .media-type-card {
+            cursor: pointer;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            transition: all 0.2s ease;
+            text-align: center;
+            padding: 1.25rem 1rem;
+            background: #fff;
+        }
+
+            .media-type-card:hover {
+                border-color: #b6c2f2;
+                background: #f8f9ff;
+            }
+
+            .media-type-card.active {
+                border-color: #556ee6;
+                background: rgba(85, 110, 230, 0.06);
+                box-shadow: 0 2px 8px rgba(85, 110, 230, 0.15);
+            }
+
+            .media-type-card input[type="radio"] {
+                display: none;
+            }
+
+            .media-type-card .type-icon {
+                font-size: 2rem;
+                color: #556ee6;
+                margin-bottom: 0.5rem;
+            }
+
+        .image-preview-box {
+            width: 90px;
+            height: 90px;
+            border: 2px dashed #ced4da;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            background: #f8f9fa;
+        }
+
+            .image-preview-box img {
+                max-width: 100%;
+                max-height: 100%;
+                object-fit: contain;
+            }
+    </style>
+}
+
+<div class="row justify-content-center">
+
+    <div class="col-xxl-8">
+
+        <div class="card shadow-lg border-0">
+
+            <div class="card-header bg-warning bg-opacity-10 border-bottom">
+
+                <div class="d-flex align-items-center">
+
+                    <div class="avatar-sm me-3">
+                        <div class="avatar-title bg-warning rounded-circle">
+                            <i class="mdi mdi-pencil fs-5"></i>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h5 class="card-title mb-1">Kısayol Butonunu Düzenle</h5>
+                        <p class="card-text text-muted mb-0">
+                            Hızlı erişim butonu bilgilerini güncelleyin
+                        </p>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="card-body p-4">
+
+                <form asp-action="Edit"
+                      method="post"
+                      id="shortcutButtonEditForm"
+                      class="needs-validation"
+                      novalidate>
+
+                    <div asp-validation-summary="ModelOnly"
+                         class="alert alert-danger d-none"
+                         role="alert"
+                         id="validationSummary">
+
+                        <i class="mdi mdi-block-helper me-2"></i>
+                        <ul></ul>
+
+                    </div>
+
+                    <input type="hidden" asp-for="ShortcutButton.Id" />
+                    <input type="hidden" asp-for="ShortcutButton.SiteId" />
+
+                    <!-- Temel Bilgiler -->
+
+                    <div class="mb-4">
+
+                        <h6 class="text-primary border-bottom pb-2">
+                            <i class="mdi mdi-information-outline me-1"></i>
+                            Temel Bilgiler
+                        </h6>
+
+                        <div class="row">
+
+                            <div class="col-md-6">
+
+                                <div class="mb-3">
+
+                                    <label asp-for="ShortcutButton.Ad" class="form-label">
+                                        Buton Adı <span class="text-danger">*</span>
+                                    </label>
+
+                                    <div class="input-group">
+
+                                        <span class="input-group-text">
+                                            <i class="mdi mdi-label"></i>
+                                        </span>
+
+                                        <input asp-for="ShortcutButton.Ad"
+                                               class="form-control"
+                                               placeholder="Örn: OBS, Mail, Kütüphane" />
+
+                                    </div>
+
+                                    <span asp-validation-for="ShortcutButton.Ad"
+                                          class="text-danger small"></span>
+
+                                </div>
+
+                            </div>
+
+                            <div class="col-md-6">
+
+                                <div class="mb-3">
+
+                                    <label asp-for="ShortcutButton.Link" class="form-label">
+                                        Link
+                                    </label>
+
+                                    <div class="input-group">
+
+                                        <span class="input-group-text">
+                                            <i class="mdi mdi-link"></i>
+                                        </span>
+
+                                        <input asp-for="ShortcutButton.Link"
+                                               class="form-control"
+                                               placeholder="Örn: https://obs.universite.edu.tr" />
+
+                                    </div>
+
+                                    <span asp-validation-for="ShortcutButton.Link"
+                                          class="text-danger small"></span>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <div class="row">
+
+                            <div class="col-md-4">
+
+                                <div class="mb-3">
+
+                                    <label asp-for="ShortcutButton.HedefId" class="form-label">
+                                        Hedef
+                                    </label>
+
+                                    <select asp-for="ShortcutButton.HedefId" class="form-select select2">
+                                        @foreach (var hedef in Model.Hedefler)
+                                        {
+                                            <option value="@hedef.Id">@hedef.Aciklama</option>
+                                        }
+                                    </select>
+
+                                    <span asp-validation-for="ShortcutButton.HedefId"
+                                          class="text-danger small"></span>
+
+                                </div>
+
+                            </div>
+
+                            <div class="col-md-4">
+
+                                <div class="mb-3">
+
+                                    <label asp-for="ShortcutButton.DilId" class="form-label">
+                                        Dil
+                                    </label>
+
+                                    <select asp-for="ShortcutButton.DilId" class="form-select select2">
+                                        @foreach (var dil in Model.Diller)
+                                        {
+                                            <option value="@dil.Id">@dil.Ad</option>
+                                        }
+                                    </select>
+
+                                    <span asp-validation-for="ShortcutButton.DilId"
+                                          class="text-danger small"></span>
+
+                                </div>
+
+                            </div>
+
+                            <div class="col-md-4">
+
+                                <div class="mb-3">
+
+                                    <label asp-for="ShortcutButton.Sira" class="form-label">
+                                        Sıra
+                                    </label>
+
+                                    <div class="input-group">
+
+                                        <span class="input-group-text">
+                                            <i class="mdi mdi-sort-numeric-ascending"></i>
+                                        </span>
+
+                                        <input asp-for="ShortcutButton.Sira"
+                                               class="form-control"
+                                               type="number"
+                                               min="0" />
+
+                                    </div>
+
+                                    <span asp-validation-for="ShortcutButton.Sira"
+                                          class="text-danger small"></span>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <!-- Görsel Türü Seçimi -->
+
+                    <div class="mb-4">
+
+                        <h6 class="text-primary border-bottom pb-2">
+                            <i class="mdi mdi-image-multiple-outline me-1"></i>
+                            Görsel Türü
+                        </h6>
+
+                        <div class="row g-3">
+
+                            <div class="col-md-6">
+                                <label class="media-type-card d-block" id="iconTypeCard">
+                                    <input type="radio"
+                                           asp-for="ShortcutButton.IsIconImage"
+                                           value="true"
+                                           id="isIconTrue" />
+                                    <div class="type-icon">
+                                        <i class="fas fa-icons"></i>
+                                    </div>
+                                    <div class="fw-semibold">İkon Eklemek İstiyorum</div>
+                                    <small class="text-muted">Font Awesome ikon kütüphanesinden seçim yapın</small>
+                                </label>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="media-type-card d-block" id="imageTypeCard">
+                                    <input type="radio"
+                                           asp-for="ShortcutButton.IsIconImage"
+                                           value="false"
+                                           id="isIconFalse" />
+                                    <div class="type-icon">
+                                        <i class="mdi mdi-image-outline"></i>
+                                    </div>
+                                    <div class="fw-semibold">Resim Yüklemek İstiyorum</div>
+                                    <small class="text-muted">Dosya yöneticisinden resim seçin</small>
+                                </label>
+                            </div>
+
+                        </div>
+
+                        <span asp-validation-for="ShortcutButton.IsIconImage"
+                              class="text-danger small"></span>
+
+                        <!-- İKON SEÇİM ALANI -->
+                        <div id="iconSection" class="mt-4" style="display:none;">
+
+                            <div class="mb-3">
+
+                                <label class="form-label">
+                                    <i class="mdi mdi-image-outline me-1"></i>
+                                    İkon
+                                </label>
+
+                                <div class="input-group">
+
+                                    <span class="input-group-text">
+                                        <i class="fas fa-icons"></i>
+                                    </span>
+
+                                    <input asp-for="ShortcutButton.IconUrl"
+                                           id="IconUrlInput"
+                                           class="form-control"
+                                           placeholder="İkon seçmek için butona tıklayın (ör: fas fa-user)" />
+
+                                    <button type="button"
+                                            class="btn btn-outline-info"
+                                            id="openIconPickerBtn"
+                                            title="İkon Seç">
+
+                                        <i class="fas fa-icons me-1"></i> İkon Seç
+
+                                    </button>
+
+                                    <button type="button"
+                                            class="btn btn-outline-secondary"
+                                            id="clearIconBtn"
+                                            title="İkonu Temizle">
+
+                                        <i class="mdi mdi-close"></i>
+
+                                    </button>
+
+                                </div>
+
+                                <!-- Icon Preview -->
+                                <div id="iconPreview" class="mt-2 d-none">
+                                    <div class="d-flex align-items-center p-2 bg-light rounded border">
+                                        <i id="previewIcon" class="fas fa-circle fs-4 me-2 text-primary"></i>
+                                        <code id="previewIconText" class="small"></code>
+                                    </div>
+                                </div>
+
+                                <span asp-validation-for="ShortcutButton.IconUrl"
+                                      class="text-danger small"></span>
+
+                                <small class="text-muted">
+                                    <i class="mdi mdi-information-outline"></i>
+                                    İkon seçmek için <a href="javascript:void(0);" id="openIconPickerLink">tıklayın</a>
+                                    veya doğrudan Font Awesome class adını (ör: <code>fas fa-user</code>) yazın.
+                                </small>
+
+                            </div>
+
+                        </div>
+
+                        <!-- RESİM SEÇİM ALANI -->
+                        <div id="imageSection" class="mt-4" style="display:none;">
+
+                            <div class="mb-3">
+
+                                <label class="form-label">
+                                    <i class="mdi mdi-image-outline me-1"></i>
+                                    Resim
+                                </label>
+
+                                <div class="d-flex align-items-center gap-3">
+
+                                    <div class="image-preview-box" id="imagePreviewBox">
+                                        <i class="mdi mdi-image-plus text-muted fs-3" id="imagePlaceholder"></i>
+                                        <img id="imagePreview" src="" alt="Seçilen resim" style="display:none;" />
+                                    </div>
+
+                                    <div class="flex-grow-1">
+
+                                        <div class="input-group">
+
+                                            <span class="input-group-text">
+                                                <i class="mdi mdi-link-variant"></i>
+                                            </span>
+
+                                            <input asp-for="ShortcutButton.ImageUrl"
+                                                   id="ImageUrlInput"
+                                                   class="form-control"
+                                                   placeholder="Dosya yöneticisinden resim seçin" />
+
+                                            <button type="button"
+                                                    class="btn btn-outline-primary"
+                                                    id="openFileManagerBtn"
+                                                    title="Dosya Yöneticisi">
+
+                                                <i class="mdi mdi-folder-open-outline me-1"></i> Resim Seç
+
+                                            </button>
+
+                                            <button type="button"
+                                                    class="btn btn-outline-secondary"
+                                                    id="clearImageBtn"
+                                                    title="Resmi Temizle">
+
+                                                <i class="mdi mdi-close"></i>
+
+                                            </button>
+
+                                        </div>
+
+                                        <span asp-validation-for="ShortcutButton.ImageUrl"
+                                              class="text-danger small"></span>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <!-- Actions -->
+
+                    <div class="d-flex justify-content-between align-items-center pt-3 border-top">
+
+                        <a asp-action="Index"
+                           class="btn btn-outline-secondary">
+
+                            <i class="mdi mdi-arrow-left me-1"></i>
+                            Listeye Dön
+
+                        </a>
+
+                        <button type="submit"
+                                class="btn btn-primary">
+
+                            <i class="mdi mdi-content-save me-1"></i>
+                            Güncelle
+
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- Dosya Yöneticisi Modal -->
+<div class="modal fade" id="fileManagerModal" tabindex="-1" aria-labelledby="fileManagerModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="fileManagerModalLabel">
+                    <i class="mdi mdi-folder-open-outline me-1"></i> Dosya Yöneticisi
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
+            </div>
+            <div class="modal-body p-0" style="height: 600px;">
+                <iframe id="fileManagerFrame" src="" style="width:100%; height:100%; border:none;"></iframe>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Icons Modal -->
+<div class="modal fade" id="iconModal" tabindex="-1" aria-labelledby="iconModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="iconModalLabel">
+                    <i class="mdi mdi-folder-open-outline me-1"></i> Tüm İkonlar
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
+            </div>
+            <div class="modal-body p-0" style="height: 600px; overflow-y:auto;">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">Font awesome</h3>
+                            </div>
+                            <div class="card-body">
+                                <p class="text-muted">Get icons on your website with <strong>Font Awesome</strong>, the web's most popular icon set and toolkit. For more info visit <a href="http://fontawesome.com" target="_blank">Font Awesome's page</a>.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">Font Awesome 4.2.0</h3>
+                            </div>
+                            <div class="card-body">
+                                <p class="card-title-desc mb-2">Use <code><i class="fa fa-adjust"></i></code> <span class="badge bg-success">v 4.2.0</span> &mdash; site (template1) ile birebir ayn&#305; ikon seti.</p>
+                                <div class="row icon-demo-content" id="solid">
+                                </div>
+                            </div>
+                        </div> <!-- end card -->
+                    </div> <!-- end col -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script src="~/assets/js/app.js"></script>
+    <script src="~/assets/js/pages/fontawesome.init.js"></script>
+    <script src="~/assets/libs/select2/js/select2.full.min.js"></script>
+    <script src="~/assets/libs/select2/js/i18n/tr.js"></script>
+
+    <script>
+
+        // ============================================
+        // Sayfa Yüklendi
+        // ============================================
+
+        $(document).ready(function () {
+
+            const validationSummary = $('#validationSummary');
+
+            if (validationSummary.find('li').length > 0) {
+                validationSummary.removeClass('d-none');
+            }
+
+            $('.select2').select2({
+                language: 'tr',
+                width: '100%',
+                placeholder: 'Seçiniz',
+                allowClear: true
+            });
+
+            // Görsel türü seçim kartlarını başlat
+            initMedia_typeCards();
+
+            syncMediaSections();
+
+            // Mevcut değerler varsa önizlemeleri göster
+            var initialIcon = $('#IconUrlInput').val();
+            if (initialIcon && initialIcon.trim()) {
+                showIconPreview(initialIcon.trim());
+            }
+
+            var initialImage = $('#ImageUrlInput').val();
+            if (initialImage && initialImage.trim()) {
+                showImagePreview(initialImage.trim());
+            }
+
+        });
+
+        // ============================================
+        // Görsel Türü Kartları (İkon / Resim)
+        // ============================================
+
+        function initMedia_typeCards() {
+            $('input[name="ShortcutButton.IsIconImage"]').on('change', function () {
+                syncMediaSections();
+            });
+        }
+
+        function syncMediaSections() {
+            var isIcon = $('input[name="ShortcutButton.IsIconImage"]:checked').val();
+
+            $('#iconTypeCard').toggleClass('active', isIcon === 'true');
+            $('#imageTypeCard').toggleClass('active', isIcon === 'false');
+
+            if (isIcon === 'true') {
+                $('#iconSection').slideDown(150);
+                $('#imageSection').slideUp(150);
+            } else if (isIcon === 'false') {
+                $('#iconSection').slideUp(150);
+                $('#imageSection').slideDown(150);
+            } else {
+                $('#iconSection').hide();
+                $('#imageSection').hide();
+            }
+        }
+
+        // ============================================
+        // İkon Seçimi (Font Awesome Modal)
+        // ============================================
+
+        $('#openIconPickerBtn, #openIconPickerLink').on('click', function () {
+            $('#iconModal').modal('show');
+        });
+
+        // Click handler for icon selection in the modal
+        $(document).on('click', '#iconModal .icon-demo-content .col-xl-3', function () {
+            var $wrapper = $(this).find('.icon-wrapper');
+            var $icon = $wrapper.find('i');
+            var iconHtml = $icon.length
+                ? $icon.prop('outerHTML')
+                : $(this).find('i').prop('outerHTML') || '';
+
+            // Extract class names from the <i> tag
+            var match = iconHtml.match(/class="([^"]+)"/);
+            if (match && match[1]) {
+                var iconClass = match[1];
+                $('#IconUrlInput').val(iconClass);
+                showIconPreview(iconClass);
+
+                $('#iconModal').modal('hide');
+            }
+        });
+
+        // Update preview when user types manually
+        $('#IconUrlInput').on('input', function () {
+            var val = $(this).val().trim();
+            if (val) {
+                showIconPreview(val);
+            } else {
+                $('#iconPreview').addClass('d-none');
+            }
+        });
+
+        $('#clearIconBtn').on('click', function () {
+            $('#IconUrlInput').val('');
+            $('#iconPreview').addClass('d-none');
+        });
+
+        function showIconPreview(iconClass) {
+            $('#previewIcon').attr('class', iconClass + ' fs-4 me-2 text-primary');
+            $('#previewIconText').text(iconClass);
+            $('#iconPreview').removeClass('d-none');
+        }
+
+        // ============================================
+        // Resim Seçimi (File Manager Modal)
+        // ============================================
+
+        $('#openFileManagerBtn').on('click', function () {
+
+            const type = 'image';
+
+            $('#fileManagerFrame').attr(
+                'src',
+                '/File?mode=picker&type=' + type
+            );
+
+            $('#fileManagerModal').modal('show');
+
+        });
+
+        $('#clearImageBtn').on('click', function () {
+            $('#ImageUrlInput').val('');
+            showImagePreview('');
+        });
+
+        function showImagePreview(url) {
+            if (url) {
+                $('#imagePreview').attr('src', url).show();
+                $('#imagePlaceholder').hide();
+            } else {
+                $('#imagePreview').attr('src', '').hide();
+                $('#imagePlaceholder').show();
+            }
+        }
+
+        // ============================================
+        // File Manager Message Listener
+        // ============================================
+
+        function fileManagerMessageHandler(event) {
+
+            // Güvenlik kontrolü
+            if (event.origin !== window.location.origin)
+                return;
+
+            if (event.data.type === 'file-selected') {
+
+                $('#ImageUrlInput').val(event.data.url);
+                showImagePreview(event.data.url);
+
+                $('#fileManagerModal').modal('hide');
+
+            }
+
+        }
+
+        window.removeEventListener('message', fileManagerMessageHandler);
+
+        window.addEventListener(
+            'message',
+            fileManagerMessageHandler
+        );
+
+    </script>
+}

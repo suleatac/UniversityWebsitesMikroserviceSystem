@@ -1,0 +1,206 @@
+@model IEnumerable<Microservice.Admin.ViewModels.ShortcutButton.GetShortcutButtonVm>
+
+@{
+    ViewBag.pTitle = "Kısayol Butonlar";
+    ViewBag.Title = "Kısayol Buton Yönetimi";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section styles {
+    <link href="~/assets/libs/datatables.net-bs5/css/dataTables.bootstrap5.min.css" rel="stylesheet" type="text/css" />
+    <link href="~/assets/libs/datatables.net-responsive-bs5/css/responsive.bootstrap5.min.css" rel="stylesheet" type="text/css" />
+    <link href="~/assets/libs/datatables.net-buttons-bs5/css/buttons.bootstrap5.min.css" rel="stylesheet" type="text/css" />
+    <style>
+        .page-header-card {
+            background: linear-gradient(135deg, #556ee6 0%, #7c8ff0 100%);
+            border-radius: 12px;
+            padding: 1.5rem;
+            color: white;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 4px 12px rgba(85, 110, 230, 0.2);
+        }
+
+            .page-header-card h4 { font-weight: 600; margin-bottom: 0.25rem; }
+
+        .btn-create {
+            background: linear-gradient(135deg, #556ee6 0%, #7c8ff0 100%);
+            border: none;
+            color: white;
+            padding: 0.6rem 1.2rem;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+            .btn-create:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 3px 10px rgba(85, 110, 230, 0.3);
+                color: white;
+            }
+
+        .table-card { border: none; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.06); }
+
+            .table-card .card-header {
+                background: linear-gradient(135deg, #fdfefe 0%, #f0f2ff 100%);
+                border-bottom: 2px solid #556ee6;
+                border-radius: 12px 12px 0 0 !important;
+                padding: 1rem 1.25rem;
+            }
+
+        .shortcut-preview-icon {
+            font-size: 1.4rem;
+            color: #556ee6;
+        }
+
+        .shortcut-preview-img {
+            width: 36px;
+            height: 36px;
+            object-fit: contain;
+            border-radius: 6px;
+            border: 1px solid #eee;
+        }
+    </style>
+}
+
+<!-- Page Header -->
+<div class="page-header-card">
+    <div class="d-flex justify-content-between align-items-center">
+        <div>
+            <h4><i class="mdi mdi-flash-circle me-2"></i>Kısayol Buton Yönetimi</h4>
+            <p class="mb-0 opacity-75">Sitenizin hızlı erişim butonlarını buradan yönetebilirsiniz</p>
+        </div>
+        <a asp-action="Create" class="btn btn-create">
+            <i class="mdi mdi-plus-circle me-1"></i> Yeni Kısayol Butonu
+        </a>
+    </div>
+</div>
+
+<!-- DataTable -->
+<div class="row">
+    <div class="col-12">
+        <div class="card table-card">
+            <div class="card-header">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0">
+                        <i class="mdi mdi-table me-2 text-primary"></i>Kısayol Buton Listesi
+                    </h5>
+                    <span class="badge bg-primary bg-opacity-10 text-primary">@Model.Count() Kayıt</span>
+                </div>
+            </div>
+            <div class="card-body">
+                <table id="datatable-shortcut" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Görsel</th>
+                            <th>Buton Adı</th>
+                            <th>Link</th>
+                            <th>Sıra</th>
+                            <th>Aksiyonlar</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.OrderBy(x => x.Sira))
+                        {
+                            <tr>
+                                <td>@item.Id</td>
+                                <td class="text-center">
+                                    @if (item.IsIconImage == true && !string.IsNullOrWhiteSpace(item.IconUrl))
+                                    {
+                                        <i class="@item.IconUrl shortcut-preview-icon" title="@item.IconUrl"></i>
+                                    }
+                                    else if (!string.IsNullOrWhiteSpace(item.ImageUrl))
+                                    {
+                                        <img src="@item.ImageUrl" alt="@item.Ad" class="shortcut-preview-img" />
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">—</span>
+                                    }
+                                </td>
+                                <td>@item.Ad</td>
+                                <td>
+                                    @if (!string.IsNullOrWhiteSpace(item.Link))
+                                    {
+                                        <a href="@item.Link" target="_blank" class="text-truncate d-inline-block" style="max-width: 260px;">@item.Link</a>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">—</span>
+                                    }
+                                </td>
+                                <td>@item.Sira</td>
+                                <td class="text-center">
+                                    <a class="btn btn-outline-primary btn-sm" title="Düzenle" href="/ShortcutButton/Edit/@item.Id">
+                                        <i class="fas fa-pencil-alt"></i>
+                                    </a>
+                                    <a class="btn btn-outline-danger btn-sm" title="Sil" href="/ShortcutButton/Delete/@item.Id">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <script src="~/assets/libs/datatables.net/js/jquery.dataTables.min.js"></script>
+    <script src="~/assets/libs/datatables.net-bs5/js/dataTables.bootstrap5.min.js"></script>
+    <script src="~/assets/libs/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
+    <script src="~/assets/libs/datatables.net-responsive-bs5/js/responsive.bootstrap5.min.js"></script>
+    <script src="~/assets/libs/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
+    <script src="~/assets/libs/datatables.net-buttons-bs5/js/buttons.bootstrap5.min.js"></script>
+    <script src="~/assets/libs/jszip/jszip.min.js"></script>
+    <script src="~/assets/libs/pdfmake/build/pdfmake.min.js"></script>
+    <script src="~/assets/libs/pdfmake/build/vfs_fonts.js"></script>
+    <script src="~/assets/libs/datatables.net-buttons/js/buttons.html5.min.js"></script>
+    <script src="~/assets/libs/datatables.net-buttons/js/buttons.print.min.js"></script>
+    <script src="~/assets/libs/datatables.net-buttons/js/buttons.colVis.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            $(".dataTables_length select").addClass("form-select form-select-sm");
+
+            var a = $("#datatable-shortcut").DataTable({
+                dom: '<"row"<"col-sm-12 col-md-6"B><"col-sm-12 col-md-6"f>>' +
+                     '<"row"<"col-sm-12"tr>>' +
+                     '<"row"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>',
+                fixedHeader: true,
+                deferRender: true,
+                filter: true,
+                paging: true,
+                pageLength: 10,
+                order: [[4, 'asc']],
+                buttons: [
+                    { extend: 'copy', text: '<i class="fas fa-copy"></i> Kopyala', className: 'btn btn-sm btn-warning', exportOptions: { columns: ':visible' } },
+                    { extend: 'excel', text: '<i class="fas fa-file-excel"></i> Excel', className: 'btn btn-sm btn-success', exportOptions: { columns: ':visible' } },
+                    { extend: 'pdf', text: '<i class="fas fa-file-pdf"></i> PDF', className: 'btn btn-sm btn-info', exportOptions: { columns: ':visible' } },
+                    { extend: 'colvis', text: '<i class="fas fa-columns"></i> Sütunlar', className: 'btn btn-sm btn-secondary' }
+                ],
+                lengthMenu: [[10, 25, 50, -1], ['10 adet', '25 adet', '50 adet', 'Hepsi']],
+                language: {
+                    url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/tr.json',
+                    paginate: {
+                        previous: "<i class='mdi mdi-chevron-left'>",
+                        next: "<i class='mdi mdi-chevron-right'>"
+                    },
+                    info: "Toplam _TOTAL_ kayıttan _START_ - _END_ arası gösteriliyor",
+                    infoEmpty: "Gösterilecek kayıt bulunmamaktadır",
+                    infoFiltered: "(_MAX_ kayıt içinden filtrelendi)",
+                    search: "Ara:",
+                    zeroRecords: "Eşleşen kayıt bulunamadı"
+                },
+                drawCallback: function () {
+                    $(".dataTables_paginate > .pagination").addClass("pagination");
+                }
+            });
+
+            a.buttons().container().appendTo("#datatable-shortcut_wrapper .col-md-6:eq(0)");
+        });
+    </script>
+    <script src="~/assets/js/app.js"></script>
+}

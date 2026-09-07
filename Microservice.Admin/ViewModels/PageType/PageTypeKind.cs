@@ -6,15 +6,15 @@ namespace Microservice.Admin.ViewModels.PageType
     {
         Home = 1,
         Menu = 2,
-        NewsList = 3,
-        NewsDetail = 4,
-        AnnouncementList = 5,
-        AnnouncementDetail = 6,
+        Haberler = 3,
+        Haber = 4,
+        Duyurular = 5,
+        Duyuru = 6,
         Banner = 7,
         Bilgi = 8,
         Etkinlik = 9,
-        VideoList = 10,
-        VideoDetail = 11,
+        Videolar = 10,
+        Video = 11,
         StaticPage = 12,
     }
 }

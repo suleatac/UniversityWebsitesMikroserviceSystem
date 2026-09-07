@@ -1,10 +1,11 @@
 using Microservice.Web.Services.ServiceResults;
-using Microservice.Web.ViewModels.Content;
+using Microservice.Web.ViewModels.Etkinlik;
 
 namespace Microservice.Web.Services.Interfaces
 {
     public interface IEtkinlikService
     {
-        Task<ServiceResult<ContentDetailVm>> GetEtkinlikByIdAsync(int id);
+        Task<ServiceResult<List<EtkinlikVm>>> GetEtkinliklerAsync(int siteId, int dilId);
+        Task<ServiceResult<EtkinlikVm>> GetEtkinlikByIdAsync(int id);
     }
 }

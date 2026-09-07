@@ -11,12 +11,15 @@ namespace Microservice.Web.Controllers
 {
     public class TemplateController : Controller
     {
-        private const int HomeLatestContentCount = 5;
+        private const int HomeLatestContentCount = 8;
 
         private readonly IRouteService _routeService;
         private readonly IHaberService _haberService;
         private readonly IDuyuruService _duyuruService;
         private readonly IBannerService _bannerService;
+        private readonly IEtkinlikService _etkinlikService;
+        private readonly IBilgiService _bilgiService;
+        private readonly IShortcutButtonService _shortcutButtonService;
         private readonly IMenuService _menuService;
         private readonly ISiteService _siteService;
         private readonly ILogger<TemplateController> _logger;
@@ -25,17 +28,23 @@ namespace Microservice.Web.Controllers
             IRouteService routeService,
             IHaberService haberService,
             IDuyuruService duyuruService,
+            IBilgiService bilgiService,
             IBannerService bannerService,
+            IEtkinlikService etkinlikService,
             IMenuService menuService,
             ISiteService siteService,
+            IShortcutButtonService shortcutButtonService,
             ILogger<TemplateController> logger)
         {
+            _etkinlikService = etkinlikService;
             _routeService = routeService;
+            _bilgiService = bilgiService;
             _haberService = haberService;
             _duyuruService = duyuruService;
             _bannerService = bannerService;
             _menuService = menuService;
             _siteService = siteService;
+            _shortcutButtonService = shortcutButtonService;
             _logger = logger;
         }
 
@@ -135,8 +144,10 @@ namespace Microservice.Web.Controllers
             var bannersTask = _bannerService.GetBannersAsync(siteId, languageId);
             var haberlerTask = _haberService.GetHabersAsync(siteId, languageId);
             var duyurularTask = _duyuruService.GetDuyurularAsync(siteId, languageId);
-
-            await Task.WhenAll(siteTask, menusTask, bannersTask, haberlerTask, duyurularTask);
+            var shortcutButtonsTask = _shortcutButtonService.GetShortcutButtonsAsync(siteId, languageId);
+            var bilgiTask = _bilgiService.GetBilgisAsync(siteId, languageId);
+            var etkinliklerTask = _etkinlikService.GetEtkinliklerAsync(siteId, languageId);
+            await Task.WhenAll(siteTask, menusTask, bannersTask, haberlerTask, duyurularTask, shortcutButtonsTask, bilgiTask, etkinliklerTask);
 
             var siteResult = await siteTask;
 
@@ -148,8 +159,11 @@ namespace Microservice.Web.Controllers
 
             var menusResult = await menusTask;
             var bannersResult = await bannersTask;
+            var bilgiResult = await bilgiTask;
             var haberlerResult = await haberlerTask;
             var duyurularResult = await duyurularTask;
+            var shortcutButtonsResult = await shortcutButtonsTask;
+            var etkinliklerResult = await etkinliklerTask;
 
             var model = new TemplatePageViewModel {
                 Site = siteResult.Data,
@@ -162,8 +176,20 @@ namespace Microservice.Web.Controllers
                     .OrderByDescending(h => h.YayimTarihi)
                     .Take(HomeLatestContentCount)
                     .ToList(),
+                Bilgiler = (bilgiResult.Data ?? [])
+                    .OrderByDescending(b => b.YayimTarihi)
+                    .Take(HomeLatestContentCount)
+                    .ToList(),
+                ShortcutButtons= (shortcutButtonsResult.Data ?? [])
+                    .OrderByDescending(b => b.Sira)
+                    .Take(HomeLatestContentCount)
+                    .ToList(),
                 Duyurular = (duyurularResult.Data ?? [])
                     .OrderByDescending(d => d.YayimTarihi)
+                    .Take(HomeLatestContentCount)
+                    .ToList(),
+                Etkinlikler = (etkinliklerResult.Data ?? [])
+                    .OrderByDescending(e => e.YayimTarihi)
                     .Take(HomeLatestContentCount)
                     .ToList()
             };

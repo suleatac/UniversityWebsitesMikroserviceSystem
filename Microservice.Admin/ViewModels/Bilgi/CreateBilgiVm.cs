@@ -4,13 +4,10 @@ namespace Microservice.Admin.ViewModels.Bilgi
 {
     public class CreateBilgiVm
     {
-        [Range(1, int.MaxValue, ErrorMessage = "Sayfa türü seçimi zorunludur.")]
-        public int PageTypeId { get; set; }
-
         public int SiteId { get; set; }
         public int DilId { get; set; }
         public int? HedefId { get; set; }
-
+        public int PageTypeId { get; set; }
         public string Baslik { get; set; } = default!;
         public string KisaAciklama { get; set; } = default!;
         public string IcerikMetni { get; set; } = default!;

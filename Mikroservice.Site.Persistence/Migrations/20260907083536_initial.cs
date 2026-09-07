@@ -471,6 +471,47 @@ namespace Mikroservice.Site.Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "ShortcutButtons",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    SiteId = table.Column<int>(type: "integer", nullable: false),
+                    DilId = table.Column<int>(type: "integer", nullable: false),
+                    HedefId = table.Column<int>(type: "integer", nullable: false),
+                    Ad = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
+                    Link = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
+                    IconUrl = table.Column<string>(type: "character varying(300)", maxLength: 300, nullable: true),
+                    ImageUrl = table.Column<string>(type: "character varying(300)", maxLength: 300, nullable: true),
+                    IsIconImage = table.Column<bool>(type: "boolean", nullable: true),
+                    Sira = table.Column<int>(type: "integer", nullable: false),
+                    OlusturulmaTarihi = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ShortcutButtons", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ShortcutButtons_Diller_DilId",
+                        column: x => x.DilId,
+                        principalTable: "Diller",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_ShortcutButtons_Hedefler_HedefId",
+                        column: x => x.HedefId,
+                        principalTable: "Hedefler",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.SetNull);
+                    table.ForeignKey(
+                        name: "FK_ShortcutButtons_Siteler_SiteId",
+                        column: x => x.SiteId,
+                        principalTable: "Siteler",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "SikcaSorulanSorular",
                 columns: table => new
                 {
@@ -781,6 +822,21 @@ namespace Mikroservice.Site.Persistence.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_ShortcutButtons_DilId",
+                table: "ShortcutButtons",
+                column: "DilId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ShortcutButtons_HedefId",
+                table: "ShortcutButtons",
+                column: "HedefId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ShortcutButtons_SiteId_DilId",
+                table: "ShortcutButtons",
+                columns: new[] { "SiteId", "DilId" });
+
+            migrationBuilder.CreateIndex(
                 name: "IX_SikcaSorulanSorular_DilId",
                 table: "SikcaSorulanSorular",
                 column: "DilId");
@@ -899,6 +955,9 @@ namespace Mikroservice.Site.Persistence.Migrations
                 name: "Popuplar");
 
             migrationBuilder.DropTable(
+                name: "ShortcutButtons");
+
+            migrationBuilder.DropTable(
                 name: "SikcaSorulanSorular");
 
             migrationBuilder.DropTable(
@@ -911,13 +970,13 @@ namespace Mikroservice.Site.Persistence.Migrations
                 name: "YonetimDuyuruOkunduBilgileri");
 
             migrationBuilder.DropTable(
-                name: "Hedefler");
-
-            migrationBuilder.DropTable(
                 name: "SitePersonelleri");
 
             migrationBuilder.DropTable(
                 name: "PageTypes");
+
+            migrationBuilder.DropTable(
+                name: "Hedefler");
 
             migrationBuilder.DropTable(
                 name: "YonetimDuyurular");

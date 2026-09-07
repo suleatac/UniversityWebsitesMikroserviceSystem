@@ -57,6 +57,7 @@ namespace Microservice.Site.Persistence.Extentions
             services.AddScoped<IYoneticiSiteRepository, YoneticiSiteRepository>();
             services.AddScoped<IYonetimDuyuruRepository, YonetimDuyuruRepository>();
             services.AddScoped<IYonetimDuyuruOkunduRepository, YonetimDuyuruOkunduRepository>();
+            services.AddScoped<IShortcutButtonRepository, ShortcutButtonRepository>();
             services.AddScoped<SiteNginxConfigService>();
           
 

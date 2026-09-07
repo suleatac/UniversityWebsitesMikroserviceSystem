@@ -17,5 +17,6 @@ namespace Microservice.Web.ViewModels.Site
         public int DefaultLanguageId { get; set; }
         public string SiteEPostaSifre { get; init; } = default!;
         public GetDilVm DefaultLanguage { get; set; } = null!;
+        public SiteOzellikleriVm? SiteOzellikleri { get; set; }
     }
 }

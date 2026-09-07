@@ -21,10 +21,10 @@ namespace Microservice.Web.Services.ServicesExtentions
             services.AddScoped<IVideoService, VideoService>();
             services.AddScoped<IRouteService, RouteService>();
             services.AddScoped<IDilService, DilService>();
-
+            services.AddScoped<IShortcutButtonService, ShortcutButtonService>();
             services.AddScoped<IPageDetailResolver, NewsDetailResolver>();
             services.AddScoped<IPageDetailResolver, AnnouncementDetailResolver>();
-
+            services.AddScoped<IBilgiService, BilgiService>();
             services.AddScoped<IPageResolver, NewsListPageResolver>();
 
 

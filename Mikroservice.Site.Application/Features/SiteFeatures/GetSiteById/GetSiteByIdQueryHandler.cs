@@ -17,8 +17,8 @@ namespace Mikroservice.Site.Application.Features.SiteFeatures.GetSiteById
         public async Task<ServiceResult<SiteDetailDto>> Handle(GetSiteByIdQuery request, CancellationToken cancellationToken)
         {
 
-            // ✔ DB'den TEK kayıt çek
-            var entity = await siteRepository.GetByIdAsync(request.Id);
+            // ✔ DB'den TEK kayıt çek (SiteOzellikleri dahil)
+            var entity = await siteRepository.GetSiteWithDetailsByIdAsync(request.Id, cancellationToken);
 
             if (entity is null)
             {

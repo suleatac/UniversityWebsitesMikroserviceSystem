@@ -1,0 +1,556 @@
+/* Font Awesome 4.2.0 icon set (source: Microservice.Web/wwwroot/template1/css/font-awesome.css).
+   Scoped to #iconModal / #iconPreview so it does not override the admin theme's Font Awesome 5 styles.
+   Regenerate with generate-fa4-scoped-css.ps1 when the web template changes. */
+@font-face {
+  font-family: 'FontAwesome';
+  src: url('../fonts/fontawesome-webfont.eot?v=4.2.0');
+  src: url('../fonts/fontawesome-webfont.eot?#iefix&v=4.2.0') format('embedded-opentype'),
+  url('../fonts/fontawesome-webfont.woff?v=4.2.0') format('woff'),
+  url('../fonts/fontawesome-webfont.ttf?v=4.2.0') format('truetype'),
+  url('../fonts/fontawesome-webfont.svg?v=4.2.0#fontawesomeregular') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+:is(#iconModal,#iconPreview) .fa{display: inline-block;
+  font: normal normal normal 14px/1 FontAwesome;
+  font-size: inherit;
+  text-rendering: auto;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;}
+:is(#iconModal,#iconPreview) .fa-lg{font-size: 1.33333333em;
+  line-height: 0.75em;
+  vertical-align: -15%;}
+:is(#iconModal,#iconPreview) .fa-2x{font-size: 2em;}
+:is(#iconModal,#iconPreview) .fa-3x{font-size: 3em;}
+:is(#iconModal,#iconPreview) .fa-4x{font-size: 4em;}
+:is(#iconModal,#iconPreview) .fa-5x{font-size: 5em;}
+:is(#iconModal,#iconPreview) .fa-fw{width: 1.28571429em;
+  text-align: center;}
+:is(#iconModal,#iconPreview) .fa-ul{padding-left: 0;
+  margin-left: 2.14285714em;
+  list-style-type: none;}
+:is(#iconModal,#iconPreview) .fa-ul > li{position: relative;}
+:is(#iconModal,#iconPreview) .fa-li{position: absolute;
+  left: -2.14285714em;
+  width: 2.14285714em;
+  top: 0.14285714em;
+  text-align: center;}
+:is(#iconModal,#iconPreview) .fa-li.fa-lg{left: -1.85714286em;}
+:is(#iconModal,#iconPreview) .fa-border{padding: .2em .25em .15em;
+  border: solid 0.08em #eeeeee;
+  border-radius: .1em;}
+:is(#iconModal,#iconPreview) .fa.pull-left{margin-right: .3em;}
+:is(#iconModal,#iconPreview) .fa.pull-right{margin-left: .3em;}
+:is(#iconModal,#iconPreview) .fa-spin{-webkit-animation: fa-spin 2s infinite linear;
+  animation: fa-spin 2s infinite linear;}
+:is(#iconModal,#iconPreview) .fa-rotate-90{filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=1);
+  -webkit-transform: rotate(90deg);
+  -ms-transform: rotate(90deg);
+  transform: rotate(90deg);}
+:is(#iconModal,#iconPreview) .fa-rotate-180{filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=2);
+  -webkit-transform: rotate(180deg);
+  -ms-transform: rotate(180deg);
+  transform: rotate(180deg);}
+:is(#iconModal,#iconPreview) .fa-rotate-270{filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
+  -webkit-transform: rotate(270deg);
+  -ms-transform: rotate(270deg);
+  transform: rotate(270deg);}
+:is(#iconModal,#iconPreview) .fa-flip-horizontal{filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=0, mirror=1);
+  -webkit-transform: scale(-1, 1);
+  -ms-transform: scale(-1, 1);
+  transform: scale(-1, 1);}
+:is(#iconModal,#iconPreview) .fa-flip-vertical{filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=2, mirror=1);
+  -webkit-transform: scale(1, -1);
+  -ms-transform: scale(1, -1);
+  transform: scale(1, -1);}
+:is(#iconModal,#iconPreview) .fa-stack{position: relative;
+  display: inline-block;
+  width: 2em;
+  height: 2em;
+  line-height: 2em;
+  vertical-align: middle;}
+:is(#iconModal,#iconPreview) .fa-stack-1x,:is(#iconModal,#iconPreview) .fa-stack-2x{position: absolute;
+  left: 0;
+  width: 100%;
+  text-align: center;}
+:is(#iconModal,#iconPreview) .fa-stack-1x{line-height: inherit;}
+:is(#iconModal,#iconPreview) .fa-stack-2x{font-size: 2em;}
+:is(#iconModal,#iconPreview) .fa-inverse{color: #ffffff;}
+:is(#iconModal,#iconPreview) .fa-music:before{content: "\f001";}
+:is(#iconModal,#iconPreview) .fa-search:before{content: "\f002";}
+:is(#iconModal,#iconPreview) .fa-envelope-o:before{content: "\f003";}
+:is(#iconModal,#iconPreview) .fa-heart:before{content: "\f004";}
+:is(#iconModal,#iconPreview) .fa-star:before{content: "\f005";}
+:is(#iconModal,#iconPreview) .fa-star-o:before{content: "\f006";}
+:is(#iconModal,#iconPreview) .fa-user:before{content: "\f007";}
+:is(#iconModal,#iconPreview) .fa-film:before{content: "\f008";}
+:is(#iconModal,#iconPreview) .fa-th-large:before{content: "\f009";}
+:is(#iconModal,#iconPreview) .fa-th:before{content: "\f00a";}
+:is(#iconModal,#iconPreview) .fa-th-list:before{content: "\f00b";}
+:is(#iconModal,#iconPreview) .fa-check:before{content: "\f00c";}
+:is(#iconModal,#iconPreview) .fa-remove:before,:is(#iconModal,#iconPreview) .fa-close:before,:is(#iconModal,#iconPreview) .fa-times:before{content: "\f00d";}
+:is(#iconModal,#iconPreview) .fa-search-plus:before{content: "\f00e";}
+:is(#iconModal,#iconPreview) .fa-search-minus:before{content: "\f010";}
+:is(#iconModal,#iconPreview) .fa-power-off:before{content: "\f011";}
+:is(#iconModal,#iconPreview) .fa-signal:before{content: "\f012";}
+:is(#iconModal,#iconPreview) .fa-gear:before,:is(#iconModal,#iconPreview) .fa-cog:before{content: "\f013";}
+:is(#iconModal,#iconPreview) .fa-trash-o:before{content: "\f014";}
+:is(#iconModal,#iconPreview) .fa-home:before{content: "\f015";}
+:is(#iconModal,#iconPreview) .fa-file-o:before{content: "\f016";}
+:is(#iconModal,#iconPreview) .fa-clock-o:before{content: "\f017";}
+:is(#iconModal,#iconPreview) .fa-road:before{content: "\f018";}
+:is(#iconModal,#iconPreview) .fa-download:before{content: "\f019";}
+:is(#iconModal,#iconPreview) .fa-arrow-circle-o-down:before{content: "\f01a";}
+:is(#iconModal,#iconPreview) .fa-arrow-circle-o-up:before{content: "\f01b";}
+:is(#iconModal,#iconPreview) .fa-inbox:before{content: "\f01c";}
+:is(#iconModal,#iconPreview) .fa-play-circle-o:before{content: "\f01d";}
+:is(#iconModal,#iconPreview) .fa-rotate-right:before,:is(#iconModal,#iconPreview) .fa-repeat:before{content: "\f01e";}
+:is(#iconModal,#iconPreview) .fa-refresh:before{content: "\f021";}
+:is(#iconModal,#iconPreview) .fa-list-alt:before{content: "\f022";}
+:is(#iconModal,#iconPreview) .fa-lock:before{content: "\f023";}
+:is(#iconModal,#iconPreview) .fa-flag:before{content: "\f024";}
+:is(#iconModal,#iconPreview) .fa-headphones:before{content: "\f025";}
+:is(#iconModal,#iconPreview) .fa-volume-off:before{content: "\f026";}
+:is(#iconModal,#iconPreview) .fa-volume-down:before{content: "\f027";}
+:is(#iconModal,#iconPreview) .fa-volume-up:before{content: "\f028";}
+:is(#iconModal,#iconPreview) .fa-qrcode:before{content: "\f029";}
+:is(#iconModal,#iconPreview) .fa-barcode:before{content: "\f02a";}
+:is(#iconModal,#iconPreview) .fa-tag:before{content: "\f02b";}
+:is(#iconModal,#iconPreview) .fa-tags:before{content: "\f02c";}
+:is(#iconModal,#iconPreview) .fa-book:before{content: "\f02d";}
+:is(#iconModal,#iconPreview) .fa-bookmark:before{content: "\f02e";}
+:is(#iconModal,#iconPreview) .fa-print:before{content: "\f02f";}
+:is(#iconModal,#iconPreview) .fa-camera:before{content: "\f030";}
+:is(#iconModal,#iconPreview) .fa-font:before{content: "\f031";}
+:is(#iconModal,#iconPreview) .fa-bold:before{content: "\f032";}
+:is(#iconModal,#iconPreview) .fa-italic:before{content: "\f033";}
+:is(#iconModal,#iconPreview) .fa-text-height:before{content: "\f034";}
+:is(#iconModal,#iconPreview) .fa-text-width:before{content: "\f035";}
+:is(#iconModal,#iconPreview) .fa-align-left:before{content: "\f036";}
+:is(#iconModal,#iconPreview) .fa-align-center:before{content: "\f037";}
+:is(#iconModal,#iconPreview) .fa-align-right:before{content: "\f038";}
+:is(#iconModal,#iconPreview) .fa-align-justify:before{content: "\f039";}
+:is(#iconModal,#iconPreview) .fa-list:before{content: "\f03a";}
+:is(#iconModal,#iconPreview) .fa-dedent:before,:is(#iconModal,#iconPreview) .fa-outdent:before{content: "\f03b";}
+:is(#iconModal,#iconPreview) .fa-indent:before{content: "\f03c";}
+:is(#iconModal,#iconPreview) .fa-video-camera:before{content: "\f03d";}
+:is(#iconModal,#iconPreview) .fa-photo:before,:is(#iconModal,#iconPreview) .fa-image:before,:is(#iconModal,#iconPreview) .fa-picture-o:before{content: "\f03e";}
+:is(#iconModal,#iconPreview) .fa-pencil:before{content: "\f040";}
+:is(#iconModal,#iconPreview) .fa-map-marker:before{content: "\f041";}
+:is(#iconModal,#iconPreview) .fa-adjust:before{content: "\f042";}
+:is(#iconModal,#iconPreview) .fa-tint:before{content: "\f043";}
+:is(#iconModal,#iconPreview) .fa-edit:before,:is(#iconModal,#iconPreview) .fa-pencil-square-o:before{content: "\f044";}
+:is(#iconModal,#iconPreview) .fa-share-square-o:before{content: "\f045";}
+:is(#iconModal,#iconPreview) .fa-check-square-o:before{content: "\f046";}
+:is(#iconModal,#iconPreview) .fa-arrows:before{content: "\f047";}
+:is(#iconModal,#iconPreview) .fa-step-backward:before{content: "\f048";}
+:is(#iconModal,#iconPreview) .fa-fast-backward:before{content: "\f049";}
+:is(#iconModal,#iconPreview) .fa-backward:before{content: "\f04a";}
+:is(#iconModal,#iconPreview) .fa-play:before{content: "\f04b";}
+:is(#iconModal,#iconPreview) .fa-pause:before{content: "\f04c";}
+:is(#iconModal,#iconPreview) .fa-stop:before{content: "\f04d";}
+:is(#iconModal,#iconPreview) .fa-forward:before{content: "\f04e";}
+:is(#iconModal,#iconPreview) .fa-fast-forward:before{content: "\f050";}
+:is(#iconModal,#iconPreview) .fa-step-forward:before{content: "\f051";}
+:is(#iconModal,#iconPreview) .fa-eject:before{content: "\f052";}
+:is(#iconModal,#iconPreview) .fa-chevron-left:before{content: "\f053";}
+:is(#iconModal,#iconPreview) .fa-chevron-right:before{content: "\f054";}
+:is(#iconModal,#iconPreview) .fa-plus-circle:before{content: "\f055";}
+:is(#iconModal,#iconPreview) .fa-minus-circle:before{content: "\f056";}
+:is(#iconModal,#iconPreview) .fa-times-circle:before{content: "\f057";}
+:is(#iconModal,#iconPreview) .fa-check-circle:before{content: "\f058";}
+:is(#iconModal,#iconPreview) .fa-question-circle:before{content: "\f059";}
+:is(#iconModal,#iconPreview) .fa-info-circle:before{content: "\f05a";}
+:is(#iconModal,#iconPreview) .fa-crosshairs:before{content: "\f05b";}
+:is(#iconModal,#iconPreview) .fa-times-circle-o:before{content: "\f05c";}
+:is(#iconModal,#iconPreview) .fa-check-circle-o:before{content: "\f05d";}
+:is(#iconModal,#iconPreview) .fa-ban:before{content: "\f05e";}
+:is(#iconModal,#iconPreview) .fa-arrow-left:before{content: "\f060";}
+:is(#iconModal,#iconPreview) .fa-arrow-right:before{content: "\f061";}
+:is(#iconModal,#iconPreview) .fa-arrow-up:before{content: "\f062";}
+:is(#iconModal,#iconPreview) .fa-arrow-down:before{content: "\f063";}
+:is(#iconModal,#iconPreview) .fa-mail-forward:before,:is(#iconModal,#iconPreview) .fa-share:before{content: "\f064";}
+:is(#iconModal,#iconPreview) .fa-expand:before{content: "\f065";}
+:is(#iconModal,#iconPreview) .fa-compress:before{content: "\f066";}
+:is(#iconModal,#iconPreview) .fa-plus:before{content: "\f067";}
+:is(#iconModal,#iconPreview) .fa-minus:before{content: "\f068";}
+:is(#iconModal,#iconPreview) .fa-asterisk:before{content: "\f069";}
+:is(#iconModal,#iconPreview) .fa-exclamation-circle:before{content: "\f06a";}
+:is(#iconModal,#iconPreview) .fa-gift:before{content: "\f06b";}
+:is(#iconModal,#iconPreview) .fa-leaf:before{content: "\f06c";}
+:is(#iconModal,#iconPreview) .fa-fire:before{content: "\f06d";}
+:is(#iconModal,#iconPreview) .fa-eye:before{content: "\f06e";}
+:is(#iconModal,#iconPreview) .fa-eye-slash:before{content: "\f070";}
+:is(#iconModal,#iconPreview) .fa-warning:before,:is(#iconModal,#iconPreview) .fa-exclamation-triangle:before{content: "\f071";}
+:is(#iconModal,#iconPreview) .fa-plane:before{content: "\f072";}
+:is(#iconModal,#iconPreview) .fa-calendar:before{content: "\f073";}
+:is(#iconModal,#iconPreview) .fa-random:before{content: "\f074";}
+:is(#iconModal,#iconPreview) .fa-comment:before{content: "\f075";}
+:is(#iconModal,#iconPreview) .fa-magnet:before{content: "\f076";}
+:is(#iconModal,#iconPreview) .fa-chevron-up:before{content: "\f077";}
+:is(#iconModal,#iconPreview) .fa-chevron-down:before{content: "\f078";}
+:is(#iconModal,#iconPreview) .fa-retweet:before{content: "\f079";}
+:is(#iconModal,#iconPreview) .fa-shopping-cart:before{content: "\f07a";}
+:is(#iconModal,#iconPreview) .fa-folder:before{content: "\f07b";}
+:is(#iconModal,#iconPreview) .fa-folder-open:before{content: "\f07c";}
+:is(#iconModal,#iconPreview) .fa-arrows-v:before{content: "\f07d";}
+:is(#iconModal,#iconPreview) .fa-arrows-h:before{content: "\f07e";}
+:is(#iconModal,#iconPreview) .fa-bar-chart-o:before,:is(#iconModal,#iconPreview) .fa-bar-chart:before{content: "\f080";}
+:is(#iconModal,#iconPreview) .fa-twitter-square:before{content: "\f081";}
+:is(#iconModal,#iconPreview) .fa-facebook-square:before{content: "\f082";}
+:is(#iconModal,#iconPreview) .fa-camera-retro:before{content: "\f083";}
+:is(#iconModal,#iconPreview) .fa-key:before{content: "\f084";}
+:is(#iconModal,#iconPreview) .fa-gears:before,:is(#iconModal,#iconPreview) .fa-cogs:before{content: "\f085";}
+:is(#iconModal,#iconPreview) .fa-comments:before{content: "\f086";}
+:is(#iconModal,#iconPreview) .fa-thumbs-o-up:before{content: "\f087";}
+:is(#iconModal,#iconPreview) .fa-thumbs-o-down:before{content: "\f088";}
+:is(#iconModal,#iconPreview) .fa-star-half:before{content: "\f089";}
+:is(#iconModal,#iconPreview) .fa-heart-o:before{content: "\f08a";}
+:is(#iconModal,#iconPreview) .fa-sign-out:before{content: "\f08b";}
+:is(#iconModal,#iconPreview) .fa-linkedin-square:before{content: "\f08c";}
+:is(#iconModal,#iconPreview) .fa-thumb-tack:before{content: "\f08d";}
+:is(#iconModal,#iconPreview) .fa-external-link:before{content: "\f08e";}
+:is(#iconModal,#iconPreview) .fa-sign-in:before{content: "\f090";}
+:is(#iconModal,#iconPreview) .fa-trophy:before{content: "\f091";}
+:is(#iconModal,#iconPreview) .fa-github-square:before{content: "\f092";}
+:is(#iconModal,#iconPreview) .fa-upload:before{content: "\f093";}
+:is(#iconModal,#iconPreview) .fa-lemon-o:before{content: "\f094";}
+:is(#iconModal,#iconPreview) .fa-phone:before{content: "\f095";}
+:is(#iconModal,#iconPreview) .fa-square-o:before{content: "\f096";}
+:is(#iconModal,#iconPreview) .fa-bookmark-o:before{content: "\f097";}
+:is(#iconModal,#iconPreview) .fa-phone-square:before{content: "\f098";}
+:is(#iconModal,#iconPreview) .fa-twitter:before{content: "\f099";}
+:is(#iconModal,#iconPreview) .fa-facebook:before{content: "\f09a";}
+:is(#iconModal,#iconPreview) .fa-github:before{content: "\f09b";}
+:is(#iconModal,#iconPreview) .fa-unlock:before{content: "\f09c";}
+:is(#iconModal,#iconPreview) .fa-credit-card:before{content: "\f09d";}
+:is(#iconModal,#iconPreview) .fa-rss:before{content: "\f09e";}
+:is(#iconModal,#iconPreview) .fa-hdd-o:before{content: "\f0a0";}
+:is(#iconModal,#iconPreview) .fa-bullhorn:before{content: "\f0a1";}
+:is(#iconModal,#iconPreview) .fa-bell:before{content: "\f0f3";}
+:is(#iconModal,#iconPreview) .fa-certificate:before{content: "\f0a3";}
+:is(#iconModal,#iconPreview) .fa-hand-o-right:before{content: "\f0a4";}
+:is(#iconModal,#iconPreview) .fa-hand-o-left:before{content: "\f0a5";}
+:is(#iconModal,#iconPreview) .fa-hand-o-up:before{content: "\f0a6";}
+:is(#iconModal,#iconPreview) .fa-hand-o-down:before{content: "\f0a7";}
+:is(#iconModal,#iconPreview) .fa-arrow-circle-left:before{content: "\f0a8";}
+:is(#iconModal,#iconPreview) .fa-arrow-circle-right:before{content: "\f0a9";}
+:is(#iconModal,#iconPreview) .fa-arrow-circle-up:before{content: "\f0aa";}
+:is(#iconModal,#iconPreview) .fa-arrow-circle-down:before{content: "\f0ab";}
+:is(#iconModal,#iconPreview) .fa-globe:before{content: "\f0ac";}
+:is(#iconModal,#iconPreview) .fa-wrench:before{content: "\f0ad";}
+:is(#iconModal,#iconPreview) .fa-tasks:before{content: "\f0ae";}
+:is(#iconModal,#iconPreview) .fa-filter:before{content: "\f0b0";}
+:is(#iconModal,#iconPreview) .fa-briefcase:before{content: "\f0b1";}
+:is(#iconModal,#iconPreview) .fa-arrows-alt:before{content: "\f0b2";}
+:is(#iconModal,#iconPreview) .fa-group:before,:is(#iconModal,#iconPreview) .fa-users:before{content: "\f0c0";}
+:is(#iconModal,#iconPreview) .fa-chain:before,:is(#iconModal,#iconPreview) .fa-link:before{content: "\f0c1";}
+:is(#iconModal,#iconPreview) .fa-cloud:before{content: "\f0c2";}
+:is(#iconModal,#iconPreview) .fa-flask:before{content: "\f0c3";}
+:is(#iconModal,#iconPreview) .fa-cut:before,:is(#iconModal,#iconPreview) .fa-scissors:before{content: "\f0c4";}
+:is(#iconModal,#iconPreview) .fa-copy:before,:is(#iconModal,#iconPreview) .fa-files-o:before{content: "\f0c5";}
+:is(#iconModal,#iconPreview) .fa-paperclip:before{content: "\f0c6";}
+:is(#iconModal,#iconPreview) .fa-save:before,:is(#iconModal,#iconPreview) .fa-floppy-o:before{content: "\f0c7";}
+:is(#iconModal,#iconPreview) .fa-square:before{content: "\f0c8";}
+:is(#iconModal,#iconPreview) .fa-navicon:before,:is(#iconModal,#iconPreview) .fa-reorder:before,:is(#iconModal,#iconPreview) .fa-bars:before{content: "\f0c9";}
+:is(#iconModal,#iconPreview) .fa-list-ul:before{content: "\f0ca";}
+:is(#iconModal,#iconPreview) .fa-list-ol:before{content: "\f0cb";}
+:is(#iconModal,#iconPreview) .fa-strikethrough:before{content: "\f0cc";}
+:is(#iconModal,#iconPreview) .fa-underline:before{content: "\f0cd";}
+:is(#iconModal,#iconPreview) .fa-table:before{content: "\f0ce";}
+:is(#iconModal,#iconPreview) .fa-magic:before{content: "\f0d0";}
+:is(#iconModal,#iconPreview) .fa-truck:before{content: "\f0d1";}
+:is(#iconModal,#iconPreview) .fa-pinterest:before{content: "\f0d2";}
+:is(#iconModal,#iconPreview) .fa-pinterest-square:before{content: "\f0d3";}
+:is(#iconModal,#iconPreview) .fa-google-plus-square:before{content: "\f0d4";}
+:is(#iconModal,#iconPreview) .fa-google-plus:before{content: "\f0d5";}
+:is(#iconModal,#iconPreview) .fa-money:before{content: "\f0d6";}
+:is(#iconModal,#iconPreview) .fa-caret-down:before{content: "\f0d7";}
+:is(#iconModal,#iconPreview) .fa-caret-up:before{content: "\f0d8";}
+:is(#iconModal,#iconPreview) .fa-caret-left:before{content: "\f0d9";}
+:is(#iconModal,#iconPreview) .fa-caret-right:before{content: "\f0da";}
+:is(#iconModal,#iconPreview) .fa-columns:before{content: "\f0db";}
+:is(#iconModal,#iconPreview) .fa-unsorted:before,:is(#iconModal,#iconPreview) .fa-sort:before{content: "\f0dc";}
+:is(#iconModal,#iconPreview) .fa-sort-down:before,:is(#iconModal,#iconPreview) .fa-sort-desc:before{content: "\f0dd";}
+:is(#iconModal,#iconPreview) .fa-sort-up:before,:is(#iconModal,#iconPreview) .fa-sort-asc:before{content: "\f0de";}
+:is(#iconModal,#iconPreview) .fa-envelope:before{content: "\f0e0";}
+:is(#iconModal,#iconPreview) .fa-linkedin:before{content: "\f0e1";}
+:is(#iconModal,#iconPreview) .fa-rotate-left:before,:is(#iconModal,#iconPreview) .fa-undo:before{content: "\f0e2";}
+:is(#iconModal,#iconPreview) .fa-legal:before,:is(#iconModal,#iconPreview) .fa-gavel:before{content: "\f0e3";}
+:is(#iconModal,#iconPreview) .fa-dashboard:before,:is(#iconModal,#iconPreview) .fa-tachometer:before{content: "\f0e4";}
+:is(#iconModal,#iconPreview) .fa-comment-o:before{content: "\f0e5";}
+:is(#iconModal,#iconPreview) .fa-comments-o:before{content: "\f0e6";}
+:is(#iconModal,#iconPreview) .fa-flash:before,:is(#iconModal,#iconPreview) .fa-bolt:before{content: "\f0e7";}
+:is(#iconModal,#iconPreview) .fa-sitemap:before{content: "\f0e8";}
+:is(#iconModal,#iconPreview) .fa-umbrella:before{content: "\f0e9";}
+:is(#iconModal,#iconPreview) .fa-paste:before,:is(#iconModal,#iconPreview) .fa-clipboard:before{content: "\f0ea";}
+:is(#iconModal,#iconPreview) .fa-lightbulb-o:before{content: "\f0eb";}
+:is(#iconModal,#iconPreview) .fa-exchange:before{content: "\f0ec";}
+:is(#iconModal,#iconPreview) .fa-cloud-download:before{content: "\f0ed";}
+:is(#iconModal,#iconPreview) .fa-cloud-upload:before{content: "\f0ee";}
+:is(#iconModal,#iconPreview) .fa-user-md:before{content: "\f0f0";}
+:is(#iconModal,#iconPreview) .fa-stethoscope:before{content: "\f0f1";}
+:is(#iconModal,#iconPreview) .fa-suitcase:before{content: "\f0f2";}
+:is(#iconModal,#iconPreview) .fa-bell-o:before{content: "\f0a2";}
+:is(#iconModal,#iconPreview) .fa-coffee:before{content: "\f0f4";}
+:is(#iconModal,#iconPreview) .fa-cutlery:before{content: "\f0f5";}
+:is(#iconModal,#iconPreview) .fa-file-text-o:before{content: "\f0f6";}
+:is(#iconModal,#iconPreview) .fa-building-o:before{content: "\f0f7";}
+:is(#iconModal,#iconPreview) .fa-hospital-o:before{content: "\f0f8";}
+:is(#iconModal,#iconPreview) .fa-ambulance:before{content: "\f0f9";}
+:is(#iconModal,#iconPreview) .fa-medkit:before{content: "\f0fa";}
+:is(#iconModal,#iconPreview) .fa-fighter-jet:before{content: "\f0fb";}
+:is(#iconModal,#iconPreview) .fa-beer:before{content: "\f0fc";}
+:is(#iconModal,#iconPreview) .fa-h-square:before{content: "\f0fd";}
+:is(#iconModal,#iconPreview) .fa-plus-square:before{content: "\f0fe";}
+:is(#iconModal,#iconPreview) .fa-angle-double-left:before{content: "\f100";}
+:is(#iconModal,#iconPreview) .fa-angle-double-right:before{content: "\f101";}
+:is(#iconModal,#iconPreview) .fa-angle-double-up:before{content: "\f102";}
+:is(#iconModal,#iconPreview) .fa-angle-double-down:before{content: "\f103";}
+:is(#iconModal,#iconPreview) .fa-angle-left:before{content: "\f104";}
+:is(#iconModal,#iconPreview) .fa-angle-right:before{content: "\f105";}
+:is(#iconModal,#iconPreview) .fa-angle-up:before{content: "\f106";}
+:is(#iconModal,#iconPreview) .fa-angle-down:before{content: "\f107";}
+:is(#iconModal,#iconPreview) .fa-desktop:before{content: "\f108";}
+:is(#iconModal,#iconPreview) .fa-laptop:before{content: "\f109";}
+:is(#iconModal,#iconPreview) .fa-tablet:before{content: "\f10a";}
+:is(#iconModal,#iconPreview) .fa-mobile-phone:before,:is(#iconModal,#iconPreview) .fa-mobile:before{content: "\f10b";}
+:is(#iconModal,#iconPreview) .fa-circle-o:before{content: "\f10c";}
+:is(#iconModal,#iconPreview) .fa-quote-left:before{content: "\f10d";}
+:is(#iconModal,#iconPreview) .fa-quote-right:before{content: "\f10e";}
+:is(#iconModal,#iconPreview) .fa-spinner:before{content: "\f110";}
+:is(#iconModal,#iconPreview) .fa-circle:before{content: "\f111";}
+:is(#iconModal,#iconPreview) .fa-mail-reply:before,:is(#iconModal,#iconPreview) .fa-reply:before{content: "\f112";}
+:is(#iconModal,#iconPreview) .fa-github-alt:before{content: "\f113";}
+:is(#iconModal,#iconPreview) .fa-folder-o:before{content: "\f114";}
+:is(#iconModal,#iconPreview) .fa-folder-open-o:before{content: "\f115";}
+:is(#iconModal,#iconPreview) .fa-smile-o:before{content: "\f118";}
+:is(#iconModal,#iconPreview) .fa-frown-o:before{content: "\f119";}
+:is(#iconModal,#iconPreview) .fa-meh-o:before{content: "\f11a";}
+:is(#iconModal,#iconPreview) .fa-gamepad:before{content: "\f11b";}
+:is(#iconModal,#iconPreview) .fa-keyboard-o:before{content: "\f11c";}
+:is(#iconModal,#iconPreview) .fa-flag-o:before{content: "\f11d";}
+:is(#iconModal,#iconPreview) .fa-flag-checkered:before{content: "\f11e";}
+:is(#iconModal,#iconPreview) .fa-terminal:before{content: "\f120";}
+:is(#iconModal,#iconPreview) .fa-code:before{content: "\f121";}
+:is(#iconModal,#iconPreview) .fa-mail-reply-all:before,:is(#iconModal,#iconPreview) .fa-reply-all:before{content: "\f122";}
+:is(#iconModal,#iconPreview) .fa-star-half-empty:before,:is(#iconModal,#iconPreview) .fa-star-half-full:before,:is(#iconModal,#iconPreview) .fa-star-half-o:before{content: "\f123";}
+:is(#iconModal,#iconPreview) .fa-location-arrow:before{content: "\f124";}
+:is(#iconModal,#iconPreview) .fa-crop:before{content: "\f125";}
+:is(#iconModal,#iconPreview) .fa-code-fork:before{content: "\f126";}
+:is(#iconModal,#iconPreview) .fa-unlink:before,:is(#iconModal,#iconPreview) .fa-chain-broken:before{content: "\f127";}
+:is(#iconModal,#iconPreview) .fa-question:before{content: "\f128";}
+:is(#iconModal,#iconPreview) .fa-info:before{content: "\f129";}
+:is(#iconModal,#iconPreview) .fa-exclamation:before{content: "\f12a";}
+:is(#iconModal,#iconPreview) .fa-superscript:before{content: "\f12b";}
+:is(#iconModal,#iconPreview) .fa-subscript:before{content: "\f12c";}
+:is(#iconModal,#iconPreview) .fa-eraser:before{content: "\f12d";}
+:is(#iconModal,#iconPreview) .fa-puzzle-piece:before{content: "\f12e";}
+:is(#iconModal,#iconPreview) .fa-microphone:before{content: "\f130";}
+:is(#iconModal,#iconPreview) .fa-microphone-slash:before{content: "\f131";}
+:is(#iconModal,#iconPreview) .fa-shield:before{content: "\f132";}
+:is(#iconModal,#iconPreview) .fa-calendar-o:before{content: "\f133";}
+:is(#iconModal,#iconPreview) .fa-fire-extinguisher:before{content: "\f134";}
+:is(#iconModal,#iconPreview) .fa-rocket:before{content: "\f135";}
+:is(#iconModal,#iconPreview) .fa-maxcdn:before{content: "\f136";}
+:is(#iconModal,#iconPreview) .fa-chevron-circle-left:before{content: "\f137";}
+:is(#iconModal,#iconPreview) .fa-chevron-circle-right:before{content: "\f138";}
+:is(#iconModal,#iconPreview) .fa-chevron-circle-up:before{content: "\f139";}
+:is(#iconModal,#iconPreview) .fa-chevron-circle-down:before{content: "\f13a";}
+:is(#iconModal,#iconPreview) .fa-html5:before{content: "\f13b";}
+:is(#iconModal,#iconPreview) .fa-css3:before{content: "\f13c";}
+:is(#iconModal,#iconPreview) .fa-anchor:before{content: "\f13d";}
+:is(#iconModal,#iconPreview) .fa-unlock-alt:before{content: "\f13e";}
+:is(#iconModal,#iconPreview) .fa-bullseye:before{content: "\f140";}
+:is(#iconModal,#iconPreview) .fa-ellipsis-h:before{content: "\f141";}
+:is(#iconModal,#iconPreview) .fa-ellipsis-v:before{content: "\f142";}
+:is(#iconModal,#iconPreview) .fa-rss-square:before{content: "\f143";}
+:is(#iconModal,#iconPreview) .fa-play-circle:before{content: "\f144";}
+:is(#iconModal,#iconPreview) .fa-ticket:before{content: "\f145";}
+:is(#iconModal,#iconPreview) .fa-minus-square:before{content: "\f146";}
+:is(#iconModal,#iconPreview) .fa-minus-square-o:before{content: "\f147";}
+:is(#iconModal,#iconPreview) .fa-level-up:before{content: "\f148";}
+:is(#iconModal,#iconPreview) .fa-level-down:before{content: "\f149";}
+:is(#iconModal,#iconPreview) .fa-check-square:before{content: "\f14a";}
+:is(#iconModal,#iconPreview) .fa-pencil-square:before{content: "\f14b";}
+:is(#iconModal,#iconPreview) .fa-external-link-square:before{content: "\f14c";}
+:is(#iconModal,#iconPreview) .fa-share-square:before{content: "\f14d";}
+:is(#iconModal,#iconPreview) .fa-compass:before{content: "\f14e";}
+:is(#iconModal,#iconPreview) .fa-toggle-down:before,:is(#iconModal,#iconPreview) .fa-caret-square-o-down:before{content: "\f150";}
+:is(#iconModal,#iconPreview) .fa-toggle-up:before,:is(#iconModal,#iconPreview) .fa-caret-square-o-up:before{content: "\f151";}
+:is(#iconModal,#iconPreview) .fa-toggle-right:before,:is(#iconModal,#iconPreview) .fa-caret-square-o-right:before{content: "\f152";}
+:is(#iconModal,#iconPreview) .fa-euro:before,:is(#iconModal,#iconPreview) .fa-eur:before{content: "\f153";}
+:is(#iconModal,#iconPreview) .fa-gbp:before{content: "\f154";}
+:is(#iconModal,#iconPreview) .fa-dollar:before,:is(#iconModal,#iconPreview) .fa-usd:before{content: "\f155";}
+:is(#iconModal,#iconPreview) .fa-rupee:before,:is(#iconModal,#iconPreview) .fa-inr:before{content: "\f156";}
+:is(#iconModal,#iconPreview) .fa-cny:before,:is(#iconModal,#iconPreview) .fa-rmb:before,:is(#iconModal,#iconPreview) .fa-yen:before,:is(#iconModal,#iconPreview) .fa-jpy:before{content: "\f157";}
+:is(#iconModal,#iconPreview) .fa-ruble:before,:is(#iconModal,#iconPreview) .fa-rouble:before,:is(#iconModal,#iconPreview) .fa-rub:before{content: "\f158";}
+:is(#iconModal,#iconPreview) .fa-won:before,:is(#iconModal,#iconPreview) .fa-krw:before{content: "\f159";}
+:is(#iconModal,#iconPreview) .fa-bitcoin:before,:is(#iconModal,#iconPreview) .fa-btc:before{content: "\f15a";}
+:is(#iconModal,#iconPreview) .fa-file:before{content: "\f15b";}
+:is(#iconModal,#iconPreview) .fa-file-text:before{content: "\f15c";}
+:is(#iconModal,#iconPreview) .fa-sort-alpha-asc:before{content: "\f15d";}
+:is(#iconModal,#iconPreview) .fa-sort-alpha-desc:before{content: "\f15e";}
+:is(#iconModal,#iconPreview) .fa-sort-amount-asc:before{content: "\f160";}
+:is(#iconModal,#iconPreview) .fa-sort-amount-desc:before{content: "\f161";}
+:is(#iconModal,#iconPreview) .fa-sort-numeric-asc:before{content: "\f162";}
+:is(#iconModal,#iconPreview) .fa-sort-numeric-desc:before{content: "\f163";}
+:is(#iconModal,#iconPreview) .fa-thumbs-up:before{content: "\f164";}
+:is(#iconModal,#iconPreview) .fa-thumbs-down:before{content: "\f165";}
+:is(#iconModal,#iconPreview) .fa-youtube-square:before{content: "\f166";}
+:is(#iconModal,#iconPreview) .fa-youtube:before{content: "\f167";}
+:is(#iconModal,#iconPreview) .fa-xing:before{content: "\f168";}
+:is(#iconModal,#iconPreview) .fa-xing-square:before{content: "\f169";}
+:is(#iconModal,#iconPreview) .fa-youtube-play:before{content: "\f16a";}
+:is(#iconModal,#iconPreview) .fa-dropbox:before{content: "\f16b";}
+:is(#iconModal,#iconPreview) .fa-stack-overflow:before{content: "\f16c";}
+:is(#iconModal,#iconPreview) .fa-instagram:before{content: "\f16d";}
+:is(#iconModal,#iconPreview) .fa-flickr:before{content: "\f16e";}
+:is(#iconModal,#iconPreview) .fa-adn:before{content: "\f170";}
+:is(#iconModal,#iconPreview) .fa-bitbucket:before{content: "\f171";}
+:is(#iconModal,#iconPreview) .fa-bitbucket-square:before{content: "\f172";}
+:is(#iconModal,#iconPreview) .fa-tumblr:before{content: "\f173";}
+:is(#iconModal,#iconPreview) .fa-tumblr-square:before{content: "\f174";}
+:is(#iconModal,#iconPreview) .fa-long-arrow-down:before{content: "\f175";}
+:is(#iconModal,#iconPreview) .fa-long-arrow-up:before{content: "\f176";}
+:is(#iconModal,#iconPreview) .fa-long-arrow-left:before{content: "\f177";}
+:is(#iconModal,#iconPreview) .fa-long-arrow-right:before{content: "\f178";}
+:is(#iconModal,#iconPreview) .fa-apple:before{content: "\f179";}
+:is(#iconModal,#iconPreview) .fa-windows:before{content: "\f17a";}
+:is(#iconModal,#iconPreview) .fa-android:before{content: "\f17b";}
+:is(#iconModal,#iconPreview) .fa-linux:before{content: "\f17c";}
+:is(#iconModal,#iconPreview) .fa-dribbble:before{content: "\f17d";}
+:is(#iconModal,#iconPreview) .fa-skype:before{content: "\f17e";}
+:is(#iconModal,#iconPreview) .fa-foursquare:before{content: "\f180";}
+:is(#iconModal,#iconPreview) .fa-trello:before{content: "\f181";}
+:is(#iconModal,#iconPreview) .fa-female:before{content: "\f182";}
+:is(#iconModal,#iconPreview) .fa-male:before{content: "\f183";}
+:is(#iconModal,#iconPreview) .fa-gittip:before{content: "\f184";}
+:is(#iconModal,#iconPreview) .fa-sun-o:before{content: "\f185";}
+:is(#iconModal,#iconPreview) .fa-moon-o:before{content: "\f186";}
+:is(#iconModal,#iconPreview) .fa-archive:before{content: "\f187";}
+:is(#iconModal,#iconPreview) .fa-bug:before{content: "\f188";}
+:is(#iconModal,#iconPreview) .fa-vk:before{content: "\f189";}
+:is(#iconModal,#iconPreview) .fa-weibo:before{content: "\f18a";}
+:is(#iconModal,#iconPreview) .fa-renren:before{content: "\f18b";}
+:is(#iconModal,#iconPreview) .fa-pagelines:before{content: "\f18c";}
+:is(#iconModal,#iconPreview) .fa-stack-exchange:before{content: "\f18d";}
+:is(#iconModal,#iconPreview) .fa-arrow-circle-o-right:before{content: "\f18e";}
+:is(#iconModal,#iconPreview) .fa-arrow-circle-o-left:before{content: "\f190";}
+:is(#iconModal,#iconPreview) .fa-toggle-left:before,:is(#iconModal,#iconPreview) .fa-caret-square-o-left:before{content: "\f191";}
+:is(#iconModal,#iconPreview) .fa-dot-circle-o:before{content: "\f192";}
+:is(#iconModal,#iconPreview) .fa-wheelchair:before{content: "\f193";}
+:is(#iconModal,#iconPreview) .fa-vimeo-square:before{content: "\f194";}
+:is(#iconModal,#iconPreview) .fa-turkish-lira:before,:is(#iconModal,#iconPreview) .fa-try:before{content: "\f195";}
+:is(#iconModal,#iconPreview) .fa-plus-square-o:before{content: "\f196";}
+:is(#iconModal,#iconPreview) .fa-space-shuttle:before{content: "\f197";}
+:is(#iconModal,#iconPreview) .fa-slack:before{content: "\f198";}
+:is(#iconModal,#iconPreview) .fa-envelope-square:before{content: "\f199";}
+:is(#iconModal,#iconPreview) .fa-wordpress:before{content: "\f19a";}
+:is(#iconModal,#iconPreview) .fa-openid:before{content: "\f19b";}
+:is(#iconModal,#iconPreview) .fa-institution:before,:is(#iconModal,#iconPreview) .fa-bank:before,:is(#iconModal,#iconPreview) .fa-university:before{content: "\f19c";}
+:is(#iconModal,#iconPreview) .fa-mortar-board:before,:is(#iconModal,#iconPreview) .fa-graduation-cap:before{content: "\f19d";}
+:is(#iconModal,#iconPreview) .fa-yahoo:before{content: "\f19e";}
+:is(#iconModal,#iconPreview) .fa-google:before{content: "\f1a0";}
+:is(#iconModal,#iconPreview) .fa-reddit:before{content: "\f1a1";}
+:is(#iconModal,#iconPreview) .fa-reddit-square:before{content: "\f1a2";}
+:is(#iconModal,#iconPreview) .fa-stumbleupon-circle:before{content: "\f1a3";}
+:is(#iconModal,#iconPreview) .fa-stumbleupon:before{content: "\f1a4";}
+:is(#iconModal,#iconPreview) .fa-delicious:before{content: "\f1a5";}
+:is(#iconModal,#iconPreview) .fa-digg:before{content: "\f1a6";}
+:is(#iconModal,#iconPreview) .fa-pied-piper:before{content: "\f1a7";}
+:is(#iconModal,#iconPreview) .fa-pied-piper-alt:before{content: "\f1a8";}
+:is(#iconModal,#iconPreview) .fa-drupal:before{content: "\f1a9";}
+:is(#iconModal,#iconPreview) .fa-joomla:before{content: "\f1aa";}
+:is(#iconModal,#iconPreview) .fa-language:before{content: "\f1ab";}
+:is(#iconModal,#iconPreview) .fa-fax:before{content: "\f1ac";}
+:is(#iconModal,#iconPreview) .fa-building:before{content: "\f1ad";}
+:is(#iconModal,#iconPreview) .fa-child:before{content: "\f1ae";}
+:is(#iconModal,#iconPreview) .fa-paw:before{content: "\f1b0";}
+:is(#iconModal,#iconPreview) .fa-spoon:before{content: "\f1b1";}
+:is(#iconModal,#iconPreview) .fa-cube:before{content: "\f1b2";}
+:is(#iconModal,#iconPreview) .fa-cubes:before{content: "\f1b3";}
+:is(#iconModal,#iconPreview) .fa-behance:before{content: "\f1b4";}
+:is(#iconModal,#iconPreview) .fa-behance-square:before{content: "\f1b5";}
+:is(#iconModal,#iconPreview) .fa-steam:before{content: "\f1b6";}
+:is(#iconModal,#iconPreview) .fa-steam-square:before{content: "\f1b7";}
+:is(#iconModal,#iconPreview) .fa-recycle:before{content: "\f1b8";}
+:is(#iconModal,#iconPreview) .fa-automobile:before,:is(#iconModal,#iconPreview) .fa-car:before{content: "\f1b9";}
+:is(#iconModal,#iconPreview) .fa-cab:before,:is(#iconModal,#iconPreview) .fa-taxi:before{content: "\f1ba";}
+:is(#iconModal,#iconPreview) .fa-tree:before{content: "\f1bb";}
+:is(#iconModal,#iconPreview) .fa-spotify:before{content: "\f1bc";}
+:is(#iconModal,#iconPreview) .fa-deviantart:before{content: "\f1bd";}
+:is(#iconModal,#iconPreview) .fa-soundcloud:before{content: "\f1be";}
+:is(#iconModal,#iconPreview) .fa-database:before{content: "\f1c0";}
+:is(#iconModal,#iconPreview) .fa-file-pdf-o:before{content: "\f1c1";}
+:is(#iconModal,#iconPreview) .fa-file-word-o:before{content: "\f1c2";}
+:is(#iconModal,#iconPreview) .fa-file-excel-o:before{content: "\f1c3";}
+:is(#iconModal,#iconPreview) .fa-file-powerpoint-o:before{content: "\f1c4";}
+:is(#iconModal,#iconPreview) .fa-file-photo-o:before,:is(#iconModal,#iconPreview) .fa-file-picture-o:before,:is(#iconModal,#iconPreview) .fa-file-image-o:before{content: "\f1c5";}
+:is(#iconModal,#iconPreview) .fa-file-zip-o:before,:is(#iconModal,#iconPreview) .fa-file-archive-o:before{content: "\f1c6";}
+:is(#iconModal,#iconPreview) .fa-file-sound-o:before,:is(#iconModal,#iconPreview) .fa-file-audio-o:before{content: "\f1c7";}
+:is(#iconModal,#iconPreview) .fa-file-movie-o:before,:is(#iconModal,#iconPreview) .fa-file-video-o:before{content: "\f1c8";}
+:is(#iconModal,#iconPreview) .fa-file-code-o:before{content: "\f1c9";}
+:is(#iconModal,#iconPreview) .fa-vine:before{content: "\f1ca";}
+:is(#iconModal,#iconPreview) .fa-codepen:before{content: "\f1cb";}
+:is(#iconModal,#iconPreview) .fa-jsfiddle:before{content: "\f1cc";}
+:is(#iconModal,#iconPreview) .fa-life-bouy:before,:is(#iconModal,#iconPreview) .fa-life-buoy:before,:is(#iconModal,#iconPreview) .fa-life-saver:before,:is(#iconModal,#iconPreview) .fa-support:before,:is(#iconModal,#iconPreview) .fa-life-ring:before{content: "\f1cd";}
+:is(#iconModal,#iconPreview) .fa-circle-o-notch:before{content: "\f1ce";}
+:is(#iconModal,#iconPreview) .fa-ra:before,:is(#iconModal,#iconPreview) .fa-rebel:before{content: "\f1d0";}
+:is(#iconModal,#iconPreview) .fa-ge:before,:is(#iconModal,#iconPreview) .fa-empire:before{content: "\f1d1";}
+:is(#iconModal,#iconPreview) .fa-git-square:before{content: "\f1d2";}
+:is(#iconModal,#iconPreview) .fa-git:before{content: "\f1d3";}
+:is(#iconModal,#iconPreview) .fa-hacker-news:before{content: "\f1d4";}
+:is(#iconModal,#iconPreview) .fa-tencent-weibo:before{content: "\f1d5";}
+:is(#iconModal,#iconPreview) .fa-qq:before{content: "\f1d6";}
+:is(#iconModal,#iconPreview) .fa-wechat:before,:is(#iconModal,#iconPreview) .fa-weixin:before{content: "\f1d7";}
+:is(#iconModal,#iconPreview) .fa-send:before,:is(#iconModal,#iconPreview) .fa-paper-plane:before{content: "\f1d8";}
+:is(#iconModal,#iconPreview) .fa-send-o:before,:is(#iconModal,#iconPreview) .fa-paper-plane-o:before{content: "\f1d9";}
+:is(#iconModal,#iconPreview) .fa-history:before{content: "\f1da";}
+:is(#iconModal,#iconPreview) .fa-circle-thin:before{content: "\f1db";}
+:is(#iconModal,#iconPreview) .fa-header:before{content: "\f1dc";}
+:is(#iconModal,#iconPreview) .fa-paragraph:before{content: "\f1dd";}
+:is(#iconModal,#iconPreview) .fa-sliders:before{content: "\f1de";}
+:is(#iconModal,#iconPreview) .fa-share-alt:before{content: "\f1e0";}
+:is(#iconModal,#iconPreview) .fa-share-alt-square:before{content: "\f1e1";}
+:is(#iconModal,#iconPreview) .fa-bomb:before{content: "\f1e2";}
+:is(#iconModal,#iconPreview) .fa-soccer-ball-o:before,:is(#iconModal,#iconPreview) .fa-futbol-o:before{content: "\f1e3";}
+:is(#iconModal,#iconPreview) .fa-tty:before{content: "\f1e4";}
+:is(#iconModal,#iconPreview) .fa-binoculars:before{content: "\f1e5";}
+:is(#iconModal,#iconPreview) .fa-plug:before{content: "\f1e6";}
+:is(#iconModal,#iconPreview) .fa-slideshare:before{content: "\f1e7";}
+:is(#iconModal,#iconPreview) .fa-twitch:before{content: "\f1e8";}
+:is(#iconModal,#iconPreview) .fa-yelp:before{content: "\f1e9";}
+:is(#iconModal,#iconPreview) .fa-newspaper-o:before{content: "\f1ea";}
+:is(#iconModal,#iconPreview) .fa-wifi:before{content: "\f1eb";}
+:is(#iconModal,#iconPreview) .fa-calculator:before{content: "\f1ec";}
+:is(#iconModal,#iconPreview) .fa-paypal:before{content: "\f1ed";}
+:is(#iconModal,#iconPreview) .fa-google-wallet:before{content: "\f1ee";}
+:is(#iconModal,#iconPreview) .fa-cc-visa:before{content: "\f1f0";}
+:is(#iconModal,#iconPreview) .fa-cc-mastercard:before{content: "\f1f1";}
+:is(#iconModal,#iconPreview) .fa-cc-discover:before{content: "\f1f2";}
+:is(#iconModal,#iconPreview) .fa-cc-amex:before{content: "\f1f3";}
+:is(#iconModal,#iconPreview) .fa-cc-paypal:before{content: "\f1f4";}
+:is(#iconModal,#iconPreview) .fa-cc-stripe:before{content: "\f1f5";}
+:is(#iconModal,#iconPreview) .fa-bell-slash:before{content: "\f1f6";}
+:is(#iconModal,#iconPreview) .fa-bell-slash-o:before{content: "\f1f7";}
+:is(#iconModal,#iconPreview) .fa-trash:before{content: "\f1f8";}
+:is(#iconModal,#iconPreview) .fa-copyright:before{content: "\f1f9";}
+:is(#iconModal,#iconPreview) .fa-at:before{content: "\f1fa";}
+:is(#iconModal,#iconPreview) .fa-eyedropper:before{content: "\f1fb";}
+:is(#iconModal,#iconPreview) .fa-paint-brush:before{content: "\f1fc";}
+:is(#iconModal,#iconPreview) .fa-birthday-cake:before{content: "\f1fd";}
+:is(#iconModal,#iconPreview) .fa-area-chart:before{content: "\f1fe";}
+:is(#iconModal,#iconPreview) .fa-pie-chart:before{content: "\f200";}
+:is(#iconModal,#iconPreview) .fa-line-chart:before{content: "\f201";}
+:is(#iconModal,#iconPreview) .fa-lastfm:before{content: "\f202";}
+:is(#iconModal,#iconPreview) .fa-lastfm-square:before{content: "\f203";}
+:is(#iconModal,#iconPreview) .fa-toggle-off:before{content: "\f204";}
+:is(#iconModal,#iconPreview) .fa-toggle-on:before{content: "\f205";}
+:is(#iconModal,#iconPreview) .fa-bicycle:before{content: "\f206";}
+:is(#iconModal,#iconPreview) .fa-bus:before{content: "\f207";}
+:is(#iconModal,#iconPreview) .fa-ioxhost:before{content: "\f208";}
+:is(#iconModal,#iconPreview) .fa-angellist:before{content: "\f209";}
+:is(#iconModal,#iconPreview) .fa-cc:before{content: "\f20a";}
+:is(#iconModal,#iconPreview) .fa-shekel:before,:is(#iconModal,#iconPreview) .fa-sheqel:before,:is(#iconModal,#iconPreview) .fa-ils:before{content: "\f20b";}
+:is(#iconModal,#iconPreview) .fa-meanpath:before{content: "\f20c";}

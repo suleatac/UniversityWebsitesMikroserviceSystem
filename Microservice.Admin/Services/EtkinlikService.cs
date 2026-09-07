@@ -3,6 +3,7 @@ using Microservice.Admin.Services.Interfaces;
 using Microservice.Admin.Services.ServiceResults;
 using Microservice.Admin.ViewModels;
 using Microservice.Admin.ViewModels.Etkinlik;
+using Microservice.Admin.ViewModels.PageType;
 using System.Text.Json;
 
 namespace Microservice.Admin.Services
@@ -11,11 +12,14 @@ namespace Microservice.Admin.Services
     {
         private readonly IEtkinlikClientServices _etkinlikClient;
         private readonly ILogger<EtkinlikService> _logger;
-
-        public EtkinlikService(IEtkinlikClientServices etkinlikClient, ILogger<EtkinlikService> logger)
+        private readonly IPageTypeService _pageTypeService;
+        private readonly ISiteService _siteService;
+        public EtkinlikService(IEtkinlikClientServices etkinlikClient, ILogger<EtkinlikService> logger, IPageTypeService pageTypeService, ISiteService siteService)
         {
             _etkinlikClient = etkinlikClient ?? throw new ArgumentNullException(nameof(etkinlikClient));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _pageTypeService = pageTypeService ?? throw new ArgumentNullException(nameof(pageTypeService));
+            _siteService = siteService ?? throw new ArgumentNullException(nameof(siteService));
         }
 
         public async Task<ServiceResult<List<GetEtkinlikVm>>> GetEtkinliklerAsync(int siteId, int dilId)
@@ -52,6 +56,33 @@ namespace Microservice.Admin.Services
 
         public async Task<ServiceResult<object>> CreateEtkinlikAsync(CreateEtkinlikVm dto)
         {
+
+
+            var siteResult = await _siteService.GetSiteByIdAsync(dto.SiteId);
+
+            if (!siteResult.IsSuccess || siteResult.Data == null)
+                return ServiceResult<object>.Error(
+                    siteResult.Fail?.Detail ??
+                    siteResult.Fail?.Title ??
+                    "Site bilgisi alınamadı");
+
+            var etkinlikPageTypeResult =
+                await _pageTypeService.GetPageTypeByTemplateIdAndPageTypeKindAsync(
+                    siteResult.Data.TemplateId,
+                    dto.DilId,
+                    PageTypeKind.Etkinlik);
+
+            if (!etkinlikPageTypeResult.IsSuccess || etkinlikPageTypeResult.Data == null)
+                return ServiceResult<object>.Error(
+                    etkinlikPageTypeResult.Fail?.Detail ??
+                    etkinlikPageTypeResult.Fail?.Title ??
+                    "Etkinlik sayfa türü bulunamadı");
+
+            // PageTypeId'yi client'tan değil server'dan belirle
+            dto.PageTypeId = etkinlikPageTypeResult.Data.Id;
+
+
+
             _logger.LogInformation("Yeni etkinlik oluşturuluyor. Başlık: {Title}", dto.Baslik);
             var response = await _etkinlikClient.CreateEtkinlikAsync(dto);
 
@@ -69,6 +100,41 @@ namespace Microservice.Admin.Services
 
         public async Task<ServiceResult<object>> UpdateEtkinlikAsync(EtkinlikDetailVm dto)
         {
+
+
+
+
+
+            var siteResult = await _siteService.GetSiteByIdAsync(dto.SiteId);
+
+            if (!siteResult.IsSuccess || siteResult.Data == null)
+                return ServiceResult<object>.Error(
+                    siteResult.Fail?.Detail ??
+                    siteResult.Fail?.Title ??
+                    "Site bilgisi alınamadı");
+
+            var etkinlikPageTypeResult =
+                await _pageTypeService.GetPageTypeByTemplateIdAndPageTypeKindAsync(
+                    siteResult.Data.TemplateId,
+                    dto.DilId,
+                    PageTypeKind.Etkinlik);
+
+            if (!etkinlikPageTypeResult.IsSuccess || etkinlikPageTypeResult.Data == null)
+                return ServiceResult<object>.Error(
+                    etkinlikPageTypeResult.Fail?.Detail ??
+                    etkinlikPageTypeResult.Fail?.Title ??
+                    "Etkinlik sayfa türü bulunamadı");
+
+            // PageTypeId'yi client'tan değil server'dan belirle
+            dto.PageTypeId = etkinlikPageTypeResult.Data.Id;
+
+
+
+
+
+
+
+
             _logger.LogInformation("Etkinlik güncelleniyor. Id: {Id}", dto.Id);
             var response = await _etkinlikClient.UpdateEtkinlikAsync(dto.Id, dto);
 

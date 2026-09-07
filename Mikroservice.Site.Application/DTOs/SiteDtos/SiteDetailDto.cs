@@ -1,4 +1,5 @@
-﻿using Mikroservice.Site.Domain.Entities;
+﻿using Mikroservice.Site.Application.DTOs.SiteOzellikleriDtos;
+using Mikroservice.Site.Domain.Entities;
 
 namespace Mikroservice.Site.Application.DTOs.SiteDtos
 {
@@ -18,5 +19,6 @@ namespace Mikroservice.Site.Application.DTOs.SiteDtos
         public int SertifikaParmakIziId { get; init; }
         public int DefaultLanguageId { get; set; } = 1;
         public Dil DefaultLanguage { get; set; } = new Dil();
+        public SiteOzellikleriDto? SiteOzellikleri { get; set; }
     }
 }

@@ -71,7 +71,7 @@ namespace Microservice.Admin.Services
                 await _pageTypeService.GetPageTypeByTemplateIdAndPageTypeKindAsync(
                     siteResult.Data.TemplateId,
                     dto.DilId,
-                    PageTypeKind.AnnouncementDetail);
+                    PageTypeKind.Duyuru);
 
             if (!duyuruPageTypeResult.IsSuccess || duyuruPageTypeResult.Data == null)
                 return ServiceResult<object>.Error(
@@ -112,7 +112,7 @@ namespace Microservice.Admin.Services
                 await _pageTypeService.GetPageTypeByTemplateIdAndPageTypeKindAsync(
                     siteResult.Data.TemplateId,
                     dto.DilId,
-                    PageTypeKind.AnnouncementDetail);
+                    PageTypeKind.Duyuru);
 
             if (!duyuruPageTypeResult.IsSuccess || duyuruPageTypeResult.Data == null)
                 return ServiceResult<object>.Error(
@@ -120,7 +120,8 @@ namespace Microservice.Admin.Services
                     duyuruPageTypeResult.Fail?.Title ??
                     "Duyuru sayfa türü bulunamadı");
 
-
+            // PageTypeId'yi client'tan değil server'dan belirle
+            dto.PageTypeId = duyuruPageTypeResult.Data.Id;
 
             _logger.LogInformation("Duyuru güncelleniyor. Id: {Id}", dto.Id);
             var response = await _duyuruClient.UpdateDuyuruAsync(dto.Id, dto);

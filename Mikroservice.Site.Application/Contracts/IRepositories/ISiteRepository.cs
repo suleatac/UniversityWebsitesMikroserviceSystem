@@ -4,5 +4,6 @@ namespace Microservice.Site.Application.Contracts.IRepositories
     {
         Task<bool> AnyAsync(CancellationToken cancellationToken = default);
         Task<Mikroservice.Site.Domain.Entities.Site?> GetSiteByHostAsync(string host, CancellationToken cancellationToken = default);
+        Task<Mikroservice.Site.Domain.Entities.Site?> GetSiteWithDetailsByIdAsync(int id, CancellationToken cancellationToken = default);
     }
 }

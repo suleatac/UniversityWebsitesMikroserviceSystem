@@ -21,7 +21,16 @@ namespace Microservice.Site.Persistence.Repositories
         {
             return _appDbContext.Set<Mikroservice.Site.Domain.Entities.Site>()
             .Include(x => x.DefaultLanguage)
+            .Include(x => x.SiteOzellikleri)
             .FirstOrDefaultAsync( x => x.SiteUrl == host, cancellationToken);
+        }
+
+        public Task<Mikroservice.Site.Domain.Entities.Site?> GetSiteWithDetailsByIdAsync(int id, CancellationToken cancellationToken = default)
+        {
+            return _appDbContext.Set<Mikroservice.Site.Domain.Entities.Site>()
+            .Include(x => x.DefaultLanguage)
+            .Include(x => x.SiteOzellikleri)
+            .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
         }
 
     }

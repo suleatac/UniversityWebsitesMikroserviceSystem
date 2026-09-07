@@ -3,6 +3,7 @@ using Microservice.Admin.Services.Interfaces;
 using Microservice.Admin.Services.ServiceResults;
 using Microservice.Admin.ViewModels;
 using Microservice.Admin.ViewModels.Bilgi;
+using Microservice.Admin.ViewModels.PageType;
 using System.Text.Json;
 
 namespace Microservice.Admin.Services
@@ -11,9 +12,13 @@ namespace Microservice.Admin.Services
     {
         private readonly IBilgiClientServices _bilgiClient;
         private readonly ILogger<BilgiService> _logger;
+        private readonly IPageTypeService _pageTypeService;
+        private readonly ISiteService _siteService;
 
-        public BilgiService(IBilgiClientServices bilgiClient, ILogger<BilgiService> logger)
+        public BilgiService(IBilgiClientServices bilgiClient, ILogger<BilgiService> logger, IPageTypeService pageTypeService, ISiteService siteService)
         {
+            _pageTypeService = pageTypeService ?? throw new ArgumentNullException(nameof(pageTypeService));
+            _siteService = siteService ?? throw new ArgumentNullException(nameof(siteService));
             _bilgiClient = bilgiClient ?? throw new ArgumentNullException(nameof(bilgiClient));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
@@ -52,6 +57,40 @@ namespace Microservice.Admin.Services
 
         public async Task<ServiceResult<object>> CreateBilgiAsync(CreateBilgiVm dto)
         {
+
+
+
+
+            var siteResult = await _siteService.GetSiteByIdAsync(dto.SiteId);
+
+            if (!siteResult.IsSuccess || siteResult.Data == null)
+                return ServiceResult<object>.Error(
+                    siteResult.Fail?.Detail ??
+                    siteResult.Fail?.Title ??
+                    "Site bilgisi alınamadı");
+
+            var duyuruPageTypeResult =
+                await _pageTypeService.GetPageTypeByTemplateIdAndPageTypeKindAsync(
+                    siteResult.Data.TemplateId,
+                    dto.DilId,
+                    PageTypeKind.Bilgi);
+
+            if (!duyuruPageTypeResult.IsSuccess || duyuruPageTypeResult.Data == null)
+                return ServiceResult<object>.Error(
+                    duyuruPageTypeResult.Fail?.Detail ??
+                    duyuruPageTypeResult.Fail?.Title ??
+                    "Duyuru sayfa türü bulunamadı");
+
+            // PageTypeId'yi client'tan değil server'dan belirle
+            dto.PageTypeId = duyuruPageTypeResult.Data.Id;
+
+
+
+
+
+
+
+
             _logger.LogInformation("Yeni bilgi oluşturuluyor. Başlık: {Title}", dto.Baslik);
             var response = await _bilgiClient.CreateBilgiAsync(dto);
 
@@ -69,6 +108,36 @@ namespace Microservice.Admin.Services
 
         public async Task<ServiceResult<object>> UpdateBilgiAsync(BilgiDetailVm dto)
         {
+
+
+
+
+            var siteResult = await _siteService.GetSiteByIdAsync(dto.SiteId);
+
+            if (!siteResult.IsSuccess || siteResult.Data == null)
+                return ServiceResult<object>.Error(
+                    siteResult.Fail?.Detail ??
+                    siteResult.Fail?.Title ??
+                    "Site bilgisi alınamadı");
+
+            var duyuruPageTypeResult =
+                await _pageTypeService.GetPageTypeByTemplateIdAndPageTypeKindAsync(
+                    siteResult.Data.TemplateId,
+                    dto.DilId,
+                    PageTypeKind.Bilgi);
+
+            if (!duyuruPageTypeResult.IsSuccess || duyuruPageTypeResult.Data == null)
+                return ServiceResult<object>.Error(
+                    duyuruPageTypeResult.Fail?.Detail ??
+                    duyuruPageTypeResult.Fail?.Title ??
+                    "Duyuru sayfa türü bulunamadı");
+
+            // PageTypeId'yi client'tan değil server'dan belirle
+            dto.PageTypeId = duyuruPageTypeResult.Data.Id;
+
+
+
+
             _logger.LogInformation("Bilgi güncelleniyor. Id: {Id}", dto.Id);
             var response = await _bilgiClient.UpdateBilgiAsync(dto.Id, dto);
 

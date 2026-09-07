@@ -2,7 +2,6 @@
 using Microservice.Shared;
 using Microservice.Shared.Services.RedisServiceItems;
 using Microservice.Site.Application.Contracts.IRepositories;
-using Mikroservice.Site.Domain.Entities;
 
 namespace Mikroservice.Site.Application.Features.BilgiFeatures.DeleteBilgi
 {
@@ -26,7 +25,7 @@ namespace Mikroservice.Site.Application.Features.BilgiFeatures.DeleteBilgi
             await unitOfWork.SaveChangesAsync(cancellationToken);
 
             //Cache temizleme işlemi.
-            var cacheKey = $"bilgis:list:{bilgi.SiteId}:*";
+            var cacheKey = $"bilgi:list:{bilgi.SiteId}:*";
             await redisCache.RemoveByPatternAsync(cacheKey, cancellationToken);
 
             return ServiceResult.Success();

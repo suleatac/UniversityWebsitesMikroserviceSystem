@@ -27,6 +27,7 @@ namespace Mikroservice.Site.Domain.Entities
         public ICollection<Menu> Menus { get; set; } = new List<Menu>();
         public ICollection<Haber> Habers { get; set; } = new List<Haber>();
         public ICollection<Duyuru> Duyurus { get; set; } = new List<Duyuru>();
+        public ICollection<ShortcutButton> ShortcutButtons { get; set; } = new List<ShortcutButton>();
         public ICollection<BandLogo> BandLogos { get; set; } = new List<BandLogo>();
         public ICollection<MediaFile> MediaFiles { get; set; } = new List<MediaFile>();
         public ICollection<SikcaSorulanSoru> SikcaSorulanSorus { get; set; } = new List<SikcaSorulanSoru>();

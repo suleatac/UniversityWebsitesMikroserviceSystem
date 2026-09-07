@@ -6,6 +6,7 @@ using Microservice.Web.Clients.EtkinlikClients;
 using Microservice.Web.Clients.HaberClients;
 using Microservice.Web.Clients.MenuClients;
 using Microservice.Web.Clients.PageTypeClients;
+using Microservice.Web.Clients.ShortcutButtonClients;
 using Microservice.Web.Clients.SiteClients;
 using Microservice.Web.Clients.VideoClients;
 using Microservice.Web.HttpHandlers;
@@ -39,29 +40,40 @@ namespace Microservice.Web.Clients
            })
            .AddHttpMessageHandler<ClientAuthenticatedHttpClientHandler>();//bu clientcredential için token alıp istek göndermek için
 
+            //Banner Clients
             services.AddRefitClient<IBannerClientServices>()
                 .ConfigureHttpClient(c => c.BaseAddress = GetSiteBaseAddress(configuration))
                 .AddHttpMessageHandler<ClientAuthenticatedHttpClientHandler>();
 
+            //Bilgi Clients
             services.AddRefitClient<IBilgiClientServices>()
                 .ConfigureHttpClient(c => c.BaseAddress = GetSiteBaseAddress(configuration))
                 .AddHttpMessageHandler<ClientAuthenticatedHttpClientHandler>();
 
+            //Duyuru Clients
             services.AddRefitClient<IDuyuruClientServices>()
                .ConfigureHttpClient(c => c.BaseAddress = GetSiteBaseAddress(configuration))
                .AddHttpMessageHandler<ClientAuthenticatedHttpClientHandler>();
 
+            //Etkinlik Clients
             services.AddRefitClient<IEtkinlikClientServices>()
                 .ConfigureHttpClient(c => c.BaseAddress = GetSiteBaseAddress(configuration))
                 .AddHttpMessageHandler<ClientAuthenticatedHttpClientHandler>();
 
+            //Video Clients
             services.AddRefitClient<IVideoClientServices>()
                 .ConfigureHttpClient(c => c.BaseAddress = GetSiteBaseAddress(configuration))
                 .AddHttpMessageHandler<ClientAuthenticatedHttpClientHandler>();
 
+            //ShortcutButton Clients
+            services.AddRefitClient<IShortcutButtonClientServices>()
+                .ConfigureHttpClient(c => c.BaseAddress = GetSiteBaseAddress(configuration))
+                .AddHttpMessageHandler<ClientAuthenticatedHttpClientHandler>();
+
+            //Dil Clients
             services.AddRefitClient<IDilClientServices>()
-       .ConfigureHttpClient(c => c.BaseAddress = GetSiteBaseAddress(configuration))
-       .AddHttpMessageHandler<ClientAuthenticatedHttpClientHandler>();
+                .ConfigureHttpClient(c => c.BaseAddress = GetSiteBaseAddress(configuration))
+                .AddHttpMessageHandler<ClientAuthenticatedHttpClientHandler>();
 
             //Menu Clients
             services.AddRefitClient<IMenuClientServices>()

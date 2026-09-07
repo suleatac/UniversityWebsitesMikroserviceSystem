@@ -42,7 +42,7 @@ namespace Mikroservice.Site.Application.Features.BilgiFeatures.CreateBilgi
 
 
             //Cache temizleme işlemi.
-            var cacheKey = $"bilgis:list:{newBilgi.SiteId}:*";
+            var cacheKey = $"bilgi:list:{newBilgi.SiteId}:*";
             await redisCache.RemoveByPatternAsync(cacheKey, cancellationToken);
 
 

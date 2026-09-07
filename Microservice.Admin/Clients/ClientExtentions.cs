@@ -10,6 +10,7 @@ using Microservice.Admin.Clients.HedefClients;
 using Microservice.Admin.Clients.MenuClients;
 using Microservice.Admin.Clients.PersonelTipClients;
 using Microservice.Admin.Clients.PopupClients;
+using Microservice.Admin.Clients.ShortcutButtonClients;
 using Microservice.Admin.Clients.SikcaSorulanSoruClients;
 using Microservice.Admin.Clients.SiteClients;
 using Microservice.Admin.Clients.SiteOzellikleriClients;
@@ -224,6 +225,16 @@ namespace Microservice.Admin.Clients
          })
          .AddHttpMessageHandler<AuthenticatedHttpClientHandler>()//bu usertoken için istek atarken kullanmak için
          .AddHttpMessageHandler<ClientAuthenticatedHttpClientHandler>();//bu clientcredential için token alıp istek göndermek için
+
+           //ShortcutButton Clients
+           services.AddRefitClient<IShortcutButtonClientServices>()
+          .ConfigureHttpClient(c => {
+
+              var microserviceOption = configuration.GetSection(MicroservicesSetting.SectionName).Get<MicroservicesSetting>();
+              c.BaseAddress = new Uri(microserviceOption!.Site.BaseUrl);
+          })
+          .AddHttpMessageHandler<AuthenticatedHttpClientHandler>()//bu usertoken için istek atarken kullanmak için
+          .AddHttpMessageHandler<ClientAuthenticatedHttpClientHandler>();//bu clientcredential için token alıp istek göndermek için
 
            //Popup Clients
            services.AddRefitClient<IPopupClientServices>()

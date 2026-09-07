@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Mikroservice.Site.Persistence.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260903120757_initial")]
+    [Migration("20260907083536_initial")]
     partial class initial
     {
         /// <inheritdoc />
@@ -652,6 +652,63 @@ namespace Mikroservice.Site.Persistence.Migrations
                     b.ToTable("Popuplar");
                 });
 
+            modelBuilder.Entity("Mikroservice.Site.Domain.Entities.ShortcutButton", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Ad")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<int>("DilId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("HedefId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("IconUrl")
+                        .HasMaxLength(300)
+                        .HasColumnType("character varying(300)");
+
+                    b.Property<string>("ImageUrl")
+                        .HasMaxLength(300)
+                        .HasColumnType("character varying(300)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool?>("IsIconImage")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Link")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<DateTime>("OlusturulmaTarihi")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<int>("Sira")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("SiteId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DilId");
+
+                    b.HasIndex("HedefId");
+
+                    b.HasIndex("SiteId", "DilId");
+
+                    b.ToTable("ShortcutButtons");
+                });
+
             modelBuilder.Entity("Mikroservice.Site.Domain.Entities.SikcaSorulanSoru", b =>
                 {
                     b.Property<int>("Id")
@@ -1265,6 +1322,33 @@ namespace Mikroservice.Site.Persistence.Migrations
                     b.Navigation("Site");
                 });
 
+            modelBuilder.Entity("Mikroservice.Site.Domain.Entities.ShortcutButton", b =>
+                {
+                    b.HasOne("Mikroservice.Site.Domain.Entities.Dil", "Dil")
+                        .WithMany()
+                        .HasForeignKey("DilId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Mikroservice.Site.Domain.Entities.Hedef", "Hedef")
+                        .WithMany()
+                        .HasForeignKey("HedefId")
+                        .OnDelete(DeleteBehavior.SetNull)
+                        .IsRequired();
+
+                    b.HasOne("Mikroservice.Site.Domain.Entities.Site", "Site")
+                        .WithMany("ShortcutButtons")
+                        .HasForeignKey("SiteId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Dil");
+
+                    b.Navigation("Hedef");
+
+                    b.Navigation("Site");
+                });
+
             modelBuilder.Entity("Mikroservice.Site.Domain.Entities.SikcaSorulanSoru", b =>
                 {
                     b.HasOne("Mikroservice.Site.Domain.Entities.Dil", "Dil")
@@ -1502,6 +1586,8 @@ namespace Mikroservice.Site.Persistence.Migrations
                     b.Navigation("Menus");
 
                     b.Navigation("Popup");
+
+                    b.Navigation("ShortcutButtons");
 
                     b.Navigation("SikcaSorulanSorus");
 

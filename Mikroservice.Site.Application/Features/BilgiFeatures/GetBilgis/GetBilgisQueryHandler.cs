@@ -18,7 +18,7 @@ namespace Mikroservice.Site.Application.Features.BilgiFeatures.GetBilgis
         public async Task<ServiceResult<List<Bilgi>>> Handle(GetBilgisQuery request, CancellationToken cancellationToken)
         {
             // Önce cache'e bak
-            var cacheKey = $"bilgis:list:{request.SiteId}:{request.DilId}";
+            var cacheKey = $"bilgi:list:{request.SiteId}:{request.DilId}";
             var cached = await redisCacheService.GetListAsync<Bilgi>(cacheKey, cancellationToken);
             if (cached is not null)
             {

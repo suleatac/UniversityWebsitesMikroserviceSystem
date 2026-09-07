@@ -3,6 +3,7 @@ using Microservice.Admin.Services.Interfaces;
 using Microservice.Admin.Services.ServiceResults;
 using Microservice.Admin.ViewModels;
 using Microservice.Admin.ViewModels.Haber;
+using Microservice.Admin.ViewModels.PageType;
 using Microservice.Admin.ViewModels.Site;
 using System.Text.Json;
 
@@ -12,11 +13,15 @@ namespace Microservice.Admin.Services
     {
         private readonly IHaberClientService _haberClient;
         private readonly ILogger<HaberService> _logger;
+        private readonly IPageTypeService _pageTypeService;
+        private readonly ISiteService _siteService;
 
-        public HaberService(IHaberClientService haberClient, ILogger<HaberService> logger)
+        public HaberService(IHaberClientService haberClient, ILogger<HaberService> logger, IPageTypeService pageTypeService, ISiteService siteService)
         {
             _haberClient = haberClient ?? throw new ArgumentNullException(nameof(haberClient));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _pageTypeService = pageTypeService ?? throw new ArgumentNullException(nameof(pageTypeService));
+            _siteService = siteService ?? throw new ArgumentNullException(nameof(siteService));
         }
 
         // LIST
@@ -117,32 +122,33 @@ namespace Microservice.Admin.Services
         // CREATE
         public async Task<ServiceResult<object>> CreateHaberAsync(CreateHaberVm dto)
         {
+  
+
+            var siteResult = await _siteService.GetSiteByIdAsync(dto.SiteId);
+
+            if (!siteResult.IsSuccess || siteResult.Data == null)
+                return ServiceResult<object>.Error(
+                    siteResult.Fail?.Detail ??
+                    siteResult.Fail?.Title ??
+                    "Site bilgisi alınamadı");
+
+            var haberPageTypeResult =
+                await _pageTypeService.GetPageTypeByTemplateIdAndPageTypeKindAsync(
+                    siteResult.Data.TemplateId,
+                    dto.DilId,
+                    PageTypeKind.Haber);
+
+            if (!haberPageTypeResult.IsSuccess || haberPageTypeResult.Data == null)
+                return ServiceResult<object>.Error(
+                    haberPageTypeResult.Fail?.Detail ??
+                    haberPageTypeResult.Fail?.Title ??
+                    "Haber sayfa türü bulunamadı");
+
+            // PageTypeId'yi client'tan değil server'dan belirle
+            dto.PageTypeId = haberPageTypeResult.Data.Id;
+
+
             _logger.LogInformation("Yeni haber oluşturuluyor. Başlık: {Title}", dto.Baslik);
-
-
-            var testVerisi = new CreateHaberVm {
-                SiteId = 1,                          // ✅ 0'dan büyük olmalı
-                DilId = 1,                           // ✅ 0'dan büyük olmalı
-                HedefId = 1,                      // ✅ Opsiyonel
-
-                Baslik = "Üniversitemizde Yeni Kütüphane Binası Açıldı",           // ✅ Boş olamaz, max 200 karakter
-                KisaAciklama = "Modern mimarisi ve geniş koleksiyonuyla yeni kütüphane binamız hizmete girdi.", // ✅ Boş olamaz, max 500 karakter
-                IcerikMetni = "<p>Üniversitemizin yeni kütüphane binası hizmete girdi.</p>", // ✅ Boş olamaz
-
-                Link = "https://www.ornek-universite.edu.tr/kutuphane",            // ✅ Opsiyonel, geçerli URL olmalı
-                ResimUrl = "https://www.ornek-universite.edu.tr/images/kutuphane.jpg", // ✅ Opsiyonel, geçerli URL olmalı
-
-                YayimTarihi = DateTime.Now,          // ✅ Boş olamaz
-                BaslamaTarihi = DateTime.Today,      // ✅ Opsiyonel
-                BitisTarihi = null,                  // ✅ Opsiyonel
-
-                SeoUrl = "universitemizde-yeni-kutuphane-binasi-acildi",  // ✅ Opsiyonel
-                SeoTitle = "Yeni Kütüphane Binası",                       // ✅ Opsiyonel
-                SeoDescription = "Yeni kütüphane binamız hizmete girdi."  // ✅ Opsiyonel
-            };
-
-
-
             var response = await _haberClient.CreateHaberAsync(dto);
 
             if (!response.IsSuccessStatusCode)
@@ -170,6 +176,32 @@ namespace Microservice.Admin.Services
         // UPDATE
         public async Task<ServiceResult<object>> UpdateHaberAsync(HaberDetailVm dto)
         {
+
+
+            var siteResult = await _siteService.GetSiteByIdAsync(dto.SiteId);
+
+            if (!siteResult.IsSuccess || siteResult.Data == null)
+                return ServiceResult<object>.Error(
+                    siteResult.Fail?.Detail ??
+                    siteResult.Fail?.Title ??
+                    "Site bilgisi alınamadı");
+
+            var haberTypeResult =
+                await _pageTypeService.GetPageTypeByTemplateIdAndPageTypeKindAsync(
+                    siteResult.Data.TemplateId,
+                    dto.DilId,
+                    PageTypeKind.Haber);
+
+            if (!haberTypeResult.IsSuccess || haberTypeResult.Data == null)
+                return ServiceResult<object>.Error(
+                    haberTypeResult.Fail?.Detail ??
+                    haberTypeResult.Fail?.Title ??
+                    "Haber sayfa türü bulunamadı");
+
+            // PageTypeId'yi client'tan değil server'dan belirle
+            dto.PageTypeId = haberTypeResult.Data.Id;
+
+
             _logger.LogInformation("Haber güncelleniyor. Id: {Id}", dto.Id);
 
             var response = await _haberClient.UpdateHaberAsync(dto.Id, dto);
