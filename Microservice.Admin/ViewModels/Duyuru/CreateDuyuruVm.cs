@@ -4,9 +4,11 @@ namespace Microservice.Admin.ViewModels.Duyuru
 {
     public class CreateDuyuruVm
     {
+
         public int PageTypeId { get; set; }
         public int SiteId { get; set; }
         public int DilId { get; set; }
+
         [Range(1, int.MaxValue, ErrorMessage = "Hedef seçimi zorunludur.")]
         public int HedefId { get; set; }
 

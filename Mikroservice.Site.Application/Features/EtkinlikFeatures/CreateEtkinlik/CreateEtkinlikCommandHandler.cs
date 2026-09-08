@@ -41,7 +41,7 @@ namespace Mikroservice.Site.Application.Features.EtkinlikFeatures.CreateEtkinlik
             await unitOfWork.SaveChangesAsync(cancellationToken);
 
             //Cache temizleme işlemi.
-            var cacheKey = $"etkinliks:list:{newEtkinlik.SiteId}:*";
+            var cacheKey = $"etkinlik:list:{newEtkinlik.SiteId}:*";
             await redisCache.RemoveByPatternAsync(cacheKey, cancellationToken);
 
             var response = new CreateEtkinlikResponse(newEtkinlik.Id);

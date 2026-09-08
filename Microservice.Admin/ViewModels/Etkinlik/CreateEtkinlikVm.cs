@@ -5,6 +5,7 @@ namespace Microservice.Admin.ViewModels.Etkinlik
     public class CreateEtkinlikVm
     {
 
+  
         public int PageTypeId { get; set; }
 
         public int SiteId { get; set; }

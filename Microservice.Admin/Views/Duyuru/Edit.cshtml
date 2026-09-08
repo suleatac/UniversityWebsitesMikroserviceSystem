@@ -1,4 +1,4 @@
-@model Microservice.Admin.ViewModels.Duyuru.DuyuruDetailVm
+@model Microservice.Admin.ViewModels.Duyuru.DuyuruEditIndexVm
 
 @{
     ViewBag.pTitle = "Duyurular";
@@ -65,9 +65,9 @@
                         <h5 class="card-title mb-1">Duyuru Düzenle</h5>
                         <p class="card-text text-muted mb-0">
                             Duyuru ID:
-                            <strong>@Model.Id</strong>
+                            <strong>@Model.DuyuruDetail.Id</strong>
                             |
-                            <span class="text-primary">@Model.Baslik</span>
+                            <span class="text-primary">@Model.DuyuruDetail.Baslik</span>
                         </p>
                     </div>
                 </div>
@@ -88,11 +88,11 @@
                         <ul class="mb-0"></ul>
                     </div>
 
-                    <input type="hidden" asp-for="Id" />
-                    <input type="hidden" asp-for="SiteId" />
-                    <input type="hidden" asp-for="DilId" />
-                    <input type="hidden" asp-for="EklemeTarihi" />
-                    <input type="hidden" asp-for="GosterimSayisi" />
+                    <input type="hidden" asp-for="DuyuruDetail.Id" />
+                    <input type="hidden" asp-for="DuyuruDetail.SiteId" />
+                    <input type="hidden" asp-for="DuyuruDetail.DilId" />
+                    <input type="hidden" asp-for="DuyuruDetail.EklemeTarihi" />
+                    <input type="hidden" asp-for="DuyuruDetail.GosterimSayisi" />
 
                     <!-- Bilgi -->
                     <div class="mb-4">
@@ -101,12 +101,12 @@
 
                             <div>
                                 <strong>Eklenme Tarihi:</strong>
-                                @Model.EklemeTarihi.ToString("dd.MM.yyyy HH:mm")
+                                @Model.DuyuruDetail.EklemeTarihi.ToString("dd.MM.yyyy HH:mm")
 
                                 &nbsp;|&nbsp;
 
                                 <strong>Gösterim:</strong>
-                                @Model.GosterimSayisi
+                                @Model.DuyuruDetail.GosterimSayisi
                             </div>
                         </div>
                     </div>
@@ -124,7 +124,7 @@
                             <div class="col-md-8">
                                 <div class="mb-3">
 
-                                    <label asp-for="Baslik" class="form-label">
+                                    <label asp-for="DuyuruDetail.Baslik" class="form-label">
                                         Başlık
                                         <span class="text-danger">*</span>
                                     </label>
@@ -134,12 +134,12 @@
                                             <i class="mdi mdi-format-title"></i>
                                         </span>
 
-                                        <input asp-for="Baslik"
+                                        <input asp-for="DuyuruDetail.Baslik"
                                                class="form-control"
                                                placeholder="Duyuru başlığını giriniz" />
                                     </div>
 
-                                    <span asp-validation-for="Baslik"
+                                    <span asp-validation-for="DuyuruDetail.Baslik"
                                           class="text-danger small"></span>
                                 </div>
                             </div>
@@ -147,7 +147,7 @@
                             <div class="col-md-4">
                                 <div class="mb-3">
 
-                                    <label asp-for="KisaAciklama" class="form-label">
+                                    <label asp-for="DuyuruDetail.KisaAciklama" class="form-label">
                                         Kısa Açıklama
                                         <span class="text-danger">*</span>
                                     </label>
@@ -157,12 +157,12 @@
                                             <i class="mdi mdi-text-short"></i>
                                         </span>
 
-                                        <input asp-for="KisaAciklama"
+                                        <input asp-for="DuyuruDetail.KisaAciklama"
                                                class="form-control"
                                                placeholder="Kısa açıklama" />
                                     </div>
 
-                                    <span asp-validation-for="KisaAciklama"
+                                    <span asp-validation-for="DuyuruDetail.KisaAciklama"
                                           class="text-danger small"></span>
                                 </div>
                             </div>
@@ -180,18 +180,18 @@
 
                         <div class="mb-3">
 
-                            <label asp-for="IcerikMetni" class="form-label">
+                            <label asp-for="DuyuruDetail.IcerikMetni" class="form-label">
                                 İçerik Metni
                                 <span class="text-danger">*</span>
                             </label>
 
-                            <textarea asp-for="IcerikMetni"
+                            <textarea asp-for="DuyuruDetail.IcerikMetni"
                                       id="IcerikMetniEditor"
                                       class="form-control"
                                       rows="10"
                                       placeholder="Duyuru içeriğini giriniz..."></textarea>
 
-                            <span asp-validation-for="IcerikMetni"
+                            <span asp-validation-for="DuyuruDetail.IcerikMetni"
                                   class="text-danger small"></span>
                         </div>
 
@@ -200,7 +200,7 @@
                             <div class="col-md-6">
                                 <div class="mb-3">
 
-                                    <label asp-for="Link" class="form-label">
+                                    <label asp-for="DuyuruDetail.Link" class="form-label">
                                         Link
                                     </label>
 
@@ -209,12 +209,12 @@
                                             <i class="mdi mdi-link"></i>
                                         </span>
 
-                                        <input asp-for="Link"
+                                        <input asp-for="DuyuruDetail.Link"
                                                class="form-control"
                                                placeholder="https://..." />
                                     </div>
 
-                                    <span asp-validation-for="Link"
+                                    <span asp-validation-for="DuyuruDetail.Link"
                                           class="text-danger small"></span>
                                 </div>
                             </div>
@@ -222,7 +222,7 @@
                             <div class="col-md-6">
                                 <div class="mb-3">
 
-                                    <label asp-for="ResimUrl" class="form-label">
+                                    <label asp-for="DuyuruDetail.ResimUrl" class="form-label">
                                         Resim URL
                                     </label>
 
@@ -231,12 +231,12 @@
                                             <i class="mdi mdi-image"></i>
                                         </span>
 
-                                        <input asp-for="ResimUrl"
+                                        <input asp-for="DuyuruDetail.ResimUrl"
                                                class="form-control"
                                                placeholder="Resim URL" />
                                     </div>
 
-                                    <span asp-validation-for="ResimUrl"
+                                    <span asp-validation-for="DuyuruDetail.ResimUrl"
                                           class="text-danger small"></span>
                                 </div>
                             </div>
@@ -257,15 +257,15 @@
                             <div class="col-md-3">
                                 <div class="mb-3">
 
-                                    <label asp-for="YayimTarihi" class="form-label">
+                                    <label asp-for="DuyuruDetail.YayimTarihi" class="form-label">
                                         Yayım Tarihi
                                     </label>
 
-                                    <input asp-for="YayimTarihi"
+                                    <input asp-for="DuyuruDetail.YayimTarihi"
                                            class="form-control"
                                            type="datetime-local" />
 
-                                    <span asp-validation-for="YayimTarihi"
+                                    <span asp-validation-for="DuyuruDetail.YayimTarihi"
                                           class="text-danger small"></span>
                                 </div>
                             </div>
@@ -273,15 +273,15 @@
                             <div class="col-md-3">
                                 <div class="mb-3">
 
-                                    <label asp-for="BaslamaTarihi" class="form-label">
+                                    <label asp-for="DuyuruDetail.BaslamaTarihi" class="form-label">
                                         Başlama Tarihi
                                     </label>
 
-                                    <input asp-for="BaslamaTarihi"
+                                    <input asp-for="DuyuruDetail.BaslamaTarihi"
                                            class="form-control"
                                            type="datetime-local" />
 
-                                    <span asp-validation-for="BaslamaTarihi"
+                                    <span asp-validation-for="DuyuruDetail.BaslamaTarihi"
                                           class="text-danger small"></span>
                                 </div>
                             </div>
@@ -289,33 +289,31 @@
                             <div class="col-md-3">
                                 <div class="mb-3">
 
-                                    <label asp-for="BitisTarihi" class="form-label">
+                                    <label asp-for="DuyuruDetail.BitisTarihi" class="form-label">
                                         Bitiş Tarihi
                                     </label>
 
-                                    <input asp-for="BitisTarihi"
+                                    <input asp-for="DuyuruDetail.BitisTarihi"
                                            class="form-control"
                                            type="datetime-local" />
 
-                                    <span asp-validation-for="BitisTarihi"
+                                    <span asp-validation-for="DuyuruDetail.BitisTarihi"
                                           class="text-danger small"></span>
                                 </div>
                             </div>
 
                             <div class="col-md-3">
                                 <div class="mb-3">
-
-                                    <label asp-for="HedefId" class="form-label">
+                                    <label asp-for="DuyuruDetail.HedefId" class="form-label">
                                         Hedef
                                     </label>
-
-                                    <select asp-for="HedefId"
-                                            class="form-select select2">
-                                        <option value="">-- Hedef Seçin --</option>
-                                    </select>
-
-                                    <span asp-validation-for="HedefId"
-                                          class="text-danger small"></span>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="mdi mdi-target"></i></span>
+                                        <select asp-for="DuyuruDetail.HedefId" class="form-select"
+                                                asp-items="@(new SelectList(Model.Hedefler, "Id", "Aciklama"))">
+                                        </select>
+                                    </div>
+                                    <span asp-validation-for="DuyuruDetail.HedefId" class="text-danger small"></span>
                                 </div>
                             </div>
 
@@ -337,15 +335,15 @@
                             <div class="col-md-4">
                                 <div class="mb-3">
 
-                                    <label asp-for="SeoUrl" class="form-label">
+                                    <label asp-for="DuyuruDetail.SeoUrl" class="form-label">
                                         SEO URL
                                     </label>
 
-                                    <input asp-for="SeoUrl"
+                                    <input asp-for="DuyuruDetail.SeoUrl"
                                            class="form-control"
                                            placeholder="seo-url" />
 
-                                    <span asp-validation-for="SeoUrl"
+                                    <span asp-validation-for="DuyuruDetail.SeoUrl"
                                           class="text-danger small"></span>
                                 </div>
                             </div>
@@ -353,15 +351,15 @@
                             <div class="col-md-4">
                                 <div class="mb-3">
 
-                                    <label asp-for="SeoTitle" class="form-label">
+                                    <label asp-for="DuyuruDetail.SeoTitle" class="form-label">
                                         SEO Title
                                     </label>
 
-                                    <input asp-for="SeoTitle"
+                                    <input asp-for="DuyuruDetail.SeoTitle"
                                            class="form-control"
                                            placeholder="SEO başlık" />
 
-                                    <span asp-validation-for="SeoTitle"
+                                    <span asp-validation-for="DuyuruDetail.SeoTitle"
                                           class="text-danger small"></span>
                                 </div>
                             </div>
@@ -369,15 +367,15 @@
                             <div class="col-md-4">
                                 <div class="mb-3">
 
-                                    <label asp-for="SeoDescription" class="form-label">
+                                    <label asp-for="DuyuruDetail.SeoDescription" class="form-label">
                                         SEO Description
                                     </label>
 
-                                    <input asp-for="SeoDescription"
+                                    <input asp-for="DuyuruDetail.SeoDescription"
                                            class="form-control"
                                            placeholder="SEO açıklama" />
 
-                                    <span asp-validation-for="SeoDescription"
+                                    <span asp-validation-for="DuyuruDetail.SeoDescription"
                                           class="text-danger small"></span>
                                 </div>
                             </div>
@@ -418,6 +416,9 @@
     <script src="~/assets/libs/select2/js/select2.full.min.js"></script>
     <script src="~/assets/libs/select2/js/i18n/tr.js"></script>
 
+    <!-- TinyMCE -->
+    <script src="~/assets/libs/tinymce/tinymce.min.js"></script>
+
     <script>
         $(document).ready(function () {
 
@@ -438,15 +439,58 @@
         allowClear: true
         });
 
-        // CKEditor
-        if (document.querySelector('#IcerikMetniEditor')) {
+        // TinyMCE
+        tinymce.init({
+        selector: '#IcerikMetniEditor',
+        height: 500,
+        menubar: true,
+        language: 'tr_TR',
 
-        ClassicEditor
-        .create(document.querySelector('#IcerikMetniEditor'))
-        .catch(error => {
-        console.error(error);
+        plugins: [
+        'advlist', 'autolink', 'lists', 'link', 'image',
+        'charmap', 'preview', 'anchor', 'searchreplace',
+        'visualblocks', 'code', 'fullscreen',
+        'insertdatetime', 'media', 'table',
+        'help', 'wordcount', 'codesample'
+        ],
+
+        toolbar:
+        'undo redo | blocks fontfamily fontsize | ' +
+        'bold italic underline strikethrough | forecolor backcolor | ' +
+        'alignleft aligncenter alignright alignjustify | ' +
+        'bullist numlist outdent indent | ' +
+        'link image media table | codesample | ' +
+        'removeformat | code fullscreen help',
+
+        branding: false,
+
+        content_style:
+        'body { font-family:Helvetica,Arial,sans-serif; font-size:14px; padding:10px }',
+
+        placeholder: 'Duyuru içeriğini giriniz...',
+
+        setup: function (editor) {
+
+        editor.on('change', function () {
+        editor.save();
+        });
+
+        editor.on('keyup', function () {
+        editor.save();
         });
         }
+        });
+
+        // Submit
+        document.getElementById('duyuruEditForm')
+        .addEventListener('submit', function () {
+
+        const editor = tinymce.get('IcerikMetniEditor');
+
+        if (editor) {
+        editor.save();
+        }
+        });
 
         });
     </script>

@@ -119,6 +119,7 @@ namespace Microservice.Admin.Controllers
             _logger.LogInformation("Bilgi düzenleme sayfası açıldı. Id: {Id}", id);
 
             var result = await _bilgiService.GetBilgiByIdAsync(id);
+            var hedefler = await _hedefService.GetHedefsAsync();
 
             if (!result.IsSuccess || result.Data == null)
             {
@@ -126,12 +127,19 @@ namespace Microservice.Admin.Controllers
                 TempData["Error"] = "Kayıt bulunamadı.";
                 return RedirectToAction(nameof(Index));
             }
-            return View(result.Data);
+            var viewModel = new BilgiEditIndexVm {
+                BilgiDetail = result.Data,
+                Hedefler = hedefler.Data ?? new List<ViewModels.Hedef.GetHedefVm>(),
+            };
+
+
+
+            return View(viewModel);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(BilgiDetailVm model)
+        public async Task<IActionResult> Edit(BilgiEditIndexVm model)
         {
             if (!ModelState.IsValid)
             {
@@ -139,16 +147,16 @@ namespace Microservice.Admin.Controllers
                 return View(model);
             }
 
-            var result = await _bilgiService.UpdateBilgiAsync(model);
+            var result = await _bilgiService.UpdateBilgiAsync(model.BilgiDetail);
 
             if (!result.IsSuccess)
             {
-                _logger.LogError("Bilgi güncellenemedi. Id: {Id}, Hata: {Error}", model.Id, result.Fail?.Detail);
+                _logger.LogError("Bilgi güncellenemedi. Id: {Id}, Hata: {Error}", model.BilgiDetail.Id, result.Fail?.Detail);
                 ModelState.AddModelError("", result.Fail?.Detail ?? result.Fail?.Title ?? "Güncelleme başarısız");
                 return View(model);
             }
 
-            _logger.LogInformation("Bilgi güncellendi. Id: {Id}", model.Id);
+            _logger.LogInformation("Bilgi güncellendi. Id: {Id}", model.BilgiDetail.Id);
             TempData["Success"] = "Bilgi başarıyla güncellendi.";
             return RedirectToAction(nameof(Index));
         }

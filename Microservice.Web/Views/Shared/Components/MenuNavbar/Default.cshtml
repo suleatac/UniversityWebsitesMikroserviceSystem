@@ -1,4 +1,4 @@
-@model List<Microservice.Web.ViewModels.Menu.MenuGetVm>
+@model Microservice.Web.ViewModels.Menu.MenuGetIndexVm
 
 @{
     string BuildHref(string? link) => string.IsNullOrWhiteSpace(link) ? "#" : "/" + link.Trim('/');
@@ -97,9 +97,12 @@
         <div class="container">
             <div class="header-wrap clearfix">
                 <div id="logo" class="logo">
-                    <a href="/" rel="home">
-                        <img src="~/template1/images/logo.png" alt="image">
-                    </a>
+                    @if (!string.IsNullOrWhiteSpace(Model.Site?.SiteOzellikleri?.SiteTopbarLogo))
+                    {
+                        <a href="/" rel="home">
+                            <img src="@Model.Site.SiteOzellikleri.SiteTopbarLogo" alt="image">
+                        </a>
+                    }
                 </div><!-- /.logo -->
 
 
@@ -110,7 +113,7 @@
                             <li class="home">
                                 <a href="/">Anasayfa</a>
                             </li>
-                            @foreach (var menu in Model)
+                            @foreach (var menu in Model.Menus)
                             {
                                 var href = BuildHref(menu.Link);
 

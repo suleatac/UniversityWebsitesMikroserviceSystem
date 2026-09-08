@@ -1,5 +1,6 @@
 using Microservice.Web.Services.Interfaces;
 using Microservice.Web.ViewModels.Menu;
+using Microservice.Web.ViewModels.Site;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Microservice.Web.ViewComponents
@@ -16,39 +17,53 @@ namespace Microservice.Web.ViewComponents
             _logger = logger;
         }
 
-        public async Task<IViewComponentResult> InvokeAsync(int siteId, int dilId, List<MenuGetVm>? preloadedMenus = null)
+        public async Task<IViewComponentResult> InvokeAsync(
+            int siteId,
+            int dilId,
+            List<MenuGetVm>? preloadedMenus = null,
+            SiteDetailGetVm? preloadedSite = null)
         {
             if (siteId <= 0 || dilId <= 0)
             {
-                return View(new List<MenuGetVm>());
+                return View(new MenuGetIndexVm());
             }
 
-            List<MenuGetVm> allMenus;
+            var menus = preloadedMenus ?? await GetMenusAsync(siteId, dilId);
 
-            if (preloadedMenus is not null)
-            {
-                // Controller aynı istek içinde menüleri zaten çekmişse tekrar servise gitmeyi atla.
-                allMenus = preloadedMenus;
-            }
-            else
-            {
-                var result = await _menuService.GetMenusAsync(siteId, dilId);
-
-                if (!result.IsSuccess || result.Data is null)
-                {
-                    _logger.LogWarning("Navbar menüleri alınamadı. SiteId: {SiteId}, DilId: {DilId}", siteId, dilId);
-                    return View(new List<MenuGetVm>());
-                }
-
-                allMenus = result.Data;
-            }
-
-            var menus = allMenus
-                .Where(m => m.ParentId is null)
-                .OrderBy(m => m.Sira)
+            var rootMenus = menus
+                .Where(menu => menu.ParentId is null)
+                .OrderBy(menu => menu.Sira)
                 .ToList();
 
-            return View(menus);
+            var site = preloadedSite ?? new SiteDetailGetVm {
+                Id = siteId
+            };
+
+            var viewModel = new MenuGetIndexVm {
+                Site = site,
+                Menus = rootMenus
+            };
+
+            return View(viewModel);
         }
+
+        private async Task<List<MenuGetVm>> GetMenusAsync(int siteId, int dilId)
+        {
+            var result = await _menuService.GetMenusAsync(siteId, dilId);
+
+            if (result.IsSuccess && result.Data is not null)
+            {
+                return result.Data;
+            }
+
+            _logger.LogWarning(
+                "Navbar menüleri alınamadı. SiteId: {SiteId}, DilId: {DilId}",
+                siteId,
+                dilId);
+
+            return new List<MenuGetVm>();
+        }
+
+
     }
 }

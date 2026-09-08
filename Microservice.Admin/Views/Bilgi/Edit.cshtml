@@ -1,4 +1,4 @@
-@model Microservice.Admin.ViewModels.Bilgi.BilgiDetailVm
+@model Microservice.Admin.ViewModels.Bilgi.BilgiEditIndexVm
 
 @{
     ViewBag.pTitle = "Bilgiler";
@@ -77,12 +77,12 @@
                         <p class="card-text text-muted mb-0">
 
                             Bilgi ID:
-                            <strong>@Model.Id</strong>
+                            <strong>@Model.BilgiDetail.Id</strong>
 
                             |
 
                             <span class="text-primary">
-                                @Model.Baslik
+                                @Model.BilgiDetail.Baslik
                             </span>
 
                         </p>
@@ -112,11 +112,11 @@
 
                     </div>
 
-                    <input type="hidden" asp-for="Id" />
-                    <input type="hidden" asp-for="SiteId" />
-                    <input type="hidden" asp-for="DilId" />
-                    <input type="hidden" asp-for="EklemeTarihi" />
-                    <input type="hidden" asp-for="GosterimSayisi" />
+                    <input type="hidden" asp-for="BilgiDetail.Id" />
+                    <input type="hidden" asp-for="BilgiDetail.SiteId" />
+                    <input type="hidden" asp-for="BilgiDetail.DilId" />
+                    <input type="hidden" asp-for="BilgiDetail.EklemeTarihi" />
+                    <input type="hidden" asp-for="BilgiDetail.GosterimSayisi" />
 
                     <!-- Bilgi Kutusu -->
 
@@ -130,12 +130,12 @@
                             <div>
 
                                 <strong>Eklenme Tarihi:</strong>
-                                @Model.EklemeTarihi.ToString("dd.MM.yyyy HH:mm")
+                                @Model.BilgiDetail.EklemeTarihi.ToString("dd.MM.yyyy HH:mm")
 
                                 &nbsp;|&nbsp;
 
                                 <strong>Gösterim:</strong>
-                                @Model.GosterimSayisi
+                                @Model.BilgiDetail.GosterimSayisi
 
                             </div>
 
@@ -160,7 +160,7 @@
 
                                 <div class="mb-3">
 
-                                    <label asp-for="Baslik"
+                                    <label asp-for="BilgiDetail.Baslik"
                                            class="form-label">
 
                                         Başlık
@@ -174,13 +174,13 @@
                                             <i class="mdi mdi-format-title"></i>
                                         </span>
 
-                                        <input asp-for="Baslik"
+                                        <input asp-for="BilgiDetail.Baslik"
                                                class="form-control"
                                                placeholder="Bilgi başlığını giriniz" />
 
                                     </div>
 
-                                    <span asp-validation-for="Baslik"
+                                    <span asp-validation-for="BilgiDetail.Baslik"
                                           class="text-danger small"></span>
 
                                 </div>
@@ -191,7 +191,7 @@
 
                                 <div class="mb-3">
 
-                                    <label asp-for="KisaAciklama"
+                                    <label asp-for="BilgiDetail.KisaAciklama"
                                            class="form-label">
 
                                         Kısa Açıklama
@@ -205,13 +205,13 @@
                                             <i class="mdi mdi-text-short"></i>
                                         </span>
 
-                                        <input asp-for="KisaAciklama"
+                                        <input asp-for="BilgiDetail.KisaAciklama"
                                                class="form-control"
                                                placeholder="Kısa açıklama" />
 
                                     </div>
 
-                                    <span asp-validation-for="KisaAciklama"
+                                    <span asp-validation-for="BilgiDetail.KisaAciklama"
                                           class="text-danger small"></span>
 
                                 </div>
@@ -235,7 +235,7 @@
 
                         <div class="mb-3">
 
-                            <label asp-for="IcerikMetni"
+                            <label asp-for="BilgiDetail.IcerikMetni"
                                    class="form-label">
 
                                 İçerik Metni
@@ -243,13 +243,13 @@
 
                             </label>
 
-                            <textarea asp-for="IcerikMetni"
+                            <textarea asp-for="BilgiDetail.IcerikMetni"
                                       id="IcerikMetniEditor"
                                       class="form-control"
                                       rows="10"
                                       placeholder="Bilgi içeriğini giriniz..."></textarea>
 
-                            <span asp-validation-for="IcerikMetni"
+                            <span asp-validation-for="BilgiDetail.IcerikMetni"
                                   class="text-danger small"></span>
 
                         </div>
@@ -260,7 +260,7 @@
 
                                 <div class="mb-3">
 
-                                    <label asp-for="Link"
+                                    <label asp-for="BilgiDetail.Link"
                                            class="form-label">
 
                                         Link
@@ -273,13 +273,13 @@
                                             <i class="mdi mdi-link"></i>
                                         </span>
 
-                                        <input asp-for="Link"
+                                        <input asp-for="BilgiDetail.Link"
                                                class="form-control"
                                                placeholder="https://..." />
 
                                     </div>
 
-                                    <span asp-validation-for="Link"
+                                    <span asp-validation-for="BilgiDetail.Link"
                                           class="text-danger small"></span>
 
                                 </div>
@@ -290,7 +290,7 @@
 
                                 <div class="mb-3">
 
-                                    <label asp-for="ResimUrl"
+                                    <label asp-for="BilgiDetail.ResimUrl"
                                            class="form-label">
 
                                         Resim URL
@@ -303,7 +303,7 @@
                                             <i class="mdi mdi-image"></i>
                                         </span>
 
-                                        <input asp-for="ResimUrl"
+                                        <input asp-for="BilgiDetail.ResimUrl"
                                                id="ResimUrlInput"
                                                class="form-control"
                                                placeholder="Resim URL" />
@@ -319,7 +319,7 @@
 
                                     </div>
 
-                                    <span asp-validation-for="ResimUrl"
+                                    <span asp-validation-for="BilgiDetail.ResimUrl"
                                           class="text-danger small"></span>
 
                                 </div>
@@ -347,18 +347,18 @@
 
                                 <div class="mb-3">
 
-                                    <label asp-for="YayimTarihi"
+                                    <label asp-for="BilgiDetail.YayimTarihi"
                                            class="form-label">
 
                                         Yayım Tarihi
 
                                     </label>
 
-                                    <input asp-for="YayimTarihi"
+                                    <input asp-for="BilgiDetail.YayimTarihi"
                                            class="form-control"
                                            type="datetime-local" />
 
-                                    <span asp-validation-for="YayimTarihi"
+                                    <span asp-validation-for="BilgiDetail.YayimTarihi"
                                           class="text-danger small"></span>
 
                                 </div>
@@ -369,18 +369,18 @@
 
                                 <div class="mb-3">
 
-                                    <label asp-for="BaslamaTarihi"
+                                    <label asp-for="BilgiDetail.BaslamaTarihi"
                                            class="form-label">
 
                                         Başlama Tarihi
 
                                     </label>
 
-                                    <input asp-for="BaslamaTarihi"
+                                    <input asp-for="BilgiDetail.BaslamaTarihi"
                                            class="form-control"
                                            type="datetime-local" />
 
-                                    <span asp-validation-for="BaslamaTarihi"
+                                    <span asp-validation-for="BilgiDetail.BaslamaTarihi"
                                           class="text-danger small"></span>
 
                                 </div>
@@ -391,18 +391,18 @@
 
                                 <div class="mb-3">
 
-                                    <label asp-for="BitisTarihi"
+                                    <label asp-for="BilgiDetail.BitisTarihi"
                                            class="form-label">
 
                                         Bitiş Tarihi
 
                                     </label>
 
-                                    <input asp-for="BitisTarihi"
+                                    <input asp-for="BilgiDetail.BitisTarihi"
                                            class="form-control"
                                            type="datetime-local" />
 
-                                    <span asp-validation-for="BitisTarihi"
+                                    <span asp-validation-for="BilgiDetail.BitisTarihi"
                                           class="text-danger small"></span>
 
                                 </div>
@@ -413,34 +413,21 @@
 
                                 <div class="mb-3">
 
-                                    <label asp-for="HedefId"
+                                    <label asp-for="BilgiDetail.HedefId"
                                            class="form-label">
 
                                         Hedef
 
                                     </label>
 
-                                    <select asp-for="HedefId"
-                                            class="form-select select2">
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="mdi mdi-target"></i></span>
+                                        <select asp-for="BilgiDetail.HedefId" class="form-select"
+                                                asp-items="@(new SelectList(Model.Hedefler, "Id", "Aciklama"))">
+                                        </select>
+                                    </div>
 
-                                        <option value="">
-                                            -- Hedef Seçin --
-                                        </option>
-
-                                        @if (ViewBag.Hedefler != null)
-                                        {
-                                            foreach (var hedef in ViewBag.Hedefler)
-                                            {
-                                                <option value="@hedef.Id"
-                                                        selected="@(Model.HedefId == hedef.Id)">
-                                                    @hedef.Aciklama
-                                                </option>
-                                            }
-                                        }
-
-                                    </select>
-
-                                    <span asp-validation-for="HedefId"
+                                    <span asp-validation-for="BilgiDetail.HedefId"
                                           class="text-danger small"></span>
 
                                 </div>
@@ -470,14 +457,14 @@
 
                                 <div class="mb-3">
 
-                                    <label asp-for="SeoUrl"
+                                    <label asp-for="BilgiDetail.SeoUrl"
                                            class="form-label">
 
                                         SEO URL
 
                                     </label>
 
-                                    <input asp-for="SeoUrl"
+                                    <input asp-for="BilgiDetail.SeoUrl"
                                            class="form-control"
                                            placeholder="seo-url" />
 
@@ -489,14 +476,14 @@
 
                                 <div class="mb-3">
 
-                                    <label asp-for="SeoTitle"
+                                    <label asp-for="BilgiDetail.SeoTitle"
                                            class="form-label">
 
                                         SEO Title
 
                                     </label>
 
-                                    <input asp-for="SeoTitle"
+                                    <input asp-for="BilgiDetail.SeoTitle"
                                            class="form-control"
                                            placeholder="SEO başlık" />
 
@@ -508,14 +495,14 @@
 
                                 <div class="mb-3">
 
-                                    <label asp-for="SeoDescription"
+                                    <label asp-for="BilgiDetail.SeoDescription"
                                            class="form-label">
 
                                         SEO Description
 
                                     </label>
 
-                                    <input asp-for="SeoDescription"
+                                    <input asp-for="BilgiDetail.SeoDescription"
                                            class="form-control"
                                            placeholder="SEO açıklama" />
 

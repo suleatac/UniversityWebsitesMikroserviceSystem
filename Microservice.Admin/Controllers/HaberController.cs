@@ -170,6 +170,7 @@ namespace Microservice.Admin.Controllers
             _logger.LogInformation("Haber edit sayfası açıldı. Id: {Id}", id);
 
             var result = await _haberService.GetHaberByIdAsync(id);
+            var hedefler = await _hedefService.GetHedefsAsync();
 
             if (!result.IsSuccess || result.Data == null)
             {
@@ -178,14 +179,17 @@ namespace Microservice.Admin.Controllers
                 TempData["Error"] = "Kayıt bulunamadı.";
                 return RedirectToAction(nameof(Index));
             }
-
-            return View(result.Data);
+            var viewModel = new HaberEditIndexVm {
+                HaberDetail = result.Data,
+                Hedefler = hedefler.Data ?? new List<ViewModels.Hedef.GetHedefVm>()
+            };
+            return View(viewModel);
         }
 
         // 🔹 UPDATE - POST
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(HaberDetailVm model)
+        public async Task<IActionResult> Edit(HaberEditIndexVm model)
         {
             if (!ModelState.IsValid)
             {
@@ -193,20 +197,20 @@ namespace Microservice.Admin.Controllers
                 return View(model);
             }
 
-            var result = await _haberService.UpdateHaberAsync(model);
+            var result = await _haberService.UpdateHaberAsync(model.HaberDetail);
 
             if (!result.IsSuccess)
             {
-                _logger.LogError("Haber güncellenemedi. Id: {Id}, Hata: {Error}", model.Id, result.Fail?.Detail);
+                _logger.LogError("Haber güncellenemedi. Id: {Id}, Hata: {Error}", model.HaberDetail.Id, result.Fail?.Detail);
 
                 ModelState.AddModelError("", result.Fail?.Detail ?? result.Fail?.Title ?? "Güncelleme başarısız");
                 return View(model);
             }
 
-            _logger.LogInformation("Haber güncellendi. Id: {Id}", model.Id);
+            _logger.LogInformation("Haber güncellendi. Id: {Id}", model.HaberDetail.Id);
 
             TempData["Success"] = "Haber başarıyla güncellendi.";
-            return RedirectToAction(nameof(Index), new { siteId = model.SiteId, dilId = model.DilId });
+            return RedirectToAction(nameof(Index), new { siteId = model.HaberDetail.SiteId, dilId = model.HaberDetail.DilId });
         }
 
         // 🔹 DELETE - GET

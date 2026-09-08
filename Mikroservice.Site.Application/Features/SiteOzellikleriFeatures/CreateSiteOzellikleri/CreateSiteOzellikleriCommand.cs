@@ -1,5 +1,4 @@
 using Microservice.Shared;
-using Mikroservice.Site.Application.Features.PopupFeatures.CreatePopup;
 
 namespace Mikroservice.Site.Application.Features.SiteOzellikleriFeatures.CreateSiteOzellikleri
 {
@@ -7,33 +6,33 @@ namespace Mikroservice.Site.Application.Features.SiteOzellikleriFeatures.CreateS
     {
         public int SiteId { get; init; }
 
-        public string SiteAdress { get; init; } = default!;
-        public string SiteAdressEng { get; init; } = default!;
+        public string? SiteAdress { get; init; } 
+        public string? SiteAdressEng { get; init; } 
 
-        public string SiteBaslangicHakkimizda { get; init; } = default!;
-        public string SiteBaslangicHakkimizdaEng { get; init; } = default!;
+        public string? SiteBaslangicHakkimizda { get; init; } 
+        public string? SiteBaslangicHakkimizdaEng { get; init; } 
 
-        public string SiteTelNo { get; init; } = default!;
-        public string SiteFaxNo { get; init; } = default!;
+        public string? SiteTelNo { get; init; } 
+        public string? SiteFaxNo { get; init; } 
 
-        public string SiteFacebookAdress { get; init; } = default!;
-        public string SiteTwitterAdress { get; init; } = default!;
-        public string SiteInstagramAdress { get; init; } = default!;
-        public string SiteYoutubeAdress { get; init; } = default!;
-        public string SiteLinkedinAdress { get; init; } = default!;
+        public string? SiteFacebookAdress { get; init; } 
+        public string? SiteTwitterAdress { get; init; } 
+        public string? SiteInstagramAdress { get; init; } 
+        public string? SiteYoutubeAdress { get; init; } 
+        public string? SiteLinkedinAdress { get; init; } 
 
-        public string SiteHaritaAdress { get; init; } = default!;
+        public string? SiteHaritaAdress { get; init; } 
 
-        public string SiteBaslangicVideoLink { get; init; } = default!;
-        public string SiteBaslangicVideoResimAdress { get; init; } = default!;
-        public string SiteVideoType { get; init; } = default!;
+        public string? SiteBaslangicVideoLink { get; init; } 
+        public string? SiteBaslangicVideoResimAdress { get; init; } 
+        public string? SiteVideoType { get; init; } 
 
-        public string SiteWatsappAdress { get; init; } = default!;
+        public string? SiteWatsappAdress { get; init; } 
 
-        public string SiteHakkindaLink { get; init; } = default!;
-        public string SiteHakkindaResim { get; init; } = default!;
+        public string? SiteHakkindaLink { get; init; } 
+        public string? SiteHakkindaResim { get; init; } 
 
-        public string SiteFooterLogo { get; init; } = default!;
-        public string SiteTopbarLogo { get; init; } = default!;
+        public string? SiteFooterLogo { get; init; } 
+        public string? SiteTopbarLogo { get; init; } 
     }
 }

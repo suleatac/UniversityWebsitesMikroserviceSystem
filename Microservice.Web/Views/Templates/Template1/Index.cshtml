@@ -32,14 +32,14 @@
     <div class="container">
         <div class="row">
             <div class="col-md-5">
-
+             
                 <section class="un-post-scroller un-post-scroller-2901"
                          data-delay="0">
-
+                  
                     <div class="section-inner-no-padding">
-
+              
                         <div class="post-scroller-wrap verticalCarousel">
-
+                            <h4 class="title">Duyurular</h4>
                             <div class="post-scroller-carousel">
 
                                 <div class="post-scroller-carousel-inner verticalCarouselGroup vc_list">
@@ -59,7 +59,7 @@
                                                         <div class="row">
 
                                                             <!-- Resim -->
-                                                            <div class="col-md-4 col-sm-4 col-xs-4 post-thumbnail-mini">
+                                                            <div class="col-md-3 col-sm-4 col-xs-4 post-thumbnail-mini">
 
                                                                 <div class="item-thumbnail">
 
@@ -80,7 +80,7 @@
                                                             </div>
 
                                                             <!-- İçerik -->
-                                                            <div class="col-md-8 col-sm-8 col-xs-8 post-content-mini">
+                                                            <div class="col-md-9 col-sm-8 col-xs-8 post-content-mini">
 
                                                                 <h4>
                                                                     <a class="post-title-mini main-color-1-hover"
@@ -143,7 +143,10 @@
                                    class="vc_goUp btn btn-primary post-scroller-button post-scroller-up">
                                     <i class="fa fa-angle-up"></i>
                                 </a>
-
+                                <a href="#"
+                                   style="float:right;font-weight:600;text-decoration:underline;">
+                                 Tümü
+                                </a>
                             </div>
 
                         </div>
@@ -177,7 +180,7 @@
                                         <a href="@shortcutButton.Link">@shortcutButton.Ad</a>
                                     </div>
                                     <div class="box-content">
-                                        <a href="@shortcutButton.Link">Detaylı görmek için tıklayınız...</a>
+                                        <a href="@shortcutButton.Link">Detaylı görmek için tıklayınız Detaylı görmek için tıklayınız Detaylı görmek için tıklayınız</a>
                                     </div>
                                 </div>
                             </div><!-- /.iconbox -->
@@ -196,40 +199,32 @@
     </div><!-- /.container -->
 </section><!--/flat-row -->
 <!-- END SECTION SHORTCUT BUTTONS -->
-<!-- START SECTION BİLGİLER -->
+<!-- START SECTION HAKKINDA -->
+@{
+    var siteOzellikleri = Model.Site.SiteOzellikleri;
+}
 <section class="flat-row no-padding">
     <div class="flat-fluid">
         <div class="container">
-            <div class="row">
+            <div class="flat-information">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h4 class="title">Sivas Teknoloji ve Transfer Ofisi Hakkında</h4>
+                        <p>@siteOzellikleri?.SiteBaslangicHakkimizda</p>
+                        <a class="flat-button" href="@siteOzellikleri?.SiteHakkindaLink"><i class="fa fa-leaf"></i>DETAYLARI GÖRÜN</a>
+                    </div>
 
-
-
-                @if (Model.Bilgiler != null && Model.Bilgiler.Any())
-                {
-                    @foreach (var bilgi in Model.Bilgiler)
-                    {
-
-                        <div class="col-md-4">
-                            <div class="post">
-                                <h1 class="title">@bilgi.Baslik</h1>
-                                <p>@bilgi.KisaAciklama</p>
-
-                                <a class="flat-button button-button_30 btn-default" href="@(string.IsNullOrWhiteSpace(bilgi.Link) ? "#" : bilgi.Link)" data-delay="0">Detayları Görün <i class="fa fa-angle-right"></i></a>
-                            </div>
+                    <div class="col-md-6">
+                        <div class="thumb-information">
+                            <img src="@siteOzellikleri?.SiteHakkindaResim" alt="image">
                         </div>
-
-
-                    }
-
-                }
-
-
-               
-            </div><!--/row-->
-        </div><!--/flat-fluid-->
-    </div><!--/container-->
-</section><!--/flat-row -->
-<!-- END SECTION BİLGİLER -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- END SECTION HAKKINDA -->
 <!-- START SECTION HABERLER VE ETKİNLİKLER -->
 <section class="flat-row flat-ev-carousel">
     <div class="container">
@@ -374,31 +369,80 @@
     </div><!-- /container -->
 </section><!-- /page-title -->
 <!-- END SECTION HABERLER VE ETKİNLİKLER -->
-<!-- START SECTION HAKKINDA -->
-@{
-    var siteOzellikleri = Model.Site.SiteOzellikleri;
-}
+<!-- START SECTION BİLGİLER -->
 <section class="flat-row no-padding">
-    <div class="container">
-        <div class="flat-information">
+    <div class="flat-fluid">
+        <div class="container">
             <div class="row">
+
+
+
+                @if (Model.Bilgiler != null && Model.Bilgiler.Any())
+                {
+                    @foreach (var bilgi in Model.Bilgiler)
+                    {
+
+                        <div class="col-md-4">
+                            <div class="post">
+                                <h1 class="title">@bilgi.Baslik</h1>
+                                <p>@bilgi.KisaAciklama</p>
+
+                                <a class="flat-button button-button_30 btn-default" href="@(string.IsNullOrWhiteSpace(bilgi.Link) ? "#" : bilgi.Link)" data-delay="0">Detayları Görün <i class="fa fa-angle-right"></i></a>
+                            </div>
+                        </div>
+
+
+                    }
+
+                }
+
+
+               
+            </div><!--/row-->
+        </div><!--/flat-fluid-->
+    </div><!--/container-->
+</section><!--/flat-row -->
+<!-- END SECTION BİLGİLER -->
+<!-- START SOSYAL MEDYA PAYLAŞIMLARI -->
+<section class="flat-row flat-ev-carousel">
+
+    <div class="container">
+     
+       
+                <h4 class="title">Sosyal Medya Paylaşımları</h4>
+     
+            <div class="row pt-1">
+
                 <div class="col-md-6">
-                    <h4 class="title">Sivas Teknoloji ve Transfer Ofisi Hakkında</h4>
-                    <p>@siteOzellikleri?.SiteBaslangicHakkimizda</p>
-                    <a class="flat-button" href="@siteOzellikleri?.SiteHakkindaLink"><i class="fa fa-leaf"></i>DETAILS</a>
+                    <!-- FACEBOOK -->
+                    <div class="fb-page" data-href="https://www.facebook.com/sivastto" data-hide-cover="false" data-tabs="timeline" data-height="540" data-width="500" data-small-header="true" data-adapt-container-width="true" data-hide-cover="true" data-show-facepile="true"></div>
+                    <div id="fb-root"></div>
+                    <!-- END FACEBOOK -->
                 </div>
 
                 <div class="col-md-6">
-                    <div class="thumb-information">
-                        <img src="@siteOzellikleri?.SiteHakkindaResim" alt="image">
+                    <!-- INSTAGRAM-->
+                    <div class="row ScrollBar">
+                        <!-- Instagram Embed -->
+                        <script async src="//www.instagram.com/embed.js"></script>
+                        <iframe class="instagram-media"
+                                src="https://www.instagram.com/sivastto/embed"
+                                width="100%"
+                                height="500"
+                                frameborder="0"
+                                scrolling="no"
+                                allowtransparency="true">
+                        </iframe>
                     </div>
                 </div>
             </div>
-        </div>
+   
 
     </div>
+
+    <script async defer crossorigin="anonymous" src="https://connect.facebook.net/tr_TR/sdk.js#xfbml=1&version=v13.0" nonce="OPTJJ8lo"></script>';
 </section>
-<!-- END SECTION HAKKINDA -->
+<!-- END SOSYAL MEDYA PAYLAŞIMLARI -->
 <!-- START SECTION PARALLAX VİDEO-->
 <div class="page-title parallax parallax7">
     <div class="flat-video-fancybox">

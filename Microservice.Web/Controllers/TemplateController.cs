@@ -196,7 +196,7 @@ namespace Microservice.Web.Controllers
 
             // Navbar component'inin menüleri tekrar servisten çekmesini önlemek için burada paylaşılıyor.
             ViewData["Menus"] = model.Menus;
-
+            ViewData["Site"] = model.Site;
             var viewPath = GetTemplateViewPath(route.Page.TemplateId, "Index");
 
             return View(viewPath, model);

@@ -7,8 +7,8 @@ namespace Microservice.Admin.Services.Interfaces
     {
         Task<ServiceResult<List<GetMenuVm>>> GetMenusAsync(int siteId, int dilId);
         Task<ServiceResult<MenuVm>> GetMenuByIdAsync(int id);
-        Task<ServiceResult<bool>> CreateMenuAsync(MenuVm dto);
-        Task<ServiceResult<bool>> UpdateMenuAsync(MenuVm dto);
+        Task<ServiceResult<object>> CreateMenuAsync(MenuVm dto);
+        Task<ServiceResult<object>> UpdateMenuAsync(MenuVm dto);
         Task<ServiceResult<bool>> DeleteMenuAsync(int id);
     }
 }

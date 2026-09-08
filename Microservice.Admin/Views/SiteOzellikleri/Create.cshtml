@@ -22,8 +22,22 @@
                 </div>
             </div>
             <div class="card-body p-4">
-                <form asp-action="Create" id="siteOzellikleriCreateForm" class="needs-validation" novalidate>
-                    <div asp-validation-summary="ModelOnly" class="alert alert-danger d-none" role="alert"><i class="mdi mdi-block-helper me-2"></i><ul></ul></div>
+                <form 
+                    asp-action="Create" 
+                    method="post" 
+                    id="siteOzellikleriCreateForm" 
+                    class="needs-validation" 
+                    novalidate>
+
+                    <div id="validationSummary"
+                         asp-validation-summary="ModelOnly"
+                         class="alert alert-danger d-none"
+                         role="alert">
+                        <i class="mdi mdi-block-helper me-2"></i>
+                        <ul></ul>
+                    </div>
+
+
                     <input type="hidden" asp-for="SiteId" />
 
                     <div class="mb-4">
@@ -84,7 +98,14 @@
                         <h6 class="text-primary border-bottom pb-2"><i class="mdi mdi-share-variant me-1"></i> Sosyal Medya</h6>
                         <div class="row">
                             <div class="col-md-4">
-                                <div class="mb-3"><label asp-for="SiteFacebookAdress" class="form-label">Facebook</label><div class="input-group"><span class="input-group-text"><i class="mdi mdi-facebook"></i></span><input asp-for="SiteFacebookAdress" class="form-control" placeholder="Facebook URL" /></div></div>
+                                <div class="mb-3">
+                                    <label asp-for="SiteFacebookAdress" class="form-label">Facebook</label>
+                                    <div class="input-group"><span class="input-group-text">
+                                        <i class="mdi mdi-facebook"></i>
+                                        </span>
+                                        <input asp-for="SiteFacebookAdress" class="form-control" placeholder="Facebook URL" />
+                                    </div>
+                                    </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="mb-3"><label asp-for="SiteTwitterAdress" class="form-label">Twitter</label><div class="input-group"><span class="input-group-text"><i class="mdi mdi-twitter"></i></span><input asp-for="SiteTwitterAdress" class="form-control" placeholder="Twitter URL" /></div></div>

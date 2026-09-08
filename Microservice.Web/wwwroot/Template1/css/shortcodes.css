@@ -313,7 +313,7 @@
 .post-scroller-wrap {
     padding: 30px;
     background :#ffffff;
-    background: rgba(255,255,255,.9);
+    background: rgba(255,255,255,.8);
 }
 
 .post-scroller-carousel {
@@ -364,7 +364,7 @@
 }
 
 .post-item-mini {
-    padding-bottom:30px;
+    padding-bottom:20px;
     border-bottom:solid 1px #eaeaea;
 }
 
@@ -1289,6 +1289,28 @@ body.mobile .event-item:hover .event-thumbnail img {
     display: inline-block;
     padding: 0 15px;
 }
+/* Duyurular Başlık
+-------------------------------------------------------------- */
+.header-overlay-scroller .title {
+    font-family: "Bitter", sans-serif;
+    font-size: 15px;
+    color: #343434;
+    margin-bottom: 25px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #EBEBEB;
+    margin-left: 10px;
+}
+/* Flat Ev Carousel
+-------------------------------------------------------------- */
+.flat-ev-carousel .title {
+    font-family: "Bitter", sans-serif;
+    font-size: 28px;
+    color: #343434;
+    margin-bottom: 20px;
+    padding-bottom:10px;
+    border-bottom: 1px solid #EBEBEB;
+    margin-left:10px;
+}
 
 /* Flat information
 -------------------------------------------------------------- */
@@ -1297,40 +1319,44 @@ body.mobile .event-item:hover .event-thumbnail img {
 }
 
 .flat-information {
-    text-align: right;
-    padding-bottom: 75px;
-    margin-bottom: 75px;
-    border-bottom: 1px solid #EBEBEB;
+    text-align: left;
+   /* padding-bottom: 75px;*/
+
+    /*    margin-bottom: 75px;*/
+    /*    border-bottom: 1px solid #EBEBEB;*/
 }
 
 .flat-information .title,
 .flat-lecturers .title {
     font-family: "Bitter", sans-serif;
     font-size: 28px;
-    color: #343434;
+    color: #fff;
     margin-bottom: 35px;
 }
 
-.flat-information p,
-.flat-lecturers p {
-    margin-bottom: 35px;
-}
+    .flat-information p,
+    .flat-lecturers p {
+        margin-bottom: 35px;
+        color: #fff;
+    }
 
-.flat-information .flat-button,
-.flat-lecturers  .flat-button {
-    display: inline-block;
-    padding: 17px 40px;
-    font-size: 17px;
-    transition: all .2s;
-    border-radius: 3px;
-    border: solid 2px #666;
-}
+    .flat-information .flat-button,
+    .flat-lecturers .flat-button {
+        display: inline-block;
+        padding: 17px 40px;
+        font-size: 17px;
+        transition: all .2s;
+        border-radius: 3px;
+        border: solid 2px #fff;
+        background-color:transparent;
+        color: #fff;
+    }
 
 .flat-information .flat-button:hover,
 .flat-lecturers  .flat-button:hover {
-    color: #fff;
-    background-color: #666666;
-    border-color: #666666;
+    color: #343434;
+    background-color: #fff;
+    border-color: #fff;
 }
 
 .flat-information .flat-button i,

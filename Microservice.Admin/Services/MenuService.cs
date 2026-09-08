@@ -2,6 +2,7 @@ using Microservice.Admin.Clients.MenuClients;
 using Microservice.Admin.Services.Interfaces;
 using Microservice.Admin.Services.ServiceResults;
 using Microservice.Admin.ViewModels.Menu;
+using Microservice.Admin.ViewModels.PageType;
 using System.Text.Json;
 
 namespace Microservice.Admin.Services
@@ -11,10 +12,14 @@ namespace Microservice.Admin.Services
         private readonly IMenuClientServices _menuClient;
         private readonly ILogger<MenuService> _logger;
 
-        public MenuService(IMenuClientServices menuClient, ILogger<MenuService> logger)
+        private readonly IPageTypeService _pageTypeService;
+        private readonly ISiteService _siteService;
+        public MenuService(IMenuClientServices menuClient, ILogger<MenuService> logger, IPageTypeService pageTypeService, ISiteService siteService)
         {
             _menuClient = menuClient ?? throw new ArgumentNullException(nameof(menuClient));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _pageTypeService = pageTypeService ?? throw new ArgumentNullException(nameof(pageTypeService));
+            _siteService = siteService ?? throw new ArgumentNullException(nameof(siteService));
         }
 
         // LIST
@@ -75,8 +80,34 @@ namespace Microservice.Admin.Services
         }
 
         // CREATE
-        public async Task<ServiceResult<bool>> CreateMenuAsync(MenuVm dto)
+        public async Task<ServiceResult<object>> CreateMenuAsync(MenuVm dto)
         {
+
+
+
+            var siteResult = await _siteService.GetSiteByIdAsync(dto.SiteId);
+
+            if (!siteResult.IsSuccess || siteResult.Data == null)
+                return ServiceResult<object>.Error(
+                    siteResult.Fail?.Detail ??
+                    siteResult.Fail?.Title ??
+                    "Site bilgisi alınamadı");
+
+            var menuPageTypeResult =
+                await _pageTypeService.GetPageTypeByTemplateIdAndPageTypeKindAsync(
+                    siteResult.Data.TemplateId,
+                    dto.DilId,
+                    PageTypeKind.Menu);
+
+            if (!menuPageTypeResult.IsSuccess || menuPageTypeResult.Data == null)
+                return ServiceResult<object>.Error(
+                    menuPageTypeResult.Fail?.Detail ??
+                    menuPageTypeResult.Fail?.Title ??
+                    "Duyuru sayfa türü bulunamadı");
+
+            // PageTypeId'yi client'tan değil server'dan belirle
+            dto.PageTypeId = menuPageTypeResult.Data.Id;
+
             _logger.LogInformation("Yeni menu oluşturuluyor. Name: {Name}", dto.Ad);
 
             var response = await _menuClient.CreateMenuAsync(dto);
@@ -94,18 +125,51 @@ namespace Microservice.Admin.Services
                     problemDetails?.Detail
                 );
 
-                return ServiceResult<bool>.Error(
+                return ServiceResult<object>.Error(
                     problemDetails?.Detail ?? problemDetails?.Title ?? "Menu oluşturulamadı"
                 );
             }
 
             _logger.LogInformation("Menu başarıyla oluşturuldu.");
-            return ServiceResult<bool>.Success(true);
+            return ServiceResult<object>.Success(true);
         }
 
         // UPDATE
-        public async Task<ServiceResult<bool>> UpdateMenuAsync(MenuVm dto)
+        public async Task<ServiceResult<object>> UpdateMenuAsync(MenuVm dto)
         {
+
+
+
+            var siteResult = await _siteService.GetSiteByIdAsync(dto.SiteId);
+
+            if (!siteResult.IsSuccess || siteResult.Data == null)
+                return ServiceResult<object>.Error(
+                    siteResult.Fail?.Detail ??
+                    siteResult.Fail?.Title ??
+                    "Site bilgisi alınamadı");
+
+            var menuPageTypeResult =
+                await _pageTypeService.GetPageTypeByTemplateIdAndPageTypeKindAsync(
+                    siteResult.Data.TemplateId,
+                    dto.DilId,
+                    PageTypeKind.Menu);
+
+            if (!menuPageTypeResult.IsSuccess || menuPageTypeResult.Data == null)
+                return ServiceResult<object>.Error(
+                    menuPageTypeResult.Fail?.Detail ??
+                    menuPageTypeResult.Fail?.Title ??
+                    "Duyuru sayfa türü bulunamadı");
+
+            // PageTypeId'yi client'tan değil server'dan belirle
+            dto.PageTypeId = menuPageTypeResult.Data.Id;
+
+
+
+
+
+
+
+
             _logger.LogInformation("Menu güncelleniyor. Id: {Id}", dto.Id);
 
             var response = await _menuClient.UpdateMenuAsync(dto.Id, dto);
@@ -123,13 +187,13 @@ namespace Microservice.Admin.Services
                     problemDetails?.Detail
                 );
 
-                return ServiceResult<bool>.Error(
+                return ServiceResult<object>.Error(
                     problemDetails?.Detail ?? problemDetails?.Title ?? $"Menu güncellenemedi. Id: {dto.Id}"
                 );
             }
 
             _logger.LogInformation("Menu güncellendi. Id: {Id}", dto.Id);
-            return ServiceResult<bool>.Success(true);
+            return ServiceResult<object>.Success(true);
         }
 
         // DELETE

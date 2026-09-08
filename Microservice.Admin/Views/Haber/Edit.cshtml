@@ -1,4 +1,4 @@
-@model Microservice.Admin.ViewModels.Haber.HaberDetailVm
+@model Microservice.Admin.ViewModels.Haber.HaberEditIndexVm
 @{
     ViewBag.pTitle = "Haberler";
     ViewBag.Title = "Haber Düzenle";
@@ -17,7 +17,7 @@
                     </div>
                     <div>
                         <h5 class="card-title mb-1">Haber Düzenle</h5>
-                        <p class="card-text text-muted mb-0">Haber ID: <strong>@Model.Id</strong> | <span class="text-primary">@Model.Baslik</span></p>
+                        <p class="card-text text-muted mb-0">Haber ID: <strong>@Model.HaberDetail.Id</strong> | <span class="text-primary">@Model.HaberDetail.Baslik</span></p>
                     </div>
                 </div>
             </div>
@@ -29,20 +29,20 @@
                         <ul></ul>
                     </div>
 
-                    <input type="hidden" asp-for="Id" />
-                    <input type="hidden" asp-for="SiteId" />
-                    <input type="hidden" asp-for="DilId" />
-                    <input type="hidden" asp-for="EklemeTarihi" />
-                    <input type="hidden" asp-for="GosterimSayisi" />
+                    <input type="hidden" asp-for="HaberDetail.Id" />
+                    <input type="hidden" asp-for="HaberDetail.SiteId" />
+                    <input type="hidden" asp-for="HaberDetail.DilId" />
+                    <input type="hidden" asp-for="HaberDetail.EklemeTarihi" />
+                    <input type="hidden" asp-for="HaberDetail.GosterimSayisi" />
 
                     <!-- Site ve Dil Bilgisi Gösterimi -->
                     <div class="mb-4">
                         <div class="alert alert-info d-flex align-items-center" role="alert">
                             <i class="mdi mdi-information-outline me-2 fs-5"></i>
                             <div>
-                                <strong>Eklenme Tarihi:</strong> @Model.EklemeTarihi.ToString("dd.MM.yyyy HH:mm")
+                                <strong>Eklenme Tarihi:</strong> @Model.HaberDetail.EklemeTarihi.ToString("dd.MM.yyyy HH:mm")
                                 &nbsp;|&nbsp;
-                                <strong>Gösterim:</strong> @Model.GosterimSayisi
+                                <strong>Gösterim:</strong> @Model.HaberDetail.GosterimSayisi
                             </div>
                         </div>
                     </div>
@@ -56,26 +56,26 @@
                         <div class="row">
                             <div class="col-md-8">
                                 <div class="mb-3">
-                                    <label asp-for="Baslik" class="form-label">
+                                    <label asp-for="HaberDetail.Baslik" class="form-label">
                                         Başlık <span class="text-danger">*</span>
                                     </label>
                                     <div class="input-group">
                                         <span class="input-group-text"><i class="mdi mdi-format-title"></i></span>
-                                        <input asp-for="Baslik" class="form-control" placeholder="Haber başlığını giriniz" />
+                                        <input asp-for="HaberDetail.Baslik" class="form-control" placeholder="Haber başlığını giriniz" />
                                     </div>
-                                    <span asp-validation-for="Baslik" class="text-danger small"></span>
+                                    <span asp-validation-for="HaberDetail.Baslik" class="text-danger small"></span>
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="mb-3">
-                                    <label asp-for="KisaAciklama" class="form-label">
+                                    <label asp-for="HaberDetail.KisaAciklama" class="form-label">
                                         Kısa Açıklama <span class="text-danger">*</span>
                                     </label>
                                     <div class="input-group">
                                         <span class="input-group-text"><i class="mdi mdi-text-short"></i></span>
-                                        <input asp-for="KisaAciklama" class="form-control" placeholder="Kısa açıklama giriniz" />
+                                        <input asp-for="HaberDetail.KisaAciklama" class="form-control" placeholder="Kısa açıklama giriniz" />
                                     </div>
-                                    <span asp-validation-for="KisaAciklama" class="text-danger small"></span>
+                                    <span asp-validation-for="HaberDetail.KisaAciklama" class="text-danger small"></span>
                                 </div>
                             </div>
                            
@@ -90,39 +90,39 @@
 
                         <!-- TinyMCE Editör -->
                         <div class="mb-3">
-                            <label asp-for="IcerikMetni" class="form-label">
+                            <label asp-for="HaberDetail.IcerikMetni" class="form-label">
                                 İçerik Metni <span class="text-danger">*</span>
                             </label>
-                            <textarea asp-for="IcerikMetni" id="IcerikMetniEditor" class="form-control" rows="10" placeholder="Haber içeriğini giriniz..."></textarea>
-                            <span asp-validation-for="IcerikMetni" class="text-danger small"></span>
+                            <textarea asp-for="HaberDetail.IcerikMetni" id="IcerikMetniEditor" class="form-control" rows="10" placeholder="Haber içeriğini giriniz..."></textarea>
+                            <span asp-validation-for="HaberDetail.IcerikMetni" class="text-danger small"></span>
                         </div>
 
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="mb-3">
-                                    <label asp-for="Link" class="form-label">
+                                    <label asp-for="HaberDetail.Link" class="form-label">
                                         Link
                                     </label>
                                     <div class="input-group">
                                         <span class="input-group-text"><i class="mdi mdi-link"></i></span>
-                                        <input asp-for="Link" class="form-control" placeholder="https://..." />
+                                        <input asp-for="HaberDetail.Link" class="form-control" placeholder="https://..." />
                                     </div>
-                                    <span asp-validation-for="Link" class="text-danger small"></span>
+                                    <span asp-validation-for="HaberDetail.Link" class="text-danger small"></span>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="mb-3">
-                                    <label asp-for="ResimUrl" class="form-label">
+                                    <label asp-for="HaberDetail.ResimUrl" class="form-label">
                                         Resim URL
                                     </label>
                                     <div class="input-group">
                                         <span class="input-group-text"><i class="mdi mdi-image-outline"></i></span>
-                                        <input asp-for="ResimUrl" id="ResimUrlInput" class="form-control" placeholder="https://example.com/image.jpg" />
+                                        <input asp-for="HaberDetail.ResimUrl" id="ResimUrlInput" class="form-control" placeholder="https://example.com/image.jpg" />
                                         <button type="button" class="btn btn-outline-primary" id="openFileManagerBtn" title="Dosya Yöneticisi">
                                             <i class="mdi mdi-folder-open-outline"></i>
                                         </button>
                                     </div>
-                                    <span asp-validation-for="ResimUrl" class="text-danger small"></span>
+                                    <span asp-validation-for="HaberDetail.ResimUrl" class="text-danger small"></span>
                                 </div>
                             </div>
                           
@@ -138,53 +138,56 @@
                         <div class="row">
                             <div class="col-md-3">
                                 <div class="mb-3">
-                                    <label asp-for="YayimTarihi" class="form-label">
+                                    <label asp-for="HaberDetail.YayimTarihi" class="form-label">
                                         Yayım Tarihi <span class="text-danger">*</span>
                                     </label>
                                     <div class="input-group">
                                         <span class="input-group-text"><i class="mdi mdi-calendar-check"></i></span>
-                                        <input asp-for="YayimTarihi" type="datetime-local" class="form-control"
-                                               value="@Model.YayimTarihi.ToString("yyyy-MM-ddTHH:mm")" />
+                                        <input asp-for="HaberDetail.YayimTarihi" type="datetime-local" class="form-control"
+                                               value="@Model.HaberDetail.YayimTarihi.ToString("yyyy-MM-ddTHH:mm")" />
                                     </div>
-                                    <span asp-validation-for="YayimTarihi" class="text-danger small"></span>
+                                    <span asp-validation-for="HaberDetail.YayimTarihi" class="text-danger small"></span>
                                 </div>
                             </div>
+                    
                             <div class="col-md-3">
                                 <div class="mb-3">
-                                    <label asp-for="EklemeTarihi" class="form-label">
-                                        Eklenme Tarihi
-                                    </label>
-                                    <div class="input-group">
-                                        <span class="input-group-text"><i class="mdi mdi-calendar-plus"></i></span>
-                                        <input type="text" class="form-control" value="@Model.EklemeTarihi.ToString("dd.MM.yyyy HH:mm")" readonly disabled />
-                                    </div>
-                                    <small class="text-muted">Otomatik oluşturuldu, değiştirilemez.</small>
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="mb-3">
-                                    <label asp-for="BaslamaTarihi" class="form-label">
+                                    <label asp-for="HaberDetail.BaslamaTarihi" class="form-label">
                                         Başlama Tarihi
                                     </label>
                                     <div class="input-group">
                                         <span class="input-group-text"><i class="mdi mdi-calendar-start"></i></span>
-                                        <input asp-for="BaslamaTarihi" type="datetime-local" class="form-control"
-                                               value="@(Model.BaslamaTarihi.HasValue ? Model.BaslamaTarihi.Value.ToString("yyyy-MM-ddTHH:mm") : "")" />
+                                        <input asp-for="HaberDetail.BaslamaTarihi" type="datetime-local" class="form-control"
+                                               value="@(Model.HaberDetail.BaslamaTarihi.HasValue ? Model.HaberDetail.BaslamaTarihi.Value.ToString("yyyy-MM-ddTHH:mm") : "")" />
                                     </div>
-                                    <span asp-validation-for="BaslamaTarihi" class="text-danger small"></span>
+                                    <span asp-validation-for="HaberDetail.BaslamaTarihi" class="text-danger small"></span>
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="mb-3">
-                                    <label asp-for="BitisTarihi" class="form-label">
+                                    <label asp-for="HaberDetail.BitisTarihi" class="form-label">
                                         Bitiş Tarihi
                                     </label>
                                     <div class="input-group">
                                         <span class="input-group-text"><i class="mdi mdi-calendar-end"></i></span>
-                                        <input asp-for="BitisTarihi" type="datetime-local" class="form-control"
-                                               value="@(Model.BitisTarihi.HasValue ? Model.BitisTarihi.Value.ToString("yyyy-MM-ddTHH:mm") : "")" />
+                                        <input asp-for="HaberDetail.BitisTarihi" type="datetime-local" class="form-control"
+                                               value="@(Model.HaberDetail.BitisTarihi.HasValue ? Model.HaberDetail.BitisTarihi.Value.ToString("yyyy-MM-ddTHH:mm") : "")" />
                                     </div>
-                                    <span asp-validation-for="BitisTarihi" class="text-danger small"></span>
+                                    <span asp-validation-for="HaberDetail.BitisTarihi" class="text-danger small"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="mb-3">
+                                    <label asp-for="HaberDetail.HedefId" class="form-label">
+                                        Hedef
+                                    </label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="mdi mdi-target"></i></span>
+                                        <select asp-for="HaberDetail.HedefId" class="form-select"
+                                                asp-items="@(new SelectList(Model.Hedefler, "Id", "Aciklama"))">
+                                        </select>
+                                    </div>
+                                    <span asp-validation-for="HaberDetail.HedefId" class="text-danger small"></span>
                                 </div>
                             </div>
                         </div>
@@ -199,38 +202,38 @@
                         <div class="row">
                             <div class="col-md-4">
                                 <div class="mb-3">
-                                    <label asp-for="SeoUrl" class="form-label">
+                                    <label asp-for="HaberDetail.SeoUrl" class="form-label">
                                         SEO URL
                                     </label>
                                     <div class="input-group">
                                         <span class="input-group-text"><i class="mdi mdi-link-variant"></i></span>
-                                        <input asp-for="SeoUrl" class="form-control" placeholder="haber-basligi" />
+                                        <input asp-for="HaberDetail.SeoUrl" class="form-control" placeholder="haber-basligi" />
                                     </div>
-                                    <span asp-validation-for="SeoUrl" class="text-danger small"></span>
+                                    <span asp-validation-for="HaberDetail.SeoUrl" class="text-danger small"></span>
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="mb-3">
-                                    <label asp-for="SeoTitle" class="form-label">
+                                    <label asp-for="HaberDetail.SeoTitle" class="form-label">
                                         SEO Title
                                     </label>
                                     <div class="input-group">
                                         <span class="input-group-text"><i class="mdi mdi-format-text"></i></span>
-                                        <input asp-for="SeoTitle" class="form-control" placeholder="SEO başlığı" />
+                                        <input asp-for="HaberDetail.SeoTitle" class="form-control" placeholder="SEO başlığı" />
                                     </div>
-                                    <span asp-validation-for="SeoTitle" class="text-danger small"></span>
+                                    <span asp-validation-for="HaberDetail.SeoTitle" class="text-danger small"></span>
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="mb-3">
-                                    <label asp-for="SeoDescription" class="form-label">
+                                    <label asp-for="HaberDetail.SeoDescription" class="form-label">
                                         SEO Description
                                     </label>
                                     <div class="input-group">
                                         <span class="input-group-text"><i class="mdi mdi-text-box-search-outline"></i></span>
-                                        <input asp-for="SeoDescription" class="form-control" placeholder="SEO açıklaması" />
+                                        <input asp-for="HaberDetail.SeoDescription" class="form-control" placeholder="SEO açıklaması" />
                                     </div>
-                                    <span asp-validation-for="SeoDescription" class="text-danger small"></span>
+                                    <span asp-validation-for="HaberDetail.SeoDescription" class="text-danger small"></span>
                                 </div>
                             </div>
                         </div>
@@ -242,7 +245,7 @@
                             <i class="mdi mdi-arrow-left me-1"></i> Listeye Dön
                         </a>
                         <div class="d-flex gap-2">
-                            <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-outline-info">
+                            <a asp-action="Details" asp-route-id="@Model.HaberDetail.Id" class="btn btn-outline-info">
                                 <i class="mdi mdi-eye-outline me-1"></i> Detay
                             </a>
                             <button type="submit" class="btn btn-warning">

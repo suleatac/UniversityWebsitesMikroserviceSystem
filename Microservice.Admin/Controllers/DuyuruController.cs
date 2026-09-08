@@ -119,6 +119,8 @@ namespace Microservice.Admin.Controllers
             _logger.LogInformation("Duyuru düzenleme sayfası açıldı. Id: {Id}", id);
 
             var result = await _duyuruService.GetDuyuruByIdAsync(id);
+            var hedefler = await _hedefService.GetHedefsAsync();
+
 
             if (!result.IsSuccess || result.Data == null)
             {
@@ -126,13 +128,17 @@ namespace Microservice.Admin.Controllers
                 TempData["Error"] = "Kayıt bulunamadı.";
                 return RedirectToAction(nameof(Index));
             }
+            var viewModel = new DuyuruEditIndexVm {
+                DuyuruDetail = result.Data,
+                Hedefler = hedefler.Data ?? new List<ViewModels.Hedef.GetHedefVm>()
+            };
 
-            return View(result.Data);
+            return View(viewModel);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(DuyuruDetailVm model)
+        public async Task<IActionResult> Edit(DuyuruEditIndexVm model)
         {
             if (!ModelState.IsValid)
             {
@@ -140,16 +146,16 @@ namespace Microservice.Admin.Controllers
                 return View(model);
             }
 
-            var result = await _duyuruService.UpdateDuyuruAsync(model);
+            var result = await _duyuruService.UpdateDuyuruAsync(model.DuyuruDetail);
 
             if (!result.IsSuccess)
             {
-                _logger.LogError("Duyuru güncellenemedi. Id: {Id}, Hata: {Error}", model.Id, result.Fail?.Detail);
+                _logger.LogError("Duyuru güncellenemedi. Id: {Id}, Hata: {Error}", model.DuyuruDetail.Id, result.Fail?.Detail);
                 ModelState.AddModelError("", result.Fail?.Detail ?? result.Fail?.Title ?? "Güncelleme başarısız");
                 return View(model);
             }
 
-            _logger.LogInformation("Duyuru güncellendi. Id: {Id}", model.Id);
+            _logger.LogInformation("Duyuru güncellendi. Id: {Id}", model.DuyuruDetail.Id);
             TempData["Success"] = "Duyuru başarıyla güncellendi.";
             return RedirectToAction(nameof(Index));
         }

@@ -8,8 +8,6 @@ namespace Mikroservice.Site.Application.Features.SiteOzellikleriFeatures.UpdateS
         {
             RuleFor(x => x.SiteId).GreaterThan(0);
 
-            RuleFor(x => x.SiteAdress).NotEmpty();
-            RuleFor(x => x.SiteTelNo).NotEmpty();
 
 
         }

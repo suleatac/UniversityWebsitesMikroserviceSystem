@@ -18,7 +18,7 @@ namespace Mikroservice.Site.Application.Features.EtkinlikFeatures.GetEtkinliks
         public async Task<ServiceResult<List<Etkinlik>>> Handle(GetEtkinliksQuery request, CancellationToken cancellationToken)
         {
             // Önce cache'e bak
-            var cacheKey = $"etkinliks:list:{request.SiteId}:{request.DilId}";
+            var cacheKey = $"etkinlik:list:{request.SiteId}:{request.DilId}";
             var cached = await redisCacheService.GetListAsync<Etkinlik>(cacheKey, cancellationToken);
             if (cached is not null)
             {

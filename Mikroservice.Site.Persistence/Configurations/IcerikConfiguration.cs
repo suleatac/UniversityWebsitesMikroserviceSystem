@@ -65,8 +65,11 @@ namespace Mikroservice.Site.Persistence.Configurations
             // =========================
             builder.HasIndex(x => new { x.SiteId, x.DilId });
 
+            // Partial unique index: sadece aktif (silinmemis) kayitlar icin benzersizlik kontrolu.
+            // Soft delete edilen kayitlar Index'e dahil degil; boylece silinen kaydin SeoUrl'si yeniden kullanilabilir.
             builder.HasIndex(x => new { x.SiteId, x.SeoUrl })
-                .IsUnique();
+                .IsUnique()
+                .HasFilter("\"IsDeleted\" = FALSE");
             // =========================
             // FILTER
             // =========================

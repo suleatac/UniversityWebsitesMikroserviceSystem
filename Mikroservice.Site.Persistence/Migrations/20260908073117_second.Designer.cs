@@ -3,6 +3,7 @@ using System;
 using Microservice.Site.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Mikroservice.Site.Persistence.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260908073117_second")]
+    partial class second
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -359,8 +362,7 @@ namespace Mikroservice.Site.Persistence.Migrations
                     b.HasIndex("SiteId", "DilId");
 
                     b.HasIndex("SiteId", "SeoUrl")
-                        .IsUnique()
-                        .HasFilter("\"IsDeleted\" = FALSE");
+                        .IsUnique();
 
                     b.ToTable("Icerik");
 

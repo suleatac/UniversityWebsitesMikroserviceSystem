@@ -178,23 +178,14 @@
                   
                             <div class="col-md-3">
 
-                               
-
-                                    <label asp-for="CreateEtkinlik.HedefId" class="form-label">
-                                        Hedef
-                                    </label>
-
-                                    <select asp-for="CreateEtkinlik.HedefId" class="form-select select2">
-                                        @foreach (var hedef in Model.Hedefler)
-                                        {
-                                            <option value="@hedef.Id">@hedef.Aciklama</option>
-                                        }
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="mdi mdi-target"></i></span>
+                                    <select asp-for="CreateEtkinlik.HedefId" class="form-select"
+                                            asp-items="@(new SelectList(Model.Hedefler, "Id", "Aciklama"))">
                                     </select>
+                                </div>
 
-                                    <span asp-validation-for="CreateEtkinlik.HedefId"
-                                          class="text-danger small"></span>
-
-
+                                <span asp-validation-for="CreateEtkinlik.HedefId" class="text-danger small"></span>
                             </div>
 
                         </div>

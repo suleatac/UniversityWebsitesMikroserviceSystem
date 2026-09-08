@@ -1,4 +1,4 @@
-@model Microservice.Admin.ViewModels.Etkinlik.EtkinlikDetailVm
+@model Microservice.Admin.ViewModels.Etkinlik.EtkinlikEditIndexVm
 
 @{
     ViewBag.pTitle = "Etkinlikler";
@@ -69,7 +69,7 @@
                     <div>
                         <h5 class="card-title mb-1">Etkinlik Düzenle</h5>
                         <p class="card-text text-muted mb-0">
-                            ID: <strong>@Model.Id</strong> | <span class="text-primary">@Model.Baslik</span>
+                            ID: <strong>@Model.EtkinlikDetail.Id</strong> | <span class="text-primary">@Model.EtkinlikDetail.Baslik</span>
                         </p>
                     </div>
                 </div>
@@ -87,18 +87,18 @@
                     @Html.AntiForgeryToken()
 
                     <!-- Hidden -->
-                    <input type="hidden" asp-for="Id" />
-                    <input type="hidden" asp-for="SiteId" />
-                    <input type="hidden" asp-for="DilId" />
-                    <input type="hidden" asp-for="EklemeTarihi" />
-                    <input type="hidden" asp-for="GosterimSayisi" />
+                    <input type="hidden" asp-for="EtkinlikDetail.Id" />
+                    <input type="hidden" asp-for="EtkinlikDetail.SiteId" />
+                    <input type="hidden" asp-for="EtkinlikDetail.DilId" />
+                    <input type="hidden" asp-for="EtkinlikDetail.EklemeTarihi" />
+                    <input type="hidden" asp-for="EtkinlikDetail.GosterimSayisi" />
 
                     <!-- INFO -->
                     <div class="mb-3">
                         <div class="alert alert-info">
-                            <strong>Eklenme:</strong> @Model.EklemeTarihi.ToString("dd.MM.yyyy HH:mm")
+                            <strong>Eklenme:</strong> @Model.EtkinlikDetail.EklemeTarihi.ToString("dd.MM.yyyy HH:mm")
                             &nbsp; | &nbsp;
-                            <strong>Gösterim:</strong> @Model.GosterimSayisi
+                            <strong>Gösterim:</strong> @Model.EtkinlikDetail.GosterimSayisi
                         </div>
                     </div>
 
@@ -111,12 +111,12 @@
                         <div class="row">
                             <div class="col-md-8">
                                 <label class="form-label">Başlık</label>
-                                <input asp-for="Baslik" class="form-control" />
+                                <input asp-for="EtkinlikDetail.Baslik" class="form-control" />
                             </div>
 
                             <div class="col-md-4">
                                 <label class="form-label">Kısa Açıklama</label>
-                                <input asp-for="KisaAciklama" class="form-control" />
+                                <input asp-for="EtkinlikDetail.KisaAciklama" class="form-control" />
                             </div>
                         </div>
                     </div>
@@ -129,7 +129,7 @@
 
                         <div class="mb-3">
                             <label class="form-label">İçerik</label>
-                            <textarea asp-for="IcerikMetni"
+                            <textarea asp-for="EtkinlikDetail.IcerikMetni"
                                       id="IcerikMetniEditor"
                                       class="form-control"
                                       rows="10"></textarea>
@@ -140,7 +140,7 @@
                             <!-- LINK -->
                             <div class="col-md-6">
                                 <label class="form-label">Link</label>
-                                <input asp-for="Link" class="form-control" />
+                                <input asp-for="EtkinlikDetail.Link" class="form-control" />
                             </div>
 
                             <!-- IMAGE -->
@@ -148,7 +148,7 @@
                                 <label class="form-label">Resim URL</label>
 
                                 <div class="input-group">
-                                    <input asp-for="ResimUrl"
+                                    <input asp-for="EtkinlikDetail.ResimUrl"
                                            id="ResimUrlInput"
                                            class="form-control" />
 
@@ -174,45 +174,32 @@
 
                         <div class="row">
                             <div class="col-md-3">
-                                <input asp-for="YayimTarihi" type="datetime-local" class="form-control" />
+                                <input asp-for="EtkinlikDetail.YayimTarihi" type="datetime-local" class="form-control" />
                             </div>
 
                             <div class="col-md-3">
-                                <input asp-for="BaslamaTarihi" type="datetime-local" class="form-control" />
+                                <input asp-for="EtkinlikDetail.BaslamaTarihi" type="datetime-local" class="form-control" />
                             </div>
 
                             <div class="col-md-3">
-                                <input asp-for="BitisTarihi" type="datetime-local" class="form-control" />
+                                <input asp-for="EtkinlikDetail.BitisTarihi" type="datetime-local" class="form-control" />
                             </div>
 
                             <div class="col-md-3">
-                                <select asp-for="HedefId"
-                                        class="form-select select2"
-                                        asp-items="@(new SelectList(ViewBag.Hedefler, "Id", "Aciklama"))">
-                             
-                                </select>
-                            </div>
-                            <div class="col-md-3">
+                          
 
-                                <div class="mb-3">
-
-                                    <label asp-for="HedefId" class="form-label">
-                                        Hedef
-                                    </label>
-
-                                    <select asp-for="HedefId" class="form-select select2">
-                                        @foreach (var hedef in ViewBag.Hedefler)
-                                        {
-                                            <option value="@hedef.Id">@hedef.Aciklama</option>
-                                        }
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="mdi mdi-target"></i></span>
+                                    <select asp-for="EtkinlikDetail.HedefId" class="form-select"
+                                            asp-items="@(new SelectList(Model.Hedefler, "Id", "Aciklama"))">
                                     </select>
-
-                                    <span asp-validation-for="HedefId"
-                                          class="text-danger small"></span>
-
                                 </div>
 
+
+
+
                             </div>
+                           
                             
                         </div>
                     </div>
@@ -225,15 +212,15 @@
 
                         <div class="row">
                             <div class="col-md-4">
-                                <input asp-for="SeoUrl" class="form-control" />
+                                <input asp-for="EtkinlikDetail.SeoUrl" class="form-control" />
                             </div>
 
                             <div class="col-md-4">
-                                <input asp-for="SeoTitle" class="form-control" />
+                                <input asp-for="EtkinlikDetail.SeoTitle" class="form-control" />
                             </div>
 
                             <div class="col-md-4">
-                                <input asp-for="SeoDescription" class="form-control" />
+                                <input asp-for="EtkinlikDetail.SeoDescription" class="form-control" />
                             </div>
                         </div>
                     </div>

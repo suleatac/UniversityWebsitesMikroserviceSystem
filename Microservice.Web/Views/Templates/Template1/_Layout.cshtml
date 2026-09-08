@@ -1,3 +1,5 @@
+@using Microservice.Web.ViewModels.Menu
+@using Microservice.Web.ViewModels.Site
 <!DOCTYPE html>
 <html lang="@(ViewData["LanguageCode"] ?? "tr")">
 <head>
@@ -49,7 +51,13 @@
 </head>
 <body>
     <div class="boxed">
-        @await Component.InvokeAsync("MenuNavbar", new { siteId = (int)(ViewData["SiteId"] ?? 0), dilId = (int)(ViewData["DilId"] ?? 0), preloadedMenus = ViewData["Menus"] as List<Microservice.Web.ViewModels.Menu.MenuGetVm> })
+        @await Component.InvokeAsync("MenuNavbar", 
+        new { 
+            siteId = (int)(ViewData["SiteId"] ?? 0), 
+            dilId = (int)(ViewData["DilId"] ?? 0), 
+            preloadedMenus = ViewData["Menus"] as List<MenuGetVm>, 
+            preloadedSite = ViewData["Site"] as SiteDetailGetVm
+        })
 
         
             @RenderBody()

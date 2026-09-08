@@ -94,6 +94,7 @@ namespace Microservice.Admin.Controllers
                 _logger.LogWarning("Create Etkinlik - ModelState geçersiz.");
                 var hedefler = await _hedefService.GetHedefsAsync();
                 model.Hedefler = hedefler.Data ?? new List<ViewModels.Hedef.GetHedefVm>();
+
                 return View(model);
             }
 
@@ -119,6 +120,7 @@ namespace Microservice.Admin.Controllers
             _logger.LogInformation("Etkinlik düzenleme sayfası açıldı. Id: {Id}", id);
 
             var result = await _etkinlikService.GetEtkinlikByIdAsync(id);
+            var hedefler = await _hedefService.GetHedefsAsync();
 
             if (!result.IsSuccess || result.Data == null)
             {
@@ -126,13 +128,20 @@ namespace Microservice.Admin.Controllers
                 TempData["Error"] = "Kayıt bulunamadı.";
                 return RedirectToAction(nameof(Index));
             }
+            var viewModel = new EtkinlikEditIndexVm {
+                EtkinlikDetail = result.Data,
+                Hedefler = hedefler.Data ?? new List<ViewModels.Hedef.GetHedefVm>(),
+            };
 
-            return View(result.Data);
+
+
+
+            return View(viewModel);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(EtkinlikDetailVm model)
+        public async Task<IActionResult> Edit(EtkinlikEditIndexVm model)
         {
             if (!ModelState.IsValid)
             {
@@ -140,16 +149,16 @@ namespace Microservice.Admin.Controllers
                 return View(model);
             }
 
-            var result = await _etkinlikService.UpdateEtkinlikAsync(model);
+            var result = await _etkinlikService.UpdateEtkinlikAsync(model.EtkinlikDetail);
 
             if (!result.IsSuccess)
             {
-                _logger.LogError("Etkinlik güncellenemedi. Id: {Id}, Hata: {Error}", model.Id, result.Fail?.Detail);
+                _logger.LogError("Etkinlik güncellenemedi. Id: {Id}, Hata: {Error}", model.EtkinlikDetail.Id, result.Fail?.Detail);
                 ModelState.AddModelError("", result.Fail?.Detail ?? result.Fail?.Title ?? "Güncelleme başarısız");
                 return View(model);
             }
 
-            _logger.LogInformation("Etkinlik güncellendi. Id: {Id}", model.Id);
+            _logger.LogInformation("Etkinlik güncellendi. Id: {Id}", model.EtkinlikDetail.Id);
             TempData["Success"] = "Etkinlik başarıyla güncellendi.";
             return RedirectToAction(nameof(Index));
         }
