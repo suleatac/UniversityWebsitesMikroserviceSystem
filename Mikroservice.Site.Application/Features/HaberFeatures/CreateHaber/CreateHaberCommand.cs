@@ -7,11 +7,11 @@ namespace Mikroservice.Site.Application.Features.HaberFeatures.CreateHaber
         public int SiteId { get; init; }
         public int PageTypeId { get; init; }
         public int DilId { get; init; }
-        public int? HedefId { get; init; }
+        public int HedefId { get; init; }
 
         public string Baslik { get; init; } = default!;
-        public string KisaAciklama { get; init; } = default!;
-        public string IcerikMetni { get; init; } = default!;
+        public string? KisaAciklama { get; init; } 
+        public string? IcerikMetni { get; init; } 
 
         public string? Link { get; init; }
         public string? ResimUrl { get; init; }

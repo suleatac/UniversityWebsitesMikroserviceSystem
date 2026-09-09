@@ -8,6 +8,7 @@ namespace Microservice.Admin.Clients.BilgiClients
     {
         [Get("/api/v1/bilgis")]
         Task<ApiResponse<List<GetBilgiVm>>> GetBilgilerAsync(int siteId, int dilId);
+   
 
         [Get("/api/v1/bilgis/{id}")]
         Task<ApiResponse<BilgiDetailVm>> GetBilgiByIdAsync(int id);

@@ -44,15 +44,40 @@ namespace Microservice.Admin.Services
             _logger.LogInformation("Bilgi getiriliyor. Id: {Id}", id);
             var response = await _bilgiClient.GetBilgiByIdAsync(id);
 
+            // TEŞHİS LOGU: Refit'in ham cevabını oldugu gibi gorunur kil
+            _logger.LogWarning(
+                "BilgiById HAM YANIT -> Id: {Id}, StatusCode: {StatusCode}, IsSuccess: {IsSuccess}, ContentIsNull: {ContentIsNull}, ErrorIsNull: {ErrorIsNull}, ErrorBody: {ErrorBody}",
+                id,
+                response.StatusCode,
+                response.IsSuccessStatusCode,
+                response.Content is null,
+                response.Error is null,
+                response.Error?.Content ?? "<null>");
+
+            // TEŞHİS LOGU: Content varsa id!=0 mi? (ExceptionMiddleware 200'e maskelediyse Id=0 bos obje gelir)
+            if (response.Content is not null)
+            {
+                _logger.LogWarning("BilgiById CONTENT -> Id: {ContentId}, Baslik: {Baslik}, SiteId: {SiteId}",
+                    response.Content.Id, response.Content.Baslik ?? "<null>", response.Content.SiteId);
+            }
+
             if (!response.IsSuccessStatusCode)
             {
-                var problemDetails = response.Error != null
-                    ? JsonSerializer.Deserialize<Microsoft.AspNetCore.Mvc.ProblemDetails>(response.Error.Content!) : null;
+                var problemDetails = response.Error?.Content != null
+                    ? JsonSerializer.Deserialize<Microsoft.AspNetCore.Mvc.ProblemDetails>(response.Error.Content) : null;
                 _logger.LogError("API Error -> StatusCode: {StatusCode}, Title: {Title}, Detail: {Detail}", response.StatusCode, problemDetails?.Title, problemDetails?.Detail);
                 return ServiceResult<BilgiDetailVm>.Error(problemDetails?.Detail ?? problemDetails?.Title ?? "Bilgi bulunamadı");
             }
 
-            return ServiceResult<BilgiDetailVm>.Success(response.Content!);
+            if (response.Content is null)
+            {
+                _logger.LogError(
+                    "API 2xx dondu AMA Content NULL. Id: {Id}, StatusCode: {StatusCode}. Sunucu bos govde donuyor (Results.Ok(null) veya ExceptionMiddleware'in 200'e maskelenen hatasi).",
+                    id, response.StatusCode);
+                return ServiceResult<BilgiDetailVm>.Error("Bilgi bulunamadı (bos yanıt)");
+            }
+
+            return ServiceResult<BilgiDetailVm>.Success(response.Content);
         }
 
         public async Task<ServiceResult<object>> CreateBilgiAsync(CreateBilgiVm dto)

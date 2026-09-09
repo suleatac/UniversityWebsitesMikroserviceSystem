@@ -14,13 +14,12 @@ namespace Mikroservice.Site.Application.Features.VideoFeatures.CreateVideo
                 .NotEmpty()
                 .MaximumLength(300);
 
-            RuleFor(x => x.KisaAciklama)
-                .NotEmpty();
 
             RuleFor(x => x.YayimTarihi)
                 .LessThanOrEqualTo(DateTime.Now.AddYears(1));
 
             RuleFor(x => x.VideoUrl)
+                .NotEmpty()
                 .Must(x => string.IsNullOrEmpty(x) || Uri.IsWellFormedUriString(x, UriKind.Absolute))
                 .WithMessage("Geçerli video URL giriniz.");
         }

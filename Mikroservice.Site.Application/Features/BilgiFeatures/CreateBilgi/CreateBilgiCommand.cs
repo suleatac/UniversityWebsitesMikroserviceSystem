@@ -1,5 +1,4 @@
 ﻿using Microservice.Shared;
-using Mikroservice.Site.Application.Features.BannerFeatures.CreateBanner;
 
 namespace Mikroservice.Site.Application.Features.BilgiFeatures.CreateBilgi
 {
@@ -8,11 +7,11 @@ namespace Mikroservice.Site.Application.Features.BilgiFeatures.CreateBilgi
         public int SiteId { get; init; }
         public int PageTypeId { get; init; }
         public int DilId { get; init; }
-        public int? HedefId { get; init; }
+        public int HedefId { get; init; }
 
         public string Baslik { get; init; } = default!;
-        public string KisaAciklama { get; init; } = default!;
-        public string IcerikMetni { get; init; } = default!;
+        public string? KisaAciklama { get; init; } 
+        public string? IcerikMetni { get; init; }
 
         public string? Link { get; init; }
         public string? ResimUrl { get; init; }

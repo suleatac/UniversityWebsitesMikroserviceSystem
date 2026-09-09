@@ -14,7 +14,6 @@ namespace Mikroservice.Site.Application.Features.DuyuruFeatures.UpdateDuyuru
 
             RuleFor(x => x.HedefId)
                 .GreaterThan(0)
-                .When(x => x.HedefId.HasValue)
                 .WithMessage("HedefId 0'dan büyük olmalıdır.");
 
             RuleFor(x => x.Baslik)

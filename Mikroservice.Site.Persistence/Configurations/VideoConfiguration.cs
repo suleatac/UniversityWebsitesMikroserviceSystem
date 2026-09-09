@@ -8,7 +8,7 @@ namespace Mikroservice.Site.Persistence.Configurations
     {
         public void Configure(EntityTypeBuilder<Video> builder)
         {
-            builder.Property(x => x.VideoUrl).HasMaxLength(500);
+            builder.Property(x => x.VideoUrl).IsRequired().HasMaxLength(500);
 
         }
     }

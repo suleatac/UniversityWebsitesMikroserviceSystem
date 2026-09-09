@@ -9,24 +9,47 @@ using System.Net;
 namespace Mikroservice.Site.Application.Features.BilgiFeatures.GetBilgiById
 {
     public class GetBilgiByIdQueryHandler(
-        IBilgiRepository bilgiRepository,
-        ILogger<GetBilgiByIdQueryHandler> logger,
-        IMapper mapper
-    ) : IRequestHandler<GetBilgiByIdQuery, ServiceResult<BilgiDetailDto>>
+    IBilgiRepository bilgiRepository,
+    ILogger<GetBilgiByIdQueryHandler> logger,
+    IMapper mapper
+) : IRequestHandler<GetBilgiByIdQuery, ServiceResult<BilgiDetailDto>>
     {
-        public async Task<ServiceResult<BilgiDetailDto>> Handle(GetBilgiByIdQuery request, CancellationToken cancellationToken)
+        public async Task<ServiceResult<BilgiDetailDto>> Handle(
+            GetBilgiByIdQuery request,
+            CancellationToken cancellationToken)
         {
+            logger.LogInformation(
+                "Bilgi getiriliyor. Id: {Id}",
+                request.Id);
             var entity = await bilgiRepository.GetByIdAsync(request.Id);
 
             if (entity is null)
             {
-                logger.LogWarning("Bilgi bulunamadı. Id: {Id}", request.Id);
-                return ServiceResult<BilgiDetailDto>.Error("Bilgi bulunamadı", HttpStatusCode.NotFound);
+                logger.LogWarning(
+                    "Bilgi bulunamadı. Id: {Id}",
+                    request.Id);
+
+                return ServiceResult<BilgiDetailDto>.Error(
+                    "Bilgi bulunamadı",
+                    HttpStatusCode.NotFound);
             }
 
             var dto = mapper.Map<BilgiDetailDto>(entity);
 
-            logger.LogInformation("Bilgi DB'den alındı. Id: {Id}", request.Id);
+            if (dto is null)
+            {
+                logger.LogError(
+                    "Bilgi DTO'ya dönüştürülemedi. Id: {Id}",
+                    request.Id);
+
+                return ServiceResult<BilgiDetailDto>.Error(
+                    "Bilgi verisi oluşturulamadı",
+                    HttpStatusCode.InternalServerError);
+            }
+
+            logger.LogInformation(
+                "Bilgi başarıyla getirildi. Id: {Id}",
+                request.Id);
 
             return ServiceResult<BilgiDetailDto>.SuccessAsOK(dto);
         }

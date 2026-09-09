@@ -383,21 +383,12 @@
 
                                     </label>
 
-                                    <select asp-for="CreateBilgi.HedefId"
-                                            class="form-select select2">
-
-                                        <option value="">
-                                            -- Hedef Seçin --
-                                        </option>
-
-                                        @foreach (var hedef in Model.Hedefler)
-                                        {
-                                            <option value="@hedef.Id">
-                                                @hedef.Aciklama
-                                            </option>
-                                        }
-
-                                    </select>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="mdi mdi-target"></i></span>
+                                        <select asp-for="CreateBilgi.HedefId" class="form-select"
+                                                asp-items="@(new SelectList(Model.Hedefler, "Id", "Aciklama"))">
+                                        </select>
+                                    </div>
 
                                     <span asp-validation-for="CreateBilgi.HedefId"
                                           class="text-danger small"></span>

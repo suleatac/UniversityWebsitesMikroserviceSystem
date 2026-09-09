@@ -14,11 +14,9 @@ namespace Mikroservice.Site.Application.Features.PopupFeatures.CreatePopup
                 .MaximumLength(200).WithMessage("Başlık en fazla 200 karakter olabilir.");
 
             RuleFor(x => x.KisaAciklama)
-                .NotEmpty().WithMessage("Kısa açıklama boş olamaz.")
                 .MaximumLength(500).WithMessage("Kısa açıklama en fazla 500 karakter olabilir.");
 
-            RuleFor(x => x.IcerikMetni)
-                .NotEmpty().WithMessage("İçerik metni boş olamaz.");
+          
 
             RuleFor(x => x.ResimUrl)
                 .MaximumLength(500)

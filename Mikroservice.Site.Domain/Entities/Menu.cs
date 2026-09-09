@@ -11,7 +11,7 @@
         public int? ParentId { get; set; } // 🔥 nullable
 
         public string Ad { get; set; } = default!;
-        public string? Link { get; set; } = default!;
+        public string? Link { get; set; } 
         public string? IconUrl { get; set; }
         public string? Icerik { get; set; } // opsiyonel (istersen kaldır)
 

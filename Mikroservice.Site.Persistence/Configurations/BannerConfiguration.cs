@@ -8,8 +8,7 @@ namespace Mikroservice.Site.Persistence.Configurations
     {
         public void Configure(EntityTypeBuilder<Banner> builder)
         {
-            builder.Property(x => x.Sira)
-                .IsRequired();
+            builder.Property(x => x.Sira).IsRequired();
             builder.HasIndex(x => new { x.SiteId, x.Sira });
         }
     }

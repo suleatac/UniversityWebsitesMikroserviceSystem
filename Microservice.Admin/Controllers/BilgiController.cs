@@ -148,11 +148,13 @@ namespace Microservice.Admin.Controllers
             }
 
             var result = await _bilgiService.UpdateBilgiAsync(model.BilgiDetail);
-
+            
             if (!result.IsSuccess)
             {
                 _logger.LogError("Bilgi güncellenemedi. Id: {Id}, Hata: {Error}", model.BilgiDetail.Id, result.Fail?.Detail);
                 ModelState.AddModelError("", result.Fail?.Detail ?? result.Fail?.Title ?? "Güncelleme başarısız");
+                var hedefler = await _hedefService.GetHedefsAsync();
+                model.Hedefler = hedefler.Data ?? new List<ViewModels.Hedef.GetHedefVm>();
                 return View(model);
             }
 

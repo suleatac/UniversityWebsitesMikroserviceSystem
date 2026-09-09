@@ -14,6 +14,6 @@
         public DateTime EklenmeTarihi { get; set; }
 
         public Site Site { get; set; } = default!;
-        public Dil? Dil { get; set; }
+        public Dil Dil { get; set; } = default!;
     }
 }

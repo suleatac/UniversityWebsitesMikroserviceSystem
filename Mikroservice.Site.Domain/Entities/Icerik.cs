@@ -7,11 +7,11 @@
 
         public int SiteId { get; set; }
         public int DilId { get; set; }
-        public int? HedefId { get; set; }
+        public int HedefId { get; set; }
 
         public string Baslik { get; set; } = default!;
-        public string KisaAciklama { get; set; } = default!;
-        public string IcerikMetni { get; set; } = default!;
+        public string? KisaAciklama { get; set; } 
+        public string? IcerikMetni { get; set; } 
 
         public string? Link { get; set; }
         public string? ResimUrl { get; set; }
@@ -33,7 +33,7 @@
         // NAVIGATION
         public Site Site { get; set; } = default!;
         public Dil Dil { get; set; } = default!;
-        public Hedef? Hedef { get; set; }
+        public Hedef Hedef { get; set; } = default!;
         public PageType PageType { get; set; } = default!;
     }
 }

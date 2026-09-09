@@ -2,6 +2,6 @@
 {
     public class Video : Icerik
     {
-        public string? VideoUrl { get; set; }
+        public string VideoUrl { get; set; } = default!;
     }
 }

@@ -8,8 +8,8 @@ namespace Mikroservice.Site.Application.Features.PopupFeatures.CreatePopup
         public int PageTypeId { get; init; }
 
         public string Baslik { get; init; } = default!;
-        public string KisaAciklama { get; init; } = default!;
-        public string IcerikMetni { get; init; } = default!;
+        public string? KisaAciklama { get; init; }
+        public string? IcerikMetni { get; init; } 
 
         public string? Link { get; init; }
         public string? ResimUrl { get; init; }
