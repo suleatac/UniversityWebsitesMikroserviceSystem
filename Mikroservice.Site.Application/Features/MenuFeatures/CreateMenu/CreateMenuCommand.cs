@@ -11,18 +11,23 @@ namespace Mikroservice.Site.Application.Features.MenuFeatures.CreateMenu
 
         public int HedefId { get; init; }
 
-        public string Ad { get; init; } = default!;
+        public string Baslik { get; init; } = default!;
 
         public string? Link { get; init; } 
 
         public string? IconUrl { get; init; }
 
-        public string? Icerik { get; init; }
+        public string? IcerikMetni { get; init; }
 
         public int Sira { get; init; }
 
         public bool MegaMenu { get; init; }
 
         public int? ParentId { get; init; }
+
+        // SEO (opsiyonel ama önemli)
+        public string SeoUrl { get; init; } = default!;
+        public string? SeoTitle { get; init; }
+        public string? SeoDescription { get; init; }
     }
 }

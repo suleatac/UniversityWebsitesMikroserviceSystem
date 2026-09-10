@@ -14,7 +14,6 @@ namespace Mikroservice.Site.Domain.Entities
         public Dil Dil { get; set; } = default!;
         public Template Template { get; set; } = default!;
         public ICollection<Icerik> Icerikler { get; set; } = new List<Icerik>();
-        public ICollection<Menu> Menuler { get; set; } = new List<Menu>();
-        public ICollection<Popup> Popuplar { get; set; } = new List<Popup>();
+
     }
 }

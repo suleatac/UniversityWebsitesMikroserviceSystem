@@ -22,16 +22,15 @@ namespace Mikroservice.Site.Application.Features.MenuFeatures.CreateMenu
                 DilId = request.DilId,
                 HedefId = request.HedefId,
 
-                Ad = request.Ad,
+                Baslik = request.Baslik,
                 Link = request.Link,
-                IconUrl = request.IconUrl,
-                Icerik = request.Icerik,
+                IcerikMetni = request.IcerikMetni,
 
                 Sira = request.Sira,
                 MegaMenu = request.MegaMenu,
                 ParentId = request.ParentId,
 
-                OlusturulmaTarihi = DateTime.Now,
+                EklemeTarihi = DateTime.Now,
                 IsDeleted = false
             };
 

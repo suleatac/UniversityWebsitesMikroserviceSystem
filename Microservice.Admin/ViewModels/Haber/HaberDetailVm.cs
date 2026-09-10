@@ -55,7 +55,7 @@ namespace Microservice.Admin.ViewModels.Haber
         public DateTime? BitisTarihi { get; set; }
 
         [StringLength(200, ErrorMessage = "SEO URL en fazla 200 karakter olabilir.")]
-        public string? SeoUrl { get; set; }
+        public string SeoUrl { get; set; } = default!;
 
         [StringLength(200, ErrorMessage = "SEO başlık en fazla 200 karakter olabilir.")]
         public string? SeoTitle { get; set; }

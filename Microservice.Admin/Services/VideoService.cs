@@ -2,6 +2,7 @@ using Microservice.Admin.Clients.VideoClients;
 using Microservice.Admin.Services.Interfaces;
 using Microservice.Admin.Services.ServiceResults;
 using Microservice.Admin.ViewModels;
+using Microservice.Admin.ViewModels.PageType;
 using Microservice.Admin.ViewModels.Video;
 using System.Text.Json;
 
@@ -11,11 +12,16 @@ namespace Microservice.Admin.Services
     {
         private readonly IVideoClientServices _videoClient;
         private readonly ILogger<VideoService> _logger;
-
-        public VideoService(IVideoClientServices videoClient, ILogger<VideoService> logger)
+        private readonly IPageTypeService _pageTypeService;
+        private readonly ISiteService _siteService;
+        private readonly ISeoService _seoService;
+        public VideoService(IVideoClientServices videoClient, ILogger<VideoService> logger, IPageTypeService pageTypeService, ISiteService siteService, ISeoService seoService)
         {
             _videoClient = videoClient ?? throw new ArgumentNullException(nameof(videoClient));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _pageTypeService = pageTypeService ?? throw new ArgumentNullException(nameof(pageTypeService));
+            _siteService = siteService ?? throw new ArgumentNullException(nameof(siteService));
+            _seoService = seoService ?? throw new ArgumentNullException(nameof(seoService));
         }
 
         public async Task<ServiceResult<List<GetVideoVm>>> GetVideosAsync(int siteId, int dilId)
@@ -52,6 +58,39 @@ namespace Microservice.Admin.Services
 
         public async Task<ServiceResult<object>> CreateVideoAsync(CreateVideoVm dto)
         {
+
+
+
+            var siteResult = await _siteService.GetSiteByIdAsync(dto.SiteId);
+
+            if (!siteResult.IsSuccess || siteResult.Data == null)
+                return ServiceResult<object>.Error(
+                    siteResult.Fail?.Detail ??
+                    siteResult.Fail?.Title ??
+                    "Site bilgisi alınamadı");
+
+            var videoPageTypeResult =
+                await _pageTypeService.GetPageTypeByTemplateIdAndPageTypeKindAsync(
+                    siteResult.Data.TemplateId,
+                    dto.DilId,
+                    PageTypeKind.Video);
+
+            if (!videoPageTypeResult.IsSuccess || videoPageTypeResult.Data == null)
+                return ServiceResult<object>.Error(
+                    videoPageTypeResult.Fail?.Detail ??
+                    videoPageTypeResult.Fail?.Title ??
+                    "Video sayfa türü bulunamadı");
+
+            // PageTypeId'yi client'tan değil server'dan belirle
+            dto.PageTypeId = videoPageTypeResult.Data.Id;
+
+            // SEO bilgileri kullanıcıdan alınmaz; başlıktan otomatik üretilir
+            await _seoService.ApplyAutoSeoAsync(dto.SiteId,dto.PageTypeId, dto.Baslik, dto.KisaAciklama,
+                seoUrl => dto.SeoUrl = seoUrl,
+                seoTitle => dto.SeoTitle = seoTitle,
+                seoDescription => dto.SeoDescription = seoDescription,
+                fallbackSlug: "video");
+
             _logger.LogInformation("Yeni video oluşturuluyor. Başlık: {Title}", dto.Baslik);
             var response = await _videoClient.CreateVideoAsync(dto);
 
@@ -69,6 +108,44 @@ namespace Microservice.Admin.Services
 
         public async Task<ServiceResult<object>> UpdateVideoAsync(VideoDetailVm dto)
         {
+
+
+            var siteResult = await _siteService.GetSiteByIdAsync(dto.SiteId);
+
+            if (!siteResult.IsSuccess || siteResult.Data == null)
+                return ServiceResult<object>.Error(
+                    siteResult.Fail?.Detail ??
+                    siteResult.Fail?.Title ??
+                    "Site bilgisi alınamadı");
+
+            var videoPageTypeResult =
+                await _pageTypeService.GetPageTypeByTemplateIdAndPageTypeKindAsync(
+                    siteResult.Data.TemplateId,
+                    dto.DilId,
+                    PageTypeKind.Video);
+
+            if (!videoPageTypeResult.IsSuccess || videoPageTypeResult.Data == null)
+                return ServiceResult<object>.Error(
+                    videoPageTypeResult.Fail?.Detail ??
+                    videoPageTypeResult.Fail?.Title ??
+                    "Video sayfa türü bulunamadı");
+
+            // PageTypeId'yi client'tan değil server'dan belirle
+            dto.PageTypeId = videoPageTypeResult.Data.Id;
+
+            // SEO bilgileri kullanıcıdan alınmaz; başlıktan otomatik üretilir
+            await _seoService.ApplyAutoSeoAsync(dto.SiteId,dto.PageTypeId, dto.Baslik, dto.KisaAciklama,
+                seoUrl => dto.SeoUrl = seoUrl,
+                seoTitle => dto.SeoTitle = seoTitle,
+                seoDescription => dto.SeoDescription = seoDescription,
+                fallbackSlug: "video",
+                excludeIcerikId: dto.Id);
+
+
+
+
+
+
             _logger.LogInformation("Video güncelleniyor. Id: {Id}", dto.Id);
             var response = await _videoClient.UpdateVideoAsync(dto.Id, dto);
 

@@ -4,10 +4,9 @@ namespace Microservice.Admin.ViewModels.Menu
     {
         public int Id { get; set; }
         public int PageTypeId { get; set; }
-        public string Ad { get; set; } = default!;
+        public string Baslik { get; set; } = default!;
         public string? Link { get; set; } = default!;
-        public string? IconUrl { get; set; }
-        public string? Icerik { get; set; }
+        public string? IcerikMetni { get; set; }
         public int Sira { get; set; }
         public bool MegaMenu { get; set; }
         public int? ParentId { get; set; }

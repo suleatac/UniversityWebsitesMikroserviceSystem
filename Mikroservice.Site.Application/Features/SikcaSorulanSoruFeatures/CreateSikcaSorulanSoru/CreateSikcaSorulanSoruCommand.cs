@@ -13,8 +13,6 @@ namespace Mikroservice.Site.Application.Features.SikcaSorulanSoruFeatures.Create
         public string Cevap { get; init; } = default!;
 
         public int Sira { get; init; }
-
-        public string? SeoUrl { get; init; }
     
     }
 }

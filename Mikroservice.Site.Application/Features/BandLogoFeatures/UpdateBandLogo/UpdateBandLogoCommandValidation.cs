@@ -1,11 +1,15 @@
 ﻿using FluentValidation;
+using Mikroservice.Site.Application.Features.BandLogoFeatures.UpdateBandLogo;
 
 namespace Mikroservice.Site.Application.Features.BandLogoFeatures.CreateBandLogo
 {
-    public class UpdateBandLogoCommandValidation : AbstractValidator<CreateBandLogoCommand>
+    public class UpdateBandLogoCommandValidation : AbstractValidator<UpdateBandLogoCommand>
     {
         public UpdateBandLogoCommandValidation()
         {
+            RuleFor(x => x.Id)
+                   .GreaterThan(0).WithMessage("Id 0'dan büyük olmalıdır.");
+
             RuleFor(x => x.SiteId)
                    .GreaterThan(0).WithMessage("SiteId 0'dan büyük olmalıdır.");
 

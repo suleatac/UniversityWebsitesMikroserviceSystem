@@ -19,7 +19,8 @@ namespace Mikroservice.Site.Persistence.Configurations
                 .HasValue<Bilgi>(IcerikTip.Bilgi)
                 .HasValue<Etkinlik>(IcerikTip.Etkinlik)
                 .HasValue<Video>(IcerikTip.Video)
-                .HasValue<Banner>(IcerikTip.Banner);
+                .HasValue<Banner>(IcerikTip.Banner)
+                .HasValue<Menu>(IcerikTip.Menu);
 
             // =========================
             // COMMON PROPERTIES
@@ -46,12 +47,16 @@ namespace Mikroservice.Site.Persistence.Configurations
 
             builder.Property(x => x.PageTypeId)
                 .IsRequired();
-
+            builder.Property(x => x.HedefId)
+                .IsRequired();
             builder.HasOne(x => x.PageType)
                 .WithMany(x => x.Icerikler)
                 .HasForeignKey(x => x.PageTypeId)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            builder.Property(x => x.SeoUrl)
+                .IsRequired()
+                .HasMaxLength(300);
 
             builder.Property(x => x.EklemeTarihi).HasDefaultValueSql("NOW()").HasColumnType("timestamp without time zone");
             builder.Property(x => x.YayimTarihi).IsRequired().HasColumnType("timestamp without time zone");

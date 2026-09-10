@@ -237,8 +237,7 @@ namespace Microservice.Admin.Controllers
                 SiteId = existing.SiteId,
                 DilId = existing.DilId,
                 Soru = existing.Soru,
-                Cevap = existing.Cevap,
-                SeoUrl = existing.SeoUrl
+                Cevap = existing.Cevap
             };
 
             var result = await _sikcaSorulanSoruService.UpdateSikcaSorulanSoruAsync(updateVm);
@@ -268,8 +267,7 @@ namespace Microservice.Admin.Controllers
                             SiteId = siblingResult.Data.SiteId,
                             DilId = siblingResult.Data.DilId,
                             Soru = siblingResult.Data.Soru,
-                            Cevap = siblingResult.Data.Cevap,
-                            SeoUrl = siblingResult.Data.SeoUrl
+                            Cevap = siblingResult.Data.Cevap
                         };
                         await _sikcaSorulanSoruService.UpdateSikcaSorulanSoruAsync(siblingUpdateVm);
                     }

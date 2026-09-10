@@ -14,17 +14,20 @@ namespace Microservice.Admin.Services
         private readonly IPageTypeService _pageTypeService;
         private readonly ISiteService _siteService;
         private readonly ILogger<BannerService> _logger;
+        private readonly ISeoService _seoService;
 
         public BannerService(
-            IBannerClientServices bannerClient, 
-            IPageTypeService pageTypeService, 
-            ISiteService siteService, 
-            ILogger<BannerService> logger)
+            IBannerClientServices bannerClient,
+            IPageTypeService pageTypeService,
+            ISiteService siteService,
+            ILogger<BannerService> logger,
+            ISeoService seoService)
         {
             _bannerClient = bannerClient ?? throw new ArgumentNullException(nameof(bannerClient));
             _pageTypeService = pageTypeService ?? throw new ArgumentNullException(nameof(pageTypeService));
             _siteService = siteService ?? throw new ArgumentNullException(nameof(siteService));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _seoService = seoService ?? throw new ArgumentNullException(nameof(seoService));
         }
 
         public async Task<ServiceResult<List<GetBannerVm>>> GetBannersAsync(int siteId, int dilId)
@@ -74,6 +77,14 @@ namespace Microservice.Admin.Services
                 return ServiceResult<object>.Error(bannerPageTypeResult.Fail?.Detail ?? bannerPageTypeResult.Fail?.Title ?? "Banner sayfa türü bulunamadı");
 
             dto.PageTypeId = bannerPageTypeResult.Data.Id;
+
+            // SEO bilgileri kullanıcıdan alınmaz; başlıktan otomatik üretilir
+            await _seoService.ApplyAutoSeoAsync(dto.SiteId, dto.PageTypeId, dto.Baslik, dto.KisaAciklama,
+                seoUrl => dto.SeoUrl = seoUrl,
+                seoTitle => dto.SeoTitle = seoTitle,
+                seoDescription => dto.SeoDescription = seoDescription,
+                fallbackSlug: "banner");
+
             _logger.LogInformation("Yeni banner oluşturuluyor. Başlık: {Title}", dto.Baslik);
             var response = await _bannerClient.CreateBannerAsync(dto);
 
@@ -114,6 +125,14 @@ namespace Microservice.Admin.Services
 
             // PageTypeId'yi client'tan değil server'dan belirle
             dto.PageTypeId = bannerPageTypeResult.Data.Id;
+
+            // SEO bilgileri kullanıcıdan alınmaz; başlıktan otomatik üretilir
+            await _seoService.ApplyAutoSeoAsync(dto.SiteId,dto.PageTypeId, dto.Baslik, dto.KisaAciklama,
+                seoUrl => dto.SeoUrl = seoUrl,
+                seoTitle => dto.SeoTitle = seoTitle,
+                seoDescription => dto.SeoDescription = seoDescription,
+                fallbackSlug: "banner",
+                excludeIcerikId: dto.Id);
 
 
 

@@ -7,7 +7,8 @@
         Bilgi = 3,
         Etkinlik = 4,
         Video = 5,
-        Banner = 6
+        Banner = 6,
+        Menu = 7
     }
 
     public enum PageTypeKind

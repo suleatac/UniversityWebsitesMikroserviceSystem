@@ -16,7 +16,7 @@ namespace Mikroservice.Site.Application.DTOs.DuyuruDtos
         public DateTime EklemeTarihi { get; set; }
         public DateTime? BaslamaTarihi { get; set; }
         public DateTime? BitisTarihi { get; set; }
-        public string? SeoUrl { get; set; }
+        public string SeoUrl { get; set; } = default!;
         public string? SeoTitle { get; set; }
         public string? SeoDescription { get; set; }
     }

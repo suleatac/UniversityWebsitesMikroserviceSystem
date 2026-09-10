@@ -52,7 +52,7 @@ namespace Microservice.Admin.Services
         }
 
         // GET BY ID
-        public async Task<ServiceResult<MenuVm>> GetMenuByIdAsync(int id)
+        public async Task<ServiceResult<MenuDetailVm>> GetMenuByIdAsync(int id)
         {
             _logger.LogInformation("Menu getiriliyor. Id: {Id}", id);
 
@@ -71,16 +71,16 @@ namespace Microservice.Admin.Services
                     problemDetails?.Detail
                 );
 
-                return ServiceResult<MenuVm>.Error(
+                return ServiceResult<MenuDetailVm>.Error(
                     problemDetails?.Detail ?? problemDetails?.Title ?? "Menu alınamadı"
                 );
             }
 
-            return ServiceResult<MenuVm>.Success(response.Content!);
+            return ServiceResult<MenuDetailVm>.Success(response.Content!);
         }
 
         // CREATE
-        public async Task<ServiceResult<object>> CreateMenuAsync(MenuVm dto)
+        public async Task<ServiceResult<object>> CreateMenuAsync(MenuDetailVm dto)
         {
 
 
@@ -108,7 +108,7 @@ namespace Microservice.Admin.Services
             // PageTypeId'yi client'tan değil server'dan belirle
             dto.PageTypeId = menuPageTypeResult.Data.Id;
 
-            _logger.LogInformation("Yeni menu oluşturuluyor. Name: {Name}", dto.Ad);
+            _logger.LogInformation("Yeni menu oluşturuluyor. Name: {Name}", dto.Baslik);
 
             var response = await _menuClient.CreateMenuAsync(dto);
 
@@ -135,7 +135,7 @@ namespace Microservice.Admin.Services
         }
 
         // UPDATE
-        public async Task<ServiceResult<object>> UpdateMenuAsync(MenuVm dto)
+        public async Task<ServiceResult<object>> UpdateMenuAsync(MenuDetailVm dto)
         {
 
 

@@ -23,7 +23,7 @@ namespace Mikroservice.Site.Application.Features.BilgiFeatures.CreateBilgi
         public DateTime? BitisTarihi { get; init; }
 
         // SEO (opsiyonel ama önemli)
-        public string? SeoUrl { get; init; }
+        public string SeoUrl { get; init; } = default!;
         public string? SeoTitle { get; init; }
         public string? SeoDescription { get; init; }
     }

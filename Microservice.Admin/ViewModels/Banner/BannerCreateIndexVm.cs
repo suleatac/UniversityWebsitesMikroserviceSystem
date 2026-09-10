@@ -7,6 +7,5 @@ namespace Microservice.Admin.ViewModels.Banner
     {
         public CreateBannerVm CreateBanner { get; set; } = new CreateBannerVm();
         public List<GetHedefVm> Hedefler { get; set; } = new List<GetHedefVm>();
-        public List<GetPageTypeVm> PageTypes { get; set; } = new List<GetPageTypeVm>();
     }
 }

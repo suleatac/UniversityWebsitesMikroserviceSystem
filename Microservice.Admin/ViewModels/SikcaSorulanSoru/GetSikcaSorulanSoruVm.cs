@@ -9,7 +9,6 @@ namespace Microservice.Admin.ViewModels.SikcaSorulanSoru
         public string Soru { get; set; } = default!;
         public string Cevap { get; set; } = default!;
         public int Sira { get; set; }
-        public string? SeoUrl { get; set; }
         public string? KategoriAd { get; set; }
         public List<GetSikcaSorulanSoruVm> Children { get; set; } = new();
     }

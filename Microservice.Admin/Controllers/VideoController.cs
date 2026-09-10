@@ -119,6 +119,7 @@ namespace Microservice.Admin.Controllers
             _logger.LogInformation("Video düzenleme sayfası açıldı. Id: {Id}", id);
 
             var result = await _videoService.GetVideoByIdAsync(id);
+            var hedefler = await _hedefService.GetHedefsAsync();
 
             if (!result.IsSuccess || result.Data == null)
             {
@@ -127,12 +128,17 @@ namespace Microservice.Admin.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            return View(result.Data);
+            var viewModel = new VideoEditIndex {
+                VideoDetail = result.Data,
+                Hedefler = hedefler.Data ?? new List<ViewModels.Hedef.GetHedefVm>(),
+            };
+
+            return View(viewModel);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(VideoDetailVm model)
+        public async Task<IActionResult> Edit(VideoEditIndex model)
         {
             if (!ModelState.IsValid)
             {
@@ -140,16 +146,16 @@ namespace Microservice.Admin.Controllers
                 return View(model);
             }
 
-            var result = await _videoService.UpdateVideoAsync(model);
+            var result = await _videoService.UpdateVideoAsync(model.VideoDetail);
 
             if (!result.IsSuccess)
             {
-                _logger.LogError("Video güncellenemedi. Id: {Id}, Hata: {Error}", model.Id, result.Fail?.Detail);
+                _logger.LogError("Video güncellenemedi. Id: {Id}, Hata: {Error}", model.VideoDetail.Id, result.Fail?.Detail);
                 ModelState.AddModelError("", result.Fail?.Detail ?? result.Fail?.Title ?? "Güncelleme başarısız");
                 return View(model);
             }
 
-            _logger.LogInformation("Video güncellendi. Id: {Id}", model.Id);
+            _logger.LogInformation("Video güncellendi. Id: {Id}", model.VideoDetail.Id);
             TempData["Success"] = "Video başarıyla güncellendi.";
             return RedirectToAction(nameof(Index));
         }

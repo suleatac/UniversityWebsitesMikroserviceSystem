@@ -23,8 +23,7 @@ namespace Mikroservice.Site.Application.Features.SikcaSorulanSoruFeatures.Create
                 Soru = request.Soru,
                 Cevap = request.Cevap,
 
-                Sira = request.Sira,
-                SeoUrl = request.SeoUrl
+                Sira = request.Sira
             };
 
             await soruRepository.AddAsync(entity);

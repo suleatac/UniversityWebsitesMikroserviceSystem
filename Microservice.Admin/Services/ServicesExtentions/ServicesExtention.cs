@@ -43,6 +43,8 @@ namespace Microservice.Admin.Services.ServicesExtentions
             services.AddScoped<ITumPersonelService, TumPersonelService>();
             services.AddScoped<IProfileService, ProfileService>();
             services.AddScoped<IAuditLogService, AuditLogService>();
+            services.AddScoped<ISeoService, SeoService>();
+            services.AddScoped<IBandLogoService, BandLogoService>();
             return services;
         }
     }

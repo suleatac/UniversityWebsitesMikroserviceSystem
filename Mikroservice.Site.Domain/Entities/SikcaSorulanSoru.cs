@@ -14,9 +14,6 @@
 
         public bool IsDeleted { get; set; } = false;
 
-        // 🔥 SEO (çok önemli)
-        public string? SeoUrl { get; set; }
-
         public SikcaSorulanSoru? Parent { get; set; }
         // NAVIGATION
         public Site Site { get; set; } = default!;

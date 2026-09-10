@@ -1,5 +1,6 @@
 using Microservice.Admin.Services.Interfaces;
 using Microservice.Admin.ViewModels.Banner;
+using Microservice.Admin.ViewModels.Duyuru;
 using Microservice.Admin.ViewModels.PageType;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -125,20 +126,23 @@ namespace Microservice.Admin.Controllers
             _logger.LogInformation("Banner düzenleme sayfası açıldı. Id: {Id}", id);
 
             var result = await _bannerService.GetBannerByIdAsync(id);
-
+            var hedefler = await _hedefService.GetHedefsAsync();
             if (!result.IsSuccess || result.Data == null)
             {
                 _logger.LogWarning("Banner bulunamadı. Id: {Id}", id);
                 TempData["Error"] = "Kayıt bulunamadı.";
                 return RedirectToAction(nameof(Index));
             }
-
-            return View(result.Data);
+            var viewModel = new BannerEditIndexVm {
+                BannerDetail = result.Data,
+                Hedefler = hedefler.Data ?? new List<ViewModels.Hedef.GetHedefVm>()
+            };
+            return View(viewModel);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(BannerDetailVm model)
+        public async Task<IActionResult> Edit(BannerEditIndexVm model)
         {
             if (!ModelState.IsValid)
             {
@@ -146,16 +150,16 @@ namespace Microservice.Admin.Controllers
                 return View(model);
             }
 
-            var result = await _bannerService.UpdateBannerAsync(model);
+            var result = await _bannerService.UpdateBannerAsync(model.BannerDetail);
 
             if (!result.IsSuccess)
             {
-                _logger.LogError("Banner güncellenemedi. Id: {Id}, Hata: {Error}", model.Id, result.Fail?.Detail);
+                _logger.LogError("Banner güncellenemedi. Id: {Id}, Hata: {Error}", model.BannerDetail.Id, result.Fail?.Detail);
                 ModelState.AddModelError("", result.Fail?.Detail ?? result.Fail?.Title ?? "Güncelleme başarısız");
                 return View(model);
             }
 
-            _logger.LogInformation("Banner güncellendi. Id: {Id}", model.Id);
+            _logger.LogInformation("Banner güncellendi. Id: {Id}", model.BannerDetail.Id);
             TempData["Success"] = "Banner başarıyla güncellendi.";
             return RedirectToAction(nameof(Index));
         }

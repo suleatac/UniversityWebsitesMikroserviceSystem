@@ -14,13 +14,15 @@ namespace Microservice.Admin.Services
         private readonly ILogger<BilgiService> _logger;
         private readonly IPageTypeService _pageTypeService;
         private readonly ISiteService _siteService;
+        private readonly ISeoService _seoService;
 
-        public BilgiService(IBilgiClientServices bilgiClient, ILogger<BilgiService> logger, IPageTypeService pageTypeService, ISiteService siteService)
+        public BilgiService(IBilgiClientServices bilgiClient, ILogger<BilgiService> logger, IPageTypeService pageTypeService, ISiteService siteService, ISeoService seoService)
         {
             _pageTypeService = pageTypeService ?? throw new ArgumentNullException(nameof(pageTypeService));
             _siteService = siteService ?? throw new ArgumentNullException(nameof(siteService));
             _bilgiClient = bilgiClient ?? throw new ArgumentNullException(nameof(bilgiClient));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _seoService = seoService ?? throw new ArgumentNullException(nameof(seoService));
         }
 
         public async Task<ServiceResult<List<GetBilgiVm>>> GetBilgilerAsync(int siteId, int dilId)
@@ -109,6 +111,13 @@ namespace Microservice.Admin.Services
             // PageTypeId'yi client'tan değil server'dan belirle
             dto.PageTypeId = duyuruPageTypeResult.Data.Id;
 
+            // SEO bilgileri kullanıcıdan alınmaz; başlıktan otomatik üretilir
+            await _seoService.ApplyAutoSeoAsync(dto.SiteId, dto.PageTypeId, dto.Baslik, dto.KisaAciklama,
+                seoUrl => dto.SeoUrl = seoUrl,
+                seoTitle => dto.SeoTitle = seoTitle,
+                seoDescription => dto.SeoDescription = seoDescription,
+                fallbackSlug: "bilgi");
+
 
 
 
@@ -159,6 +168,14 @@ namespace Microservice.Admin.Services
 
             // PageTypeId'yi client'tan değil server'dan belirle
             dto.PageTypeId = duyuruPageTypeResult.Data.Id;
+
+            // SEO bilgileri kullanıcıdan alınmaz; başlıktan otomatik üretilir
+            await _seoService.ApplyAutoSeoAsync(dto.SiteId, dto.PageTypeId, dto.Baslik, dto.KisaAciklama,
+                seoUrl => dto.SeoUrl = seoUrl,
+                seoTitle => dto.SeoTitle = seoTitle,
+                seoDescription => dto.SeoDescription = seoDescription,
+                fallbackSlug: "bilgi",
+                excludeIcerikId: dto.Id);
 
 
 

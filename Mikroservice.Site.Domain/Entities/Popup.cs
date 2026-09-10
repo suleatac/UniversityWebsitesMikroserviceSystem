@@ -3,13 +3,11 @@
     public class Popup
     {
         public int Id { get; set; }
-        public int PageTypeId { get; set; }
 
         public int SiteId { get; set; }
-
+        public int DilId { get; set; }
         public string? Baslik { get; set; } = default!;
         public string? KisaAciklama { get; set; } 
-        public string? IcerikMetni { get; set; } 
 
         public string? Link { get; set; }
         public string? ResimUrl { get; set; }
@@ -23,10 +21,6 @@
 
         public bool IsDeleted { get; set; } = false;
 
-        // SEO
-        public string? SeoUrl { get; set; }
-        public string? SeoTitle { get; set; }
-        public string? SeoDescription { get; set; }
 
         // Popup-specific
         public bool TamEkranMi { get; set; } = false;
@@ -35,6 +29,6 @@
 
         // Navigation
         public Site Site { get; set; } = default!;
-        public PageType PageType { get; set; } = default!;
+        public Dil Dil { get; set; } = default!;
     }
 }

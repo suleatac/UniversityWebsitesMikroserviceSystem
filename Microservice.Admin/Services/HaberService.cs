@@ -15,13 +15,15 @@ namespace Microservice.Admin.Services
         private readonly ILogger<HaberService> _logger;
         private readonly IPageTypeService _pageTypeService;
         private readonly ISiteService _siteService;
+        private readonly ISeoService _seoService;
 
-        public HaberService(IHaberClientService haberClient, ILogger<HaberService> logger, IPageTypeService pageTypeService, ISiteService siteService)
+        public HaberService(IHaberClientService haberClient, ILogger<HaberService> logger, IPageTypeService pageTypeService, ISiteService siteService, ISeoService seoService)
         {
             _haberClient = haberClient ?? throw new ArgumentNullException(nameof(haberClient));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _pageTypeService = pageTypeService ?? throw new ArgumentNullException(nameof(pageTypeService));
             _siteService = siteService ?? throw new ArgumentNullException(nameof(siteService));
+            _seoService = seoService ?? throw new ArgumentNullException(nameof(seoService));
         }
 
         // LIST
@@ -147,6 +149,12 @@ namespace Microservice.Admin.Services
             // PageTypeId'yi client'tan değil server'dan belirle
             dto.PageTypeId = haberPageTypeResult.Data.Id;
 
+            // SEO bilgileri kullanıcıdan alınmaz; başlıktan otomatik üretilir
+            await _seoService.ApplyAutoSeoAsync(dto.SiteId, dto.PageTypeId, dto.Baslik, dto.KisaAciklama,
+                seoUrl => dto.SeoUrl = seoUrl,
+                seoTitle => dto.SeoTitle = seoTitle,
+                seoDescription => dto.SeoDescription = seoDescription,
+                fallbackSlug: "haber");
 
             _logger.LogInformation("Yeni haber oluşturuluyor. Başlık: {Title}", dto.Baslik);
             var response = await _haberClient.CreateHaberAsync(dto);
@@ -201,6 +209,13 @@ namespace Microservice.Admin.Services
             // PageTypeId'yi client'tan değil server'dan belirle
             dto.PageTypeId = haberTypeResult.Data.Id;
 
+            // SEO bilgileri kullanıcıdan alınmaz; başlıktan otomatik üretilir
+            await _seoService.ApplyAutoSeoAsync(dto.SiteId, dto.PageTypeId, dto.Baslik, dto.KisaAciklama,
+                seoUrl => dto.SeoUrl = seoUrl,
+                seoTitle => dto.SeoTitle = seoTitle,
+                seoDescription => dto.SeoDescription = seoDescription,
+                fallbackSlug: "haber",
+                excludeIcerikId: dto.Id);
 
             _logger.LogInformation("Haber güncelleniyor. Id: {Id}", dto.Id);
 

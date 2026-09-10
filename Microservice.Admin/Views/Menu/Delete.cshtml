@@ -1,4 +1,4 @@
-@model Microservice.Admin.ViewModels.Menu.MenuVm
+@model Microservice.Admin.ViewModels.Menu.MenuDetailVm
 
 @{
     ViewBag.pTitle = "Menüler";
@@ -29,7 +29,7 @@
                 <div class="alert alert-danger d-flex align-items-center" role="alert">
                     <i class="mdi mdi-alert-circle fs-4 me-2"></i>
                     <div>
-                        <strong>Dikkat!</strong> "<strong>@Model.Ad</strong>" menüsünü silmek üzeresiniz.
+                        <strong>Dikkat!</strong> "<strong>@Model.Baslik</strong>" menüsünü silmek üzeresiniz.
                         Bu işlem geri alınamaz ve alt menüler de etkilenebilir.
                     </div>
                 </div>
@@ -43,7 +43,7 @@
                     <div class="col-md-4">
                         <div class="mb-3">
                             <label class="form-label text-muted small">Menu Adı</label>
-                            <div class="form-control-plaintext fw-semibold">@Model.Ad</div>
+                            <div class="form-control-plaintext fw-semibold">@Model.Baslik</div>
                         </div>
                     </div>
                     <div class="col-md-4">

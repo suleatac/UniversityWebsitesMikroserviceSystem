@@ -26,7 +26,7 @@ namespace Microservice.Web.Services.ServicesExtentions
             services.AddScoped<IPageDetailResolver, AnnouncementDetailResolver>();
             services.AddScoped<IBilgiService, BilgiService>();
             services.AddScoped<IPageResolver, NewsListPageResolver>();
-
+            services.AddScoped<IBandLogoService, BandLogoService>();
 
 
             return services;

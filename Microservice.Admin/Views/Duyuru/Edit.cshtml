@@ -219,6 +219,7 @@
                                 </div>
                             </div>
 
+                            <!-- Resim -->
                             <div class="col-md-6">
                                 <div class="mb-3">
 
@@ -232,12 +233,28 @@
                                         </span>
 
                                         <input asp-for="DuyuruDetail.ResimUrl"
+                                               id="ResimUrlInput"
                                                class="form-control"
                                                placeholder="Resim URL" />
+
+                                        <button type="button"
+                                                class="btn btn-outline-primary"
+                                                id="openFileManagerBtn"
+                                                title="Dosya Yöneticisi">
+                                            <i class="mdi mdi-folder-open-outline"></i>
+                                        </button>
                                     </div>
 
                                     <span asp-validation-for="DuyuruDetail.ResimUrl"
                                           class="text-danger small"></span>
+
+                                    <div class="mt-2 d-none" id="imagePreviewWrapper">
+                                        <img id="imagePreview"
+                                             class="preview-image"
+                                             src=""
+                                             alt="Önizleme" />
+                                    </div>
+
                                 </div>
                             </div>
 
@@ -322,66 +339,7 @@
                         </div>
                     </div>
 
-                    <!-- SEO -->
-                    <div class="mb-4">
-
-                        <h6 class="text-primary border-bottom pb-2">
-                            <i class="mdi mdi-magnify me-1"></i>
-                            SEO Bilgileri
-                        </h6>
-
-                        <div class="row">
-
-                            <div class="col-md-4">
-                                <div class="mb-3">
-
-                                    <label asp-for="DuyuruDetail.SeoUrl" class="form-label">
-                                        SEO URL
-                                    </label>
-
-                                    <input asp-for="DuyuruDetail.SeoUrl"
-                                           class="form-control"
-                                           placeholder="seo-url" />
-
-                                    <span asp-validation-for="DuyuruDetail.SeoUrl"
-                                          class="text-danger small"></span>
-                                </div>
-                            </div>
-
-                            <div class="col-md-4">
-                                <div class="mb-3">
-
-                                    <label asp-for="DuyuruDetail.SeoTitle" class="form-label">
-                                        SEO Title
-                                    </label>
-
-                                    <input asp-for="DuyuruDetail.SeoTitle"
-                                           class="form-control"
-                                           placeholder="SEO başlık" />
-
-                                    <span asp-validation-for="DuyuruDetail.SeoTitle"
-                                          class="text-danger small"></span>
-                                </div>
-                            </div>
-
-                            <div class="col-md-4">
-                                <div class="mb-3">
-
-                                    <label asp-for="DuyuruDetail.SeoDescription" class="form-label">
-                                        SEO Description
-                                    </label>
-
-                                    <input asp-for="DuyuruDetail.SeoDescription"
-                                           class="form-control"
-                                           placeholder="SEO açıklama" />
-
-                                    <span asp-validation-for="DuyuruDetail.SeoDescription"
-                                          class="text-danger small"></span>
-                                </div>
-                            </div>
-
-                        </div>
-                    </div>
+               
 
                     <!-- Butonlar -->
                     <div class="d-flex justify-content-end gap-2 pt-3 border-top">
@@ -406,13 +364,45 @@
         </div>
     </div>
 </div>
+<!-- File Manager Modal -->
+<div class="modal fade"
+     id="fileManagerModal"
+     tabindex="-1"
+     aria-labelledby="fileManagerModalLabel"
+     aria-hidden="true">
 
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title" id="fileManagerModalLabel">
+                    <i class="mdi mdi-folder-open-outline me-1"></i>
+                    Dosya Yöneticisi
+                </h5>
+
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal"
+                        aria-label="Kapat"></button>
+            </div>
+
+            <div class="modal-body p-0" style="height: 600px;">
+                <iframe id="fileManagerFrame"
+                        src=""
+                        style="width:100%; height:100%; border:none;">
+                </iframe>
+            </div>
+
+        </div>
+    </div>
+</div>
 @section Scripts {
 
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
     <script src="~/assets/js/app.js"></script>
+    <!-- Select2 -->
     <script src="~/assets/libs/select2/js/select2.full.min.js"></script>
     <script src="~/assets/libs/select2/js/i18n/tr.js"></script>
 
@@ -420,23 +410,38 @@
     <script src="~/assets/libs/tinymce/tinymce.min.js"></script>
 
     <script>
+
         $(document).ready(function () {
 
         // Validation Summary
-        const validationSummary = $('#validationSummary');
-
-        if (validationSummary.find('li').length > 0 ||
-        validationSummary.find('span').length > 0) {
-
-        validationSummary.removeClass('d-none');
+        if ($('#validationSummary').find('li').length > 0) {
+        $('#validationSummary').removeClass('d-none');
         }
 
         // Select2
         $('.select2').select2({
-        language: 'tr',
         width: '100%',
+        language: 'tr',
         placeholder: '-- Hedef Seçin --',
         allowClear: true
+        });
+
+        // Resim Preview
+        $('#ResimUrlInput').on('input', function () {
+
+        const url = $(this).val();
+
+        if (url && url.trim() !== '') {
+        $('#imagePreview').attr('src', url);
+        $('#imagePreviewWrapper').removeClass('d-none');
+        }
+        else {
+        $('#imagePreview').attr('src', '');
+        $('#imagePreviewWrapper').addClass('d-none');
+        }
+
+        });
+
         });
 
         // TinyMCE
@@ -469,6 +474,26 @@
 
         placeholder: 'Duyuru içeriğini giriniz...',
 
+        file_picker_callback: function (callback, value, meta) {
+
+        let type = 'image';
+
+        if (meta.filetype === 'media') {
+        type = 'video';
+        }
+
+        openFileManagerForTinyMCE(function (url) {
+
+        if (meta.filetype === 'image') {
+        callback(url, { alt: 'Resim' });
+        }
+        else {
+        callback(url);
+        }
+
+        }, type);
+        },
+
         setup: function (editor) {
 
         editor.on('change', function () {
@@ -492,6 +517,51 @@
         }
         });
 
+        // File Manager Modal
+        $('#openFileManagerBtn').on('click', function () {
+
+        $('#fileManagerFrame')
+        .attr('src', '/File?mode=picker&type=image');
+
+        $('#fileManagerModal').modal('show');
         });
+
+        // File Selected
+        window.addEventListener('message', function (event) {
+
+        if (event.data.type === 'file-selected') {
+
+        $('#ResimUrlInput').val(event.data.url).trigger('input');
+
+        $('#fileManagerModal').modal('hide');
+        }
+        });
+
+        // TinyMCE File Manager
+        function openFileManagerForTinyMCE(callback, type) {
+
+        const w = window.open(
+        '/File?mode=picker&type=' + type,
+        'FileManager',
+        'width=1200,height=700'
+        );
+
+        function handler(event) {
+
+        if (event.data.type === 'file-selected') {
+
+        callback(event.data.url);
+
+        if (w) {
+        w.close();
+        }
+
+        window.removeEventListener('message', handler);
+        }
+        }
+
+        window.addEventListener('message', handler);
+        }
+
     </script>
 }

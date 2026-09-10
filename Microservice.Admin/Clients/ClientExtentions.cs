@@ -1,4 +1,5 @@
 ﻿using Microservice.Admin.Clients.AuditLogClients;
+using Microservice.Admin.Clients.BandLogoClients;
 using Microservice.Admin.Clients.BannerClients;
 using Microservice.Admin.Clients.BilgiClients;
 using Microservice.Admin.Clients.BirimClients;
@@ -12,6 +13,7 @@ using Microservice.Admin.Clients.PersonelTipClients;
 using Microservice.Admin.Clients.PopupClients;
 using Microservice.Admin.Clients.ShortcutButtonClients;
 using Microservice.Admin.Clients.SikcaSorulanSoruClients;
+using Microservice.Admin.Clients.SeoCheckClients;
 using Microservice.Admin.Clients.SiteClients;
 using Microservice.Admin.Clients.SiteOzellikleriClients;
 using Microservice.Admin.Clients.SitePersonelClients;
@@ -265,6 +267,26 @@ namespace Microservice.Admin.Clients
           })
           .AddHttpMessageHandler<AuthenticatedHttpClientHandler>()//bu usertoken için istek atarken kullanmak için
           .AddHttpMessageHandler<ClientAuthenticatedHttpClientHandler>();//bu clientcredential için token alıp istek göndermek için
+
+            //SeoCheck Clients (site-geneli SeoUrl kullanilabilirlik kontrolu)
+            services.AddRefitClient<ISeoCheckClientServices>()
+           .ConfigureHttpClient(c => {
+
+               var microserviceOption = configuration.GetSection(MicroservicesSetting.SectionName).Get<MicroservicesSetting>();
+               c.BaseAddress = new Uri(microserviceOption!.Site.BaseUrl);
+           })
+           .AddHttpMessageHandler<AuthenticatedHttpClientHandler>()//bu usertoken için istek atarken kullanmak için
+           .AddHttpMessageHandler<ClientAuthenticatedHttpClientHandler>();//bu clientcredential için token alıp istek göndermek için
+
+            //BandLogo Clients
+            services.AddRefitClient<IBandLogoClientServices>()
+           .ConfigureHttpClient(c => {
+
+               var microserviceOption = configuration.GetSection(MicroservicesSetting.SectionName).Get<MicroservicesSetting>();
+               c.BaseAddress = new Uri(microserviceOption!.Site.BaseUrl);
+           })
+           .AddHttpMessageHandler<AuthenticatedHttpClientHandler>()//bu usertoken için istek atarken kullanmak için
+           .AddHttpMessageHandler<ClientAuthenticatedHttpClientHandler>();//bu clientcredential için token alıp istek göndermek için
 
             //TümPersonel Clients
             services.AddRefitClient<ITumPersonelClientService>()

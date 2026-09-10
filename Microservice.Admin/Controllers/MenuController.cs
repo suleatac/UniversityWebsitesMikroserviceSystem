@@ -68,7 +68,7 @@ namespace Microservice.Admin.Controllers
 
             var vm = new MenuCreateIndexVm
             {
-                CreateMenu = new MenuVm { ParentId = parentId, SiteId = currentSiteId, DilId = currentDilId },
+                CreateMenu = new MenuDetailVm { ParentId = parentId, SiteId = currentSiteId, DilId = currentDilId },
                 Menuler = menulerResult.IsSuccess ? menulerResult.Data! : new List<GetMenuVm>(),
                 Diller = dillerResult.IsSuccess ? dillerResult.Data! : new List<GetDilVm>(),
                 Hedefler = hedeflerResult.IsSuccess ? hedeflerResult.Data! : new List<GetHedefVm>()
@@ -155,17 +155,16 @@ namespace Microservice.Admin.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            var updateVm = new MenuVm
+            var updateVm = new MenuDetailVm
             {
                 Id = result.Data.Id,
                 PageTypeId = result.Data.PageTypeId,
                 SiteId = result.Data.SiteId,
                 DilId = result.Data.DilId,
                 HedefId = result.Data.HedefId,
-                Ad = result.Data.Ad,
+                Baslik = result.Data.Baslik,
                 Link = result.Data.Link,
-                IconUrl = result.Data.IconUrl,
-                Icerik = result.Data.Icerik,
+                IcerikMetni = result.Data.IcerikMetni,
                 Sira = result.Data.Sira,
                 MegaMenu = result.Data.MegaMenu,
                 ParentId = result.Data.ParentId
@@ -302,15 +301,14 @@ namespace Microservice.Admin.Controllers
             var existing = existingResult.Data;
 
             // Taşınan menuyu güncelle
-            var updateVm = new MenuVm
+            var updateVm = new MenuDetailVm
             {
                 Id = model.Id,
                 ParentId = model.ParentId,
                 Sira = model.Sira,
-                Ad = existing.Ad,
+                Baslik = existing.Baslik,
                 Link = existing.Link,
-                IconUrl = existing.IconUrl,
-                Icerik = existing.Icerik,
+                IcerikMetni = existing.IcerikMetni,
                 MegaMenu = existing.MegaMenu,
                 SiteId = existing.SiteId,
                 DilId = existing.DilId,
@@ -336,15 +334,14 @@ namespace Microservice.Admin.Controllers
                     var siblingResult = await _menuService.GetMenuByIdAsync(siblingId);
                     if (siblingResult.IsSuccess && siblingResult.Data != null)
                     {
-                        var siblingUpdateVm = new MenuVm
+                        var siblingUpdateVm = new MenuDetailVm
                         {
                             Id = siblingId,
                             ParentId = model.ParentId,
                             Sira = i,
-                            Ad = siblingResult.Data.Ad,
+                            Baslik = siblingResult.Data.Baslik,
                             Link = siblingResult.Data.Link,
-                            IconUrl = siblingResult.Data.IconUrl,
-                            Icerik = siblingResult.Data.Icerik,
+                            IcerikMetni = siblingResult.Data.IcerikMetni,
                             MegaMenu = siblingResult.Data.MegaMenu,
                             SiteId = siblingResult.Data.SiteId,
                             DilId = siblingResult.Data.DilId,
@@ -385,7 +382,7 @@ namespace Microservice.Admin.Controllers
                 .Select(m => new Dictionary<string, object>
                 {
                     { "id", m.Id },
-                    { "text", m.Ad },
+                    { "text", m.Baslik },
                     { "icon", "mdi mdi-menu" },
                     { "children", m.Children != null && m.Children.Any() ? BuildJsTreeData(m.Children.ToList(), m.Id) : new List<object>() },
                     { "data", new { sira = m.Sira, parentId = m.ParentId } },

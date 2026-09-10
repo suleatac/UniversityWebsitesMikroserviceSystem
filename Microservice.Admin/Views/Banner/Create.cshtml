@@ -152,7 +152,6 @@
                                            class="form-label">
 
                                         Kısa Açıklama
-                                        <span class="text-danger">*</span>
 
                                     </label>
 
@@ -175,28 +174,7 @@
 
                             </div>
 
-                           @*  <div class="col-md-3">
-
-                                <div class="mb-3">
-
-                                    <label asp-for="CreateBanner.Sira"
-                                           class="form-label">
-
-                                        Sıra
-
-                                    </label>
-
-                                    <input asp-for="CreateBanner.Sira"
-                                           class="form-control"
-                                           type="number"
-                                           placeholder="0" />
-
-                                    <span asp-validation-for="CreateBanner.Sira"
-                                          class="text-danger small"></span>
-
-                                </div>
-
-                            </div> *@
+                         
 
                         </div>
 
@@ -273,7 +251,7 @@
                                     <label asp-for="CreateBanner.ResimUrl"
                                            class="form-label">
 
-                                        Resim URL
+                                        Resim URL   <span class="text-danger">*</span>
 
                                     </label>
 
@@ -396,18 +374,12 @@
 
                                     </label>
 
-                                    <select asp-for="CreateBanner.HedefId"
-                                            class="form-select select2">
-
-
-                                        @foreach (var hedef in Model.Hedefler)
-                                        {
-                                            <option value="@hedef.Id">
-                                                @hedef.Aciklama
-                                            </option>
-                                        }
-
+                                 <div class="input-group">
+                                    <span class="input-group-text"><i class="mdi mdi-target"></i></span>
+                                    <select asp-for="CreateBanner.HedefId" class="form-select"
+                                            asp-items="@(new SelectList(Model.Hedefler, "Id", "Aciklama"))">
                                     </select>
+                                </div>
 
                                     <span asp-validation-for="CreateBanner.HedefId"
                                           class="text-danger small"></span>

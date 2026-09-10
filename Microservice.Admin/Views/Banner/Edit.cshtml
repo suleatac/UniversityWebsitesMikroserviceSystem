@@ -1,4 +1,4 @@
-@model Microservice.Admin.ViewModels.Banner.BannerDetailVm
+@model Microservice.Admin.ViewModels.Banner.BannerEditIndexVm
 
 @{
     ViewBag.pTitle = "Bannerlar";
@@ -77,12 +77,12 @@
                         <p class="card-text text-muted mb-0">
 
                             Banner ID:
-                            <strong>@Model.Id</strong>
+                            <strong>@Model.BannerDetail.Id</strong>
 
                             |
 
                             <span class="text-primary">
-                                @Model.Baslik
+                                @Model.BannerDetail.Baslik
                             </span>
 
                         </p>
@@ -112,11 +112,11 @@
 
                     </div>
 
-                    <input type="hidden" asp-for="Id" />
-                    <input type="hidden" asp-for="SiteId" />
-                    <input type="hidden" asp-for="DilId" />
-                    <input type="hidden" asp-for="EklemeTarihi" />
-                    <input type="hidden" asp-for="GosterimSayisi" />
+                    <input type="hidden" asp-for="BannerDetail.Id" />
+                    <input type="hidden" asp-for="BannerDetail.SiteId" />
+                    <input type="hidden" asp-for="BannerDetail.DilId" />
+                    <input type="hidden" asp-for="BannerDetail.EklemeTarihi" />
+                    <input type="hidden" asp-for="BannerDetail.GosterimSayisi" />
 
                     <!-- Bilgi Alanı -->
 
@@ -130,12 +130,12 @@
                             <div>
 
                                 <strong>Eklenme Tarihi:</strong>
-                                @Model.EklemeTarihi.ToString("dd.MM.yyyy HH:mm")
+                                @Model.BannerDetail.EklemeTarihi.ToString("dd.MM.yyyy HH:mm")
 
                                 &nbsp;|&nbsp;
 
                                 <strong>Gösterim:</strong>
-                                @Model.GosterimSayisi
+                                @Model.BannerDetail.GosterimSayisi
 
                             </div>
 
@@ -160,7 +160,7 @@
 
                                 <div class="mb-3">
 
-                                    <label asp-for="Baslik"
+                                    <label asp-for="BannerDetail.Baslik"
                                            class="form-label">
 
                                         Başlık
@@ -174,13 +174,13 @@
                                             <i class="mdi mdi-format-title"></i>
                                         </span>
 
-                                        <input asp-for="Baslik"
+                                        <input asp-for="BannerDetail.Baslik"
                                                class="form-control"
                                                placeholder="Banner başlığını giriniz" />
 
                                     </div>
 
-                                    <span asp-validation-for="Baslik"
+                                    <span asp-validation-for="BannerDetail.Baslik"
                                           class="text-danger small"></span>
 
                                 </div>
@@ -191,7 +191,7 @@
 
                                 <div class="mb-3">
 
-                                    <label asp-for="KisaAciklama"
+                                    <label asp-for="BannerDetail.KisaAciklama"
                                            class="form-label">
 
                                         Kısa Açıklama
@@ -205,13 +205,13 @@
                                             <i class="mdi mdi-text-short"></i>
                                         </span>
 
-                                        <input asp-for="KisaAciklama"
+                                        <input asp-for="BannerDetail.KisaAciklama"
                                                class="form-control"
                                                placeholder="Kısa açıklama" />
 
                                     </div>
 
-                                    <span asp-validation-for="KisaAciklama"
+                                    <span asp-validation-for="BannerDetail.KisaAciklama"
                                           class="text-danger small"></span>
 
                                 </div>
@@ -222,18 +222,18 @@
 
                                 <div class="mb-3">
 
-                                    <label asp-for="Sira"
+                                    <label asp-for="BannerDetail.Sira"
                                            class="form-label">
 
                                         Sıra
 
                                     </label>
 
-                                    <input asp-for="Sira"
+                                    <input asp-for="BannerDetail.Sira"
                                            class="form-control"
                                            type="number" />
 
-                                    <span asp-validation-for="Sira"
+                                    <span asp-validation-for="BannerDetail.Sira"
                                           class="text-danger small"></span>
 
                                 </div>
@@ -257,7 +257,7 @@
 
                         <div class="mb-3">
 
-                            <label asp-for="IcerikMetni"
+                            <label asp-for="BannerDetail.IcerikMetni"
                                    class="form-label">
 
                                 İçerik Metni
@@ -265,13 +265,13 @@
 
                             </label>
 
-                            <textarea asp-for="IcerikMetni"
+                            <textarea asp-for="BannerDetail.IcerikMetni"
                                       id="IcerikMetniEditor"
                                       class="form-control"
                                       rows="10"
                                       placeholder="Banner içeriğini giriniz..."></textarea>
 
-                            <span asp-validation-for="IcerikMetni"
+                            <span asp-validation-for="BannerDetail.IcerikMetni"
                                   class="text-danger small"></span>
 
                         </div>
@@ -282,7 +282,7 @@
 
                                 <div class="mb-3">
 
-                                    <label asp-for="Link"
+                                    <label asp-for="BannerDetail.Link"
                                            class="form-label">
 
                                         Link
@@ -295,13 +295,13 @@
                                             <i class="mdi mdi-link"></i>
                                         </span>
 
-                                        <input asp-for="Link"
+                                        <input asp-for="BannerDetail.Link"
                                                class="form-control"
                                                placeholder="https://..." />
 
                                     </div>
 
-                                    <span asp-validation-for="Link"
+                                    <span asp-validation-for="BannerDetail.Link"
                                           class="text-danger small"></span>
 
                                 </div>
@@ -312,7 +312,7 @@
 
                                 <div class="mb-3">
 
-                                    <label asp-for="ResimUrl"
+                                    <label asp-for="BannerDetail.ResimUrl"
                                            class="form-label">
 
                                         Resim URL
@@ -325,7 +325,7 @@
                                             <i class="mdi mdi-image"></i>
                                         </span>
 
-                                        <input asp-for="ResimUrl"
+                                        <input asp-for="BannerDetail.ResimUrl"
                                                id="ResimUrlInput"
                                                class="form-control"
                                                placeholder="Resim URL" />
@@ -341,7 +341,7 @@
 
                                     </div>
 
-                                    <span asp-validation-for="ResimUrl"
+                                    <span asp-validation-for="BannerDetail.ResimUrl"
                                           class="text-danger small"></span>
 
                                 </div>
@@ -369,18 +369,18 @@
 
                                 <div class="mb-3">
 
-                                    <label asp-for="YayimTarihi"
+                                    <label asp-for="BannerDetail.YayimTarihi"
                                            class="form-label">
 
                                         Yayım Tarihi
 
                                     </label>
 
-                                    <input asp-for="YayimTarihi"
+                                    <input asp-for="BannerDetail.YayimTarihi"
                                            class="form-control"
                                            type="datetime-local" />
 
-                                    <span asp-validation-for="YayimTarihi"
+                                    <span asp-validation-for="BannerDetail.YayimTarihi"
                                           class="text-danger small"></span>
 
                                 </div>
@@ -391,18 +391,18 @@
 
                                 <div class="mb-3">
 
-                                    <label asp-for="BaslamaTarihi"
+                                    <label asp-for="BannerDetail.BaslamaTarihi"
                                            class="form-label">
 
                                         Başlama Tarihi
 
                                     </label>
 
-                                    <input asp-for="BaslamaTarihi"
+                                    <input asp-for="BannerDetail.BaslamaTarihi"
                                            class="form-control"
                                            type="datetime-local" />
 
-                                    <span asp-validation-for="BaslamaTarihi"
+                                    <span asp-validation-for="BannerDetail.BaslamaTarihi"
                                           class="text-danger small"></span>
 
                                 </div>
@@ -413,18 +413,18 @@
 
                                 <div class="mb-3">
 
-                                    <label asp-for="BitisTarihi"
+                                    <label asp-for="BannerDetail.BitisTarihi"
                                            class="form-label">
 
                                         Bitiş Tarihi
 
                                     </label>
 
-                                    <input asp-for="BitisTarihi"
+                                    <input asp-for="BannerDetail.BitisTarihi"
                                            class="form-control"
                                            type="datetime-local" />
 
-                                    <span asp-validation-for="BitisTarihi"
+                                    <span asp-validation-for="BannerDetail.BitisTarihi"
                                           class="text-danger small"></span>
 
                                 </div>
@@ -435,31 +435,21 @@
 
                                 <div class="mb-3">
 
-                                    <label asp-for="HedefId"
+                                    <label asp-for="BannerDetail.HedefId"
                                            class="form-label">
 
                                         Hedef
 
                                     </label>
 
-                                    <select asp-for="HedefId"
-                                            class="form-select select2">
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="mdi mdi-target"></i></span>
+                                        <select asp-for="BannerDetail.HedefId" class="form-select"
+                                                asp-items="@(new SelectList(Model.Hedefler, "Id", "Aciklama"))">
+                                        </select>
+                                    </div>
 
-                                 
-
-                                        @if (ViewBag.Hedefler != null)
-                                        {
-                                            foreach (var hedef in ViewBag.Hedefler)
-                                            {
-                                                <option value="@hedef.Id">
-                                                    @hedef.Aciklama
-                                                </option>
-                                            }
-                                        }
-
-                                    </select>
-
-                                    <span asp-validation-for="HedefId"
+                                    <span asp-validation-for="BannerDetail.HedefId"
                                           class="text-danger small"></span>
 
                                 </div>
@@ -472,79 +462,6 @@
 
                     </div>
 
-                    <!-- SEO -->
-
-                    <div class="mb-4">
-
-                        <h6 class="text-primary border-bottom pb-2">
-
-                            <i class="mdi mdi-magnify me-1"></i>
-                            SEO Bilgileri
-
-                        </h6>
-
-                        <div class="row">
-
-                            <div class="col-md-4">
-
-                                <div class="mb-3">
-
-                                    <label asp-for="SeoUrl"
-                                           class="form-label">
-
-                                        SEO URL
-
-                                    </label>
-
-                                    <input asp-for="SeoUrl"
-                                           class="form-control"
-                                           placeholder="seo-url" />
-
-                                </div>
-
-                            </div>
-
-                            <div class="col-md-4">
-
-                                <div class="mb-3">
-
-                                    <label asp-for="SeoTitle"
-                                           class="form-label">
-
-                                        SEO Title
-
-                                    </label>
-
-                                    <input asp-for="SeoTitle"
-                                           class="form-control"
-                                           placeholder="SEO başlık" />
-
-                                </div>
-
-                            </div>
-
-                            <div class="col-md-4">
-
-                                <div class="mb-3">
-
-                                    <label asp-for="SeoDescription"
-                                           class="form-label">
-
-                                        SEO Description
-
-                                    </label>
-
-                                    <input asp-for="SeoDescription"
-                                           class="form-control"
-                                           placeholder="SEO açıklama" />
-
-                                </div>
-
-                            </div>
-
-                        </div>
-
-                    </div>
 
                     <!-- Form Butonları -->
 

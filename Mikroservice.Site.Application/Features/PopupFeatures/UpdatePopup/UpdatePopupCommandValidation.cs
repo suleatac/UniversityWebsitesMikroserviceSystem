@@ -40,17 +40,6 @@ namespace Mikroservice.Site.Application.Features.PopupFeatures.UpdatePopup
                 .When(x => x.BitisTarihi.HasValue)
                 .WithMessage("Yayım tarihi, bitiş tarihinden önce olmalıdır.");
 
-            RuleFor(x => x.SeoUrl)
-                .MaximumLength(200);
-
-            RuleFor(x => x.SeoTitle)
-                .MaximumLength(200);
-
-            RuleFor(x => x.SeoDescription)
-                .MaximumLength(500);
-            RuleFor(x => x)
-                .Must(x => x.TamEkranMi || x.GosterimSuresiSaniye > 0)
-                .WithMessage("Tam ekran değilse, gösterim süresi saniye cinsinden 0'dan büyük olmalıdır.");
 
             RuleFor(x => x)
                     .Must(x => !x.CookieIleTekrarGosterme || (x.GosterimSuresiSaniye > 0))

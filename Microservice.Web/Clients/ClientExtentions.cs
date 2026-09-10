@@ -1,4 +1,5 @@
-﻿using Microservice.Web.Clients.BannerClients;
+﻿using Microservice.Web.Clients.BandLogoClients;
+using Microservice.Web.Clients.BannerClients;
 using Microservice.Web.Clients.BilgiClients;
 using Microservice.Web.Clients.DilClients;
 using Microservice.Web.Clients.DuyuruClients;
@@ -44,6 +45,12 @@ namespace Microservice.Web.Clients
             services.AddRefitClient<IBannerClientServices>()
                 .ConfigureHttpClient(c => c.BaseAddress = GetSiteBaseAddress(configuration))
                 .AddHttpMessageHandler<ClientAuthenticatedHttpClientHandler>();
+            
+            //BandLogo Clients
+            services.AddRefitClient<IBandLogoClientServices>()
+                .ConfigureHttpClient(c => c.BaseAddress = GetSiteBaseAddress(configuration))
+                .AddHttpMessageHandler<ClientAuthenticatedHttpClientHandler>();
+
 
             //Bilgi Clients
             services.AddRefitClient<IBilgiClientServices>()

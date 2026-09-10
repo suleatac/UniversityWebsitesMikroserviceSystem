@@ -38,10 +38,9 @@ namespace Mikroservice.Site.Application.Features.MenuFeatures.UpdateMenu
             }
 
             // 🔥 Güncelleme
-            menu.Ad = request.Ad;
+            menu.Baslik = request.Baslik;
             menu.Link = request.Link;
-            menu.IconUrl = request.IconUrl;
-            menu.Icerik = request.Icerik;
+            menu.IcerikMetni = request.IcerikMetni;
 
             menu.Sira = request.Sira;
             menu.MegaMenu = request.MegaMenu;

@@ -14,12 +14,14 @@ namespace Microservice.Admin.Services
         private readonly ILogger<EtkinlikService> _logger;
         private readonly IPageTypeService _pageTypeService;
         private readonly ISiteService _siteService;
-        public EtkinlikService(IEtkinlikClientServices etkinlikClient, ILogger<EtkinlikService> logger, IPageTypeService pageTypeService, ISiteService siteService)
+        private readonly ISeoService _seoService;
+        public EtkinlikService(IEtkinlikClientServices etkinlikClient, ILogger<EtkinlikService> logger, IPageTypeService pageTypeService, ISiteService siteService, ISeoService seoService)
         {
             _etkinlikClient = etkinlikClient ?? throw new ArgumentNullException(nameof(etkinlikClient));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _pageTypeService = pageTypeService ?? throw new ArgumentNullException(nameof(pageTypeService));
             _siteService = siteService ?? throw new ArgumentNullException(nameof(siteService));
+            _seoService = seoService ?? throw new ArgumentNullException(nameof(seoService));
         }
 
         public async Task<ServiceResult<List<GetEtkinlikVm>>> GetEtkinliklerAsync(int siteId, int dilId)
@@ -81,7 +83,12 @@ namespace Microservice.Admin.Services
             // PageTypeId'yi client'tan değil server'dan belirle
             dto.PageTypeId = etkinlikPageTypeResult.Data.Id;
 
-
+            // SEO bilgileri kullanıcıdan alınmaz; başlıktan otomatik üretilir
+            await _seoService.ApplyAutoSeoAsync(dto.SiteId, dto.PageTypeId, dto.Baslik, dto.KisaAciklama,
+                seoUrl => dto.SeoUrl = seoUrl,
+                seoTitle => dto.SeoTitle = seoTitle,
+                seoDescription => dto.SeoDescription = seoDescription,
+                fallbackSlug: "etkinlik");
 
             _logger.LogInformation("Yeni etkinlik oluşturuluyor. Başlık: {Title}", dto.Baslik);
             var response = await _etkinlikClient.CreateEtkinlikAsync(dto);
@@ -127,6 +134,14 @@ namespace Microservice.Admin.Services
 
             // PageTypeId'yi client'tan değil server'dan belirle
             dto.PageTypeId = etkinlikPageTypeResult.Data.Id;
+
+            // SEO bilgileri kullanıcıdan alınmaz; başlıktan otomatik üretilir
+            await _seoService.ApplyAutoSeoAsync(dto.SiteId, dto.PageTypeId, dto.Baslik, dto.KisaAciklama,
+                seoUrl => dto.SeoUrl = seoUrl,
+                seoTitle => dto.SeoTitle = seoTitle,
+                seoDescription => dto.SeoDescription = seoDescription,
+                fallbackSlug: "etkinlik",
+                excludeIcerikId: dto.Id);
 
 
 

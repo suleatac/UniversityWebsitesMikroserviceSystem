@@ -9,6 +9,7 @@
         public string Ad { get; set; } = default!;
         public string? Link { get; set; } = default!;
         public string? IconUrl { get; set; }
+        public string? IconShortDescription { get; set; }
         public string? ImageUrl { get; set; }
         public bool? IsIconImage { get; set; }
         public int Sira { get; set; }

@@ -73,7 +73,6 @@ namespace Mikroservice.Site.Application.Features.SikcaSorulanSoruFeatures.GetSik
                     Soru = x.Soru,
                     Cevap = x.Cevap,
                     Sira = x.Sira,
-                    SeoUrl = x.SeoUrl,
                     Children = BuildTree(list, x.Id)
                 })
                 .ToList();

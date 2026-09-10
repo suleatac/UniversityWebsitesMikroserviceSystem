@@ -29,11 +29,7 @@ namespace Mikroservice.Site.Application.Features.SikcaSorulanSoruFeatures.Create
             RuleFor(x => x.Sira)
                 .GreaterThanOrEqualTo(0).WithMessage("Sıra 0 veya daha büyük olmalıdır.");
 
-            // 🔹 SeoUrl (opsiyonel ama düzgün olsun)
-            RuleFor(x => x.SeoUrl)
-                .MaximumLength(300)
-                .When(x => !string.IsNullOrEmpty(x.SeoUrl))
-                .WithMessage("SeoUrl en fazla 300 karakter olabilir.");
+    
 
 
         }

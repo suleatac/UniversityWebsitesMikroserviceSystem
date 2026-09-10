@@ -21,8 +21,6 @@ namespace Mikroservice.Site.Persistence.Configurations
             builder.Property(x => x.Cevap)
                 .IsRequired();
 
-            builder.Property(x => x.SeoUrl)
-                .HasMaxLength(300);
 
             // =========================
             // SITE
@@ -45,7 +43,7 @@ namespace Mikroservice.Site.Persistence.Configurations
             // =========================
             builder.HasIndex(x => new { x.SiteId, x.DilId });
             builder.HasIndex(x => new { x.ParentId, x.Sira });
-            builder.HasIndex(x => x.SeoUrl);
+     
 
             // =========================
             // SELF RELATION (TREE)

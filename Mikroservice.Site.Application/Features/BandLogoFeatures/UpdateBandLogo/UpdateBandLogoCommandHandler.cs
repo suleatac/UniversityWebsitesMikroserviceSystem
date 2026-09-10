@@ -28,7 +28,7 @@ namespace Mikroservice.Site.Application.Features.BandLogoFeatures.UpdateBandLogo
             await unitOfWork.SaveChangesAsync(cancellationToken);
 
             //Cache temizleme işlemi.
-            var cacheKey = $"bandlogos:list:{bandLogo.SiteId}:*";
+            var cacheKey = $"bandlogo:list:{bandLogo.SiteId}:*";
             await redisCache.RemoveByPatternAsync(cacheKey, cancellationToken);
 
             return ServiceResult.Success();

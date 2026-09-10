@@ -10,11 +10,13 @@ namespace Microservice.Admin.Services
     {
         private readonly ISikcaSorulanSoruClientServices _sikcaSorulanSoruClient;
         private readonly ILogger<SikcaSorulanSoruService> _logger;
+        private readonly ISeoService _seoService;
 
-        public SikcaSorulanSoruService(ISikcaSorulanSoruClientServices sikcaSorulanSoruClient, ILogger<SikcaSorulanSoruService> logger)
+        public SikcaSorulanSoruService(ISikcaSorulanSoruClientServices sikcaSorulanSoruClient, ILogger<SikcaSorulanSoruService> logger, ISeoService seoService)
         {
             _sikcaSorulanSoruClient = sikcaSorulanSoruClient ?? throw new ArgumentNullException(nameof(sikcaSorulanSoruClient));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _seoService = seoService ?? throw new ArgumentNullException(nameof(seoService));
         }
 
         public async Task<ServiceResult<List<GetSikcaSorulanSoruVm>>> GetSikcaSorulanSorularAsync(int siteId, int dilId)
@@ -51,6 +53,8 @@ namespace Microservice.Admin.Services
 
         public async Task<ServiceResult<bool>> CreateSikcaSorulanSoruAsync(CreateSikcaSorulanSoruVm dto)
         {
+   
+
             _logger.LogInformation("Yeni SSS oluşturuluyor. Soru: {Soru}", dto.Soru);
             var response = await _sikcaSorulanSoruClient.CreateSikcaSorulanSoruAsync(dto);
 
@@ -68,6 +72,8 @@ namespace Microservice.Admin.Services
 
         public async Task<ServiceResult<bool>> UpdateSikcaSorulanSoruAsync(SikcaSorulanSoruDetailVm dto)
         {
+    
+
             _logger.LogInformation("SSS güncelleniyor. Id: {Id}", dto.Id);
             var response = await _sikcaSorulanSoruClient.UpdateSikcaSorulanSoruAsync(dto.Id, dto);
 

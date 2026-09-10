@@ -49,7 +49,7 @@ namespace Mikroservice.Site.Application.Features.EtkinlikFeatures.UpdateEtkinlik
                 .When(x => x.BitisTarihi.HasValue)
                 .WithMessage("Yayım tarihi, bitiş tarihinden önce olmalıdır.");
 
-            RuleFor(x => x.SeoUrl)
+            RuleFor(x => x.SeoUrl).NotEmpty()
                 .MaximumLength(200);
 
             RuleFor(x => x.SeoTitle)

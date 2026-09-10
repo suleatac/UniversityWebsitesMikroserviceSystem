@@ -14,12 +14,14 @@ namespace Microservice.Admin.Services
         private readonly ILogger<DuyuruService> _logger;
         private readonly IPageTypeService _pageTypeService;
         private readonly ISiteService _siteService;
-        public DuyuruService(IDuyuruClientServices duyuruClient, ILogger<DuyuruService> logger, IPageTypeService pageTypeService, ISiteService siteService)
+        private readonly ISeoService _seoService;
+        public DuyuruService(IDuyuruClientServices duyuruClient, ILogger<DuyuruService> logger, IPageTypeService pageTypeService, ISiteService siteService, ISeoService seoService)
         {
             _duyuruClient = duyuruClient ?? throw new ArgumentNullException(nameof(duyuruClient));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _pageTypeService = pageTypeService ?? throw new ArgumentNullException(nameof(pageTypeService));
             _siteService = siteService ?? throw new ArgumentNullException(nameof(siteService));
+            _seoService = seoService ?? throw new ArgumentNullException(nameof(seoService));
         }
 
         public async Task<ServiceResult<List<GetDuyuruVm>>> GetDuyurularAsync(int siteId, int dilId)
@@ -82,6 +84,13 @@ namespace Microservice.Admin.Services
             // PageTypeId'yi client'tan değil server'dan belirle
             dto.PageTypeId = duyuruPageTypeResult.Data.Id;
 
+            // SEO bilgileri kullanıcıdan alınmaz; başlıktan otomatik üretilir
+            await _seoService.ApplyAutoSeoAsync(dto.SiteId, dto.PageTypeId, dto.Baslik, dto.KisaAciklama,
+                seoUrl => dto.SeoUrl = seoUrl,
+                seoTitle => dto.SeoTitle = seoTitle,
+                seoDescription => dto.SeoDescription = seoDescription,
+                fallbackSlug: "duyuru");
+
             _logger.LogInformation("Yeni duyuru oluşturuluyor. Başlık: {Title}", dto.Baslik);
             var response = await _duyuruClient.CreateDuyuruAsync(dto);
 
@@ -122,6 +131,14 @@ namespace Microservice.Admin.Services
 
             // PageTypeId'yi client'tan değil server'dan belirle
             dto.PageTypeId = duyuruPageTypeResult.Data.Id;
+
+            // SEO bilgileri kullanıcıdan alınmaz; başlıktan otomatik üretilir
+            await _seoService.ApplyAutoSeoAsync(dto.SiteId, dto.PageTypeId, dto.Baslik, dto.KisaAciklama,
+                seoUrl => dto.SeoUrl = seoUrl,
+                seoTitle => dto.SeoTitle = seoTitle,
+                seoDescription => dto.SeoDescription = seoDescription,
+                fallbackSlug: "duyuru",
+                excludeIcerikId: dto.Id);
 
             _logger.LogInformation("Duyuru güncelleniyor. Id: {Id}", dto.Id);
             var response = await _duyuruClient.UpdateDuyuruAsync(dto.Id, dto);
@@ -170,5 +187,6 @@ namespace Microservice.Admin.Services
 
             return ServiceResult<PaginatedResult<GetDuyuruVm>>.Success(response.Content!);
         }
+
     }
 }

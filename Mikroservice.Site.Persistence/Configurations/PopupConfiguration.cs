@@ -28,9 +28,6 @@ namespace Mikroservice.Site.Persistence.Configurations
             builder.Property(x => x.ResimUrl)
                 .HasMaxLength(500);
 
-            builder.Property(x => x.SeoUrl)
-                .HasMaxLength(300);
-
             builder.Property(x => x.GosterimSayisi)
                 .HasDefaultValue(0);
 
@@ -47,14 +44,6 @@ namespace Mikroservice.Site.Persistence.Configurations
 
             builder.Property(x => x.CookieIleTekrarGosterme)
                 .HasDefaultValue(true);
-
-            builder.Property(x => x.PageTypeId)
-                .IsRequired();
-
-            builder.HasOne(x => x.PageType)
-                .WithMany(x => x.Popuplar)
-                .HasForeignKey(x => x.PageTypeId)
-                .OnDelete(DeleteBehavior.Restrict);
 
             // Soft delete filter
             builder.HasQueryFilter(b => !b.IsDeleted);

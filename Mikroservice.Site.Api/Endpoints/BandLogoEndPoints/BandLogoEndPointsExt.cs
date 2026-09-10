@@ -21,6 +21,8 @@ namespace Mikroservice.Site.Api.Endpoints.BandLogoEndPoints
             group.UpdateBandLogoEndpointGroupItem();
             group.DeleteBandLogoEndpointGroupItem();
             group.GetBandLogosEndpointGroupItem();
+            group.GetBandLogoByIdEndpointGroupItem();
+            group.GetPaginatedBandLogoEndpointGroupItem();
 
             group.RequireAuthorization("ClientCredential");
         }

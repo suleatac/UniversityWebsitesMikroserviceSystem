@@ -132,7 +132,7 @@
                             <div class="col-md-4">
                                 <div class="mb-3">
                                     <label asp-for="CreateDuyuru.KisaAciklama" class="form-label">
-                                        Kısa Açıklama <span class="text-danger">*</span>
+                                        Kısa Açıklama 
                                     </label>
 
                                     <div class="input-group">
@@ -163,7 +163,7 @@
                         <!-- İçerik -->
                         <div class="mb-3">
                             <label asp-for="CreateDuyuru.IcerikMetni" class="form-label">
-                                İçerik Metni <span class="text-danger">*</span>
+                                İçerik Metni 
                             </label>
 
                             <textarea asp-for="CreateDuyuru.IcerikMetni"
@@ -301,15 +301,13 @@
                                     <label asp-for="CreateDuyuru.HedefId" class="form-label">
                                         Hedef
                                     </label>
-
-                                    <select asp-for="CreateDuyuru.HedefId"
-                                            class="form-select select2"
-                                            asp-items="@(new SelectList(Model.Hedefler, "Id", "Aciklama"))">
-                  
-                                    </select>
-
-                                    <span asp-validation-for="CreateDuyuru.HedefId"
-                                          class="text-danger small"></span>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="mdi mdi-target"></i></span>
+                                        <select asp-for="CreateDuyuru.HedefId" class="form-select"
+                                                asp-items="@(new SelectList(Model.Hedefler, "Id", "Aciklama"))">
+                                        </select>
+                                    </div>
+                                    <span asp-validation-for="CreateDuyuru.HedefId" class="text-danger small"></span>
                                 </div>
                             </div>
 
@@ -318,62 +316,6 @@
                         </div>
                     </div>
 
-                    <!-- SEO -->
-                    <div class="mb-4">
-                        <h6 class="text-primary border-bottom pb-2">
-                            <i class="mdi mdi-magnify me-1"></i>
-                            SEO Bilgileri
-                        </h6>
-
-                        <div class="row">
-
-                            <div class="col-md-4">
-                                <div class="mb-3">
-                                    <label asp-for="CreateDuyuru.SeoUrl" class="form-label">
-                                        SEO URL
-                                    </label>
-
-                                    <input asp-for="CreateDuyuru.SeoUrl"
-                                           class="form-control"
-                                           placeholder="seo-url" />
-
-                                    <span asp-validation-for="CreateDuyuru.SeoUrl"
-                                          class="text-danger small"></span>
-                                </div>
-                            </div>
-
-                            <div class="col-md-4">
-                                <div class="mb-3">
-                                    <label asp-for="CreateDuyuru.SeoTitle" class="form-label">
-                                        SEO Title
-                                    </label>
-
-                                    <input asp-for="CreateDuyuru.SeoTitle"
-                                           class="form-control"
-                                           placeholder="SEO başlık" />
-
-                                    <span asp-validation-for="CreateDuyuru.SeoTitle"
-                                          class="text-danger small"></span>
-                                </div>
-                            </div>
-
-                            <div class="col-md-4">
-                                <div class="mb-3">
-                                    <label asp-for="CreateDuyuru.SeoDescription" class="form-label">
-                                        SEO Description
-                                    </label>
-
-                                    <input asp-for="CreateDuyuru.SeoDescription"
-                                           class="form-control"
-                                           placeholder="SEO açıklama" />
-
-                                    <span asp-validation-for="CreateDuyuru.SeoDescription"
-                                          class="text-danger small"></span>
-                                </div>
-                            </div>
-
-                        </div>
-                    </div>
 
                     <!-- Buttons -->
                     <div class="d-flex justify-content-end gap-2 pt-3 border-top">

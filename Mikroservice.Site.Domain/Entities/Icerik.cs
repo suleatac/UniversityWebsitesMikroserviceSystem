@@ -16,6 +16,7 @@
         public string? Link { get; set; }
         public string? ResimUrl { get; set; }
         public int GosterimSayisi { get; set; } = 0;
+        public int Sira { get; set; } = 0;
 
         public DateTime YayimTarihi { get; set; }
         public DateTime EklemeTarihi { get; set; }
@@ -26,7 +27,7 @@
         public bool IsDeleted { get; set; } = false;
 
         // SEO
-        public string? SeoUrl { get; set; }
+        public string SeoUrl { get; set; } = default!;
         public string? SeoTitle { get; set; }
         public string? SeoDescription { get; set; }
 

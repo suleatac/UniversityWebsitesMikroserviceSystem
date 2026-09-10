@@ -25,7 +25,6 @@ namespace Mikroservice.Site.Application.Features.SikcaSorulanSoruFeatures.Update
             sikcaSorulanSoru.Soru = request.Soru;
             sikcaSorulanSoru.Cevap = request.Cevap;
             sikcaSorulanSoru.Sira = request.Sira;
-            sikcaSorulanSoru.SeoUrl = request.SeoUrl;
 
             await unitOfWork.SaveChangesAsync(cancellationToken);
 

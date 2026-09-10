@@ -1,0 +1,282 @@
+@model Microservice.Admin.ViewModels.BandLogo.BandLogoCreateIndexVm
+
+@{
+    ViewBag.pTitle = "Band Logoları";
+    ViewBag.Title = "Yeni Band Logo";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section styles {
+    <style>
+        .input-group-text {
+            min-width: 42px;
+            justify-content: center;
+        }
+
+        .preview-image {
+            max-height: 120px;
+            object-fit: contain;
+            border-radius: 0.5rem;
+            border: 1px solid #dee2e6;
+            padding: 4px;
+            background: #fff;
+        }
+    </style>
+}
+
+<div class="row justify-content-center">
+    <div class="col-xxl-8">
+        <div class="card shadow-lg border-0">
+
+            <!-- Header -->
+            <div class="card-header bg-primary bg-opacity-10 border-bottom">
+                <div class="d-flex align-items-center">
+                    <div class="avatar-sm me-3">
+                        <div class="avatar-title bg-primary rounded-circle">
+                            <i class="mdi mdi-image-frame fs-5"></i>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h5 class="card-title mb-1">Band Logo Bilgileri</h5>
+                        <p class="card-text text-muted mb-0">
+                            Yeni bir band logosu oluşturmak için formu doldurun
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Body -->
+            <div class="card-body p-4">
+
+                <form asp-action="Create"
+                      asp-controller="BandLogo"
+                      method="post"
+                      class="needs-validation"
+                      novalidate>
+
+                    @Html.AntiForgeryToken()
+
+                    <!-- Validation -->
+                    <div asp-validation-summary="ModelOnly"
+                         class="alert alert-danger d-none"
+                         role="alert"
+                         id="validationSummary">
+                        <i class="mdi mdi-block-helper me-2"></i>
+                    </div>
+
+                    <!-- Hidden -->
+                    <input type="hidden" asp-for="CreateBandLogo.SiteId" />
+                    <input type="hidden" asp-for="CreateBandLogo.DilId" />
+
+                    <!-- Temel Bilgiler -->
+                    <div class="mb-4">
+                        <h6 class="text-primary border-bottom pb-2">
+                            <i class="mdi mdi-information-outline me-1"></i>
+                            Temel Bilgiler
+                        </h6>
+
+                        <div class="row">
+
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label asp-for="CreateBandLogo.Ad" class="form-label">
+                                        Ad <span class="text-danger">*</span>
+                                    </label>
+
+                                    <div class="input-group">
+                                        <span class="input-group-text">
+                                            <i class="mdi mdi-format-title"></i>
+                                        </span>
+
+                                        <input asp-for="CreateBandLogo.Ad"
+                                               class="form-control"
+                                               placeholder="Logo adını giriniz" />
+                                    </div>
+
+                                    <span asp-validation-for="CreateBandLogo.Ad"
+                                          class="text-danger small"></span>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label asp-for="CreateBandLogo.Link" class="form-label">
+                                        Link
+                                    </label>
+
+                                    <div class="input-group">
+                                        <span class="input-group-text">
+                                            <i class="mdi mdi-link"></i>
+                                        </span>
+
+                                        <input asp-for="CreateBandLogo.Link"
+                                               class="form-control"
+                                               placeholder="https://example.com" />
+                                    </div>
+
+                                    <span asp-validation-for="CreateBandLogo.Link"
+                                          class="text-danger small"></span>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <!-- Görsel -->
+                    <div class="mb-4">
+                        <h6 class="text-primary border-bottom pb-2">
+                            <i class="mdi mdi-file-image-outline me-1"></i>
+                            Görsel
+                        </h6>
+
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="mb-3">
+                                    <label asp-for="CreateBandLogo.ImgUrl" class="form-label">
+                                        Görsel URL <span class="text-danger">*</span>
+                                    </label>
+
+                                    <div class="input-group">
+                                        <span class="input-group-text">
+                                            <i class="mdi mdi-image"></i>
+                                        </span>
+
+                                        <input asp-for="CreateBandLogo.ImgUrl"
+                                               id="ImgUrlInput"
+                                               class="form-control"
+                                               placeholder="Görsel URL" />
+
+                                        <button type="button"
+                                                class="btn btn-outline-primary"
+                                                id="openFileManagerBtn"
+                                                title="Dosya Yöneticisi">
+                                            <i class="mdi mdi-folder-open-outline"></i>
+                                        </button>
+                                    </div>
+
+                                    <span asp-validation-for="CreateBandLogo.ImgUrl"
+                                          class="text-danger small"></span>
+
+                                    <div class="mt-2 d-none" id="imagePreviewWrapper">
+                                        <img id="imagePreview"
+                                             class="preview-image"
+                                             src=""
+                                             alt="Önizleme" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Buttons -->
+                    <div class="d-flex justify-content-end gap-2 pt-3 border-top">
+
+                        <a asp-action="Index" class="btn btn-outline-secondary">
+                            <i class="mdi mdi-arrow-left me-1"></i>
+                            İptal
+                        </a>
+
+                        <button type="submit" class="btn btn-primary">
+                            <i class="mdi mdi-content-save me-1"></i>
+                            Kaydet
+                        </button>
+
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- File Manager Modal -->
+<div class="modal fade"
+     id="fileManagerModal"
+     tabindex="-1"
+     aria-labelledby="fileManagerModalLabel"
+     aria-hidden="true">
+
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title" id="fileManagerModalLabel">
+                    <i class="mdi mdi-folder-open-outline me-1"></i>
+                    Dosya Yöneticisi
+                </h5>
+
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal"
+                        aria-label="Kapat"></button>
+            </div>
+
+            <div class="modal-body p-0" style="height: 600px;">
+                <iframe id="fileManagerFrame"
+                        src=""
+                        style="width:100%; height:100%; border:none;">
+                </iframe>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script src="~/assets/js/app.js"></script>
+
+    <script>
+        $(document).ready(function () {
+
+            // Validation Summary
+            if ($('#validationSummary').find('li').length > 0) {
+                $('#validationSummary').removeClass('d-none');
+            }
+
+            // Görsel Preview
+            $('#ImgUrlInput').on('input', function () {
+
+                const url = $(this).val();
+
+                if (url && url.trim() !== '') {
+                    $('#imagePreview').attr('src', url);
+                    $('#imagePreviewWrapper').removeClass('d-none');
+                }
+                else {
+                    $('#imagePreview').attr('src', '');
+                    $('#imagePreviewWrapper').addClass('d-none');
+                }
+
+            });
+
+            // Başlangıç değer varsa önizlemeyi göster
+            $('#ImgUrlInput').trigger('input');
+
+        });
+
+        // File Manager Modal
+        $('#openFileManagerBtn').on('click', function () {
+
+            $('#fileManagerFrame')
+                .attr('src', '/File?mode=picker&type=image');
+
+            $('#fileManagerModal').modal('show');
+        });
+
+        // File Selected
+        window.addEventListener('message', function (event) {
+
+            if (event.data.type === 'file-selected') {
+
+                $('#ImgUrlInput').val(event.data.url).trigger('input');
+
+                $('#fileManagerModal').modal('hide');
+            }
+        });
+    </script>
+}

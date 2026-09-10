@@ -180,47 +180,24 @@
                             <div class="col-md-3">
                                 <input asp-for="CreateVideo.BitisTarihi" type="datetime-local" class="form-control" />
                             </div>
-
                             <div class="col-md-3">
-                                <select asp-for="CreateVideo.HedefId"
-                                        class="form-select select2"
-                                        asp-items="@(new SelectList(Model.Hedefler, "Id", "Aciklama"))">
-                                    <option value="">-- Hedef Seçin --</option>
-                                </select>
+                          
+                                    
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="mdi mdi-target"></i></span>
+                                    <select asp-for="CreateVideo.HedefId" class="form-select"
+                                                asp-items="@(new SelectList(Model.Hedefler, "Id", "Aciklama"))">
+                                        </select>
+                                    </div>
+                                <span asp-validation-for="CreateVideo.HedefId" class="text-danger small"></span>
+                              
                             </div>
+                          
 
-                            <div class="col-md-3">
-                                <label asp-for="CreateVideo.PageTypeId" class="form-label">Sayfa Türü <span class="text-danger">*</span></label>
-                                <select asp-for="CreateVideo.PageTypeId"
-                                        class="form-select select2"
-                                        asp-items="@(new SelectList(ViewBag.PageTypeler, "Id", "Ad"))">
-                                    <option value="">-- Sayfa Türü Seçin --</option>
-                                </select>
-                                <span asp-validation-for="CreateVideo.PageTypeId" class="text-danger small"></span>
-                            </div>
+                           
                         </div>
                     </div>
 
-                    <!-- SEO -->
-                    <div class="mb-4">
-                        <h6 class="text-primary border-bottom pb-2">
-                            <i class="mdi mdi-magnify me-1"></i> SEO
-                        </h6>
-
-                        <div class="row">
-                            <div class="col-md-4">
-                                <input asp-for="CreateVideo.SeoUrl" class="form-control" />
-                            </div>
-
-                            <div class="col-md-4">
-                                <input asp-for="CreateVideo.SeoTitle" class="form-control" />
-                            </div>
-
-                            <div class="col-md-4">
-                                <input asp-for="CreateVideo.SeoDescription" class="form-control" />
-                            </div>
-                        </div>
-                    </div>
 
                     <!-- BUTTONS -->
                     <div class="d-flex justify-content-end gap-2">

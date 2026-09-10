@@ -1,10 +1,21 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace Microservice.Admin.ViewModels.SitePersonel
 {
+    // Mikroservice.Site.Application.Features.SitePersonelFeatures.CreateSitePersonel.CreateSitePersonelCommandValidation
+    // kurallariyla paralel tutulmustur (istemci tarafi on dogrulama).
     public class CreateSitePersonelVm
     {
+        [Range(1, int.MaxValue, ErrorMessage = "Geçerli bir SiteId girilmelidir.")]
         public int SiteId { get; set; }
+
+        [Range(1, int.MaxValue, ErrorMessage = "Geçerli bir PersonelId girilmelidir.")]
         public int PersonelId { get; set; }
+
+        [Range(1, int.MaxValue, ErrorMessage = "Geçerli bir UnvanId girilmelidir.")]
         public int UnvanId { get; set; }
+
+        [Range(1, int.MaxValue, ErrorMessage = "Geçerli bir PersonelTipId girilmelidir.")]
         public int PersonelTipId { get; set; }
 
         public string? ResimUrl { get; set; } 

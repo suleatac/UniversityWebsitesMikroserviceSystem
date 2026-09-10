@@ -113,7 +113,7 @@
 
                                 <div class="mb-3">
 
-                                    <label asp-for="CreateMenu.Ad" class="form-label">
+                                    <label asp-for="CreateMenu.Baslik" class="form-label">
                                         Menu Adı <span class="text-danger">*</span>
                                     </label>
 
@@ -123,13 +123,13 @@
                                             <i class="mdi mdi-label"></i>
                                         </span>
 
-                                        <input asp-for="CreateMenu.Ad"
+                                        <input asp-for="CreateMenu.Baslik"
                                                class="form-control"
                                                placeholder="Örn: Hakkımızda" />
 
                                     </div>
 
-                                    <span asp-validation-for="CreateMenu.Ad"
+                                    <span asp-validation-for="CreateMenu.Baslik"
                                           class="text-danger small"></span>
 
                                 </div>
@@ -208,71 +208,7 @@
 
                       
 
-                        <div class="row">
-
-                            <div class="col-md-6">
-
-                                <div class="mb-3">
-
-                                    <label asp-for="CreateMenu.IconUrl" class="form-label">
-                                        <i class="mdi mdi-image-outline me-1"></i>
-                                        İkon URL
-                                    </label>
-
-                                    <div class="input-group">
-
-                                        <span class="input-group-text">
-                                            <i class="mdi mdi-image-outline"></i>
-                                        </span>
-
-                                        <input asp-for="CreateMenu.IconUrl"
-                                               id="IconUrlInput"
-                                               class="form-control"
-                                               placeholder="İkon URL veya Font Awesome class (opsiyonel)" />
-
-                                        <button type="button"
-                                                class="btn btn-outline-primary"
-                                                id="openFileManagerBtn"
-                                                title="Dosya Yöneticisi">
-
-                                            <i class="mdi mdi-folder-open-outline"></i>
-
-                                        </button>
-
-                                        <button type="button"
-                                                class="btn btn-outline-info"
-                                                id="openIconPickerBtn"
-                                                title="İkon Seç">
-
-                                            <i class="fas fa-icons"></i>
-
-                                        </button>
-
-                                    </div>
-
-                                    <!-- Icon Preview -->
-                                    <div id="iconPreview" class="mt-2 d-none">
-                                        <div class="d-flex align-items-center p-2 bg-light rounded border">
-                                            <i id="previewIcon" class="fas fa-circle fs-4 me-2 text-primary"></i>
-                                            <code id="previewIconText" class="small"></code>
-                                        </div>
-                                    </div>
-
-                                    <span asp-validation-for="CreateMenu.IconUrl"
-                                          class="text-danger small"></span>
-
-                                    <small class="text-muted">
-                                        <i class="mdi mdi-information-outline"></i>
-                                        İkon seçmek için
-                                        <a href="javascript:void(0);" id="openIconPickerLink">tıklayın</a>
-                                        veya doğrudan Font Awesome class adını (ör: <code>fas fa-user</code>) yazın.
-                                    </small>
-
-                                </div>
-
-                            </div>
-
-                        </div>
+                   
 
                         <div class="row">
 
@@ -280,20 +216,20 @@
 
                                 <div class="mb-3">
 
-                                    <label asp-for="CreateMenu.Icerik"
+                                    <label asp-for="CreateMenu.IcerikMetni"
                                            class="form-label">
 
                                         İçerik Metni
 
                                     </label>
 
-                                    <textarea asp-for="CreateMenu.Icerik"
+                                    <textarea asp-for="CreateMenu.IcerikMetni"
                                               id="IcerikMetniEditor"
                                               class="form-control"
                                               rows="10"
                                               placeholder="Menu içeriği"></textarea>
 
-                                    <span asp-validation-for="CreateMenu.Icerik"
+                                    <span asp-validation-for="CreateMenu.IcerikMetni"
                                           class="text-danger small"></span>
 
                                 </div>
@@ -466,7 +402,7 @@
 
             result.Add(new MenuSelectItemVm {
                 Id = m.Id,
-                Ad = $"{prefix} {m.Ad}"
+                Ad = $"{prefix} {m.Baslik}"
             });
 
             if (m.Children != null && m.Children.Any())

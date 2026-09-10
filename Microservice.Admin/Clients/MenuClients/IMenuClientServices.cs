@@ -9,13 +9,13 @@ namespace Microservice.Admin.Clients.MenuClients
         Task<ApiResponse<List<GetMenuVm>>> GetMenusAsync([Query] int siteId, [Query] int dilId);
 
         [Get("/api/v1/menus/{id}")]
-        Task<ApiResponse<MenuVm>> GetMenuByIdAsync(int id);
+        Task<ApiResponse<MenuDetailVm>> GetMenuByIdAsync(int id);
 
         [Post("/api/v1/menus")]
-        Task<ApiResponse<object>> CreateMenuAsync([Body] MenuVm dto);
+        Task<ApiResponse<object>> CreateMenuAsync([Body] MenuDetailVm dto);
 
         [Put("/api/v1/menus/{id}")]
-        Task<ApiResponse<object>> UpdateMenuAsync(int id, [Body] MenuVm dto);
+        Task<ApiResponse<object>> UpdateMenuAsync(int id, [Body] MenuDetailVm dto);
 
         [Delete("/api/v1/menus/{id}")]
         Task<ApiResponse<object>> DeleteMenuAsync(int id);

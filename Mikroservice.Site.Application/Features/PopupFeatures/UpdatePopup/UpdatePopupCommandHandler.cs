@@ -22,20 +22,16 @@ namespace Mikroservice.Site.Application.Features.PopupFeatures.UpdatePopup
 
             popup.Baslik = request.Baslik;
             popup.KisaAciklama = request.KisaAciklama;
-            popup.IcerikMetni = request.IcerikMetni;
             popup.Link = request.Link;
             popup.ResimUrl = request.ResimUrl;
             popup.YayimTarihi = request.YayimTarihi;
             popup.BaslamaTarihi = request.BaslamaTarihi;
             popup.BitisTarihi = request.BitisTarihi;
-            popup.SeoUrl = request.SeoUrl;
-            popup.SeoTitle = request.SeoTitle;
-            popup.SeoDescription = request.SeoDescription;
             popup.SiteId = request.SiteId;
+            popup.DilId = request.DilId;
             popup.TamEkranMi = request.TamEkranMi;
             popup.GosterimSuresiSaniye = request.GosterimSuresiSaniye;
             popup.CookieIleTekrarGosterme = request.CookieIleTekrarGosterme;
-            popup.PageTypeId = request.PageTypeId;
 
             await unitOfWork.SaveChangesAsync(cancellationToken);
 

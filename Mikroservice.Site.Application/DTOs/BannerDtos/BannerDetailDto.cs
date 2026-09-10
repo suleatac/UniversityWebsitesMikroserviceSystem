@@ -5,7 +5,7 @@ namespace Mikroservice.Site.Application.DTOs.BannerDtos
         public int Id { get; set; }
         public int SiteId { get; set; }
         public int DilId { get; set; }
-        public int? HedefId { get; set; }
+        public int HedefId { get; set; }
         public string Baslik { get; set; } = default!;
         public string KisaAciklama { get; set; } = default!;
         public string IcerikMetni { get; set; } = default!;
@@ -17,7 +17,7 @@ namespace Mikroservice.Site.Application.DTOs.BannerDtos
         public DateTime EklemeTarihi { get; set; }
         public DateTime? BaslamaTarihi { get; set; }
         public DateTime? BitisTarihi { get; set; }
-        public string? SeoUrl { get; set; }
+        public string SeoUrl { get; set; }= default!;
         public string? SeoTitle { get; set; }
         public string? SeoDescription { get; set; }
     }

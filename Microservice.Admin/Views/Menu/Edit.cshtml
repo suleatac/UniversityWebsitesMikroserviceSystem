@@ -128,7 +128,7 @@
 
                                 <div class="mb-3">
 
-                                    <label asp-for="Menu.Ad"
+                                    <label asp-for="Menu.Baslik"
                                            class="form-label">
 
                                         Menu Adı
@@ -142,13 +142,13 @@
                                             <i class="mdi mdi-label"></i>
                                         </span>
 
-                                        <input asp-for="Menu.Ad"
+                                        <input asp-for="Menu.Baslik"
                                                class="form-control"
                                                placeholder="Örn: Hakkımızda" />
 
                                     </div>
 
-                                    <span asp-validation-for="Menu.Ad"
+                                    <span asp-validation-for="Menu.Baslik"
                                           class="text-danger small"></span>
 
                                 </div>
@@ -247,7 +247,7 @@
 
                         </div>
 
-                        <div class="row">
+              @*           <div class="row">
 
                             <div class="col-md-6">
 
@@ -314,7 +314,7 @@
 
                             </div>
 
-                        </div>
+                        </div> *@
 
                         <div class="row">
 
@@ -322,7 +322,7 @@
 
                                 <div class="mb-3">
 
-                                    <label asp-for="Menu.Icerik"
+                                    <label asp-for="Menu.IcerikMetni"
                                            class="form-label">
 
                                         <i class="mdi mdi-text me-1"></i>
@@ -330,13 +330,13 @@
 
                                     </label>
 
-                                    <textarea asp-for="Menu.Icerik"
+                                    <textarea asp-for="Menu.IcerikMetni"
                                               id="IcerikMetniEditor"
                                               class="form-control"
                                               rows="10"
                                               placeholder="Menu içeriği"></textarea>
 
-                                    <span asp-validation-for="Menu.Icerik"
+                                    <span asp-validation-for="Menu.IcerikMetni"
                                           class="text-danger small"></span>
 
                                 </div>
@@ -541,7 +541,7 @@
 
             result.Add(new MenuSelectItemVm {
                 Id = m.Id,
-                Ad = $"{prefix} {m.Ad}"
+                Ad = $"{prefix} {m.Baslik}"
             });
 
             if (m.Children != null && m.Children.Any())

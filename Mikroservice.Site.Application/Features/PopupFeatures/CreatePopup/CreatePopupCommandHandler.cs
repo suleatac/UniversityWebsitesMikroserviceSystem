@@ -23,19 +23,15 @@ namespace Mikroservice.Site.Application.Features.PopupFeatures.CreatePopup
             }
 
             var newPopup = new Popup {
-                PageTypeId = request.PageTypeId,
                 Baslik = request.Baslik,
                 KisaAciklama = request.KisaAciklama,
-                IcerikMetni = request.IcerikMetni,
                 Link = request.Link,
                 ResimUrl = request.ResimUrl,
                 YayimTarihi = request.YayimTarihi,
                 BaslamaTarihi = request.BaslamaTarihi,
                 BitisTarihi = request.BitisTarihi,
-                SeoUrl = request.SeoUrl,
-                SeoTitle = request.SeoTitle,
-                SeoDescription = request.SeoDescription,
                 SiteId = request.SiteId,
+                DilId = request.DilId,
 
                 EklemeTarihi = DateTime.Now,
                 GosterimSayisi = 0,

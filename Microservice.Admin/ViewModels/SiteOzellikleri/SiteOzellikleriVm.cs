@@ -1,8 +1,14 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace Microservice.Admin.ViewModels.SiteOzellikleri
 {
+    // Mikroservice.Site.Application.Features.SiteOzellikleriFeatures (Create/Update) CommandValidation
+    // kurallariyla paralel tutulmustur (istemci tarafi on dogrulama).
     public class SiteOzellikleriVm
     {
         public int Id { get; set; }
+
+        [Range(1, int.MaxValue, ErrorMessage = "SiteId 0'dan büyük olmalıdır.")]
         public int SiteId { get; set; }
         public string? SiteAdress { get; set; } 
         public string? SiteAdressEng { get; set; } 
