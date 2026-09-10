@@ -22,6 +22,10 @@ namespace Mikroservice.Site.Application.Features.MenuFeatures.UpdateMenu
 
         public bool MegaMenu { get; init; }
 
+        public int Location { get; init; } = 1;
+
+        public bool IsVisible { get; init; } = true;
+
         public int? ParentId { get; init; }
 
         // SEO (opsiyonel ama önemli)

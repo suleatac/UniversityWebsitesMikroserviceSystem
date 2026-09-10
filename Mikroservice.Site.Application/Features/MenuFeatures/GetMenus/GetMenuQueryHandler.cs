@@ -5,6 +5,7 @@ using Microservice.Site.Application.Contracts.IRepositories;
 using Microsoft.Extensions.Logging;
 using Mikroservice.Site.Application.DTOs.MenuDtos;
 using Mikroservice.Site.Domain.Entities;
+using Mikroservice.Site.Domain.Enums;
 
 namespace Mikroservice.Site.Application.Features.MenuFeatures.GetMenus
 {
@@ -17,7 +18,7 @@ namespace Mikroservice.Site.Application.Features.MenuFeatures.GetMenus
     {
         public async Task<ServiceResult<List<MenuDto>>> Handle(GetMenuQuery request, CancellationToken cancellationToken)
         {
-            var cacheKey = $"menus:list:{request.SiteId}:{request.DilId}";
+            var cacheKey = $"menus:list:{request.SiteId}:{request.DilId}:{request.Location?.ToString() ?? "all"}";
 
             // ✔ Cache kontrol
             var cached = await redisCacheService.GetListAsync<MenuDto>(cacheKey, cancellationToken);
@@ -33,10 +34,19 @@ namespace Mikroservice.Site.Application.Features.MenuFeatures.GetMenus
             }
 
             // ✔ DB'den flat veri çek
-            var data = menuRepository.GetAll()
+            var query = menuRepository.GetAll()
                 .Where(x =>
                     x.SiteId == request.SiteId &&
-                    x.DilId == request.DilId)
+                    x.DilId == request.DilId &&
+                    x.IsVisible);
+
+            if (request.Location.HasValue)
+            {
+                var location = (MenuLocation)request.Location.Value;
+                query = query.Where(x => x.Location == location);
+            }
+
+            var data = query
                 .OrderBy(x => x.Sira)
                 .ToList();
 
@@ -74,6 +84,8 @@ namespace Mikroservice.Site.Application.Features.MenuFeatures.GetMenus
                     IcerikMetni = x.IcerikMetni,
                     Sira = x.Sira,
                     MegaMenu = x.MegaMenu,
+                    Location = (int)x.Location,
+                    IsVisible = x.IsVisible,
                     ParentId = x.ParentId,
                     Children = BuildTree(list, x.Id)
                 })

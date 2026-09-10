@@ -11,6 +11,13 @@
         Menu = 7
     }
 
+    public enum MenuLocation
+    {
+        Header = 1,
+        Footer = 2,
+        Sidebar = 3
+    }
+
     public enum PageTypeKind
     {
         Home = 1,

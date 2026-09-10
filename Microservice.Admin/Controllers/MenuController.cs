@@ -31,14 +31,14 @@ namespace Microservice.Admin.Controllers
         }
 
         // 🔹 LIST
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int? location)
         {
-            _logger.LogInformation("Menu listesi getiriliyor.");
+            _logger.LogInformation("Menu listesi getiriliyor. Location: {Location}", location);
 
             var currentSiteId = HttpContext.Session.GetInt32("CurrentSiteId") ?? 1;
             var currentDilId = HttpContext.Session.GetInt32("CurrentDilId") ?? 1;
 
-            var result = await _menuService.GetMenusAsync(currentSiteId, currentDilId);
+            var result = await _menuService.GetMenusAsync(currentSiteId, currentDilId, location);
 
             if (!result.IsSuccess)
             {
@@ -50,17 +50,29 @@ namespace Microservice.Admin.Controllers
 
             _logger.LogInformation("Menu listesi başarıyla getirildi. Count: {Count}", result.Data!.Count);
 
+            ViewBag.Location = location;
             return View(result.Data);
         }
 
         // 🔹 CREATE - GET
         [HttpGet]
-        public async Task<IActionResult> Create(int? parentId)
+        public async Task<IActionResult> Create(int? parentId, int? location)
         {
-            _logger.LogInformation("Menu oluşturma sayfası açıldı. ParentId: {ParentId}", parentId);
+            _logger.LogInformation("Menu oluşturma sayfası açıldı. ParentId: {ParentId}, Location: {Location}", parentId, location);
 
             var currentSiteId = HttpContext.Session.GetInt32("CurrentSiteId") ?? 1;
             var currentDilId = HttpContext.Session.GetInt32("CurrentDilId") ?? 1;
+
+            // Parent secildiyse konumu parent'tan miras al (footer sutununun altindaki link footer olmali)
+            var inheritedLocation = location;
+            if (parentId.HasValue && (inheritedLocation is null || inheritedLocation == MenuLocationOption.Header))
+            {
+                var parentResult = await _menuService.GetMenuByIdAsync(parentId.Value);
+                if (parentResult.IsSuccess && parentResult.Data != null)
+                {
+                    inheritedLocation = parentResult.Data.Location;
+                }
+            }
 
             var menulerResult = await _menuService.GetMenusAsync(currentSiteId, currentDilId);
             var dillerResult = await _dilService.GetDilsAsync();
@@ -68,7 +80,13 @@ namespace Microservice.Admin.Controllers
 
             var vm = new MenuCreateIndexVm
             {
-                CreateMenu = new MenuDetailVm { ParentId = parentId, SiteId = currentSiteId, DilId = currentDilId },
+                CreateMenu = new MenuDetailVm
+                {
+                    ParentId = parentId,
+                    SiteId = currentSiteId,
+                    DilId = currentDilId,
+                    Location = inheritedLocation ?? MenuLocationOption.Header
+                },
                 Menuler = menulerResult.IsSuccess ? menulerResult.Data! : new List<GetMenuVm>(),
                 Diller = dillerResult.IsSuccess ? dillerResult.Data! : new List<GetDilVm>(),
                 Hedefler = hedeflerResult.IsSuccess ? hedeflerResult.Data! : new List<GetHedefVm>()
@@ -167,6 +185,8 @@ namespace Microservice.Admin.Controllers
                 IcerikMetni = result.Data.IcerikMetni,
                 Sira = result.Data.Sira,
                 MegaMenu = result.Data.MegaMenu,
+                Location = result.Data.Location,
+                IsVisible = result.Data.IsVisible,
                 ParentId = result.Data.ParentId
             };
 
@@ -310,6 +330,8 @@ namespace Microservice.Admin.Controllers
                 Link = existing.Link,
                 IcerikMetni = existing.IcerikMetni,
                 MegaMenu = existing.MegaMenu,
+                Location = existing.Location,
+                IsVisible = existing.IsVisible,
                 SiteId = existing.SiteId,
                 DilId = existing.DilId,
                 HedefId = existing.HedefId
@@ -343,6 +365,8 @@ namespace Microservice.Admin.Controllers
                             Link = siblingResult.Data.Link,
                             IcerikMetni = siblingResult.Data.IcerikMetni,
                             MegaMenu = siblingResult.Data.MegaMenu,
+                            Location = siblingResult.Data.Location,
+                            IsVisible = siblingResult.Data.IsVisible,
                             SiteId = siblingResult.Data.SiteId,
                             DilId = siblingResult.Data.DilId,
                             HedefId = siblingResult.Data.HedefId
@@ -358,12 +382,12 @@ namespace Microservice.Admin.Controllers
 
         // 🔹 jsTree JSON DATA - AJAX
         [HttpGet]
-        public async Task<IActionResult> GetMenuTreeData()
+        public async Task<IActionResult> GetMenuTreeData(int? location)
         {
             var currentSiteId = HttpContext.Session.GetInt32("CurrentSiteId") ?? 1;
             var currentDilId = HttpContext.Session.GetInt32("CurrentDilId") ?? 1;
 
-            var result = await _menuService.GetMenusAsync(currentSiteId, currentDilId);
+            var result = await _menuService.GetMenusAsync(currentSiteId, currentDilId, location);
 
             if (!result.IsSuccess || result.Data == null)
             {

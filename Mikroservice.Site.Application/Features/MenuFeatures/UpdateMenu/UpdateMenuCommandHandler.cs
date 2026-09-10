@@ -4,6 +4,7 @@ using Microservice.Shared;
 using Microservice.Shared.Services.RabbitMqMasstransitServiceItems.Events.MenuEvents;
 using Microservice.Shared.Services.RedisServiceItems;
 using Microservice.Site.Application.Contracts.IRepositories;
+using Mikroservice.Site.Domain.Enums;
 using System;
 using System.Collections.Generic;
 using System.Net;
@@ -44,8 +45,14 @@ namespace Mikroservice.Site.Application.Features.MenuFeatures.UpdateMenu
 
             menu.Sira = request.Sira;
             menu.MegaMenu = request.MegaMenu;
+            menu.Location = (MenuLocation)request.Location;
+            menu.IsVisible = request.IsVisible;
 
             menu.ParentId = request.ParentId;
+
+            menu.SeoUrl = request.SeoUrl;
+            menu.SeoTitle = request.SeoTitle;
+            menu.SeoDescription = request.SeoDescription;
 
             // 🔹 (Opsiyonel) hedef değiştirilebilir
             menu.HedefId = request.HedefId;
@@ -54,8 +61,7 @@ namespace Mikroservice.Site.Application.Features.MenuFeatures.UpdateMenu
             await unitOfWork.SaveChangesAsync(cancellationToken);
 
             // 🔥 Event (cache invalidation)
-            var key = $"menus:list:{menu.SiteId}:{menu.DilId}";
-            await redisCache.RemoveAsync(key, cancellationToken);
+            await redisCache.RemoveByPatternAsync($"menus:list:{menu.SiteId}:{menu.DilId}:*", cancellationToken);
 
             return ServiceResult.Success();
         }

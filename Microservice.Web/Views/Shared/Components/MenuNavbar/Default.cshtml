@@ -22,7 +22,7 @@
                 <div class="col-md-12">
                     <nav class="navbar menu-top">
                         <ul class="menu clearfix">
-                            <li class="home">
+                          @*   <li class="home">
                                 <a href="blog.html">Blog</a>
                                 <ul class="submenu">
                                     <li><a href="blog-single.html">Blog Single</a></li>
@@ -33,26 +33,52 @@
                                 <ul class="submenu">
                                     <li><a href="portfolio-single.html">Portfolio Single</a></li>
                                 </ul><!-- /.submenu -->
+                            </li> *@
+                            <!-- Burası translate butonları kısmı-->
+                          
+                            <li style="position: relative;">
+                                <div class="text-wrapper mr-3">
+                                    <div class="btn-group">
+                                        <div id="google_translate_element"></div>
+                                    </div>
+                                </div>
                             </li>
                             <li>
-                                <a href="event-grid.html">Events</a>
+                                <a href="member.html">İletişim</a>
                                 <ul class="submenu">
-                                    <li><a href="event-list.html">Events List</a></li>
-                                    <li><a href="event-single.html">Events Single</a></li>
-                                </ul><!-- /.submenu -->
-                            </li>
-                            <li>
-                                <a href="course-grid.html">Courses</a>
-                                <ul class="submenu">
-                                    <li><a href="course-list.html">Courses List</a></li>
-                                    <li><a href="course-single.html">Courses Single</a></li>
-                                </ul><!-- /.submenu -->
-                            </li>
-                            <li>
-                                <a href="member.html">Member</a>
-                                <ul class="submenu">
-                                    <li><a href="member-single.html">Members Single</a></li>
-                                    <li><a href="contact.html">Contact</a></li>
+                                    <li><a href="mailto:@Model.Site.SiteEPosta">Email</a></li>
+                                    @if (!string.IsNullOrWhiteSpace(Model.Site?.SiteOzellikleri?.SiteWatsappAdress))
+                                    {
+                                        <li><a href="https://api.whatsapp.com/send?phone=@Model.Site.SiteOzellikleri.SiteWatsappAdress">Whatsapp</a></li>  
+                                    }
+                                    @if (!string.IsNullOrWhiteSpace(Model.Site?.SiteOzellikleri?.SiteTelNo))
+                                    {
+                                        <li><a href="https://api.whatsapp.com/send?phone=@Model.Site.SiteOzellikleri.SiteTelNo">Telefon</a></li>
+                                    }
+                                    @if (!string.IsNullOrWhiteSpace(Model.Site?.SiteOzellikleri?.SiteFaxNo))
+                                    {
+                                        <li><a href="https://api.whatsapp.com/send?phone=@Model.Site.SiteOzellikleri.SiteFaxNo">Fax</a></li>
+                                    }
+                                    @if (!string.IsNullOrWhiteSpace(Model.Site?.SiteOzellikleri?.SiteWatsappAdress))
+                                    {
+                                        <li><a href="https://api.whatsapp.com/send?phone=@Model.Site.SiteOzellikleri.SiteWatsappAdress">Instagram</a></li>
+                                    }
+                                    @if (!string.IsNullOrWhiteSpace(Model.Site?.SiteOzellikleri?.SiteWatsappAdress))
+                                    {
+                                        <li><a href="https://api.whatsapp.com/send?phone=@Model.Site.SiteOzellikleri.SiteWatsappAdress">Whatsapp</a></li>
+                                    }
+                                    @if (!string.IsNullOrWhiteSpace(Model.Site?.SiteOzellikleri?.SiteLinkedinAdress))
+                                    {
+                                        <li><a href="https://api.whatsapp.com/send?phone=@Model.Site.SiteOzellikleri.SiteLinkedinAdress">Linkedin</a></li>
+                                    }
+                                    @if (!string.IsNullOrWhiteSpace(Model.Site?.SiteOzellikleri?.SiteTwitterAdress))
+                                    {
+                                        <li><a href="https://api.whatsapp.com/send?phone=@Model.Site.SiteOzellikleri.SiteTwitterAdress">Twitter</a></li>
+                                    }
+                                    @if (!string.IsNullOrWhiteSpace(Model.Site?.SiteOzellikleri?.SiteYoutubeAdress))
+                                    {
+                                        <li><a href="https://api.whatsapp.com/send?phone=@Model.Site.SiteOzellikleri.SiteYoutubeAdress">Youtube</a></li>
+                                    }
                                 </ul><!-- /.submenu -->
                             </li>
                         </ul><!-- /.menu -->
@@ -75,15 +101,36 @@
 
                     <div class="navbar-right topnav-sidebar">
                         <ul class="textwidget">
-                            <li>
-                                <a href="#"><i class="fa fa-facebook"></i></a>
+                            @if (!string.IsNullOrWhiteSpace(Model.Site?.SiteOzellikleri?.SiteFacebookAdress))
+                            {
+                                   <li>
+                                    <a href="@Model.Site.SiteOzellikleri.SiteFacebookAdress"><i class="fa fa-facebook"></i></a>
                             </li>
-                            <li>
-                                <a href="#"><i class="fa fa-youtube"></i></a>
-                            </li>
-                            <li>
-                                <a href="#"><i class="fa fa-twitter"></i></a>
-                            </li>
+                            }
+                            @if (!string.IsNullOrWhiteSpace(Model.Site?.SiteOzellikleri?.SiteLinkedinAdress))
+                            {
+                                <li>
+                                    <a href="@Model.Site.SiteOzellikleri.SiteLinkedinAdress"><i class="fa fa-linkedin"></i></a>
+                                </li>
+                            }
+                            @if (!string.IsNullOrWhiteSpace(Model.Site?.SiteOzellikleri?.SiteInstagramAdress))
+                            {
+                                <li>
+                                    <a href="@Model.Site.SiteOzellikleri.SiteInstagramAdress"><i class="fa fa-instagram"></i></a>
+                                </li>
+                            }
+                            @if (!string.IsNullOrWhiteSpace(Model.Site?.SiteOzellikleri?.SiteYoutubeAdress))
+                            {
+                                <li>
+                                    <a href="@Model.Site.SiteOzellikleri.SiteYoutubeAdress"><i class="fa fa-youtube"></i></a>
+                                </li>
+                            }
+                            @if (!string.IsNullOrWhiteSpace(Model.Site?.SiteOzellikleri?.SiteTwitterAdress))
+                            {
+                                <li>
+                                    <a href="@Model.Site.SiteOzellikleri.SiteTwitterAdress"><i class="fa fa-twitter"></i></a>
+                                </li>
+                            }
                         </ul>
                     </div>
                 </div><!-- col-md-12 -->

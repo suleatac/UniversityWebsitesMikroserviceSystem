@@ -82,10 +82,40 @@
                             <p class="card-text text-muted mb-0">Menüleri sürükleyerek yeniden sıralayabilir ve hiyerarşiyi düzenleyebilirsiniz</p>
                         </div>
                     </div>
-                    <a asp-action="Create" class="btn btn-primary btn-sm">
+                    <a asp-action="Create" asp-route-location="@ViewBag.Location" class="btn btn-primary btn-sm">
                         <i class="mdi mdi-plus me-1"></i> Yeni Menu
                     </a>
                 </div>
+            </div>
+
+            <!-- Konum sekmeleri -->
+            <div class="px-4 pt-3">
+                <ul class="nav nav-pills nav-sm gap-2">
+                    <li class="nav-item">
+                        <a class="nav-link @(ViewBag.Location == null ? "active" : "")"
+                           asp-action="Index">
+                            <i class="mdi mdi-format-list-bulleted me-1"></i> Tümü
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link @(ViewBag.Location != null && (int)ViewBag.Location == Microservice.Admin.ViewModels.Menu.MenuLocationOption.Header ? "active" : "")"
+                           asp-action="Index" asp-route-location="@Microservice.Admin.ViewModels.Menu.MenuLocationOption.Header">
+                            <i class="mdi mdi-menu me-1"></i> Üst Menü
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link @(ViewBag.Location != null && (int)ViewBag.Location == Microservice.Admin.ViewModels.Menu.MenuLocationOption.Footer ? "active" : "")"
+                           asp-action="Index" asp-route-location="@Microservice.Admin.ViewModels.Menu.MenuLocationOption.Footer">
+                            <i class="mdi mdi-shape-rectangle-plus me-1"></i> Alt Menü - Hızlı Erişim
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link @(ViewBag.Location != null && (int)ViewBag.Location == Microservice.Admin.ViewModels.Menu.MenuLocationOption.Sidebar ? "active" : "")"
+                           asp-action="Index" asp-route-location="@Microservice.Admin.ViewModels.Menu.MenuLocationOption.Sidebar">
+                            <i class="mdi mdi-drawer-left me-1"></i> Sidebar
+                        </a>
+                    </li>
+                </ul>
             </div>
 
             <div class="card-body p-4">
@@ -149,7 +179,7 @@
             tree.jstree({
                 'core': {
                     'data': {
-                        'url': '@Url.Action("GetMenuTreeData", "Menu")',
+                        'url': '@Url.Action("GetMenuTreeData", "Menu")?location=@(ViewBag.Location?.ToString() ?? "")',
                         'dataType': 'json'
                     },
                     'check_callback': function (operation, node, node_parent, node_position, more) {

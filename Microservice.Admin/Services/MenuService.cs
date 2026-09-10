@@ -14,20 +14,27 @@ namespace Microservice.Admin.Services
 
         private readonly IPageTypeService _pageTypeService;
         private readonly ISiteService _siteService;
-        public MenuService(IMenuClientServices menuClient, ILogger<MenuService> logger, IPageTypeService pageTypeService, ISiteService siteService)
+        private readonly ISeoService _seoService;
+        public MenuService(
+            IMenuClientServices menuClient, 
+            ILogger<MenuService> logger, 
+            IPageTypeService pageTypeService,
+            ISeoService seoService,
+            ISiteService siteService)
         {
             _menuClient = menuClient ?? throw new ArgumentNullException(nameof(menuClient));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _pageTypeService = pageTypeService ?? throw new ArgumentNullException(nameof(pageTypeService));
             _siteService = siteService ?? throw new ArgumentNullException(nameof(siteService));
+            _seoService = seoService ?? throw new ArgumentNullException(nameof(seoService));
         }
 
         // LIST
-        public async Task<ServiceResult<List<GetMenuVm>>> GetMenusAsync(int siteId, int dilId)
+        public async Task<ServiceResult<List<GetMenuVm>>> GetMenusAsync(int siteId, int dilId, int? location = null)
         {
-            _logger.LogInformation("API'den menu listesi çekiliyor. SiteId: {SiteId}, DilId: {DilId}", siteId, dilId);
+            _logger.LogInformation("API'den menu listesi çekiliyor. SiteId: {SiteId}, DilId: {DilId}, Location: {Location}", siteId, dilId, location);
 
-            var response = await _menuClient.GetMenusAsync(siteId, dilId);
+            var response = await _menuClient.GetMenusAsync(siteId, dilId, location);
 
             if (!response.IsSuccessStatusCode)
             {
@@ -108,6 +115,21 @@ namespace Microservice.Admin.Services
             // PageTypeId'yi client'tan değil server'dan belirle
             dto.PageTypeId = menuPageTypeResult.Data.Id;
 
+
+
+
+            // SEO bilgileri kullanıcıdan alınmaz; başlıktan otomatik üretilir
+            await _seoService.ApplyAutoSeoAsync(dto.SiteId, dto.PageTypeId, dto.Baslik, dto.Baslik,
+                seoUrl => dto.SeoUrl = seoUrl,
+                seoTitle => dto.SeoTitle = seoTitle,
+                seoDescription => dto.SeoDescription = seoDescription,
+                fallbackSlug: "menu");
+
+
+
+
+
+
             _logger.LogInformation("Yeni menu oluşturuluyor. Name: {Name}", dto.Baslik);
 
             var response = await _menuClient.CreateMenuAsync(dto);
@@ -165,7 +187,12 @@ namespace Microservice.Admin.Services
 
 
 
-
+            // SEO bilgileri kullanıcıdan alınmaz; başlıktan otomatik üretilir
+            await _seoService.ApplyAutoSeoAsync(dto.SiteId, dto.PageTypeId, dto.Baslik, dto.Baslik,
+                seoUrl => dto.SeoUrl = seoUrl,
+                seoTitle => dto.SeoTitle = seoTitle,
+                seoDescription => dto.SeoDescription = seoDescription,
+                fallbackSlug: "menu");
 
 
 

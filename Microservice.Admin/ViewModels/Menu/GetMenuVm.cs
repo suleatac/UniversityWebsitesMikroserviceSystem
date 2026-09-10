@@ -9,6 +9,8 @@ namespace Microservice.Admin.ViewModels.Menu
         public string? IcerikMetni { get; set; }
         public int Sira { get; set; }
         public bool MegaMenu { get; set; }
+        public int Location { get; set; } = 1;
+        public bool IsVisible { get; set; } = true;
         public int? ParentId { get; set; }
         public int SiteId { get; set; }
         public int DilId { get; set; }

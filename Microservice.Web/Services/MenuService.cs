@@ -21,9 +21,9 @@ namespace Microservice.Web.Services
             _logger = logger;
         }
 
-        public async Task<ServiceResult<List<MenuGetVm>>> GetMenusAsync(int siteId, int dilId)
+        public async Task<ServiceResult<List<MenuGetVm>>> GetMenusAsync(int siteId, int dilId, int? location = null)
         {
-            var cacheKey = $"menu:list:{siteId}:{dilId}";
+            var cacheKey = $"menu:list:{siteId}:{dilId}:{location?.ToString() ?? "all"}";
 
             //var cached = await _redisCacheService.GetListAsync<MenuGetVm>(cacheKey);
             //if (cached is not null)
@@ -34,7 +34,7 @@ namespace Microservice.Web.Services
 
             _logger.LogInformation("Menuler çekiliyor. SiteId: {SiteId}, DilId: {DilId}", siteId, dilId);
 
-            var response = await _menuClient.GetMenusAsync(siteId, dilId);
+            var response = await _menuClient.GetMenusAsync(siteId, dilId, location);
 
             if (!response.IsSuccessStatusCode)
             {

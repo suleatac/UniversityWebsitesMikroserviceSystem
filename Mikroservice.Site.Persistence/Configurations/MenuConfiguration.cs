@@ -17,6 +17,15 @@ namespace Mikroservice.Site.Persistence.Configurations
             builder.Property(x => x.Sira)
                 .IsRequired();
 
+            // Location enum -> int olarak saklanir (MenuLocation)
+            builder.Property(x => x.Location)
+                .HasConversion<int>()
+                .IsRequired();
+
+            builder.Property(x => x.IsVisible)
+                .IsRequired()
+                .HasDefaultValue(true);
+
             // =========================
             // SELF RELATION (TREE)
             // =========================
@@ -31,6 +40,9 @@ namespace Mikroservice.Site.Persistence.Configurations
             // =========================
          
             builder.HasIndex(x => new { x.ParentId, x.Sira });
+
+            // Footer/header menuleri site + dil + bolge bazinda sorgulanir
+            builder.HasIndex(x => new { x.SiteId, x.DilId, x.Location });
 
         }
     }

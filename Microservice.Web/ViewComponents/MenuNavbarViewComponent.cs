@@ -8,6 +8,9 @@ namespace Microservice.Web.ViewComponents
     // Sayfa tipinden bağımsız olarak her template layout'unda navbar menülerini üretir.
     public class MenuNavbarViewComponent : ViewComponent
     {
+        // Mikroservice.Site.Domain.Enums.MenuLocation.Header karsiligi
+        private const int HeaderLocation = 1;
+
         private readonly IMenuService _menuService;
         private readonly ILogger<MenuNavbarViewComponent> _logger;
 
@@ -30,8 +33,11 @@ namespace Microservice.Web.ViewComponents
 
             var menus = preloadedMenus ?? await GetMenusAsync(siteId, dilId);
 
+            // Footer/sidebar menuleri navbar'da gorunmemeli
             var rootMenus = menus
-                .Where(menu => menu.ParentId is null)
+                .Where(menu => menu.ParentId is null
+                               && menu.IsVisible
+                               && menu.Location == HeaderLocation)
                 .OrderBy(menu => menu.Sira)
                 .ToList();
 

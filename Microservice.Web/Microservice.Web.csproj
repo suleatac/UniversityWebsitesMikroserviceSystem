@@ -10,10 +10,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="wwwroot\Template2\**" />
+    <Content Remove="wwwroot\Template2\**" />
+    <EmbeddedResource Remove="wwwroot\Template2\**" />
+    <None Remove="wwwroot\Template2\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Folder Include="Views\Templates\Template2\" />
-    <Folder Include="wwwroot\Template2\css\" />
-    <Folder Include="wwwroot\Template2\js\" />
-    <Folder Include="wwwroot\Template2\lib\" />
   </ItemGroup>
 
   <ItemGroup>

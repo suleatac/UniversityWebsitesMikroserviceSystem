@@ -27,8 +27,7 @@ namespace Mikroservice.Site.Application.Features.MenuFeatures.DeleteMenu
             await unitOfWork.SaveChangesAsync(cancellationToken);
 
             // 🔥 Cache invalidation
-            var key = $"menus:list:{menu.SiteId}:{menu.DilId}";
-            await redisCache.RemoveAsync(key, cancellationToken);
+            await redisCache.RemoveByPatternAsync($"menus:list:{menu.SiteId}:{menu.DilId}:*", cancellationToken);
 
             return ServiceResult.Success();
         }

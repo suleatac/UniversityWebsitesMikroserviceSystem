@@ -12,9 +12,10 @@ namespace Mikroservice.Site.Api.Endpoints.MenuEndPoints.EndPoints
             group.MapGet("/", async (
                 int siteId,
                 int dilId,
+                int? location,
                 IMediator mediator) =>
             {
-                var result = await mediator.Send(new GetMenuQuery(siteId, dilId));
+                var result = await mediator.Send(new GetMenuQuery(siteId, dilId, location));
                 return result.ToGenericResult();
             })
             .WithName("GetMenus")

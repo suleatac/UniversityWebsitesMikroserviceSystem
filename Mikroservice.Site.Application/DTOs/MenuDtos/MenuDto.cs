@@ -15,6 +15,9 @@
         public int Sira { get; set; }
         public bool MegaMenu { get; set; }
 
+        public int Location { get; set; }
+        public bool IsVisible { get; set; } = true;
+
         public int? ParentId { get; set; }
 
         public List<MenuDto> Children { get; set; } = new();

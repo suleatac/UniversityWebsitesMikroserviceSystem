@@ -16,6 +16,9 @@ namespace Mikroservice.Site.Application.DTOs.MenuDtos
         public int Sira { get; set; }
         public bool MegaMenu { get; set; }
 
+        public int Location { get; set; }
+        public bool IsVisible { get; set; } = true;
+
         public int? ParentId { get; set; }
 
         public string SeoUrl { get; set; } = default!;

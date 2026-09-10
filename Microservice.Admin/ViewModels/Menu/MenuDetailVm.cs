@@ -35,10 +35,16 @@ namespace Microservice.Admin.ViewModels.Menu
 
         public bool MegaMenu { get; set; }
 
+        // MenuLocation karsiligi: 1=Header (ust menu), 2=Footer (Hizli Erisim), 3=Sidebar
+        [Range(1, 3, ErrorMessage = "Gecerli bir menu konumu seciniz.")]
+        public int Location { get; set; } = 1;
+
+        public bool IsVisible { get; set; } = true;
+
         public int? ParentId { get; set; }
 
         [StringLength(200, ErrorMessage = "SEO URL en fazla 200 karakter olabilir.")]
-        public string SeoUrl { get; set; } = default!;
+        public string? SeoUrl { get; set; } 
 
         [StringLength(200, ErrorMessage = "SEO başlık en fazla 200 karakter olabilir.")]
         public string? SeoTitle { get; set; }

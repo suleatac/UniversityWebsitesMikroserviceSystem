@@ -3,6 +3,7 @@ using Microservice.Shared;
 using Microservice.Shared.Services.RedisServiceItems;
 using Microservice.Site.Application.Contracts.IRepositories;
 using Mikroservice.Site.Domain.Entities;
+using Mikroservice.Site.Domain.Enums;
 
 namespace Mikroservice.Site.Application.Features.MenuFeatures.CreateMenu
 {
@@ -28,7 +29,13 @@ namespace Mikroservice.Site.Application.Features.MenuFeatures.CreateMenu
 
                 Sira = request.Sira,
                 MegaMenu = request.MegaMenu,
+                Location = (MenuLocation)request.Location,
+                IsVisible = request.IsVisible,
                 ParentId = request.ParentId,
+
+                SeoUrl = request.SeoUrl,
+                SeoTitle = request.SeoTitle,
+                SeoDescription = request.SeoDescription,
 
                 EklemeTarihi = DateTime.Now,
                 IsDeleted = false
@@ -40,8 +47,7 @@ namespace Mikroservice.Site.Application.Features.MenuFeatures.CreateMenu
             // 🔥 cache temizleme işlemi
            
 
-            var key = $"menus:list:{menu.SiteId}:{menu.DilId}";
-            await redisCache.RemoveAsync(key, cancellationToken);
+            await redisCache.RemoveByPatternAsync($"menus:list:{menu.SiteId}:{menu.DilId}:*", cancellationToken);
 
             var response = new CreateMenuResponse(menu.Id);
             return ServiceResult<CreateMenuResponse>

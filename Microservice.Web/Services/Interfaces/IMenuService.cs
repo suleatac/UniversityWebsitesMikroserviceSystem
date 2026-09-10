@@ -5,6 +5,6 @@ namespace Microservice.Web.Services.Interfaces
 {
     public interface IMenuService
     {
-        Task<ServiceResult<List<MenuGetVm>>> GetMenusAsync(int siteId, int dilId);
+        Task<ServiceResult<List<MenuGetVm>>> GetMenusAsync(int siteId, int dilId, int? location = null);
     }
 }

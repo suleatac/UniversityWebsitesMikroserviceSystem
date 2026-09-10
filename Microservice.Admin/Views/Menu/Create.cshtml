@@ -181,10 +181,59 @@
                             </div>
 
                             <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label asp-for="CreateMenu.Location" class="form-label">
+                                        <i class="mdi mdi-map-marker me-1"></i>
+                                        Menü Konumu <span class="text-danger">*</span>
+                                    </label>
+                                    <select asp-for="CreateMenu.Location" class="form-select">
+                                        @foreach (var secenek in Microservice.Admin.ViewModels.Menu.MenuLocationOption.All)
+                                        {
+                                            <option value="@secenek.Value" selected="@(Model.CreateMenu.Location == secenek.Value)">
+                                                @secenek.Label
+                                            </option>
+                                        }
+                                    </select>
+                                    <span asp-validation-for="CreateMenu.Location"
+                                          class="text-danger small"></span>
+                                    <small class="text-muted">
+                                        "Alt Menü - Hızlı Erişim" seçerseniz bu kayıt footer'da sütun (veya sütun içi link) olarak yayınlanır.
+                                    </small>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
 
                                 <div class="mb-3">
 
-                                    <div class="form-check mt-4">
+                                    <div class="form-check mt-2">
+
+                                        <input asp-for="CreateMenu.IsVisible"
+                                               class="form-check-input"
+                                               type="checkbox" />
+
+                                        <label asp-for="CreateMenu.IsVisible"
+                                               class="form-check-label">
+
+                                            <i class="mdi mdi-eye me-1"></i>
+                                            Görünür
+
+                                        </label>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                            <div class="col-md-6">
+
+                                <div class="mb-3">
+
+                                    <div class="form-check mt-2">
 
                                         <input asp-for="CreateMenu.MegaMenu"
                                                class="form-check-input"

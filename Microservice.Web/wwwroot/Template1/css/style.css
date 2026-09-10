@@ -31,6 +31,43 @@
 
 /* Reset
 -------------------------------------------------------------- */
+
+
+.goog-te-gadget-icon {
+	display: none;
+}
+
+.goog-te-gadget-simple {
+	background-color: #2f3032 !important;
+	border: 0 !important;
+	/* font-size: 10pt; */
+	/* font-weight:800; */
+	display: inline-block;
+	padding: 8px 8px !important;
+	cursor: pointer;
+	zoom: 1;
+}
+
+#goog-gt-tt {
+	display: none !important;
+	visibility: hidden !important;
+}
+
+.goog-te-gadget-simple span {
+	color: #FFF !important;
+	text-decoration: none;
+}
+
+body > .skiptranslate > iframe.skiptranslate {
+	display: none !important;
+	visibility: hidden !important;
+}
+
+
+
+
+
+
 	html {
 		overflow-y: scroll;
 		-webkit-text-size-adjust: 100%;
