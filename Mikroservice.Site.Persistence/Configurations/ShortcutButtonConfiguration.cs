@@ -18,6 +18,8 @@ namespace Mikroservice.Site.Persistence.Configurations
 
             builder.Property(x => x.Link)
                 .HasMaxLength(500);
+            builder.Property(x => x.KisaAciklama)
+                .HasMaxLength(500);
 
             builder.Property(x => x.IconUrl)
                 .HasMaxLength(300);

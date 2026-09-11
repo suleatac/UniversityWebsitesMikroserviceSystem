@@ -21,6 +21,7 @@ namespace Mikroservice.Site.Application.Features.ShortcutButtonFeatures.CreateSh
                 HedefId = request.HedefId,
 
                 Ad = request.Ad,
+                KisaAciklama = request.KisaAciklama,
                 Link = request.Link,
                 IconUrl = request.IconUrl,
                 ImageUrl = request.ImageUrl,

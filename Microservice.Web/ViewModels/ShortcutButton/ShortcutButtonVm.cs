@@ -17,7 +17,9 @@ namespace Microservice.Web.ViewModels.ShortcutButton
         [StringLength(200, ErrorMessage = "Kısayol buton adı en fazla 200 karakter olabilir.")]
         [Display(Name = "Buton Adı")]
         public string Ad { get; set; } = default!;
-
+        [StringLength(500, ErrorMessage = "Kısa açıklama en fazla 500 karakter olabilir.")]
+        [Display(Name = "Kısa Açıklama")]
+        public string? KisaAciklama { get; set; }
         [StringLength(500, ErrorMessage = "Link en fazla 500 karakter olabilir.")]
         public string? Link { get; set; }
 

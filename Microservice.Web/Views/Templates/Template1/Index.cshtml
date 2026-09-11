@@ -2,8 +2,9 @@
 @{
     ViewData["Title"] = Model.Site.SiteAdi;
 }
-<!-- START SECTION BANNER -->
-<div class="tp-banner-container">
+<!-- START SECTION BANNER AND DUYURULAR -->
+<section class="tp-banner-container">
+    <!-- START BANNER -->
     <div class="tp-banner">
         <ul>
 
@@ -25,141 +26,142 @@
 
         </ul>
     </div>
-</div>
-<!-- END SECTION BANNER -->
-<!-- START SECTION DUYURULAR -->
-<div class="header-overlay-content header-overlay-scroller">
-    <div class="container">
-        <div class="row">
-            <div class="col-md-5">
-             
-                <section class="un-post-scroller un-post-scroller-2901"
-                         data-delay="0">
-                  
-                    <div class="section-inner-no-padding">
-              
-                        <div class="post-scroller-wrap verticalCarousel">
-                            <h4 class="title">Duyurular</h4>
-                            <div class="post-scroller-carousel">
+    <!-- END BANNER -->
+    <!-- START DUYURULAR -->
+    <div class="header-overlay-content header-overlay-scroller">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-5">
 
-                                <div class="post-scroller-carousel-inner verticalCarouselGroup vc_list">
+                    <section class="un-post-scroller un-post-scroller-2901"
+                             data-delay="0">
 
-                                    @if (Model.Duyurular != null && Model.Duyurular.Any())
-                                    {
-                                        var index = 0;
+                        <div class="section-inner-no-padding">
 
-                                        foreach (var duyuru in Model.Duyurular)
+                            <div class="post-scroller-wrap verticalCarousel">
+                                <h4 class="title">Duyurular</h4>
+                                <div class="post-scroller-carousel">
+
+                                    <div class="post-scroller-carousel-inner verticalCarouselGroup vc_list">
+
+                                        @if (Model.Duyurular != null && Model.Duyurular.Any())
                                         {
-                                            <div class="item post-scroller-item @(index == 0 ? "active" : "")">
+                                            var index = 0;
 
-                                                <div class="scroller-item-inner">
+                                            foreach (var duyuru in Model.Duyurular)
+                                            {
+                                                <div class="item post-scroller-item @(index == 0 ? "active" : "")">
 
-                                                    <div class="scroller-item-content post-item-mini">
+                                                    <div class="scroller-item-inner">
 
-                                                        <div class="row">
+                                                        <div class="scroller-item-content post-item-mini">
 
-                                                            <!-- Resim -->
-                                                            <div class="col-md-3 col-sm-4 col-xs-4 post-thumbnail-mini">
+                                                            <div class="row">
 
-                                                                <div class="item-thumbnail">
+                                                                <!-- Resim -->
+                                                                <div class="col-md-3 col-sm-4 col-xs-4 post-thumbnail-mini">
 
-                                                                    <a href="/duyurular/@duyuru.SeoUrl"
-                                                                       title="@duyuru.Baslik">
+                                                                    <div class="item-thumbnail">
 
-                                                                        <img src="@duyuru.ResimUrl"
-                                                                             alt="@duyuru.Baslik"
-                                                                             loading="lazy">
+                                                                        <a href="/duyurular/@duyuru.SeoUrl"
+                                                                           title="@duyuru.Baslik">
 
-                                                                        <div class="thumbnail-hoverlay main-color-1-bg"></div>
-                                                                        <div class="thumbnail-hoverlay-cross"></div>
+                                                                            <img src="@duyuru.ResimUrl"
+                                                                                 alt="@duyuru.Baslik"
+                                                                                 loading="lazy">
 
-                                                                    </a>
+                                                                            <div class="thumbnail-hoverlay main-color-1-bg"></div>
+                                                                            <div class="thumbnail-hoverlay-cross"></div>
+
+                                                                        </a>
+
+                                                                    </div>
+
+                                                                </div>
+
+                                                                <!-- İçerik -->
+                                                                <div class="col-md-9 col-sm-8 col-xs-8 post-content-mini">
+
+                                                                    <h4>
+                                                                        <a class="post-title-mini main-color-1-hover"
+                                                                           href="/duyurular/@duyuru.SeoUrl"
+                                                                           title="@duyuru.Baslik">
+
+                                                                            @duyuru.Baslik
+
+                                                                        </a>
+                                                                    </h4>
+
+                                                                    @if (!string.IsNullOrWhiteSpace(duyuru.KisaAciklama))
+                                                                    {
+                                                                        <div class="post-excerpt-mini">
+                                                                            @duyuru.KisaAciklama
+                                                                        </div>
+                                                                    }
 
                                                                 </div>
 
                                                             </div>
 
-                                                            <!-- İçerik -->
-                                                            <div class="col-md-9 col-sm-8 col-xs-8 post-content-mini">
-
-                                                                <h4>
-                                                                    <a class="post-title-mini main-color-1-hover"
-                                                                       href="/duyurular/@duyuru.SeoUrl"
-                                                                       title="@duyuru.Baslik">
-
-                                                                        @duyuru.Baslik
-
-                                                                    </a>
-                                                                </h4>
-
-                                                                @if (!string.IsNullOrWhiteSpace(duyuru.KisaAciklama))
-                                                                {
-                                                                    <div class="post-excerpt-mini">
-                                                                        @duyuru.KisaAciklama
-                                                                    </div>
-                                                                }
-
-                                                            </div>
-
                                                         </div>
 
                                                     </div>
 
                                                 </div>
 
-                                            </div>
-
-                                            index++;
+                                                index++;
+                                            }
                                         }
-                                    }
-                                    else
-                                    {
-                                        <div class="item post-scroller-item active">
-                                            <div class="scroller-item-inner">
-                                                <div class="scroller-item-content post-item-mini">
-                                                    <div class="post-content-mini">
-                                                        <div class="post-excerpt-mini">
-                                                            Henüz duyuru bulunmamaktadır.
+                                        else
+                                        {
+                                            <div class="item post-scroller-item active">
+                                                <div class="scroller-item-inner">
+                                                    <div class="scroller-item-content post-item-mini">
+                                                        <div class="post-content-mini">
+                                                            <div class="post-excerpt-mini">
+                                                                Henüz duyuru bulunmamaktadır.
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                    }
+                                        }
 
+                                    </div>
+
+                                </div>
+
+                                <!-- Carousel Kontrolleri -->
+                                <div class="verticalCarouselHeader">
+
+                                    <a href="#"
+                                       class="vc_goDown btn btn-primary post-scroller-button post-scroller-down">
+                                        <i class="fa fa-angle-down"></i>
+                                    </a>
+
+                                    <a href="#"
+                                       class="vc_goUp btn btn-primary post-scroller-button post-scroller-up">
+                                        <i class="fa fa-angle-up"></i>
+                                    </a>
+                                    <a href="#"
+                                       style="float:right;font-weight:600;text-decoration:underline;">
+                                        Tümü
+                                    </a>
                                 </div>
 
                             </div>
 
-                            <!-- Carousel Kontrolleri -->
-                            <div class="verticalCarouselHeader">
-
-                                <a href="#"
-                                   class="vc_goDown btn btn-primary post-scroller-button post-scroller-down">
-                                    <i class="fa fa-angle-down"></i>
-                                </a>
-
-                                <a href="#"
-                                   class="vc_goUp btn btn-primary post-scroller-button post-scroller-up">
-                                    <i class="fa fa-angle-up"></i>
-                                </a>
-                                <a href="#"
-                                   style="float:right;font-weight:600;text-decoration:underline;">
-                                 Tümü
-                                </a>
-                            </div>
-
                         </div>
 
-                    </div>
+                    </section>
 
-                </section>
-
+                </div>
             </div>
         </div>
     </div>
-</div>
-<!-- END SECTION DUYURULAR -->
+    <!-- END DUYURULAR -->
+</section>
+<!-- END SECTION BANNER AND DUYURULAR -->
 <!-- START SECTION SHORTCUT BUTTONS -->
 <section class="flat-row padding-top">
     <div class="container">
@@ -180,7 +182,7 @@
                                         <a href="@shortcutButton.Link">@shortcutButton.Ad</a>
                                     </div>
                                     <div class="box-content">
-                                        <a href="@shortcutButton.Link">Detaylı görmek için tıklayınız Detaylı görmek için tıklayınız Detaylı görmek için tıklayınız</a>
+                                        <a href="@shortcutButton.Link">@shortcutButton.KisaAciklama</a>
                                     </div>
                                 </div>
                             </div><!-- /.iconbox -->
@@ -232,60 +234,62 @@
 
             <div class="col-md-9 margin-small">
                 <div class="row">
-                    <h1 class="title haber">Haberler <a href="#"
-                   style="float:right;font-size:15px;text-decoration:underline;padding-top:10px;">
-                    Tümü
-                </a></h1>
-                </div>
-                
-                <div class="flat-carousel v1 style-margin">
-                    <div class="post-wrap">
-                        <div class="posts-carousel v1 v2">
-                            <div class="flat-event">
-                                <div class="flat-blog-carousel" data-item="3" data-nav="true" data-dots="false" data-auto="true">
+                    <h1 class="title haber">
+                        Haberler <a href="#"
+                                style="float:right;font-size:15px;text-decoration:underline;padding-top:10px;">
+                        Tümü
+                    </a>
+                </h1>
+            </div>
+
+            <div class="flat-carousel v1 style-margin">
+                <div class="post-wrap">
+                    <div class="posts-carousel v1 v2">
+                        <div class="flat-event">
+                            <div class="flat-blog-carousel" data-item="3" data-nav="true" data-dots="false" data-auto="true">
 
                                     
-                                    @if (Model.Haberler != null && Model.Haberler.Any())
+                                @if (Model.Haberler != null && Model.Haberler.Any())
+                                {
+                                    @foreach (var haber in Model.Haberler)
                                     {
-                                        @foreach (var haber in Model.Haberler)
-                                        {
 
-                                            <div class="grid-item">
-                                                <div class="grid-item-inner">
-                                                    <div class="event-item">
-                                                        <div class="event-thumbnail">
-                                                            <a href="/haberler/@haber.SeoUrl">
-                                                                <img src="@haber.ResimUrl" alt="image">
-                                                            </a>
-                                                        </div><!-- /event-thumbnail -->
+                                        <div class="grid-item">
+                                            <div class="grid-item-inner">
+                                                <div class="event-item">
+                                                    <div class="event-thumbnail">
+                                                        <a href="/haberler/@haber.SeoUrl">
+                                                            <img src="@haber.ResimUrl" alt="image">
+                                                        </a>
+                                                    </div><!-- /event-thumbnail -->
 
-                                                        <div class="date-block">
-                                                            <div class="month">@haber.YayimTarihi.ToString("MMM")</div>
-                                                            <div class="day">@haber.YayimTarihi.ToString("dd")</div>
-                                                        </div><!-- /date-block -->
+                                                    <div class="date-block">
+                                                        <div class="month">@haber.YayimTarihi.ToString("MMM")</div>
+                                                        <div class="day">@haber.YayimTarihi.ToString("dd")</div>
+                                                    </div><!-- /date-block -->
 
-                                                        <div class="event-overlay">
-                                                            <div class="cs-post-header">
-                                                                <div class="cs-category-links">
-                                                                    <a class="overlay-top" href="/haberler/@haber.SeoUrl">
-                                                                        <h4>@haber.Baslik</h4>
-                                                                    </a>
+                                                    <div class="event-overlay">
+                                                        <div class="cs-post-header">
+                                                            <div class="cs-category-links">
+                                                                <a class="overlay-top" href="/haberler/@haber.SeoUrl">
+                                                                    <h4>@haber.Baslik</h4>
+                                                                </a>
 
-                                                                    <div class="overlay-footer">
-                                                                        <div>@haber.YayimTarihi.ToString("dd.MM.yyyy")</div>
-                                                                        <div>@haber.KisaAciklama</div>
-                                                                    </div>
+                                                                <div class="overlay-footer">
+                                                                    <div>@haber.YayimTarihi.ToString("dd.MM.yyyy")</div>
+                                                                    <div>@haber.KisaAciklama</div>
                                                                 </div>
                                                             </div>
-                                                        </div><!-- /event-overlay -->
-                                                    </div>
+                                                        </div>
+                                                    </div><!-- /event-overlay -->
                                                 </div>
                                             </div>
+                                        </div>
 
-
-                                        }
 
                                     }
+
+                                }
 
                                     
                                     
@@ -295,66 +299,66 @@
 
 
 
-                                </div><!-- /flat-blog-carousel -->
-                            </div><!-- /flat-event -->
-                        </div><!-- /posts-carousel -->
-                    </div><!-- /post-wrap -->
-                </div><!-- /flat-carousel -->
+                            </div><!-- /flat-blog-carousel -->
+                        </div><!-- /flat-event -->
+                    </div><!-- /posts-carousel -->
+                </div><!-- /post-wrap -->
+            </div><!-- /flat-carousel -->
 
            
-            </div><!-- /col-md-9 -->
+        </div><!-- /col-md-9 -->
 
-            <div class="col-md-3">
-                <h4 class="title etkinlik">Etkinlikler</h4>
-                <div class="flat-carousel v3">
-                    <div class="post-wrap">
-                        <div class="posts-carousel v1 v4">
-                            <div class="flat-event">
-                                <div class="flat-blog-carousel" data-item="3" data-nav="true" data-dots="false" data-auto="true">
+        <div class="col-md-3">
+            <h4 class="title etkinlik">Etkinlikler</h4>
+            <div class="flat-carousel v3">
+                <div class="post-wrap">
+                    <div class="posts-carousel v1 v4">
+                        <div class="flat-event">
+                            <div class="flat-blog-carousel" data-item="3" data-nav="true" data-dots="false" data-auto="true">
 
 
                                     
-                                    @if (Model.Etkinlikler != null && Model.Etkinlikler.Any())
+                                @if (Model.Etkinlikler != null && Model.Etkinlikler.Any())
+                                {
+                                    @foreach (var etkinlik in Model.Etkinlikler)
                                     {
-                                        @foreach (var etkinlik in Model.Etkinlikler)
-                                        {
 
-                                            <div class="grid-item">
-                                                <div class="grid-item-inner">
-                                                    <div class="event-item">
-                                                        <div class="event-thumbnail">
-                                                            <a href="@(string.IsNullOrWhiteSpace(etkinlik.SeoUrl) ? "#" : $"/etkinlikler/{etkinlik.SeoUrl}")">
-                                                                <img src="@etkinlik.ResimUrl" alt="image">
-                                                            </a>
-                                                        </div><!-- /event-thumbnail -->
+                                        <div class="grid-item">
+                                            <div class="grid-item-inner">
+                                                <div class="event-item">
+                                                    <div class="event-thumbnail">
+                                                        <a href="@(string.IsNullOrWhiteSpace(etkinlik.SeoUrl) ? "#" : $"/etkinlikler/{etkinlik.SeoUrl}")">
+                                                            <img src="@etkinlik.ResimUrl" alt="image">
+                                                        </a>
+                                                    </div><!-- /event-thumbnail -->
 
-                                                        <div class="date-block">
-                                                            <div class="month">@etkinlik.YayimTarihi.ToString("MMM")</div>
-                                                            <div class="day">@etkinlik.YayimTarihi.ToString("dd")</div>
-                                                        </div><!-- /date-block -->
+                                                    <div class="date-block">
+                                                        <div class="month">@etkinlik.YayimTarihi.ToString("MMM")</div>
+                                                        <div class="day">@etkinlik.YayimTarihi.ToString("dd")</div>
+                                                    </div><!-- /date-block -->
 
-                                                        <div class="event-overlay">
-                                                            <div class="cs-post-header">
-                                                                <div class="cs-category-links">
-                                                                    <a class="overlay-top" href="@(string.IsNullOrWhiteSpace(etkinlik.SeoUrl) ? "#" : $"/etkinlikler/{etkinlik.SeoUrl}")">
-                                                                        <h4>@etkinlik.Baslik</h4>
-                                                                    </a>
+                                                    <div class="event-overlay">
+                                                        <div class="cs-post-header">
+                                                            <div class="cs-category-links">
+                                                                <a class="overlay-top" href="@(string.IsNullOrWhiteSpace(etkinlik.SeoUrl) ? "#" : $"/etkinlikler/{etkinlik.SeoUrl}")">
+                                                                    <h4>@etkinlik.Baslik</h4>
+                                                                </a>
 
-                                                                    <div class="overlay-footer">
-                                                                        <div>At @etkinlik.YayimTarihi.ToString("dd.MM.yyyy")</div>
-                                                                        <div>@etkinlik.KisaAciklama</div>
-                                                                    </div>
+                                                                <div class="overlay-footer">
+                                                                    <div>At @etkinlik.YayimTarihi.ToString("dd.MM.yyyy")</div>
+                                                                    <div>@etkinlik.KisaAciklama</div>
                                                                 </div>
                                                             </div>
-                                                        </div><!-- /event-overlay -->
-                                                    </div>
+                                                        </div>
+                                                    </div><!-- /event-overlay -->
                                                 </div>
                                             </div>
+                                        </div>
 
-
-                                        }
 
                                     }
+
+                                }
 
 
 
@@ -363,14 +367,14 @@
 
 
 
-                                </div><!-- /flat-blog-carousel -->
-                            </div><!-- /flat-event -->
-                        </div><!-- /posts-carousel -->
-                    </div><!-- /post-wrap -->
-                </div><!-- /flat-carousel v2 -->
-            </div>
-        </div><!-- /row -->
-    </div><!-- /container -->
+                            </div><!-- /flat-blog-carousel -->
+                        </div><!-- /flat-event -->
+                    </div><!-- /posts-carousel -->
+                </div><!-- /post-wrap -->
+            </div><!-- /flat-carousel v2 -->
+        </div>
+    </div><!-- /row -->
+</div><!-- /container -->
 </section><!-- /page-title -->
 <!-- END SECTION HABERLER VE ETKİNLİKLER -->
 <!-- START SECTION BİLGİLER -->
@@ -411,36 +415,36 @@
 <section class="flat-row flat-ev-carousel">
 
     <div class="container">
-     
-       
-                <h4 class="title">Sosyal Medya Paylaşımları</h4>
-     
-            <div class="row pt-1">
 
-                <div class="col-md-6">
-                    <!-- FACEBOOK -->
-                    <div class="fb-page" data-href="https://www.facebook.com/sivastto" data-hide-cover="false" data-tabs="timeline" data-height="540" data-width="500" data-small-header="true" data-adapt-container-width="true" data-hide-cover="true" data-show-facepile="true"></div>
-                    <div id="fb-root"></div>
-                    <!-- END FACEBOOK -->
-                </div>
 
-                <div class="col-md-6">
-                    <!-- INSTAGRAM-->
-                    <div class="row ScrollBar">
-                        <!-- Instagram Embed -->
-                        <script async src="//www.instagram.com/embed.js"></script>
-                        <iframe class="instagram-media"
-                                src="https://www.instagram.com/sivastto/embed"
-                                width="100%"
-                                height="500"
-                                frameborder="0"
-                                scrolling="no"
-                                allowtransparency="true">
-                        </iframe>
-                    </div>
+        <h4 class="title">Sosyal Medya Paylaşımları</h4>
+
+        <div class="row pt-1">
+
+            <div class="col-md-6">
+                <!-- FACEBOOK -->
+                <div class="fb-page" data-href="https://www.facebook.com/sivastto" data-hide-cover="false" data-tabs="timeline" data-height="540" data-width="500" data-small-header="true" data-adapt-container-width="true" data-hide-cover="true" data-show-facepile="true"></div>
+                <div id="fb-root"></div>
+                <!-- END FACEBOOK -->
+            </div>
+
+            <div class="col-md-6">
+                <!-- INSTAGRAM-->
+                <div class="row ScrollBar">
+                    <!-- Instagram Embed -->
+                    <script async src="//www.instagram.com/embed.js"></script>
+                    <iframe class="instagram-media"
+                            src="https://www.instagram.com/sivastto/embed"
+                            width="100%"
+                            height="500"
+                            frameborder="0"
+                            scrolling="no"
+                            allowtransparency="true">
+                    </iframe>
                 </div>
             </div>
-   
+        </div>
+
 
     </div>
 

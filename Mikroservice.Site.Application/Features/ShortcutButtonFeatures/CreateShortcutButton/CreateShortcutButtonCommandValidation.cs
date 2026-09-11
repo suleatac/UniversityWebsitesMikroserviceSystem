@@ -11,6 +11,10 @@ namespace Mikroservice.Site.Application.Features.ShortcutButtonFeatures.CreateSh
             RuleFor(x => x.Ad)
                 .NotEmpty().WithMessage("Kısayol buton adı boş olamaz.")
                 .MaximumLength(200).WithMessage("Kısayol buton adı en fazla 200 karakter olabilir.");
+            // 🔹 KisaAciklama
+            RuleFor(x => x.KisaAciklama)
+                .MaximumLength(500).WithMessage("Kısa açıklama en fazla 500 karakter olabilir.");
+
 
             // 🔹 Link
             RuleFor(x => x.Link).MaximumLength(500).WithMessage("Link en fazla 500 karakter olabilir.");

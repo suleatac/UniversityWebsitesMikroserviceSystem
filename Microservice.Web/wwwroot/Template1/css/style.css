@@ -68,6 +68,33 @@ body > .skiptranslate > iframe.skiptranslate {
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 	html {
 		overflow-y: scroll;
 		-webkit-text-size-adjust: 100%;
@@ -2798,6 +2825,7 @@ body.mac .dropcap {
 
 .boxed {
 	overflow: hidden;
+
 }
 
 /* site-off-canvas

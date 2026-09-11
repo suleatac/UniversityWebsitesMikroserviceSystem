@@ -7,6 +7,7 @@
         public int DilId { get; set; }
         public int HedefId { get; set; }
         public string Ad { get; set; } = default!;
+        public string? KisaAciklama { get; set; }
         public string? Link { get; set; } = default!;
         public string? IconUrl { get; set; }
         public string? ImageUrl { get; set; }

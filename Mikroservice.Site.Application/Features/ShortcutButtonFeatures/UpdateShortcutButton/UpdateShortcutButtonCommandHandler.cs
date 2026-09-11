@@ -21,6 +21,7 @@ namespace Mikroservice.Site.Application.Features.ShortcutButtonFeatures.UpdateSh
             }
 
             shortcutButton.Ad = request.Ad;
+            shortcutButton.KisaAciklama = request.KisaAciklama;
             shortcutButton.Link = request.Link;
             shortcutButton.IconUrl = request.IconUrl;
             shortcutButton.ImageUrl = request.ImageUrl;
