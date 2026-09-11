@@ -1,3 +1,6 @@
+using Microservice.Web.ViewModels.Pages;
+using System.ComponentModel.DataAnnotations;
+
 namespace Microservice.Web.ViewModels.Menu
 {
     public class MenuGetVm
@@ -6,6 +9,7 @@ namespace Microservice.Web.ViewModels.Menu
         public int SiteId { get; set; }
         public int DilId { get; set; }
         public int HedefId { get; set; }
+        public int PageTypeId { get; set; }
 
         // API (MenuDto) 'Baslik' alanini doner; 'Ad' eski view'lar icin korundu.
         public string Baslik { get; set; } = default!;
@@ -16,12 +20,19 @@ namespace Microservice.Web.ViewModels.Menu
         public string? Icerik { get; set; }
         public int Sira { get; set; }
         public bool MegaMenu { get; set; }
+        public string SeoUrl { get; set; } = default!;
+        public string? SeoTitle { get; set; }
+        public string? SeoDescription { get; set; }
+
+
 
         // MenuLocation: 1=Header, 2=Footer, 3=Sidebar
         public int Location { get; set; } = 1;
         public bool IsVisible { get; set; } = true;
 
         public int? ParentId { get; set; }
+
+        public PagesDetailVm PageType { get; set; } = null!;
         public List<MenuGetVm> Children { get; set; } = new();
     }
 }

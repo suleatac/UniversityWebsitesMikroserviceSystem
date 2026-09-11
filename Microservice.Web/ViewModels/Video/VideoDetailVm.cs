@@ -1,20 +1,23 @@
-namespace Microservice.Web.ViewModels.Content
+﻿namespace Microservice.Web.ViewModels.Video
 {
-    public class ContentDetailVm
+    public class VideoDetailVm
     {
         public int Id { get; set; }
         public int SiteId { get; set; }
         public int DilId { get; set; }
-        public string Baslik { get; set; } = string.Empty;
-        public string KisaAciklama { get; set; } = string.Empty;
-        public string IcerikMetni { get; set; } = string.Empty;
+        public int HedefId { get; set; }
+        public string Baslik { get; set; } = default!;
+        public string KisaAciklama { get; set; } = default!;
+        public string IcerikMetni { get; set; } = default!;
         public string? Link { get; set; }
         public string? ResimUrl { get; set; }
         public string? VideoUrl { get; set; }
+        public int GosterimSayisi { get; set; } = 0;
         public DateTime YayimTarihi { get; set; }
+        public DateTime EklemeTarihi { get; set; }
         public DateTime? BaslamaTarihi { get; set; }
         public DateTime? BitisTarihi { get; set; }
-        public string? SeoUrl { get; set; }
+        public string SeoUrl { get; set; } = default!;
         public string? SeoTitle { get; set; }
         public string? SeoDescription { get; set; }
     }

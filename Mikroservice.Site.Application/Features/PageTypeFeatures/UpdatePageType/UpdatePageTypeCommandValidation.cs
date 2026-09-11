@@ -13,7 +13,7 @@ namespace Mikroservice.Site.Application.Features.PageTypeFeatures.UpdatePageType
             RuleFor(x => x.DilId).GreaterThan(0);
             RuleFor(x => x.Name).NotEmpty().MaximumLength(200);
             RuleFor(x => x.Slug).NotEmpty().MaximumLength(200);
-            RuleFor(x => x.ViewName).MaximumLength(200).When(x => x.ViewName is not null);
+            RuleFor(x => x.ViewName).NotEmpty().MaximumLength(200);
         }
     }
 }

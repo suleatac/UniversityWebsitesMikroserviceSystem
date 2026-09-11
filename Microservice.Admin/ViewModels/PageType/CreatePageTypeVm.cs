@@ -26,7 +26,9 @@ namespace Microservice.Admin.ViewModels.PageType
         [StringLength(200, ErrorMessage = "ViewName en fazla 200 karakter olabilir.")]
         public string? ViewName { get; set; }
 
-        public bool IsHomePage { get; set; }
-        public bool IsActive { get; set; } = true;
+        public bool IsHomePage
+        {
+            get; set;
+        }
     }
 }

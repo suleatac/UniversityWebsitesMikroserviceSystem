@@ -2,6 +2,50 @@
 @{
     ViewData["Title"] = Model.Site.SiteAdi;
 }
+
+
+
+@using Microservice.Web.Settings
+@{
+    // Duyuru / Haber / Etkinlik icerikleri icin href uretimi:
+    // - Link dolu ise dogrudan o link kullanilir.
+    // - Link bos ise bagli oldugu sayfa tipine (PageType) yonlendirilir: /{dil}/{slug}/{seoUrl}
+
+
+    string BuildContentHref(string? link, string? seoUrl, string? pageTypeSlug)
+    {
+        if (!string.IsNullOrWhiteSpace(link))
+        {
+            var trimmedLink = link.Trim();
+
+            return trimmedLink.StartsWith("http", StringComparison.OrdinalIgnoreCase)
+                ? trimmedLink
+                : "/" + trimmedLink.Trim('/');
+        }
+
+        if (!string.IsNullOrWhiteSpace(seoUrl) && !string.IsNullOrWhiteSpace(pageTypeSlug))
+        {
+            return $"/{Model.LanguageCode}/{pageTypeSlug}/{seoUrl.Trim('/')}";
+        }
+
+        return "#";
+    }
+
+
+    // "Tumu" gibi liste sayfasina giden baglantilar icin: /{dil}/{slug}
+    string BuildListHref(string pageTypeSlug)
+    {
+        return string.IsNullOrWhiteSpace(pageTypeSlug) ? "#" : $"/{Model.LanguageCode}/{pageTypeSlug}";
+    }
+
+
+}
+
+
+
+
+
+
 <!-- START SECTION BANNER AND DUYURULAR -->
 <section class="tp-banner-container">
     <!-- START BANNER -->
@@ -63,7 +107,7 @@
 
                                                                     <div class="item-thumbnail">
 
-                                                                        <a href="/duyurular/@duyuru.SeoUrl"
+                                                                        <a href="@BuildContentHref(duyuru.Link, duyuru.SeoUrl, duyuru.PageType.Slug)"
                                                                            title="@duyuru.Baslik">
 
                                                                             <img src="@duyuru.ResimUrl"
@@ -84,7 +128,7 @@
 
                                                                     <h4>
                                                                         <a class="post-title-mini main-color-1-hover"
-                                                                           href="/duyurular/@duyuru.SeoUrl"
+                                                                           href="@BuildContentHref(duyuru.Link, duyuru.SeoUrl, duyuru.PageType.Slug)"
                                                                            title="@duyuru.Baslik">
 
                                                                             @duyuru.Baslik
@@ -143,7 +187,7 @@
                                        class="vc_goUp btn btn-primary post-scroller-button post-scroller-up">
                                         <i class="fa fa-angle-up"></i>
                                     </a>
-                                    <a href="#"
+                                    <a href="@BuildListHref("Duyurular")"
                                        style="float:right;font-weight:600;text-decoration:underline;">
                                         Tümü
                                     </a>
@@ -235,7 +279,7 @@
             <div class="col-md-9 margin-small">
                 <div class="row">
                     <h1 class="title haber">
-                        Haberler <a href="#"
+                        Haberler <a href="@BuildListHref("Haberler")"
                                 style="float:right;font-size:15px;text-decoration:underline;padding-top:10px;">
                         Tümü
                     </a>
@@ -258,7 +302,7 @@
                                             <div class="grid-item-inner">
                                                 <div class="event-item">
                                                     <div class="event-thumbnail">
-                                                        <a href="/haberler/@haber.SeoUrl">
+                                                        <a href="@BuildContentHref(haber.Link, haber.SeoUrl, haber.PageType.Slug)">
                                                             <img src="@haber.ResimUrl" alt="image">
                                                         </a>
                                                     </div><!-- /event-thumbnail -->
@@ -271,7 +315,7 @@
                                                     <div class="event-overlay">
                                                         <div class="cs-post-header">
                                                             <div class="cs-category-links">
-                                                                <a class="overlay-top" href="/haberler/@haber.SeoUrl">
+                                                                <a class="overlay-top" href="@BuildContentHref(haber.Link, haber.SeoUrl, haber.PageType.Slug)">
                                                                     <h4>@haber.Baslik</h4>
                                                                 </a>
 
@@ -327,7 +371,7 @@
                                             <div class="grid-item-inner">
                                                 <div class="event-item">
                                                     <div class="event-thumbnail">
-                                                        <a href="@(string.IsNullOrWhiteSpace(etkinlik.SeoUrl) ? "#" : $"/etkinlikler/{etkinlik.SeoUrl}")">
+                                                        <a href="@BuildContentHref(etkinlik.Link, etkinlik.SeoUrl, etkinlik.PageType.Slug)">
                                                             <img src="@etkinlik.ResimUrl" alt="image">
                                                         </a>
                                                     </div><!-- /event-thumbnail -->
@@ -340,7 +384,7 @@
                                                     <div class="event-overlay">
                                                         <div class="cs-post-header">
                                                             <div class="cs-category-links">
-                                                                <a class="overlay-top" href="@(string.IsNullOrWhiteSpace(etkinlik.SeoUrl) ? "#" : $"/etkinlikler/{etkinlik.SeoUrl}")">
+                                                                <a class="overlay-top" href="@BuildContentHref(etkinlik.Link, etkinlik.SeoUrl, etkinlik.PageType.Slug)">
                                                                     <h4>@etkinlik.Baslik</h4>
                                                                 </a>
 
@@ -395,7 +439,7 @@
                                 <h1 class="title">@bilgi.Baslik</h1>
                                 <p>@bilgi.KisaAciklama</p>
 
-                                <a class="flat-button button-button_30 btn-default" href="@(string.IsNullOrWhiteSpace(bilgi.Link) ? "#" : bilgi.Link)" data-delay="0">Detayları Görün <i class="fa fa-angle-right"></i></a>
+                                <a class="flat-button button-button_30 btn-default" href="@BuildContentHref(bilgi.Link, bilgi.SeoUrl, bilgi.PageType.Slug)" data-delay="0">Detayları Görün <i class="fa fa-angle-right"></i></a>
                             </div>
                         </div>
 

@@ -16,7 +16,8 @@ namespace Mikroservice.Site.Application.Features.DuyuruFeatures.GetDuyuruById
     {
         public async Task<ServiceResult<DuyuruDetailDto>> Handle(GetDuyuruByIdQuery request, CancellationToken cancellationToken)
         {
-            var entity = await duyuruRepository.GetByIdAsync(request.Id);
+            // ✔ DB'den TEK kayıt çek (PageType eager loading ile)
+            var entity = await duyuruRepository.GetByIdWithPageTypeAsync(request.Id, cancellationToken);
 
             if (entity is null)
             {

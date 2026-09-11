@@ -1,6 +1,7 @@
 using Microservice.Web.Clients.MenuClients;
 using Microservice.Web.Services.Interfaces;
 using Microservice.Web.Services.ServiceResults;
+using Microservice.Web.ViewModels.Duyuru;
 using Microservice.Web.ViewModels.Menu;
 using System.Text.Json;
 
@@ -51,6 +52,22 @@ namespace Microservice.Web.Services
             await _redisCacheService.SetListAsync(cacheKey, menus, CacheDuration);
 
             return ServiceResult<List<MenuGetVm>>.Success(menus);
+        }
+
+        public async Task<ServiceResult<MenuDetailVm>> GetMenuByIdAsync(int id)
+        {
+            _logger.LogInformation("Menü getiriliyor. Id: {Id}", id);
+            var response = await _menuClient.GetMenuByIdAsync(id);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var problemDetails = response.Error != null
+                    ? JsonSerializer.Deserialize<Microsoft.AspNetCore.Mvc.ProblemDetails>(response.Error.Content!) : null;
+                _logger.LogError("API Error -> StatusCode: {StatusCode}, Title: {Title}, Detail: {Detail}", response.StatusCode, problemDetails?.Title, problemDetails?.Detail);
+                return ServiceResult<MenuDetailVm>.Error(problemDetails?.Detail ?? problemDetails?.Title ?? "Menü bulunamadı");
+            }
+
+            return ServiceResult<MenuDetailVm>.Success(response.Content!);
         }
     }
 }

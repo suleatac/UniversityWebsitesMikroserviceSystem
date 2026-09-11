@@ -22,6 +22,7 @@ namespace Mikroservice.Site.Api.Endpoints.MenuEndPoints
             group.DeleteMenuEndpointGroupItem();
             group.GetMenusEndpointGroupItem();
             group.GetMenuByIdEndpointGroupItem();
+            group.GetMenuBySeoUrlEndpointGroupItem();
             group.RequireAuthorization("ClientCredential");
         }
     }

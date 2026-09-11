@@ -22,11 +22,14 @@ namespace Microservice.Web.Services.ServicesExtentions
             services.AddScoped<IRouteService, RouteService>();
             services.AddScoped<IDilService, DilService>();
             services.AddScoped<IShortcutButtonService, ShortcutButtonService>();
+            services.AddScoped<IBilgiService, BilgiService>();
+            services.AddScoped<IBandLogoService, BandLogoService>();
+
             services.AddScoped<IPageDetailResolver, NewsDetailResolver>();
             services.AddScoped<IPageDetailResolver, AnnouncementDetailResolver>();
-            services.AddScoped<IBilgiService, BilgiService>();
+            services.AddScoped<IPageDetailResolver, MenuDetailResolver>();
+      
             services.AddScoped<IPageResolver, NewsListPageResolver>();
-            services.AddScoped<IBandLogoService, BandLogoService>();
 
 
             return services;

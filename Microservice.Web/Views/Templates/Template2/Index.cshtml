@@ -11,7 +11,11 @@
         <div class="row g-2 mt-2">
             @foreach (var menu in Model.Menus.OrderBy(x => x.Sira))
             {
-                var href = string.IsNullOrWhiteSpace(menu.Link) ? "#" : "/" + menu.Link.Trim('/');
+                // Link bos ise menunun sayfa tipine (PageType) yonlendir
+                var langCode = (ViewData["LanguageCode"] as string) ?? "tr";
+                var href = !string.IsNullOrWhiteSpace(menu.Link)
+                    ? (menu.Link.StartsWith("http", StringComparison.OrdinalIgnoreCase) ? menu.Link : "/" + menu.Link.Trim('/'))
+                    : (!string.IsNullOrWhiteSpace(menu.SeoUrl) ? $"/{langCode}/{menu.PageType.Slug}/{menu.SeoUrl.Trim('/')}" : "#");
                 <div class="col-md-4">
                     <a class="btn btn-outline-dark w-100" href="@href">@menu.Ad</a>
                 </div>

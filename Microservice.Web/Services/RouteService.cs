@@ -172,6 +172,7 @@ namespace Microservice.Web.Services
             }
 
             var result = new RouteResolveResult {
+                Site = site,
                 Page = page,
                 LanguageId = languageId.Value,
                 LanguageCode = languageCode

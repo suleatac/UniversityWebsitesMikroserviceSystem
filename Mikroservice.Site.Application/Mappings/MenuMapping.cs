@@ -9,6 +9,7 @@ namespace Mikroservice.Site.Application.Mappings
         public MenuMapping()
         {
             // READ
+            CreateMap<PageType, MenuPageTypeDto>();
             CreateMap<Menu, MenuDetailDto>();
         }
     }

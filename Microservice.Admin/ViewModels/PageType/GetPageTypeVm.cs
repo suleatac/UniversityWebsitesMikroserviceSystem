@@ -10,6 +10,5 @@ namespace Microservice.Admin.ViewModels.PageType
         public int DilId { get; set; }
         public string? ViewName { get; set; }
         public bool IsHomePage { get; set; }
-        public bool IsActive { get; set; }
     }
 }

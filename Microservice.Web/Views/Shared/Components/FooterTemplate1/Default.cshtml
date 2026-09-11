@@ -1,16 +1,25 @@
-﻿@model Microservice.Web.ViewModels.Footer.FooterTemplate1Vm
+﻿@using Microservice.Web.ViewModels.Menu
+@model Microservice.Web.ViewModels.Footer.FooterTemplate1Vm
 
 @{
-    string BuildHref(string? link)
+    // Link dolu ise dogrudan o link kullanilir.
+    // Link bos ise menu, bagli oldugu sayfa tipine (PageType) yonlendirilir: /{dil}/{slug}
+    string BuildHref(MenuGetVm menu)
     {
-        if (string.IsNullOrWhiteSpace(link))
+        if (!string.IsNullOrWhiteSpace(menu.Link))
         {
-            return "#";
+            return menu.Link.StartsWith("http", StringComparison.OrdinalIgnoreCase)
+                ? menu.Link
+                : "/" + menu.Link.Trim('/');
         }
 
-        return link.StartsWith("http", StringComparison.OrdinalIgnoreCase)
-            ? link
-            : "/" + link.Trim('/');
+        if (!string.IsNullOrWhiteSpace(menu.SeoUrl))
+        {
+            var langCode = Model.DilId == 2 ? "en" : "tr";
+            return $"/{langCode}/{menu.SeoUrl.Trim('/')}";
+        }
+
+        return "#";
     }
 
     var ozellikler = Model.Site?.SiteOzellikleri;
@@ -83,7 +92,7 @@
                                         @foreach (var link in column.Children)
                                         {
                                             <li class="menu-item menu-item-type-custom menu-item-object-custom">
-                                                <a href="@BuildHref(link.Link)">@link.Baslik</a>
+                                                <a href="@BuildHref(link)">@link.Baslik</a>
                                             </li>
                                         }
                                     </ul>

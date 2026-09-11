@@ -1,6 +1,8 @@
-namespace Mikroservice.Site.Application.DTOs.MenuDtos
+﻿using Microservice.Web.ViewModels.Pages;
+
+namespace Microservice.Web.ViewModels.Menu
 {
-    public class MenuDetailDto
+    public class MenuDetailVm
     {
         public int Id { get; set; }
 
@@ -9,11 +11,8 @@ namespace Mikroservice.Site.Application.DTOs.MenuDtos
         public int HedefId { get; set; }
         public int PageTypeId { get; set; }
 
-        // Eager loading ile gelen PageType bilgisi
-        public MenuPageTypeDto? PageType { get; set; }
-
         public string Baslik { get; set; } = default!;
-        public string? Link { get; set; } 
+        public string? Link { get; set; }
         public string? IcerikMetni { get; set; }
 
         public int Sira { get; set; }
@@ -27,8 +26,7 @@ namespace Mikroservice.Site.Application.DTOs.MenuDtos
         public string SeoUrl { get; set; } = default!;
         public string? SeoTitle { get; set; }
         public string? SeoDescription { get; set; }
-
-
+        public PagesDetailVm PageType { get; set; } = null!;
 
     }
 }

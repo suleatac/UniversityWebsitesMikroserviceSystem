@@ -16,8 +16,8 @@ namespace Mikroservice.Site.Application.Features.MenuFeatures.GetMenuById
     {
         public async Task<ServiceResult<MenuDetailDto>> Handle(GetMenuByIdQuery request, CancellationToken cancellationToken)
         {
-            // ✔ DB'den TEK kayıt çek
-            var entity = await menuRepository.GetByIdAsync(request.Id);
+            // ✔ DB'den TEK kayıt çek (PageType eager loading ile)
+            var entity = await menuRepository.GetByIdWithPageTypeAsync(request.Id, cancellationToken);
 
             if (entity is null || entity.IsDeleted)
             {

@@ -7,10 +7,10 @@ namespace Mikroservice.Site.Domain.Entities
         public string Name { get; set; } = default!;
         public string Slug { get; set; } = default!;
         public int TemplateId { get; set; }
-        public string? ViewName { get; set; }
+        public string ViewName { get; set; } = default!;
         public int DilId { get; set; }
         public bool IsHomePage { get; set; }
-        public bool IsDeleted { get; set; }
+        public bool IsDeleted { get; set; } = false;
         public Dil Dil { get; set; } = default!;
         public Template Template { get; set; } = default!;
         public ICollection<Icerik> Icerikler { get; set; } = new List<Icerik>();

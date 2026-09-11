@@ -10,7 +10,7 @@ namespace Mikroservice.Site.Application.Features.PageTypeFeatures.CreatePageType
         public string Slug { get; init; } = default!;
         public int DilId { get; init; }
         public int TemplateId { get; init; }
-        public string? ViewName { get; init; }
+        public string ViewName { get; init; } = default!;
         public bool IsHomePage { get; init; }
     }
 }

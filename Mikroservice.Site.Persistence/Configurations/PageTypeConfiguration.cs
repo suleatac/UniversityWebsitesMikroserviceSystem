@@ -14,7 +14,7 @@ namespace Mikroservice.Site.Persistence.Configurations
                 .IsRequired();
             builder.Property(x => x.Name).IsRequired().HasMaxLength(200);
             builder.Property(x => x.Slug).IsRequired().HasMaxLength(200);
-            builder.Property(x => x.ViewName).HasMaxLength(200);
+            builder.Property(x => x.ViewName).IsRequired().HasMaxLength(200);
 
             builder.HasOne(x => x.Dil)
                 .WithMany()

@@ -1,13 +1,13 @@
-@model Microservice.Web.ViewModels.Menu.MenuDetailVm
+﻿@model Microservice.Web.ViewModels.Haber.HaberDetailVm
 @{
-    ViewData["Title"] = Model.Baslik ?? "Menu";
+    ViewData["Title"] = Model.Baslik ?? "Haber";
 }
 
 <div class="page-title parallax parallax1">
     <div class="container">
         <div class="flat-university">
             <div class="post">
-                <h1 class="title">@(Model.Baslik ?? "Menu")</h1>
+                <h1 class="title">@(Model.Baslik ?? "Haber")</h1>
             </div><!--/post -->
         </div><!--/flat-university -->
     </div><!--/container -->
@@ -21,7 +21,7 @@
         }
         else
         {
-            <p>Bu menü için içerik girilmemiş.</p>
+            <p>Bu haber için içerik girilmemiş.</p>
         }
     </div>
 </section>

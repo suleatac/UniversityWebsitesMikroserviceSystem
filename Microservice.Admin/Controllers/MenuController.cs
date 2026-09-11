@@ -106,6 +106,10 @@ namespace Microservice.Admin.Controllers
             // Sira alanı formdan gelmiyor, otomatik hesaplanacak
             ModelState.Remove("CreateMenu.Sira");
 
+            // SeoUrl formdan gelmiyor, service içinden otomatik hesaplanacak
+            ModelState.Remove("CreateMenu.SeoUrl");
+
+
             if (!ModelState.IsValid)
             {
                 _logger.LogWarning("Create Menu - ModelState geçersiz.");

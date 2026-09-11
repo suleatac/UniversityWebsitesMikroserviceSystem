@@ -1,7 +1,27 @@
+@using Microservice.Web.ViewModels.Menu
 @model Microservice.Web.ViewModels.Menu.MenuGetIndexVm
 
 @{
-    string BuildHref(string? link) => string.IsNullOrWhiteSpace(link) ? "#" : "/" + link.Trim('/');
+    // Link dolu ise dogrudan o link kullanilir.
+    // Link bos ise menu, bagli oldugu sayfa tipine (PageType) yonlendirilir: /{dil}/{slug}
+    string BuildHref(MenuGetVm menu)
+    {
+        if (!string.IsNullOrWhiteSpace(menu.Link))
+        {
+            var link = menu.Link.Trim();
+
+            return link.StartsWith("http", StringComparison.OrdinalIgnoreCase)
+                ? link
+                : "/" + link.Trim('/');
+        }
+
+        if (!string.IsNullOrWhiteSpace(menu.SeoUrl))
+        {
+            return $"/{Model.LanguageCode}/{menu.PageType.Slug}/{menu.SeoUrl.Trim('/')}";
+        }
+
+        return "#";
+    }
 }
 
 
@@ -22,12 +42,7 @@
                 <div class="col-md-12">
                     <nav class="navbar menu-top">
                         <ul class="menu clearfix">
-                          @*   <li class="home">
-                                <a href="blog.html">Blog</a>
-                                <ul class="submenu">
-                                    <li><a href="blog-single.html">Blog Single</a></li>
-                                </ul><!-- /.submenu -->
-                            </li>
+                          @*   
                             <li>
                                 <a href="portfolio.html">Portfolio</a>
                                 <ul class="submenu">
@@ -162,7 +177,7 @@
                             </li>
                             @foreach (var menu in Model.Menus)
                             {
-                                var href = BuildHref(menu.Link);
+                                var href = BuildHref(menu);
 
                                 if (menu.Children.Count == 0)
                                 {
@@ -175,7 +190,7 @@
                                         <ul class="submenu">
                                             @foreach (var child in menu.Children.OrderBy(c => c.Sira))
                                             {
-                                                var childHref = BuildHref(child.Link);
+                                                var childHref = BuildHref(child);
                                                 <li><a href="@childHref">@child.Ad</a></li>
                                             }
                                         </ul><!-- /.submenu -->

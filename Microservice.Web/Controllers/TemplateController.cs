@@ -1,5 +1,4 @@
 using Microservice.Web.Models;
-using Microservice.Web.Services;
 using Microservice.Web.Services.Interfaces;
 using Microservice.Web.Settings;
 using Microservice.Web.ViewModels.PageRoute;
@@ -62,10 +61,10 @@ namespace Microservice.Web.Controllers
         public async Task<IActionResult> Index()
         {
             //var host = Request.Host.Host;
-            //var path = Request.Path.Value ?? "/";
+            var path = Request.Path.Value ?? "/";
 
             var host = "default.sivas.edu.tr";
-            var path = "/";
+            //var path = "/tr/";
 
             ViewData["Host"] = host;
             ViewData["Path"] = path;
@@ -77,8 +76,8 @@ namespace Microservice.Web.Controllers
 
             if (route is null)
             {
-                var viewPath = GetTemplateViewPath(1, "test");
-                return View(viewPath);
+                return RenderNotFound(
+                    $"'{path}' adresi için geçerli bir sayfa bulunamadı.");
      
             }
 
@@ -88,7 +87,21 @@ namespace Microservice.Web.Controllers
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            return View("~/Views/Shared/Error.cshtml", new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        }
+
+        /// <summary>
+        /// Sayfa bulunamadığında 404 döndürür ve default error sayfasını gösterir.
+        /// </summary>
+        private IActionResult RenderNotFound(string? detail = null)
+        {
+            Response.StatusCode = StatusCodes.Status404NotFound;
+
+            return View("~/Views/Shared/Error.cshtml", new ErrorViewModel {
+                Title = "404 - Sayfa Bulunamadı",
+                Message = detail ?? "Aradığınız sayfa mevcut değil veya taşınmış olabilir.",
+                RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier
+            });
         }
 
         /// <summary>
@@ -102,13 +115,14 @@ namespace Microservice.Web.Controllers
 
             if (page is null)
             {
-                return NotFound();
+                return RenderNotFound("Sayfa içeriği bulunamadı.");
             }
 
             // Navbar menüsü her template sayfasında (Model tipinden bağımsız) bu bilgilerle üretilir.
             ViewData["SiteId"] = route.Site.Id;
             ViewData["DilId"] = route.LanguageId;
             ViewData["LanguageCode"] = route.LanguageCode;
+   
 
             return (PageTypeKindEnum)page.PageTypeKind switch {
                 PageTypeKindEnum.Home =>
@@ -117,12 +131,14 @@ namespace Microservice.Web.Controllers
                     await RenderNewListAsync(route),
                 PageTypeKindEnum.NewsDetail  when route.NewsDetail is not null =>
                     await RenderNewDetailAsync(route),
+                PageTypeKindEnum.Menu when route.MenuDetail is not null =>
+                await RenderMenuDetailAsync(route),
                 PageTypeKindEnum.AnnouncementList when route.DetailSlug is null =>
                     await RenderAnnouncementListAsync(route),
                 PageTypeKindEnum.AnnouncementDetail when route.AnnouncementDetail is not null =>
                     await RenderAnnouncementDetailAsync(route),
                 PageTypeKindEnum.StaticPage => RenderStaticPage(route),
-                _ => NotFound()
+                _ => RenderNotFound("Bu sayfa türü için tanımlı bir görünüm yok.")
             };
         }
 
@@ -154,7 +170,7 @@ namespace Microservice.Web.Controllers
             if (!siteResult.IsSuccess || siteResult.Data is null)
             {
                 _logger.LogWarning("Home sayfası için site bulunamadı. SiteId: {SiteId}", siteId);
-                return NotFound();
+                return RenderNotFound("Site bulunamadı.");
             }
 
             var menusResult = await menusTask;
@@ -167,6 +183,8 @@ namespace Microservice.Web.Controllers
 
             var model = new TemplatePageViewModel {
                 Site = siteResult.Data,
+                // Link'i bos olan icerikler /{LanguageCode}/{PageTypeSlug}/{SeoUrl} adresine yonlendirilir.
+                LanguageCode = route.LanguageCode,
                 Menus = menusResult.Data ?? [],
                 Banners = (bannersResult.Data ?? [])
                     .OrderByDescending(b => b.YayimTarihi)
@@ -202,6 +220,44 @@ namespace Microservice.Web.Controllers
             return View(viewPath, model);
         }
 
+
+        // ============================================================
+        // MENU
+        // ============================================================
+        private async Task<IActionResult> RenderMenuDetailAsync(
+    RouteResolveResult route)
+        {
+            if (route.MenuDetail is null)
+            {
+                return RenderNotFound("Menü bulunamadı.");
+            }
+
+            var model = await _menuService.GetMenuByIdAsync(
+                route.MenuDetail.Id);
+
+            if (!model.IsSuccess || model.Data is null)
+            {
+                return RenderNotFound("Menü yüklenemedi.");
+            }
+
+            var viewPath = GetTemplateViewPath(route.Page.TemplateId, model.Data.PageType.ViewName);
+
+            return View(viewPath, model.Data);
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         // ============================================================
         // HABERLER
         // ============================================================
@@ -216,7 +272,7 @@ namespace Microservice.Web.Controllers
                 route.Site.Id, 1);
 
             if (!model.IsSuccess || model.Data is null)
-                return NotFound();
+                return RenderNotFound("Haber listesi yüklenemedi.");
 
             var viewPath = GetTemplateViewPath(
                 route.Page.TemplateId,
@@ -233,7 +289,7 @@ namespace Microservice.Web.Controllers
         {
             if (route.NewsDetail is null)
             {
-                return NotFound();
+                return RenderNotFound("Haber bulunamadı.");
             }
 
             var model = await _haberService.GetHaberByIdAsync(
@@ -241,7 +297,7 @@ namespace Microservice.Web.Controllers
 
             if (!model.IsSuccess || model.Data is null)
             {
-                return NotFound();
+                return RenderNotFound("Haber yüklenemedi.");
             }
 
             var viewPath = GetTemplateViewPath(route.Page.TemplateId,"NewsDetail");
@@ -263,7 +319,7 @@ namespace Microservice.Web.Controllers
                 route.Site.Id, 1);
 
             if (!model.IsSuccess || model.Data is null)
-                return NotFound();
+                return RenderNotFound("Duyuru listesi yüklenemedi.");
 
             var viewPath = GetTemplateViewPath(
                 route.Page.TemplateId,
@@ -280,7 +336,7 @@ namespace Microservice.Web.Controllers
         {
             if (route.AnnouncementDetail is null)
             {
-                return NotFound();
+                return RenderNotFound("Duyuru bulunamadı.");
             }
 
             var model = await _duyuruService.GetDuyuruByIdAsync(
@@ -288,12 +344,12 @@ namespace Microservice.Web.Controllers
 
             if (!model.IsSuccess || model.Data is null)
             {
-                return NotFound();
+                return RenderNotFound("Duyuru yüklenemedi.");
             }
 
             var viewPath = GetTemplateViewPath(
                 route.Page.TemplateId,
-                "AnnouncementDetail");
+                model.Data.PageType.ViewName);
 
             return View(viewPath, model.Data);
         }
@@ -326,7 +382,7 @@ namespace Microservice.Web.Controllers
                     "Static sayfada ViewName tanımlı değil. PageId: {PageId}",
                     route.Page.Id);
 
-                return NotFound();
+                return RenderNotFound("Sayfa görünümü tanımlı değil.");
             }
 
             var viewPath = GetTemplateViewPath(

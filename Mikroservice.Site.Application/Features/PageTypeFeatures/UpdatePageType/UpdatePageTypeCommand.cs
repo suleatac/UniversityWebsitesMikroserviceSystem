@@ -11,7 +11,7 @@ namespace Microservice.Site.Application.Features.PageTypeFeatures.UpdatePageType
         public string Slug { get; init; } = default!;
         public int TemplateId { get; init; }
         public int DilId { get; init; }
-        public string? ViewName { get; init; }
+        public string ViewName { get; init; } = default!;
         public bool IsHomePage { get; init; }
     }
 }

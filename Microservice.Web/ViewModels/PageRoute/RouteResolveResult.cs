@@ -1,5 +1,6 @@
 ﻿using Microservice.Web.ViewModels.Duyuru;
 using Microservice.Web.ViewModels.Haber;
+using Microservice.Web.ViewModels.Menu;
 using Microservice.Web.ViewModels.Pages;
 using Microservice.Web.ViewModels.Site;
 
@@ -14,6 +15,7 @@ namespace Microservice.Web.ViewModels.PageRoute
 
         public HaberDetailVm? NewsDetail { get; set; }
 
+        public MenuDetailVm? MenuDetail { get; set; }
         public DuyuruDetailVm? AnnouncementDetail { get; set; }
 
         public string? DetailSlug { get; set; }

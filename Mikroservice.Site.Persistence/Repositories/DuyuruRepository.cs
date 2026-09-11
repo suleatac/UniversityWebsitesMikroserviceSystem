@@ -23,5 +23,12 @@ namespace Microservice.Site.Persistence.Repositories
             return _appDbContext.Set<Duyuru>()
                 .FirstOrDefaultAsync(x => x.SiteId == siteId && x.DilId == dilId && x.SeoUrl == seoUrl, cancellationToken);
         }
+        public async Task<Duyuru?> GetByIdWithPageTypeAsync(int id, CancellationToken cancellationToken = default)
+        {
+            return await _appDbContext.Set<Duyuru>()
+                .AsNoTracking()
+                .Include(x => x.PageType) // eager loading
+                .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
+        }
     }
 }

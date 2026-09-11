@@ -57,7 +57,8 @@
             siteId = (int)(ViewData["SiteId"] ?? 0),
             dilId = (int)(ViewData["DilId"] ?? 0),
             preloadedMenus = ViewData["Menus"] as List<MenuGetVm>,
-            preloadedSite = ViewData["Site"] as SiteDetailGetVm
+            preloadedSite = ViewData["Site"] as SiteDetailGetVm,
+            languageCode = ViewData["LanguageCode"] as string
         })
 
         

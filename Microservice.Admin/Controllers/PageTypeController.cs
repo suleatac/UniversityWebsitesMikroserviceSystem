@@ -77,8 +77,7 @@ namespace Microservice.Admin.Controllers
                 TemplateId = result.Data.TemplateId,
                 
                 ViewName = result.Data.ViewName,
-                IsHomePage = result.Data.IsHomePage,
-                IsActive = result.Data.IsActive
+                IsHomePage = result.Data.IsHomePage
             });
         }
 

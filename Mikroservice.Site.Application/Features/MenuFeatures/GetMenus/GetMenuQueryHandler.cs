@@ -33,22 +33,16 @@ namespace Mikroservice.Site.Application.Features.MenuFeatures.GetMenus
                 return ServiceResult<List<MenuDto>>.SuccessAsOK(cached);
             }
 
-            // ✔ DB'den flat veri çek
-            var query = menuRepository.GetAll()
-                .Where(x =>
-                    x.SiteId == request.SiteId &&
-                    x.DilId == request.DilId &&
-                    x.IsVisible);
+            // ✔ DB'den flat veri çek (PageType eager loading ile repository metodu üzerinden)
+            MenuLocation? location = request.Location.HasValue
+                ? (MenuLocation)request.Location.Value
+                : null;
 
-            if (request.Location.HasValue)
-            {
-                var location = (MenuLocation)request.Location.Value;
-                query = query.Where(x => x.Location == location);
-            }
-
-            var data = query
-                .OrderBy(x => x.Sira)
-                .ToList();
+            var data = await menuRepository.GetMenusWithPageTypeAsync(
+                request.SiteId,
+                request.DilId,
+                location,
+                cancellationToken);
 
             // ✔ Tree oluştur
             var tree = BuildTree(data);
@@ -79,6 +73,20 @@ namespace Mikroservice.Site.Application.Features.MenuFeatures.GetMenus
                     SiteId = x.SiteId,
                     DilId = x.DilId,
                     HedefId = x.HedefId,
+                    PageTypeId=x.PageTypeId,
+                    PageType = x.PageType is null ? null : new MenuPageTypeDto
+                    {
+                        Id = x.PageType.Id,
+                        PageTypeKind = x.PageType.PageTypeKind,
+                        Name = x.PageType.Name,
+                        Slug = x.PageType.Slug,
+                        TemplateId = x.PageType.TemplateId,
+                        ViewName = x.PageType.ViewName,
+                        IsHomePage = x.PageType.IsHomePage
+                    },
+                    SeoUrl=x.SeoUrl,
+                    SeoTitle=x.SeoTitle,
+                    SeoDescription=x.SeoDescription,
                     Baslik = x.Baslik,
                     Link = x.Link,
                     IcerikMetni = x.IcerikMetni,

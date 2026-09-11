@@ -1,6 +1,6 @@
-﻿namespace Mikroservice.Site.Application.DTOs.HaberDtos
+﻿namespace Microservice.Web.ViewModels.Banner
 {
-    public class HaberDto
+    public class GetBannerVm
     {
         public int Id { get; set; }
         public int SiteId { get; set; }
@@ -8,9 +8,8 @@
         public int HedefId { get; set; }
         public string Baslik { get; set; } = default!;
         public string KisaAciklama { get; set; } = default!;
-        public string? Link { get; set; }
-        public string? ResimUrl { get; set; }
-        public string? SeoUrl { get; set; }
+        public string ResimUrl { get; set; } = default!;
+        public int Sira { get; set; }
         public DateTime YayimTarihi { get; set; }
         public DateTime? BaslamaTarihi { get; set; }
         public DateTime? BitisTarihi { get; set; }
