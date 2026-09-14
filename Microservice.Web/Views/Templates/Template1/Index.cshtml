@@ -184,10 +184,17 @@
                                        class="vc_goUp btn btn-primary post-scroller-button post-scroller-up">
                                         <i class="fa fa-angle-up"></i>
                                     </a>
-                                    <a href="@BuildListHref("Duyurular")"
-                                       style="float:right;font-weight:600;text-decoration:underline;">
-                                        Tümü
-                                    </a>
+
+                                    @if (Model.Duyurular != null && Model.Duyurular.Any())
+                                    {
+                                        <a href="@BuildListHref(Model.Duyurular.First().PageType.Slug)"
+                                           style="float:right;font-weight:600;text-decoration:underline;">
+                                            Tümü
+                                        </a>
+                                    }
+
+
+
                                 </div>
 
                             </div>
@@ -201,6 +208,7 @@
         </div>
     </div>
     <!-- END DUYURULAR -->
+
 </section>
 <!-- END SECTION BANNER AND DUYURULAR -->
 <!-- START SECTION SHORTCUT BUTTONS -->
@@ -276,61 +284,64 @@
             <div class="col-md-9 margin-small">
                 <div class="row">
                     <h1 class="title haber">
-                        Haberler <a href="@BuildListHref("Haberler")"
-                                style="float:right;font-size:15px;text-decoration:underline;padding-top:10px;">
-                        Tümü
-                    </a>
-                </h1>
-            </div>
+                        Haberler
+                        @if (Model.Haberler != null && Model.Haberler.Any())
+                        {
+                            <a href="@BuildListHref(Model.Haberler.First().PageType.Slug)" style="float:right;font-size:15px;text-decoration:underline;padding-top:10px;">
+                                Tümü
+                            </a>
+                        }
+                    </h1>
+                </div>
 
-            <div class="flat-carousel v1 style-margin">
-                <div class="post-wrap">
-                    <div class="posts-carousel v1 v2">
-                        <div class="flat-event">
-                            <div class="flat-blog-carousel" data-item="3" data-nav="true" data-dots="false" data-auto="true">
+                <div class="flat-carousel v1 style-margin">
+                    <div class="post-wrap">
+                        <div class="posts-carousel v1 v2">
+                            <div class="flat-event">
+                                <div class="flat-blog-carousel" data-item="3" data-nav="true" data-dots="false" data-auto="true">
 
                                     
-                                @if (Model.Haberler != null && Model.Haberler.Any())
-                                {
-                                    @foreach (var haber in Model.Haberler)
+                                    @if (Model.Haberler != null && Model.Haberler.Any())
                                     {
+                                        @foreach (var haber in Model.Haberler)
+                                        {
 
-                                        <div class="grid-item">
-                                            <div class="grid-item-inner">
-                                                <div class="event-item">
-                                                    <div class="event-thumbnail">
-                                                        <a href="@BuildContentHref(haber.Link, haber.SeoUrl, haber.PageType.Slug)">
-                                                            <img src="@haber.ResimUrl" alt="image">
-                                                        </a>
-                                                    </div><!-- /event-thumbnail -->
+                                            <div class="grid-item">
+                                                <div class="grid-item-inner">
+                                                    <div class="event-item">
+                                                        <div class="event-thumbnail">
+                                                            <a href="@BuildContentHref(haber.Link, haber.SeoUrl, haber.PageType.Slug)">
+                                                                <img src="@haber.ResimUrl" alt="image">
+                                                            </a>
+                                                        </div><!-- /event-thumbnail -->
 
-                                                    <div class="date-block">
-                                                        <div class="month">@haber.YayimTarihi.ToString("MMM")</div>
-                                                        <div class="day">@haber.YayimTarihi.ToString("dd")</div>
-                                                    </div><!-- /date-block -->
+                                                        <div class="date-block">
+                                                            <div class="month">@haber.YayimTarihi.ToString("MMM")</div>
+                                                            <div class="day">@haber.YayimTarihi.ToString("dd")</div>
+                                                        </div><!-- /date-block -->
 
-                                                    <div class="event-overlay">
-                                                        <div class="cs-post-header">
-                                                            <div class="cs-category-links">
-                                                                <a class="overlay-top" href="@BuildContentHref(haber.Link, haber.SeoUrl, haber.PageType.Slug)">
-                                                                    <h4>@haber.Baslik</h4>
-                                                                </a>
+                                                        <div class="event-overlay">
+                                                            <div class="cs-post-header">
+                                                                <div class="cs-category-links">
+                                                                    <a class="overlay-top" href="@BuildContentHref(haber.Link, haber.SeoUrl, haber.PageType.Slug)">
+                                                                        <h4>@haber.Baslik</h4>
+                                                                    </a>
 
-                                                                <div class="overlay-footer">
-                                                                    <div>@haber.YayimTarihi.ToString("dd.MM.yyyy")</div>
-                                                                    <div>@haber.KisaAciklama</div>
+                                                                    <div class="overlay-footer">
+                                                                        <div>@haber.YayimTarihi.ToString("dd.MM.yyyy")</div>
+                                                                        <div>@haber.KisaAciklama</div>
+                                                                    </div>
                                                                 </div>
                                                             </div>
-                                                        </div>
-                                                    </div><!-- /event-overlay -->
+                                                        </div><!-- /event-overlay -->
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
 
+
+                                        }
 
                                     }
-
-                                }
 
                                     
                                     
@@ -340,66 +351,66 @@
 
 
 
-                            </div><!-- /flat-blog-carousel -->
-                        </div><!-- /flat-event -->
-                    </div><!-- /posts-carousel -->
-                </div><!-- /post-wrap -->
-            </div><!-- /flat-carousel -->
+                                </div><!-- /flat-blog-carousel -->
+                            </div><!-- /flat-event -->
+                        </div><!-- /posts-carousel -->
+                    </div><!-- /post-wrap -->
+                </div><!-- /flat-carousel -->
 
            
-        </div><!-- /col-md-9 -->
+            </div><!-- /col-md-9 -->
 
-        <div class="col-md-3">
-            <h4 class="title etkinlik">Etkinlikler</h4>
-            <div class="flat-carousel v3">
-                <div class="post-wrap">
-                    <div class="posts-carousel v1 v4">
-                        <div class="flat-event">
-                            <div class="flat-blog-carousel" data-item="3" data-nav="true" data-dots="false" data-auto="true">
+            <div class="col-md-3">
+                <h4 class="title etkinlik">Etkinlikler</h4>
+                <div class="flat-carousel v3">
+                    <div class="post-wrap">
+                        <div class="posts-carousel v1 v4">
+                            <div class="flat-event">
+                                <div class="flat-blog-carousel" data-item="3" data-nav="true" data-dots="false" data-auto="true">
 
 
                                     
-                                @if (Model.Etkinlikler != null && Model.Etkinlikler.Any())
-                                {
-                                    @foreach (var etkinlik in Model.Etkinlikler)
+                                    @if (Model.Etkinlikler != null && Model.Etkinlikler.Any())
                                     {
+                                        @foreach (var etkinlik in Model.Etkinlikler)
+                                        {
 
-                                        <div class="grid-item">
-                                            <div class="grid-item-inner">
-                                                <div class="event-item">
-                                                    <div class="event-thumbnail">
-                                                        <a href="@BuildContentHref(etkinlik.Link, etkinlik.SeoUrl, etkinlik.PageType.Slug)">
-                                                            <img src="@etkinlik.ResimUrl" alt="image">
-                                                        </a>
-                                                    </div><!-- /event-thumbnail -->
+                                            <div class="grid-item">
+                                                <div class="grid-item-inner">
+                                                    <div class="event-item">
+                                                        <div class="event-thumbnail">
+                                                            <a href="@BuildContentHref(etkinlik.Link, etkinlik.SeoUrl, etkinlik.PageType.Slug)">
+                                                                <img src="@etkinlik.ResimUrl" alt="image">
+                                                            </a>
+                                                        </div><!-- /event-thumbnail -->
 
-                                                    <div class="date-block">
-                                                        <div class="month">@etkinlik.YayimTarihi.ToString("MMM")</div>
-                                                        <div class="day">@etkinlik.YayimTarihi.ToString("dd")</div>
-                                                    </div><!-- /date-block -->
+                                                        <div class="date-block">
+                                                            <div class="month">@etkinlik.YayimTarihi.ToString("MMM")</div>
+                                                            <div class="day">@etkinlik.YayimTarihi.ToString("dd")</div>
+                                                        </div><!-- /date-block -->
 
-                                                    <div class="event-overlay">
-                                                        <div class="cs-post-header">
-                                                            <div class="cs-category-links">
-                                                                <a class="overlay-top" href="@BuildContentHref(etkinlik.Link, etkinlik.SeoUrl, etkinlik.PageType.Slug)">
-                                                                    <h4>@etkinlik.Baslik</h4>
-                                                                </a>
+                                                        <div class="event-overlay">
+                                                            <div class="cs-post-header">
+                                                                <div class="cs-category-links">
+                                                                    <a class="overlay-top" href="@BuildContentHref(etkinlik.Link, etkinlik.SeoUrl, etkinlik.PageType.Slug)">
+                                                                        <h4>@etkinlik.Baslik</h4>
+                                                                    </a>
 
-                                                                <div class="overlay-footer">
-                                                                    <div>At @etkinlik.YayimTarihi.ToString("dd.MM.yyyy")</div>
-                                                                    <div>@etkinlik.KisaAciklama</div>
+                                                                    <div class="overlay-footer">
+                                                                        <div>At @etkinlik.YayimTarihi.ToString("dd.MM.yyyy")</div>
+                                                                        <div>@etkinlik.KisaAciklama</div>
+                                                                    </div>
                                                                 </div>
                                                             </div>
-                                                        </div>
-                                                    </div><!-- /event-overlay -->
+                                                        </div><!-- /event-overlay -->
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
 
+
+                                        }
 
                                     }
-
-                                }
 
 
 
@@ -408,14 +419,14 @@
 
 
 
-                            </div><!-- /flat-blog-carousel -->
-                        </div><!-- /flat-event -->
-                    </div><!-- /posts-carousel -->
-                </div><!-- /post-wrap -->
-            </div><!-- /flat-carousel v2 -->
-        </div>
-    </div><!-- /row -->
-</div><!-- /container -->
+                                </div><!-- /flat-blog-carousel -->
+                            </div><!-- /flat-event -->
+                        </div><!-- /posts-carousel -->
+                    </div><!-- /post-wrap -->
+                </div><!-- /flat-carousel v2 -->
+            </div>
+        </div><!-- /row -->
+    </div><!-- /container -->
 </section><!-- /page-title -->
 <!-- END SECTION HABERLER VE ETKİNLİKLER -->
 <!-- START SECTION BİLGİLER -->
