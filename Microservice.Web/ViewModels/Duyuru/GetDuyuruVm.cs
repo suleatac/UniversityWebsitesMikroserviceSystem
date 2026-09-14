@@ -11,7 +11,7 @@ namespace Microservice.Web.ViewModels.Duyuru
         public int HedefId { get; set; }
         public int PageTypeId { get; set; }
         public string Baslik { get; set; } = default!;
-        public string? SeoUrl { get; set; }
+        public string SeoUrl { get; set; } = default!;
         public string? Link { get; set; }
         public string KisaAciklama { get; set; } = default!;
         public string? ResimUrl { get; set; }
@@ -21,6 +21,6 @@ namespace Microservice.Web.ViewModels.Duyuru
         public DateTime? BaslamaTarihi { get; set; }
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-ddTHH:mm}", ApplyFormatInEditMode = true)]
         public DateTime? BitisTarihi { get; set; }
-        public PagesDetailVm PageType { get; set; } = null!;
+        public PagesDetailVm PageType { get; set; } = default!;
     }
 }

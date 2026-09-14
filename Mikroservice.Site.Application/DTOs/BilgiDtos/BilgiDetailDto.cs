@@ -1,3 +1,5 @@
+using Mikroservice.Site.Application.DTOs.PageTypeDtos;
+
 namespace Mikroservice.Site.Application.DTOs.BilgiDtos
 {
     public class BilgiDetailDto
@@ -6,6 +8,7 @@ namespace Mikroservice.Site.Application.DTOs.BilgiDtos
         public int SiteId { get; set; }
         public int DilId { get; set; }
         public int HedefId { get; set; }
+        public int PageTypeId { get; set; }
         public string Baslik { get; set; } = default!;
         public string KisaAciklama { get; set; } = default!;
         public string IcerikMetni { get; set; } = default!;
@@ -19,5 +22,6 @@ namespace Mikroservice.Site.Application.DTOs.BilgiDtos
         public string SeoUrl { get; set; } = default!;
         public string? SeoTitle { get; set; }
         public string? SeoDescription { get; set; }
+        public PageTypeDto PageType { get; set; } = default!;
     }
 }

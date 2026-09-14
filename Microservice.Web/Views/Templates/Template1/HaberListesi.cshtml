@@ -1,0 +1,20 @@
+﻿@model List<Microservice.Web.ViewModels.Haber.GetHaberVm>
+@{
+    ViewData["Title"] = "Haberler";
+}
+
+<div class="page-title parallax parallax1">
+    <div class="container">
+        <div class="flat-university">
+            <div class="post">
+                <h1 class="title">Haberler</h1>
+            </div><!--/post -->
+        </div><!--/flat-university -->
+    </div><!--/container -->
+</div><!--/page-title -->
+
+<section class="flat-row">
+    <div class="container">
+     Toplam haber sayısı: @Model.Count()
+    </div>
+</section>

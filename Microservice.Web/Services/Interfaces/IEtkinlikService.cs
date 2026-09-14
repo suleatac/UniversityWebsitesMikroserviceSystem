@@ -5,7 +5,7 @@ namespace Microservice.Web.Services.Interfaces
 {
     public interface IEtkinlikService
     {
-        Task<ServiceResult<List<EtkinlikVm>>> GetEtkinliklerAsync(int siteId, int dilId);
-        Task<ServiceResult<EtkinlikVm>> GetEtkinlikByIdAsync(int id);
+        Task<ServiceResult<List<GetEtkinlikVm>>> GetEtkinliklerAsync(int siteId, int dilId);
+        Task<ServiceResult<EtkinlikDetailVm>> GetEtkinlikByIdAsync(int id);
     }
 }

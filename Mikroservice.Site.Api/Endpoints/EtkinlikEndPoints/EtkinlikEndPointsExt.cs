@@ -23,6 +23,7 @@ namespace Mikroservice.Site.Api.Endpoints.EtkinlikEndPoints
             group.GetEtkinliklerEndpointGroupItem();
             group.GetEtkinlikByIdEndpointGroupItem();
             group.GetPaginatedEtkinlikEndpointGroupItem();
+            group.GetEtkinlikBySeoUrlEndpointGroupItem();
 
             group.RequireAuthorization("ClientCredential");
         }

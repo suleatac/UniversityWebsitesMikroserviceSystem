@@ -17,5 +17,14 @@ namespace Microservice.Site.Persistence.Repositories
         {
             return await _appDbContext.Set<Icerik>().AnyAsync(cancellationToken);
         }
+        public Task<bool> IsSeoUrlAvailableAsync(int siteId, int PageTypeId, string SeoUrl, int? ExcludeIcerikId, CancellationToken cancellationToken = default)
+        {
+            return _appDbContext.Set<Icerik>()
+                .AnyAsync(x => x.SiteId == siteId
+                                && x.SeoUrl == SeoUrl
+                                && x.PageTypeId == PageTypeId
+                                && (!ExcludeIcerikId.HasValue || x.Id != ExcludeIcerikId.Value),
+                    cancellationToken);
+        }
     }
 }

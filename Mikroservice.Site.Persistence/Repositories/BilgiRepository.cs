@@ -17,5 +17,28 @@ namespace Microservice.Site.Persistence.Repositories
         {
             return await _appDbContext.Set<Bilgi>().AnyAsync(cancellationToken);
         }
+        public async Task<Bilgi?> GetByIdWithPageTypeAsync(int id, CancellationToken cancellationToken = default)
+        {
+            return await _appDbContext.Set<Bilgi>()
+                .AsNoTracking()
+                .Include(x => x.PageType) // eager loading
+                .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
+        }
+        public async Task<List<Bilgi>> GetBySiteAndLanguageAsync(int siteId, int dilId, CancellationToken cancellationToken)
+        {
+            return await _appDbContext
+                .Set<Bilgi>()
+                .AsNoTracking()
+                .Include(x => x.PageType) // eager loading
+                .Where(x => x.SiteId == siteId &&x.DilId == dilId).OrderByDescending(x => x.YayimTarihi)
+                .ToListAsync(cancellationToken);
+        }
+        public Task<Bilgi?> GetBySeoUrlAsync(int siteId, int dilId, string seoUrl, CancellationToken cancellationToken = default)
+        {
+            return _appDbContext.Set<Bilgi>()
+                .AsNoTracking()
+                .Include(x => x.PageType) // eager loading
+                .FirstOrDefaultAsync(x => x.SiteId == siteId && x.DilId == dilId && x.SeoUrl == seoUrl, cancellationToken);
+        }
     }
 }

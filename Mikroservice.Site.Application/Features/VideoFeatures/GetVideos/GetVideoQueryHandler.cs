@@ -1,50 +1,51 @@
-﻿using MediatR;
+﻿using AutoMapper;
+using MediatR;
 using Microservice.Shared;
 using Microservice.Shared.Services.RedisServiceItems;
 using Microservice.Site.Application.Contracts.IRepositories;
 using Microsoft.Extensions.Logging;
-using Mikroservice.Site.Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Text;
+using Mikroservice.Site.Application.DTOs.VideoDtos;
 
 namespace Mikroservice.Site.Application.Features.VideoFeatures.GetVideos
 {
     public class GetVideoQueryHandler(
-      IVideoRepository repository,
+      IVideoRepository videoRepository,
       IRedisCacheService redis,
-      ILogger<GetVideoQueryHandler> logger
-  ) : IRequestHandler<GetVideosQuery, ServiceResult<List<Video>>>
+      ILogger<GetVideoQueryHandler> logger,
+      IMapper mapper
+  ) : IRequestHandler<GetVideosQuery, ServiceResult<List<VideoDto>>>
     {
-        public async Task<ServiceResult<List<Video>>> Handle(
+        public async Task<ServiceResult<List<VideoDto>>> Handle(
             GetVideosQuery request,
             CancellationToken cancellationToken)
         {
             var cacheKey = $"video:list:{request.SiteId}:{request.DilId}";
 
-            var cached = await redis.GetListAsync<Video>(cacheKey, cancellationToken);
+            var cached = await redis.GetListAsync<VideoDto>(cacheKey, cancellationToken);
 
             if (cached is not null)
             {
                 logger.LogInformation("Video cache'den alındı");
-                return ServiceResult<List<Video>>.SuccessAsOK(cached);
+                return ServiceResult<List<VideoDto>>.SuccessAsOK(cached);
             }
 
-            var now = DateTime.Now;
+            // Yoksa veritabanından çek
+            var data = await videoRepository.GetBySiteAndLanguageAsync(request.SiteId, request.DilId, cancellationToken);
 
-            var data = repository.GetAll()
-                .Where(x =>
-                    x.SiteId == request.SiteId &&
-                    x.DilId == request.DilId &&
-                    !x.IsDeleted &&
-                    (x.BaslamaTarihi == null || x.BaslamaTarihi <= now) &&
-                    (x.BitisTarihi == null || x.BitisTarihi >= now))
-                .OrderByDescending(x => x.YayimTarihi)
-                .ToList();
+            //Loglama
+            logger.LogInformation(
+                "Video verisi veritabanından alındı. SiteId:{siteId}, DilId:{dilId}, Count:{count}",
+                request.SiteId,
+                request.DilId,
+                data.Count);
 
-            await redis.SetListAsync(cacheKey, data, TimeSpan.FromHours(12), cancellationToken);
+            var mappedData = mapper.Map<List<VideoDto>>(data);
 
-            return ServiceResult<List<Video>>.SuccessAsOK(data);
+            await redis.SetListAsync(cacheKey, mappedData, TimeSpan.FromHours(12), cancellationToken);
+
+            var dtoData = mapper.Map<List<VideoDto>>(data);
+
+            return ServiceResult<List<VideoDto>>.SuccessAsOK(dtoData);
         }
     }
 }

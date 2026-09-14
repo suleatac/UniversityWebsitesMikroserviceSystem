@@ -1,0 +1,51 @@
+﻿using OpenTelemetry;
+using OpenTelemetry.Resources;
+using OpenTelemetry.Trace;
+
+namespace Microservice.Web.SeriLog
+{
+    public static class LogExtensions
+    {
+        public static IServiceCollection AddLoggingExt(this IServiceCollection services, IConfiguration configuration)
+        {
+            //Opentelemetry trace için eklendi.
+            var openTelemetryConstants = configuration.GetSection("OpenTelemetry").Get<OpenTelemetryConstants>();
+
+            services.AddOpenTelemetry()
+                .WithTracing(tracingBuilder => {
+                    tracingBuilder
+                    .AddSource(openTelemetryConstants!.ActivitySourceName)
+                    .ConfigureResource(resource => {
+                        resource.AddService(openTelemetryConstants.ServiceName, serviceVersion: openTelemetryConstants.ServiceVersion);
+                    })
+                    .AddAspNetCoreInstrumentation(options => {
+                      
+
+                        options.RecordException = true;
+                    })
+                    .AddHttpClientInstrumentation(httpOptions => {
+
+                        httpOptions.FilterHttpRequestMessage = request => {
+                            var pathValue = request.RequestUri?.AbsolutePath;
+                            // Null veya boş path kontrolü
+                            if (string.IsNullOrEmpty(pathValue))
+                                return false;
+
+                            // '9200' içeren istekleri hariç tut (Elasticsearch)
+                            return !pathValue.Contains("9200", StringComparison.InvariantCulture);
+                        };
+
+
+                    })
+                    .AddRedisInstrumentation(options => {
+                        options.SetVerboseDatabaseStatements = true;
+                    })
+                    .SetSampler(new AlwaysOnSampler())
+                    .AddOtlpExporter();//Jaeger
+                });
+
+            return services;
+        }
+
+    }
+}

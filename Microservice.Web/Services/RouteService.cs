@@ -309,6 +309,10 @@ namespace Microservice.Web.Services
         }
 
 
+        // =============================================================
+        // DETAIL -> Altsayfalar için resolveri çağırır. örn: Haberlersayfası, Duyurular sayfası
+        // =============================================================
+
         private async Task<RouteResolveResult?> ResolvePageAsync(
     RouteResolveResult result)
         {
@@ -332,12 +336,10 @@ namespace Microservice.Web.Services
 
 
         // =============================================================
-        // DETAIL
+        // DETAIL -> Altsayfaların detayı için resolveri çağırır. Örn: Haber detay sayfası, Duyuru detay sayfası
         // =============================================================
 
-        private async Task<RouteResolveResult?> ResolveDetailAsync(
-     RouteResolveResult result,
-     string detailSlug)
+        private async Task<RouteResolveResult?> ResolveDetailAsync( RouteResolveResult result, string detailSlug)
         {
             var pageType = result.Page.PageTypeKind;
 

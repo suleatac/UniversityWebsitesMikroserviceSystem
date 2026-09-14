@@ -18,7 +18,7 @@ namespace Microservice.Web.Services
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public async Task<ServiceResult<List<EtkinlikVm>>> GetEtkinliklerAsync(int siteId, int dilId)
+        public async Task<ServiceResult<List<GetEtkinlikVm>>> GetEtkinliklerAsync(int siteId, int dilId)
         {
             _logger.LogInformation("API'den etkinlik listesi çekiliyor. SiteId: {SiteId}, DilId: {DilId}", siteId, dilId);
 
@@ -37,17 +37,17 @@ namespace Microservice.Web.Services
                     problemDetails?.Detail
                 );
 
-                return ServiceResult<List<EtkinlikVm>>.Error(
+                return ServiceResult<List<GetEtkinlikVm>>.Error(
                     problemDetails?.Detail ?? problemDetails?.Title ?? "Etkinlikler alınamadı"
                 );
             }
 
             _logger.LogInformation("Etkinlik listesi başarıyla alındı. Count: {Count}", response.Content?.Count);
-            return ServiceResult<List<EtkinlikVm>>.Success(response.Content!);
+            return ServiceResult<List<GetEtkinlikVm>>.Success(response.Content!);
         }
 
         // GET BY ID
-        public async Task<ServiceResult<EtkinlikVm>> GetEtkinlikByIdAsync(int id)
+        public async Task<ServiceResult<EtkinlikDetailVm>> GetEtkinlikByIdAsync(int id)
         {
             _logger.LogInformation("Etkinlik getiriliyor. Id: {Id}", id);
 
@@ -66,12 +66,12 @@ namespace Microservice.Web.Services
                     problemDetails?.Detail
                 );
 
-                return ServiceResult<EtkinlikVm>.Error(
+                return ServiceResult<EtkinlikDetailVm>.Error(
                     problemDetails?.Detail ?? problemDetails?.Title ?? "Etkinlik alınamadı"
                 );
             }
 
-            return ServiceResult<EtkinlikVm>.Success(response.Content!);
+            return ServiceResult<EtkinlikDetailVm>.Success(response.Content!);
         }
     }
 }

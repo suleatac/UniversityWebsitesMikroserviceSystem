@@ -34,7 +34,8 @@ namespace Microservice.Web.ViewComponents
         public async Task<IViewComponentResult> InvokeAsync(
            int siteId,
            int dilId,
-           SiteDetailGetVm? preloadedSite = null)
+           SiteDetailGetVm? preloadedSite = null,
+            string? languageCode = null)
         {
             if (siteId <= 0 || dilId <= 0)
             {
@@ -52,7 +53,8 @@ namespace Microservice.Web.ViewComponents
 
             var viewModel = new FooterTemplate1Vm {
                 Site = site,
-                DilId = dilId,
+                // Link'i bos olan menuler /{languageCode}/{PageTypeSlug} adresine yonlendirilir
+                LanguageCode = string.IsNullOrWhiteSpace(languageCode) ? "tr" : languageCode.Trim('/').ToLowerInvariant(),
                 BandLogos = bandLogosTask.Result.Data ?? new List<GetBandLogoVm>(),
                 FooterColumns = FilterFooterColumns(footerMenusTask.Result.Data),
                 LatestHaberler = (haberlerTask.Result.Data ?? new List<GetHaberVm>())
@@ -65,17 +67,17 @@ namespace Microservice.Web.ViewComponents
         }
 
         // Sadece gorunur kok sutunlari ve siralanmis linkleri dondurur
-        private List<MenuGetVm> FilterFooterColumns(List<MenuGetVm>? menus)
+        private List<GetMenuVm> FilterFooterColumns(List<GetMenuVm>? menus)
         {
             if (menus is null)
             {
-                return new List<MenuGetVm>();
+                return new List<GetMenuVm>();
             }
 
             return menus
                 .Where(menu => menu.ParentId is null && menu.IsVisible)
                 .OrderBy(menu => menu.Sira)
-                .Select(column => new MenuGetVm {
+                .Select(column => new GetMenuVm {
                     Id = column.Id,
                     SiteId = column.SiteId,
                     DilId = column.DilId,

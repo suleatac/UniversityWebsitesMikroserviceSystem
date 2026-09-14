@@ -4,26 +4,31 @@
 @{
     // Link dolu ise dogrudan o link kullanilir.
     // Link bos ise menu, bagli oldugu sayfa tipine (PageType) yonlendirilir: /{dil}/{slug}
-    string BuildHref(MenuGetVm menu)
+
+    // Link dolu ise dogrudan o link kullanilir.
+    // Link bos ise menu, bagli oldugu sayfa tipine (PageType) yonlendirilir: /{dil}/{slug}
+    string BuildHref(GetMenuVm menu)
     {
         if (!string.IsNullOrWhiteSpace(menu.Link))
         {
-            return menu.Link.StartsWith("http", StringComparison.OrdinalIgnoreCase)
-                ? menu.Link
-                : "/" + menu.Link.Trim('/');
+            var link = menu.Link.Trim();
+
+            return link.StartsWith("http", StringComparison.OrdinalIgnoreCase)
+                ? link
+                : "/" + link.Trim('/');
         }
 
         if (!string.IsNullOrWhiteSpace(menu.SeoUrl))
         {
-            var langCode = Model.DilId == 2 ? "en" : "tr";
-            return $"/{langCode}/{menu.SeoUrl.Trim('/')}";
+            return $"/{Model.LanguageCode}/{menu.PageType.Slug}/{menu.SeoUrl.Trim('/')}";
         }
 
         return "#";
     }
 
+
     var ozellikler = Model.Site?.SiteOzellikleri;
-    var isEnglish = Model.DilId == 2;
+    var isEnglish = Model.LanguageCode == "en";
     var footerAddress = isEnglish ? ozellikler?.SiteAdressEng : ozellikler?.SiteAdress;
     var haberBasligi = isEnglish ? "RECENT POSTS" : "SON HABERLER";
     var iletisimBasligi = isEnglish ? "CONTACT" : "İLETİŞİM";
@@ -89,10 +94,10 @@
                                 <div class=" widget-inner">
                                     <h2 class="widget-title maincolor1">@column.Baslik</h2>
                                     <ul class="menu">
-                                        @foreach (var link in column.Children)
+                                        @foreach (var menu in column.Children)
                                         {
                                             <li class="menu-item menu-item-type-custom menu-item-object-custom">
-                                                <a href="@BuildHref(link)">@link.Baslik</a>
+                                                <a href="@BuildHref(menu)">@menu.Baslik</a>
                                             </li>
                                         }
                                     </ul>
@@ -112,7 +117,7 @@
                                     @foreach (var haber in Model.LatestHaberler)
                                     {
                                         <li>
-                                            <a href="/haberler/@haber.SeoUrl">@haber.Baslik</a>
+                                            <a href="/@Model.LanguageCode/@haber.PageType.Slug/@haber.SeoUrl">@haber.Baslik</a>
                                         </li>
                                     }
                                 </ul>

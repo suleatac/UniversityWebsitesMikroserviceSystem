@@ -3,7 +3,6 @@ using MediatR;
 using Microservice.Shared;
 using Microservice.Shared.Services.RedisServiceItems;
 using Microservice.Site.Application.Contracts.IRepositories;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Mikroservice.Site.Application.DTOs.HaberDtos;
 
@@ -35,10 +34,9 @@ namespace Mikroservice.Site.Application.Features.HaberFeatures.GetHabers
 
 
             // Yoksa veritabanından çek
-            var data = await haberRepository.GetAll().Where(b => b.SiteId == request.SiteId && b.DilId == request.DilId).ToListAsync(cancellationToken);
+            var data = await haberRepository.GetBySiteAndLanguageAsync(request.SiteId, request.DilId, cancellationToken);
 
-         
-            //Örnek Loglama
+            //Loglama
             logger.LogInformation(
                 "Haber verisi veritabanından alındı. SiteId:{siteId}, DilId:{dilId}, Count:{count}",
                 request.SiteId,

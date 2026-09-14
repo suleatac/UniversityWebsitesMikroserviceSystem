@@ -13,5 +13,6 @@ namespace Microservice.Site.Application.Contracts.IRepositories
 
         // Id bazinda, PageType bilgisi eager loading ile tek menu
         Task<Menu?> GetByIdWithPageTypeAsync(int id, CancellationToken cancellationToken = default);
+        Task<List<Menu>> GetBySiteAndLanguageAsync(int siteId, int dilId, CancellationToken cancellationToken);
     }
 }

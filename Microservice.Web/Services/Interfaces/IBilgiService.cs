@@ -5,7 +5,7 @@ namespace Microservice.Web.Services.Interfaces
 {
     public interface IBilgiService
     {
-        Task<ServiceResult<List<BilgiVm>>> GetBilgisAsync(int siteId, int dilId);
-        Task<ServiceResult<BilgiVm>> GetBilgiByIdAsync(int id);
+        Task<ServiceResult<List<GetBilgiVm>>> GetBilgisAsync(int siteId, int dilId);
+        Task<ServiceResult<BilgiDetailVm>> GetBilgiByIdAsync(int id);
     }
 }

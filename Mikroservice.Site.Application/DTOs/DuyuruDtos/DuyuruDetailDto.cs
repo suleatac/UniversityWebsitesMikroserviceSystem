@@ -23,6 +23,6 @@ namespace Mikroservice.Site.Application.DTOs.DuyuruDtos
         public string? SeoTitle { get; set; }
         public string? SeoDescription { get; set; }
         // Eager loading ile gelen PageType bilgisi
-        public PageTypeDto? PageType { get; set; }
+        public PageTypeDto PageType { get; set; } = default!;
     }
 }

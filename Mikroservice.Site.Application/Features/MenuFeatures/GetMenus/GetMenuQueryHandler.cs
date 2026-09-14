@@ -4,6 +4,7 @@ using Microservice.Shared.Services.RedisServiceItems;
 using Microservice.Site.Application.Contracts.IRepositories;
 using Microsoft.Extensions.Logging;
 using Mikroservice.Site.Application.DTOs.MenuDtos;
+using Mikroservice.Site.Application.DTOs.PageTypeDtos;
 using Mikroservice.Site.Domain.Entities;
 using Mikroservice.Site.Domain.Enums;
 
@@ -74,7 +75,7 @@ namespace Mikroservice.Site.Application.Features.MenuFeatures.GetMenus
                     DilId = x.DilId,
                     HedefId = x.HedefId,
                     PageTypeId=x.PageTypeId,
-                    PageType = x.PageType is null ? null : new MenuPageTypeDto
+                    PageType = new PageTypeDto
                     {
                         Id = x.PageType.Id,
                         PageTypeKind = x.PageType.PageTypeKind,

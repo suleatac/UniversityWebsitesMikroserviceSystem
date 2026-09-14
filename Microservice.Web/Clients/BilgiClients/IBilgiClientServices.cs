@@ -6,9 +6,13 @@ namespace Microservice.Web.Clients.BilgiClients
     public interface IBilgiClientServices
     {
         [Get("/api/v1/bilgis/{id}")]
-        Task<ApiResponse<BilgiVm>> GetBilgiByIdAsync(int id);
+        Task<ApiResponse<BilgiDetailVm>> GetBilgiByIdAsync(int id);
 
         [Get("/api/v1/bilgis")]
-        Task<ApiResponse<List<BilgiVm>>> GetBilgisAsync(int siteId, int dilId);
+        Task<ApiResponse<List<GetBilgiVm>>> GetBilgisAsync(int siteId, int dilId);
+
+
+        [Get("/api/v1/bilgis/seo/{siteId}/{dilId}/{seoUrl}")]
+        Task<ApiResponse<BilgiDetailVm>> GetBilgiBySeoUrlAsync(int siteId, int dilId, string seoUrl);
     }
 }

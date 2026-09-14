@@ -23,6 +23,7 @@ namespace Mikroservice.Site.Api.Endpoints.BilgiEndPoints
             group.GetBilgisEndpointGroupItem();
             group.GetBilgiByIdEndpointGroupItem();
             group.GetPaginatedBilgiEndpointGroupItem();
+            group.GetBilgiBySeoUrlEndpointGroupItem();
 
             group.RequireAuthorization("ClientCredential");
         }

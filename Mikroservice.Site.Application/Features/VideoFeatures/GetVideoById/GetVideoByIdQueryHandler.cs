@@ -16,7 +16,8 @@ namespace Mikroservice.Site.Application.Features.VideoFeatures.GetVideoById
     {
         public async Task<ServiceResult<VideoDetailDto>> Handle(GetVideoByIdQuery request, CancellationToken cancellationToken)
         {
-            var entity = await videoRepository.GetByIdAsync(request.Id);
+            // ✔ DB'den TEK kayıt çek (PageType eager loading ile)
+            var entity = await videoRepository.GetByIdWithPageTypeAsync(request.Id, cancellationToken);
 
             if (entity is null)
             {

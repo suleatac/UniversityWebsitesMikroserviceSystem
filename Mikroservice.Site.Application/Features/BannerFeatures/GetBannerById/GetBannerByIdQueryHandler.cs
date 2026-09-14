@@ -16,7 +16,8 @@ namespace Mikroservice.Site.Application.Features.BannerFeatures.GetBannerById
     {
         public async Task<ServiceResult<BannerDetailDto>> Handle(GetBannerByIdQuery request, CancellationToken cancellationToken)
         {
-            var entity = await bannerRepository.GetByIdAsync(request.Id);
+            // ✔ DB'den TEK kayıt çek (PageType eager loading ile)
+            var entity = await bannerRepository.GetByIdWithPageTypeAsync(request.Id, cancellationToken);
 
             if (entity is null)
             {

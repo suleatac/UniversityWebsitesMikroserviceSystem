@@ -56,7 +56,7 @@
         new {
             siteId = (int)(ViewData["SiteId"] ?? 0),
             dilId = (int)(ViewData["DilId"] ?? 0),
-            preloadedMenus = ViewData["Menus"] as List<MenuGetVm>,
+            preloadedMenus = ViewData["Menus"] as List<GetMenuVm>,
             preloadedSite = ViewData["Site"] as SiteDetailGetVm,
             languageCode = ViewData["LanguageCode"] as string
         })
@@ -69,7 +69,8 @@
         @await Component.InvokeAsync("FooterTemplate1", new {
             siteId = (int)(ViewData["SiteId"] ?? 0),
             dilId = (int)(ViewData["DilId"] ?? 0),
-            preloadedSite = ViewData["Site"] as SiteDetailGetVm
+            preloadedSite = ViewData["Site"] as SiteDetailGetVm,
+            languageCode = ViewData["LanguageCode"] as string
         })
 
 

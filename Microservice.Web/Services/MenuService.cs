@@ -22,7 +22,7 @@ namespace Microservice.Web.Services
             _logger = logger;
         }
 
-        public async Task<ServiceResult<List<MenuGetVm>>> GetMenusAsync(int siteId, int dilId, int? location = null)
+        public async Task<ServiceResult<List<GetMenuVm>>> GetMenusAsync(int siteId, int dilId, int? location = null)
         {
             var cacheKey = $"menu:list:{siteId}:{dilId}:{location?.ToString() ?? "all"}";
 
@@ -45,13 +45,13 @@ namespace Microservice.Web.Services
 
                 _logger.LogError("Menuler alınamadı. StatusCode: {StatusCode}, Detail: {Detail}", response.StatusCode, problemDetails?.Detail);
 
-                return ServiceResult<List<MenuGetVm>>.Error(problemDetails?.Detail ?? problemDetails?.Title ?? "Menuler alınamadı");
+                return ServiceResult<List<GetMenuVm>>.Error(problemDetails?.Detail ?? problemDetails?.Title ?? "Menuler alınamadı");
             }
 
-            var menus = response.Content ?? new List<MenuGetVm>();
+            var menus = response.Content ?? new List<GetMenuVm>();
             await _redisCacheService.SetListAsync(cacheKey, menus, CacheDuration);
 
-            return ServiceResult<List<MenuGetVm>>.Success(menus);
+            return ServiceResult<List<GetMenuVm>>.Success(menus);
         }
 
         public async Task<ServiceResult<MenuDetailVm>> GetMenuByIdAsync(int id)

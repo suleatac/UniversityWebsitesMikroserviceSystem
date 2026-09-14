@@ -4,7 +4,7 @@
 @{
     // Link dolu ise dogrudan o link kullanilir.
     // Link bos ise menu, bagli oldugu sayfa tipine (PageType) yonlendirilir: /{dil}/{slug}
-    string BuildHref(MenuGetVm menu)
+    string BuildHref(GetMenuVm menu)
     {
         if (!string.IsNullOrWhiteSpace(menu.Link))
         {

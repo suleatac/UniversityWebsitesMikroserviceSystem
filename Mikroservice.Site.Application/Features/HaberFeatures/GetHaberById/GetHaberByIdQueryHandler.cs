@@ -17,8 +17,8 @@ namespace Mikroservice.Site.Application.Features.HaberFeatures.GetHaberById
         public async Task<ServiceResult<HaberDetailDto>> Handle(GetHaberByIdQuery request, CancellationToken cancellationToken)
         {
 
-            // ✔ DB'den TEK kayıt çek
-            var entity = await haberRepository.GetByIdAsync(request.Id);
+            // ✔ DB'den TEK kayıt çek (PageType eager loading ile)
+            var entity = await haberRepository.GetByIdWithPageTypeAsync(request.Id, cancellationToken);
 
             if (entity is null)
             {

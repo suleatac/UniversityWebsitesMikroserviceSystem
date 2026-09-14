@@ -23,7 +23,7 @@ namespace Microservice.Web.ViewComponents
         public async Task<IViewComponentResult> InvokeAsync(
             int siteId,
             int dilId,
-            List<MenuGetVm>? preloadedMenus = null,
+            List<GetMenuVm>? preloadedMenus = null,
             SiteDetailGetVm? preloadedSite = null,
             string? languageCode = null)
         {
@@ -56,7 +56,7 @@ namespace Microservice.Web.ViewComponents
             return View(viewModel);
         }
 
-        private async Task<List<MenuGetVm>> GetMenusAsync(int siteId, int dilId)
+        private async Task<List<GetMenuVm>> GetMenusAsync(int siteId, int dilId)
         {
             var result = await _menuService.GetMenusAsync(siteId, dilId);
 
@@ -70,7 +70,7 @@ namespace Microservice.Web.ViewComponents
                 siteId,
                 dilId);
 
-            return new List<MenuGetVm>();
+            return new List<GetMenuVm>();
         }
 
 

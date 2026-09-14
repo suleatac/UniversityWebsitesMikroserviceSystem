@@ -1,8 +1,11 @@
-﻿using MediatR;
+﻿using AutoMapper;
+using MediatR;
 using Microservice.Shared;
 using Microservice.Shared.Services.RedisServiceItems;
 using Microservice.Site.Application.Contracts.IRepositories;
 using Microsoft.Extensions.Logging;
+using Mikroservice.Site.Application.DTOs.BannerDtos;
+using Mikroservice.Site.Application.DTOs.DuyuruDtos;
 using Mikroservice.Site.Domain.Entities;
 
 namespace Mikroservice.Site.Application.Features.BannerFeatures.GetBanners
@@ -10,15 +13,16 @@ namespace Mikroservice.Site.Application.Features.BannerFeatures.GetBanners
     public class GetBannersQueryHandler(
           IBannerRepository bannerRepository,
           IRedisCacheService redisCacheService,
-          ILogger<GetBannersQueryHandler> logger
+          ILogger<GetBannersQueryHandler> logger,
+          IMapper mapper
         )
-        : IRequestHandler<GetBannersQuery, ServiceResult<List<Banner>>>
+        : IRequestHandler<GetBannersQuery, ServiceResult<List<BannerDto>>>
     {
-        public async Task<ServiceResult<List<Banner>>> Handle(GetBannersQuery request, CancellationToken cancellationToken)
+        public async Task<ServiceResult<List<BannerDto>>> Handle(GetBannersQuery request, CancellationToken cancellationToken)
         {
             // Önce cache'e bak
             var cacheKey = $"banners:list:{request.SiteId}:{request.DilId}";
-            var cached = await redisCacheService.GetListAsync<Banner>(cacheKey, cancellationToken);
+            var cached = await redisCacheService.GetListAsync<BannerDto>(cacheKey, cancellationToken);
             if (cached is not null)
             {
                 //Örnek Loglama
@@ -27,23 +31,27 @@ namespace Mikroservice.Site.Application.Features.BannerFeatures.GetBanners
                 request.SiteId,
                 request.DilId,
                 cached.Count);
-                return ServiceResult<List<Banner>>.SuccessAsOK(cached);
+                return ServiceResult<List<BannerDto>>.SuccessAsOK(cached);
             }
 
 
             // Yoksa veritabanından çek
-            var data = bannerRepository.GetAll().Where(b => b.SiteId == request.SiteId && b.DilId == request.DilId).OrderBy(x => x.Sira).ToList();
+            var data = await bannerRepository.GetBySiteAndLanguageAsync(request.SiteId, request.DilId, cancellationToken);
 
-            // Cache'e yaz
-            await redisCacheService.SetListAsync(cacheKey, data, TimeSpan.FromHours(24), cancellationToken);
-
-            //Örnek Loglama
+            //Loglama
             logger.LogInformation(
                 "Banner verisi veritabanından alındı. SiteId:{siteId}, DilId:{dilId}, Count:{count}",
                 request.SiteId,
                 request.DilId,
                 data.Count);
-            return ServiceResult<List<Banner>>.SuccessAsOK(data);
+
+            var mappedData = mapper.Map<List<BannerDto>>(data);
+
+            // Cache'e yaz
+            await redisCacheService.SetListAsync(cacheKey, mappedData, TimeSpan.FromHours(24), cancellationToken);
+
+         
+            return ServiceResult<List<BannerDto>>.SuccessAsOK(mappedData);
         }
     }
 }

@@ -25,12 +25,14 @@ namespace Microservice.Web.Services.ServicesExtentions
             services.AddScoped<IBilgiService, BilgiService>();
             services.AddScoped<IBandLogoService, BandLogoService>();
 
-            services.AddScoped<IPageDetailResolver, NewsDetailResolver>();
-            services.AddScoped<IPageDetailResolver, AnnouncementDetailResolver>();
-            services.AddScoped<IPageDetailResolver, MenuDetailResolver>();
-      
-            services.AddScoped<IPageResolver, NewsListPageResolver>();
+            services.AddScoped<IPageDetailResolver, HaberDetayResolver>();
+            services.AddScoped<IPageDetailResolver, DuyuruDetayResolver>();
+            services.AddScoped<IPageDetailResolver, MenuDetayResolver>();
+            services.AddScoped<IPageDetailResolver, BilgiDetayResolver>();
+            services.AddScoped<IPageDetailResolver, EtkinlikDetayResolver>();
 
+            services.AddScoped<IPageResolver, HaberListesiPageResolver>();
+            services.AddScoped<IPageResolver, DuyuruListesiPageResolver>();
 
             return services;
         }

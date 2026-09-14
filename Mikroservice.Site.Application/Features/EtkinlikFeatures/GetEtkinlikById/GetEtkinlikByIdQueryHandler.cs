@@ -16,7 +16,8 @@ namespace Mikroservice.Site.Application.Features.EtkinlikFeatures.GetEtkinlikByI
     {
         public async Task<ServiceResult<EtkinlikDetailDto>> Handle(GetEtkinlikByIdQuery request, CancellationToken cancellationToken)
         {
-            var entity = await etkinlikRepository.GetByIdAsync(request.Id);
+            // ✔ DB'den TEK kayıt çek (PageType eager loading ile)
+            var entity = await etkinlikRepository.GetByIdWithPageTypeAsync(request.Id, cancellationToken);
 
             if (entity is null)
             {

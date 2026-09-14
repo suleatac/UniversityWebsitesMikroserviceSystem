@@ -21,6 +21,8 @@ namespace Microservice.Site.Persistence.Repositories
         public Task<Duyuru?> GetBySeoUrlAsync(int siteId, int dilId, string seoUrl, CancellationToken cancellationToken = default)
         {
             return _appDbContext.Set<Duyuru>()
+                .AsNoTracking()
+                .Include(x => x.PageType) // eager loading
                 .FirstOrDefaultAsync(x => x.SiteId == siteId && x.DilId == dilId && x.SeoUrl == seoUrl, cancellationToken);
         }
         public async Task<Duyuru?> GetByIdWithPageTypeAsync(int id, CancellationToken cancellationToken = default)
@@ -29,6 +31,15 @@ namespace Microservice.Site.Persistence.Repositories
                 .AsNoTracking()
                 .Include(x => x.PageType) // eager loading
                 .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
+        }
+        public async Task<List<Duyuru>> GetBySiteAndLanguageAsync(int siteId, int dilId, CancellationToken cancellationToken)
+        {
+            return await _appDbContext
+                .Set<Duyuru>()
+                .AsNoTracking()
+                .Include(x => x.PageType) // eager loading
+                .Where(x => x.SiteId == siteId && x.DilId == dilId).OrderByDescending(x => x.YayimTarihi)
+                .ToListAsync(cancellationToken);
         }
     }
 }

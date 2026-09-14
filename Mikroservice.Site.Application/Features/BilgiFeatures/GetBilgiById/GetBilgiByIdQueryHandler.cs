@@ -21,7 +21,8 @@ namespace Mikroservice.Site.Application.Features.BilgiFeatures.GetBilgiById
             logger.LogInformation(
                 "Bilgi getiriliyor. Id: {Id}",
                 request.Id);
-            var entity = await bilgiRepository.GetByIdAsync(request.Id);
+            // ✔ DB'den TEK kayıt çek (PageType eager loading ile)
+            var entity = await bilgiRepository.GetByIdWithPageTypeAsync(request.Id, cancellationToken);
 
             if (entity is null)
             {

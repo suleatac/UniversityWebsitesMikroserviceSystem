@@ -5,14 +5,14 @@ using Microservice.Web.ViewModels.PageRoute;
 
 namespace Microservice.Web.Services.PageDetailResolvers
 {
-    public class NewsDetailResolver : IPageDetailResolver
+    public class HaberDetayResolver : IPageDetailResolver
     {
         private readonly IHaberClientServices _haberClient;
-        private readonly ILogger<NewsDetailResolver> _logger;
+        private readonly ILogger<HaberDetayResolver> _logger;
 
-        public NewsDetailResolver(
+        public HaberDetayResolver(
             IHaberClientServices haberClient,
-            ILogger<NewsDetailResolver> logger)
+            ILogger<HaberDetayResolver> logger)
         {
             _haberClient = haberClient;
             _logger = logger;
@@ -20,7 +20,7 @@ namespace Microservice.Web.Services.PageDetailResolvers
 
         public bool CanResolve(PageTypeKindEnum pageType)
         {
-            return pageType == PageTypeKindEnum.NewsList;
+            return pageType == PageTypeKindEnum.HaberDetay;
         }
 
         public async Task<RouteResolveResult?> ResolveAsync(
@@ -44,7 +44,7 @@ namespace Microservice.Web.Services.PageDetailResolvers
                 return null;
             }
 
-            result.NewsDetail = response.Content;
+            result.HaberDetay = response.Content;
 
             return result;
         }

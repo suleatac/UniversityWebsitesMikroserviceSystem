@@ -1,34 +1,34 @@
-﻿using Microservice.Web.Clients.DuyuruClients;
+﻿using Microservice.Web.Clients.BilgiClients;
 using Microservice.Web.Services.Interfaces;
 using Microservice.Web.Settings;
 using Microservice.Web.ViewModels.PageRoute;
 
 namespace Microservice.Web.Services.PageDetailResolvers
 {
-    public class AnnouncementDetailResolver : IPageDetailResolver
+    public class BilgiDetayResolver : IPageDetailResolver
     {
-        private readonly IDuyuruClientServices _duyuruClient;
-        private readonly ILogger<AnnouncementDetailResolver> _logger;
+        private readonly IBilgiClientServices _bilgiClient;
+        private readonly ILogger<BilgiDetayResolver> _logger;
 
-        public AnnouncementDetailResolver(
-            IDuyuruClientServices duyuruClient,
-            ILogger<AnnouncementDetailResolver> logger)
+        public BilgiDetayResolver(
+            IBilgiClientServices bilgiClient,
+            ILogger<BilgiDetayResolver> logger)
         {
-            _duyuruClient = duyuruClient;
+            _bilgiClient = bilgiClient;
             _logger = logger;
         }
 
         public bool CanResolve(PageTypeKindEnum pageType)
         {
-            return pageType == PageTypeKindEnum.AnnouncementList;
+            return pageType == PageTypeKindEnum.Bilgi;
         }
 
         public async Task<RouteResolveResult?> ResolveAsync(
             RouteResolveResult result,
             string detailSlug)
         {
-            var response = await _duyuruClient
-                .GetDuyuruBySeoUrlAsync(
+            var response = await _bilgiClient
+                .GetBilgiBySeoUrlAsync(
                     result.Site.Id,
                     result.LanguageId,
                     detailSlug);
@@ -36,7 +36,7 @@ namespace Microservice.Web.Services.PageDetailResolvers
             if (!response.IsSuccessful || response.Content is null)
             {
                 _logger.LogWarning(
-                    "Duyuru bulunamadı. SiteId: {SiteId}, LanguageId: {LanguageId}, SeoUrl: {SeoUrl}",
+                    "Bilgi bulunamadı. SiteId: {SiteId}, LanguageId: {LanguageId}, SeoUrl: {SeoUrl}",
                     result.Site.Id,
                     result.LanguageId,
                     detailSlug);
@@ -44,7 +44,7 @@ namespace Microservice.Web.Services.PageDetailResolvers
                 return null;
             }
 
-            result.AnnouncementDetail = response.Content;
+            result.BilgiDetay = response.Content;
 
             return result;
         }

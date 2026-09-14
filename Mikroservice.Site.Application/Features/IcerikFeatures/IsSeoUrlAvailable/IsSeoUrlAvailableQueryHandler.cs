@@ -1,7 +1,6 @@
 using MediatR;
 using Microservice.Shared;
 using Microservice.Site.Application.Contracts.IRepositories;
-using Microsoft.EntityFrameworkCore;
 using System.Net;
 
 namespace Mikroservice.Site.Application.Features.IcerikFeatures.IsSeoUrlAvailable
@@ -17,12 +16,8 @@ namespace Mikroservice.Site.Application.Features.IcerikFeatures.IsSeoUrlAvailabl
             // Icerik tablosu (Haber, Duyuru, Bilgi, Etkinlik, Video, Banner - TPH) uzerinde
             // benzersiz index (SiteId, SeoUrl) oldugundan kontrol site genelinde yapilir.
             // Not: GetAll() uzerindeki soft-delete query filter otomatik uygulanir.
-            var icerikTaken = await icerikRepository.GetAll()
-                .AnyAsync(x => x.SiteId == request.SiteId
-                                && x.SeoUrl == request.SeoUrl
-                                && x.PageTypeId == request.PageTypeId
-                                && (!request.ExcludeIcerikId.HasValue || x.Id != request.ExcludeIcerikId.Value),
-                    cancellationToken);
+            var icerikTaken = await icerikRepository
+                .IsSeoUrlAvailableAsync(request.SiteId, request.PageTypeId, request.SeoUrl, request.ExcludeIcerikId, cancellationToken);
 
             if (icerikTaken)
                 return ServiceResult<bool>.Success(false);

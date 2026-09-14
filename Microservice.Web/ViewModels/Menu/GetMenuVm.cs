@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Microservice.Web.ViewModels.Menu
 {
-    public class MenuGetVm
+    public class GetMenuVm
     {
         public int Id { get; set; }
         public int SiteId { get; set; }
@@ -32,7 +32,7 @@ namespace Microservice.Web.ViewModels.Menu
 
         public int? ParentId { get; set; }
 
-        public PagesDetailVm PageType { get; set; } = null!;
-        public List<MenuGetVm> Children { get; set; } = new();
+        public PagesDetailVm PageType { get; set; } = default!;
+        public List<GetMenuVm> Children { get; set; } = new();
     }
 }

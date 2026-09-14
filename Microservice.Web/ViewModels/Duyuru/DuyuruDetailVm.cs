@@ -29,11 +29,11 @@ namespace Microservice.Web.ViewModels.Duyuru
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-ddTHH:mm}", ApplyFormatInEditMode = true)]
         public DateTime? BitisTarihi { get; set; }
 
-        public string? SeoUrl { get; set; }
+        public string SeoUrl { get; set; }= default!;
         public string? SeoTitle { get; set; }
         public string? SeoDescription { get; set; }
 
-        public PagesDetailVm PageType { get; set; } = null!;
+        public PagesDetailVm PageType { get; set; } = default!;
 
     }
 }

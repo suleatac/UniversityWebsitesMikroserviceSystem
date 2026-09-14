@@ -21,7 +21,25 @@ namespace Microservice.Site.Persistence.Repositories
         public Task<Haber?> GetBySeoUrlAsync(int siteId, int dilId, string seoUrl, CancellationToken cancellationToken = default)
         {
             return _appDbContext.Set<Haber>()
+                .AsNoTracking()
+                .Include(x => x.PageType) // eager loading
                 .FirstOrDefaultAsync(x => x.SiteId == siteId && x.DilId == dilId && x.SeoUrl == seoUrl, cancellationToken);
+        }
+        public async Task<Haber?> GetByIdWithPageTypeAsync(int id, CancellationToken cancellationToken = default)
+        {
+            return await _appDbContext.Set<Haber>()
+                .AsNoTracking()
+                .Include(x => x.PageType) // eager loading
+                .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
+        }
+        public async Task<List<Haber>> GetBySiteAndLanguageAsync(int siteId, int dilId, CancellationToken cancellationToken)
+        {
+            return await _appDbContext
+                .Set<Haber>()
+                .AsNoTracking()
+                .Include(x => x.PageType) // eager loading
+                .Where(x => x.SiteId == siteId && x.DilId == dilId).OrderByDescending(x => x.YayimTarihi)
+                .ToListAsync(cancellationToken);
         }
     }
 }

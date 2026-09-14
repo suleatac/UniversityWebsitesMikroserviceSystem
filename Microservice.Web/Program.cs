@@ -1,8 +1,10 @@
 using Microservice.Web.Clients;
 using Microservice.Web.Configurations;
 using Microservice.Web.HttpHandlers;
+using Microservice.Web.SeriLog;
 using Microservice.Web.Services.ServicesExtentions;
 using Microsoft.AspNetCore.Localization;
+using Serilog;
 using System.Globalization;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -28,6 +30,10 @@ builder.Services.AddServicesExtentions(builder.Configuration);
 //Client Extentions Ayarları
 builder.Services.AddClientExtentions(builder.Configuration);
 
+//Logging Extentions Ayarları
+builder.Services.AddLoggingExt(builder.Configuration);
+//Log işlemi için eklenen kısım
+builder.Host.UseSerilog(Logging.ConfigureLogging);
 
 
 

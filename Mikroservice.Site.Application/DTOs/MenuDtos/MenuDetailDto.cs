@@ -1,3 +1,5 @@
+using Mikroservice.Site.Application.DTOs.PageTypeDtos;
+
 namespace Mikroservice.Site.Application.DTOs.MenuDtos
 {
     public class MenuDetailDto
@@ -8,9 +10,6 @@ namespace Mikroservice.Site.Application.DTOs.MenuDtos
         public int DilId { get; set; }
         public int HedefId { get; set; }
         public int PageTypeId { get; set; }
-
-        // Eager loading ile gelen PageType bilgisi
-        public MenuPageTypeDto? PageType { get; set; }
 
         public string Baslik { get; set; } = default!;
         public string? Link { get; set; } 
@@ -29,6 +28,8 @@ namespace Mikroservice.Site.Application.DTOs.MenuDtos
         public string? SeoDescription { get; set; }
 
 
+        // Eager loading ile gelen PageType bilgisi
+        public PageTypeDto PageType { get; set; } = default!;
 
     }
 }

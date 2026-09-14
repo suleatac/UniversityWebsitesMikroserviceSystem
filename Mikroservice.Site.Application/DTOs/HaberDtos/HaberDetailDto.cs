@@ -1,4 +1,6 @@
-﻿namespace Mikroservice.Site.Application.DTOs.HaberDtos
+﻿using Mikroservice.Site.Application.DTOs.PageTypeDtos;
+
+namespace Mikroservice.Site.Application.DTOs.HaberDtos
 {
     public class HaberDetailDto
     {
@@ -7,7 +9,7 @@
         public int SiteId { get; set; }
         public int DilId { get; set; }
         public int HedefId { get; set; }
-
+        public int PageTypeId { get; set; }
         public string Baslik { get; set; } = default!;
         public string KisaAciklama { get; set; } = default!;
         public string IcerikMetni { get; set; } = default!;
@@ -26,5 +28,7 @@
         public string SeoUrl { get; set; } = default!;
         public string? SeoTitle { get; set; }
         public string? SeoDescription { get; set; }
+        // Eager loading ile gelen PageType bilgisi
+        public PageTypeDto PageType { get; set; } = default!;
     }
 }

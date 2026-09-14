@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microservice.Web.ViewModels.Pages;
+using System.ComponentModel.DataAnnotations;
 
 namespace Microservice.Web.ViewModels.Haber
 {
@@ -7,7 +8,8 @@ namespace Microservice.Web.ViewModels.Haber
         public int Id { get; set; }
         public int SiteId { get; set; }
         public int DilId { get; set; }
-        public int? HedefId { get; set; }
+        public int HedefId { get; set; }
+        public int PageTypeId { get; set; }
         public string Baslik { get; set; } = default!;
         public string? SeoUrl { get; set; }
         public string? Link { get; set; }
@@ -19,5 +21,6 @@ namespace Microservice.Web.ViewModels.Haber
         public DateTime? BaslamaTarihi { get; set; }
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-ddTHH:mm}", ApplyFormatInEditMode = true)]
         public DateTime? BitisTarihi { get; set; }
+        public PagesDetailVm PageType { get; set; } = default!;
     }
 }

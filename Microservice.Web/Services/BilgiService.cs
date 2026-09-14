@@ -17,7 +17,7 @@ namespace Microservice.Web.Services
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public async Task<ServiceResult<List<BilgiVm>>> GetBilgisAsync(int siteId, int dilId)
+        public async Task<ServiceResult<List<GetBilgiVm>>> GetBilgisAsync(int siteId, int dilId)
         {
             _logger.LogInformation("API'den bilgi listesi çekiliyor. SiteId: {SiteId}, DilId: {DilId}", siteId, dilId);
 
@@ -36,17 +36,17 @@ namespace Microservice.Web.Services
                     problemDetails?.Detail
                 );
 
-                return ServiceResult<List<BilgiVm>>.Error(
+                return ServiceResult<List<GetBilgiVm>>.Error(
                     problemDetails?.Detail ?? problemDetails?.Title ?? "Bilgiler alınamadı"
                 );
             }
 
             _logger.LogInformation("Bilgi listesi başarıyla alındı. Count: {Count}", response.Content?.Count);
-            return ServiceResult<List<BilgiVm>>.Success(response.Content!);
+            return ServiceResult<List<GetBilgiVm>>.Success(response.Content!);
         }
 
         // GET BY ID
-        public async Task<ServiceResult<BilgiVm>> GetBilgiByIdAsync(int id)
+        public async Task<ServiceResult<BilgiDetailVm>> GetBilgiByIdAsync(int id)
         {
             _logger.LogInformation("Bilgi getiriliyor. Id: {Id}", id);
 
@@ -65,12 +65,12 @@ namespace Microservice.Web.Services
                     problemDetails?.Detail
                 );
 
-                return ServiceResult<BilgiVm>.Error(
+                return ServiceResult<BilgiDetailVm>.Error(
                     problemDetails?.Detail ?? problemDetails?.Title ?? "Bilgi alınamadı"
                 );
             }
 
-            return ServiceResult<BilgiVm>.Success(response.Content!);
+            return ServiceResult<BilgiDetailVm>.Success(response.Content!);
         }
     }
 }

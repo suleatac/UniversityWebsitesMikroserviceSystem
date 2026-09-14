@@ -124,19 +124,23 @@ namespace Microservice.Web.Controllers
             ViewData["LanguageCode"] = route.LanguageCode;
    
 
-            return (PageTypeKindEnum)page.PageTypeKind switch {
+            return page.PageTypeKind switch {
                 PageTypeKindEnum.Home =>
-                   await RenderHomeAsync(route),
-                PageTypeKindEnum.NewsList when route.DetailSlug is null =>
-                    await RenderNewListAsync(route),
-                PageTypeKindEnum.NewsDetail  when route.NewsDetail is not null =>
-                    await RenderNewDetailAsync(route),
-                PageTypeKindEnum.Menu when route.MenuDetail is not null =>
-                await RenderMenuDetailAsync(route),
-                PageTypeKindEnum.AnnouncementList when route.DetailSlug is null =>
-                    await RenderAnnouncementListAsync(route),
-                PageTypeKindEnum.AnnouncementDetail when route.AnnouncementDetail is not null =>
-                    await RenderAnnouncementDetailAsync(route),
+                     await RenderHomeAsync(route),
+                PageTypeKindEnum.HaberListesi when route.DetailSlug is null =>
+                     await RenderHaberListesiAsync(route),
+                PageTypeKindEnum.HaberDetay  when route.HaberDetay is not null =>
+                     await RenderHaberDetayAsync(route),
+                PageTypeKindEnum.Etkinlik when route.EtkinlikDetay is not null =>
+                     await RenderEtkinlikDetayAsync(route),
+                PageTypeKindEnum.Bilgi when route.BilgiDetay is not null =>
+                     await RenderBilgiDetayAsync(route),
+                PageTypeKindEnum.Menu when route.MenuDetay is not null =>
+                     await RenderMenuDetailAsync(route),
+                PageTypeKindEnum.DuyuruListesi when route.DetailSlug is null =>
+                     await RenderDuyuruListesiAsync(route),
+                PageTypeKindEnum.DuyuruDetay when route.DuyuruDetay is not null =>
+                     await RenderDuyuruDetayAsync(route),
                 PageTypeKindEnum.StaticPage => RenderStaticPage(route),
                 _ => RenderNotFound("Bu sayfa türü için tanımlı bir görünüm yok.")
             };
@@ -149,8 +153,7 @@ namespace Microservice.Web.Controllers
         /// <summary>
         /// Ana sayfa: menüler + en güncel bannerlar, duyurular ve haberler.
         /// </summary>
-        private async Task<IActionResult> RenderHomeAsync(
-            RouteResolveResult route)
+        private async Task<IActionResult> RenderHomeAsync(RouteResolveResult route)
         {
             var siteId = route.Site.Id;
             var languageId = route.LanguageId;
@@ -224,40 +227,65 @@ namespace Microservice.Web.Controllers
         // ============================================================
         // MENU
         // ============================================================
-        private async Task<IActionResult> RenderMenuDetailAsync(
-    RouteResolveResult route)
+        private async Task<IActionResult> RenderMenuDetailAsync(RouteResolveResult route)
         {
-            if (route.MenuDetail is null)
+            if (route.MenuDetay is null)
             {
                 return RenderNotFound("Menü bulunamadı.");
             }
 
-            var model = await _menuService.GetMenuByIdAsync(
-                route.MenuDetail.Id);
+            var model = route.MenuDetay;
 
-            if (!model.IsSuccess || model.Data is null)
+
+            var viewPath = GetTemplateViewPath(route.Page.TemplateId, model.PageType.ViewName);
+
+            return View(viewPath, model);
+        }
+        // ============================================================
+        // ETKİNLİKLER
+        // ============================================================
+
+        /// <summary>
+        /// /etkinlik/etkinlik-slug
+        /// </summary>
+        private async Task<IActionResult> RenderEtkinlikDetayAsync(RouteResolveResult route)
+        {
+            if (route.EtkinlikDetay is null)
             {
-                return RenderNotFound("Menü yüklenemedi.");
+                return RenderNotFound("Etkinlik bulunamadı.");
             }
 
-            var viewPath = GetTemplateViewPath(route.Page.TemplateId, model.Data.PageType.ViewName);
+            var model = route.EtkinlikDetay;
 
-            return View(viewPath, model.Data);
+
+
+            var viewPath = GetTemplateViewPath(route.Page.TemplateId, model.PageType.ViewName);
+
+            return View(viewPath, model);
         }
 
+        // ============================================================
+        // BİLGİ SAYFASI
+        // ============================================================
+
+        /// <summary>
+        /// /BİLGİ/bilgi-slug
+        /// </summary>
+        private async Task<IActionResult> RenderBilgiDetayAsync(RouteResolveResult route)
+        {
+            if (route.BilgiDetay is null)
+            {
+                return RenderNotFound("Bilgi bulunamadı.");
+            }
+
+            var model = route.BilgiDetay;
 
 
 
+            var viewPath = GetTemplateViewPath(route.Page.TemplateId, model.PageType.ViewName);
 
-
-
-
-
-
-
-
-
-
+            return View(viewPath, model);
+        }
         // ============================================================
         // HABERLER
         // ============================================================
@@ -265,44 +293,35 @@ namespace Microservice.Web.Controllers
         /// <summary>
         /// /haberler
         /// </summary>
-        private async Task<IActionResult> RenderNewListAsync(
-            RouteResolveResult route)
+        private async Task<IActionResult> RenderHaberListesiAsync(RouteResolveResult route)
         {
-            var model = await _haberService.GetHabersAsync(
-                route.Site.Id, 1);
+            if (route.HaberListesi is null)
+            {
+                return RenderNotFound("Haberler bulunamadı.");
+            }
 
-            if (!model.IsSuccess || model.Data is null)
-                return RenderNotFound("Haber listesi yüklenemedi.");
+            var viewPath = GetTemplateViewPath( route.Page.TemplateId,"HaberListesi");
 
-            var viewPath = GetTemplateViewPath(
-                route.Page.TemplateId,
-                "NewList");
-
-            return View(viewPath, model.Data);
+            return View(viewPath, route.HaberListesi);
         }
 
         /// <summary>
         /// /haberler/haber-slug
         /// </summary>
-        private async Task<IActionResult> RenderNewDetailAsync(
-            RouteResolveResult route)
+        private async Task<IActionResult> RenderHaberDetayAsync(RouteResolveResult route)
         {
-            if (route.NewsDetail is null)
+            if (route.HaberDetay is null)
             {
                 return RenderNotFound("Haber bulunamadı.");
             }
 
-            var model = await _haberService.GetHaberByIdAsync(
-                route.NewsDetail.Id);
+            var model = route.HaberDetay;
 
-            if (!model.IsSuccess || model.Data is null)
-            {
-                return RenderNotFound("Haber yüklenemedi.");
-            }
+           
 
-            var viewPath = GetTemplateViewPath(route.Page.TemplateId,"NewsDetail");
+            var viewPath = GetTemplateViewPath(route.Page.TemplateId,model.PageType.ViewName);
 
-            return View(viewPath, model.Data);
+            return View(viewPath, model);
         }
 
         // ============================================================
@@ -312,46 +331,35 @@ namespace Microservice.Web.Controllers
         /// <summary>
         /// /duyurular
         /// </summary>
-        private async Task<IActionResult> RenderAnnouncementListAsync(
-            RouteResolveResult route)
+        private async Task<IActionResult> RenderDuyuruListesiAsync(RouteResolveResult route)
         {
-            var model = await _duyuruService.GetDuyurularAsync(
-                route.Site.Id, 1);
+            if (route.DuyuruListesi is null)
+            {
+                return RenderNotFound("Duyurular bulunamadı.");
+            }
 
-            if (!model.IsSuccess || model.Data is null)
-                return RenderNotFound("Duyuru listesi yüklenemedi.");
+            var viewPath = GetTemplateViewPath(route.Page.TemplateId, "DuyuruListesi");
 
-            var viewPath = GetTemplateViewPath(
-                route.Page.TemplateId,
-                "AnnouncementList");
-
-            return View(viewPath, model.Data);
+            return View(viewPath, route.DuyuruListesi);
         }
 
         /// <summary>
         /// /duyurular/duyuru-slug
         /// </summary>
-        private async Task<IActionResult> RenderAnnouncementDetailAsync(
-            RouteResolveResult route)
+        private async Task<IActionResult> RenderDuyuruDetayAsync(RouteResolveResult route)
         {
-            if (route.AnnouncementDetail is null)
+            if (route.DuyuruDetay is null)
             {
                 return RenderNotFound("Duyuru bulunamadı.");
             }
 
-            var model = await _duyuruService.GetDuyuruByIdAsync(
-                route.AnnouncementDetail.Id);
+            var model = route.DuyuruDetay;
 
-            if (!model.IsSuccess || model.Data is null)
-            {
-                return RenderNotFound("Duyuru yüklenemedi.");
-            }
 
-            var viewPath = GetTemplateViewPath(
-                route.Page.TemplateId,
-                model.Data.PageType.ViewName);
 
-            return View(viewPath, model.Data);
+            var viewPath = GetTemplateViewPath(route.Page.TemplateId, model.PageType.ViewName);
+
+            return View(viewPath, model); 
         }
 
         // ============================================================
@@ -371,8 +379,7 @@ namespace Microservice.Web.Controllers
         /// /yonetim
         /// /birimler
         /// </summary>
-        private IActionResult RenderStaticPage(
-            RouteResolveResult route)
+        private IActionResult RenderStaticPage(RouteResolveResult route)
         {
             var viewName = route.Page.ViewName;
 
@@ -396,9 +403,7 @@ namespace Microservice.Web.Controllers
         // TEMPLATE VIEW PATH
         // ============================================================
 
-        private static string GetTemplateViewPath(
-            int templateId,
-            string viewName)
+        private static string GetTemplateViewPath(int templateId, string viewName)
         {
             if (templateId <= 0)
             {

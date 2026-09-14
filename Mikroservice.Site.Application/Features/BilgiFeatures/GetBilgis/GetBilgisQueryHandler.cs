@@ -1,25 +1,26 @@
-﻿using MediatR;
+﻿using AutoMapper;
+using MediatR;
 using Microservice.Shared;
 using Microservice.Shared.Services.RedisServiceItems;
 using Microservice.Site.Application.Contracts.IRepositories;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using Mikroservice.Site.Domain.Entities;
+using Mikroservice.Site.Application.DTOs.BilgiDtos;
 
 namespace Mikroservice.Site.Application.Features.BilgiFeatures.GetBilgis
 {
     public class GetBilgisQueryHandler(
           IBilgiRepository bilgiRepository,
           IRedisCacheService redisCacheService,
-          ILogger<GetBilgisQueryHandler> logger
+          ILogger<GetBilgisQueryHandler> logger,
+          IMapper mapper
         )
-        : IRequestHandler<GetBilgisQuery, ServiceResult<List<Bilgi>>>
+        : IRequestHandler<GetBilgisQuery, ServiceResult<List<BilgiDto>>>
     {
-        public async Task<ServiceResult<List<Bilgi>>> Handle(GetBilgisQuery request, CancellationToken cancellationToken)
+        public async Task<ServiceResult<List<BilgiDto>>> Handle(GetBilgisQuery request, CancellationToken cancellationToken)
         {
             // Önce cache'e bak
             var cacheKey = $"bilgi:list:{request.SiteId}:{request.DilId}";
-            var cached = await redisCacheService.GetListAsync<Bilgi>(cacheKey, cancellationToken);
+            var cached = await redisCacheService.GetListAsync<BilgiDto>(cacheKey, cancellationToken);
             if (cached is not null)
             {
                 //Örnek Loglama
@@ -28,23 +29,26 @@ namespace Mikroservice.Site.Application.Features.BilgiFeatures.GetBilgis
                 request.SiteId,
                 request.DilId,
                 cached.Count);
-                return ServiceResult<List<Bilgi>>.SuccessAsOK(cached);
+                return ServiceResult<List<BilgiDto>>.SuccessAsOK(cached);
             }
 
 
             // Yoksa veritabanından çek
-            var data = await bilgiRepository.GetAll().Where(b => b.SiteId == request.SiteId && b.DilId == request.DilId).ToListAsync(cancellationToken);
+            var data = await bilgiRepository.GetBySiteAndLanguageAsync(request.SiteId, request.DilId, cancellationToken);
 
-            // Cache'e yaz
-            await redisCacheService.SetListAsync(cacheKey, data, TimeSpan.FromHours(24), cancellationToken);
-
-            //Örnek Loglama
+            //Loglama
             logger.LogInformation(
                 "Bilgi verisi veritabanından alındı. SiteId:{siteId}, DilId:{dilId}, Count:{count}",
                 request.SiteId,
                 request.DilId,
                 data.Count);
-            return ServiceResult<List<Bilgi>>.SuccessAsOK(data);
+
+            var mappedData = mapper.Map<List<BilgiDto>>(data);
+            // Cache'e yaz
+            await redisCacheService.SetListAsync(cacheKey, mappedData, TimeSpan.FromHours(24), cancellationToken);
+
+      
+            return ServiceResult<List<BilgiDto>>.SuccessAsOK(mappedData);
         }
     }
 }

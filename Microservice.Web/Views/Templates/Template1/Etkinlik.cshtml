@@ -1,0 +1,27 @@
+﻿@model Microservice.Web.ViewModels.Etkinlik.EtkinlikDetailVm
+@{
+    ViewData["Title"] = Model.Baslik ?? "Etkinlik";
+}
+
+<div class="page-title parallax parallax1">
+    <div class="container">
+        <div class="flat-university">
+            <div class="post">
+                <h1 class="title">@(Model.Baslik ?? "Etkinlik")</h1>
+            </div><!--/post -->
+        </div><!--/flat-university -->
+    </div><!--/container -->
+</div><!--/page-title -->
+
+<section class="flat-row">
+    <div class="container">
+        @if (!string.IsNullOrWhiteSpace(Model.IcerikMetni))
+        {
+            <div>@Html.Raw(Model.IcerikMetni)</div>
+        }
+        else
+        {
+            <p>Bu etkinlik için içerik girilmemiş.</p>
+        }
+    </div>
+</section>
