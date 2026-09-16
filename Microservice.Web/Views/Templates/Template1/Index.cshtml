@@ -29,11 +29,6 @@
     }
 
 
-    // "Tumu" gibi liste sayfasina giden baglantilar icin: /{dil}/{slug}
-    string BuildListHref(string pageTypeSlug)
-    {
-        return string.IsNullOrWhiteSpace(pageTypeSlug) ? "#" : $"/{Model.LanguageCode}/{pageTypeSlug}";
-    }
 
 
 }
@@ -187,7 +182,7 @@
 
                                     @if (Model.Duyurular != null && Model.Duyurular.Any())
                                     {
-                                        <a href="@BuildListHref(Model.Duyurular.First().PageType.Slug)"
+                                        <a href="@Model.DuyuruListUrl"
                                            style="float:right;font-weight:600;text-decoration:underline;">
                                             Tümü
                                         </a>
@@ -287,7 +282,7 @@
                         Haberler
                         @if (Model.Haberler != null && Model.Haberler.Any())
                         {
-                            <a href="@BuildListHref(Model.Haberler.First().PageType.Slug)" style="float:right;font-size:15px;text-decoration:underline;padding-top:10px;">
+                            <a href="@Model.HaberListUrl" style="float:right;font-size:15px;text-decoration:underline;padding-top:10px;">
                                 Tümü
                             </a>
                         }

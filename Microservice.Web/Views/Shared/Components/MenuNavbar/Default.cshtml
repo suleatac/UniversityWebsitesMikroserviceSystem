@@ -104,11 +104,16 @@
                     </a>
 
                     <div class="submenu top-search">
-                        <form class="search-form">
+                        @{
+                            var searchAction = string.IsNullOrWhiteSpace(Model.SearchPageSlug)
+                                ? "#"
+                                : $"/{Model.LanguageCode}/{Model.SearchPageSlug}";
+                        }
+                        <form class="search-form" method="get" action="@searchAction">
                             <div class="input-group">
-                                <input type="search" class="search-field" placeholder="Search Here">
+                                <input type="search" class="search-field" name="q" placeholder="Search Here" value="@Context.Request.Query["q"]">
                                 <span class="input-group-btn">
-                                    <button type="submit"><i class="fa fa-search fa-4x"></i></button>
+                                    <button type="submit" id="s"><i class="fa fa-search fa-4x"></i></button>
                                 </span>
                             </div>
                         </form>

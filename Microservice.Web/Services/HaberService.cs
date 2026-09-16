@@ -2,6 +2,7 @@
 using Microservice.Web.Services.Interfaces;
 using Microservice.Web.Services.ServiceResults;
 using Microservice.Web.ViewModels.Haber;
+using Microservice.Web.ViewModels.Paged;
 using System.Text.Json;
 
 namespace Microservice.Web.Services
@@ -76,6 +77,42 @@ namespace Microservice.Web.Services
         }
 
    
+
+       // PAGINATED + SEARCH
+       public async Task<ServiceResult<PagedResultVm<GetHaberVm>>> GetPaginatedAsync(
+           int siteId,
+           int dilId,
+           string? search,
+           int page,
+           int pageSize)
+       {
+           _logger.LogInformation(
+               "Sayfali haber listesi cekiliyor. SiteId: {SiteId}, DilId: {DilId}, Search: {Search}, Page: {Page}",
+               siteId, dilId, search, page);
+
+           var response = await _haberClient.GetPaginatedAsync(siteId, dilId, page, pageSize, search);
+
+           if (!response.IsSuccessStatusCode)
+           {
+               var problemDetails = response.Error != null
+                   ? JsonSerializer.Deserialize<Microsoft.AspNetCore.Mvc.ProblemDetails>(response.Error.Content!)
+                   : null;
+
+               _logger.LogError(
+                   "API Error -> StatusCode: {StatusCode}, Title: {Title}, Detail: {Detail}",
+                   response.StatusCode,
+                   problemDetails?.Title,
+                   problemDetails?.Detail
+               );
+
+               return ServiceResult<PagedResultVm<GetHaberVm>>.Error(
+                   problemDetails?.Detail ?? problemDetails?.Title ?? "Haberler alınamadı"
+               );
+           }
+
+           return ServiceResult<PagedResultVm<GetHaberVm>>.Success(
+               response.Content ?? new PagedResultVm<GetHaberVm>());
+       }
 
     }
 }

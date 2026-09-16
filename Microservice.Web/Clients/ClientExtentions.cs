@@ -5,6 +5,7 @@ using Microservice.Web.Clients.DilClients;
 using Microservice.Web.Clients.DuyuruClients;
 using Microservice.Web.Clients.EtkinlikClients;
 using Microservice.Web.Clients.HaberClients;
+using Microservice.Web.Clients.IcerikClients;
 using Microservice.Web.Clients.MenuClients;
 using Microservice.Web.Clients.PageTypeClients;
 using Microservice.Web.Clients.ShortcutButtonClients;
@@ -103,6 +104,11 @@ namespace Microservice.Web.Clients
                c.BaseAddress = new Uri(microserviceOption!.Site.BaseUrl);
            })
            .AddHttpMessageHandler<ClientAuthenticatedHttpClientHandler>();//bu clientcredential için token alıp istek göndermek için
+
+            //Icerik (arama) Clients
+            services.AddRefitClient<IIcerikClientServices>()
+                .ConfigureHttpClient(c => c.BaseAddress = GetSiteBaseAddress(configuration))
+                .AddHttpMessageHandler<ClientAuthenticatedHttpClientHandler>();
 
 
 

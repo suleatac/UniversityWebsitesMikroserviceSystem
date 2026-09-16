@@ -21,10 +21,10 @@ namespace Microservice.Site.Persistence.Repositories
         {
             return await _appDbContext.Set<SitePersonel>().AnyAsync(x=>x.UnvanId==unvanId,cancellationToken);
         }
-        public async Task<List<SitePersonel>> GetAllWithPersonelTipAndUnvanAsync(int siteId,CancellationToken cancellationToken = default)
+        public async Task<List<SitePersonel>> GetAllWithPersonelTipPageTypeAndUnvanAsync(int siteId,CancellationToken cancellationToken = default)
         {
             return await _appDbContext.Set<SitePersonel>()
-                .Include(x => x.Unvan).Include(x => x.PersonelTip)
+                .Include(x => x.Unvan).Include(x => x.PersonelTip).Include(x => x.PageType)
                 .Where(x => x.SiteId == siteId)
                 .AsNoTracking()
                 .ToListAsync(cancellationToken);

@@ -1,5 +1,4 @@
 ﻿using Microservice.Web.ViewModels.SitePersonel;
-using Microservice.Web.ViewModels.Video;
 using Refit;
 
 namespace Microservice.Web.Clients.SitePersonelClients

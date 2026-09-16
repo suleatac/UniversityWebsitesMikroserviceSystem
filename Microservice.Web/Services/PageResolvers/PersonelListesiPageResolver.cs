@@ -7,14 +7,14 @@ namespace Microservice.Web.Services.PageResolvers
 {
     public class PersonelListesiPageResolver : IPageResolver
     {
-        private readonly ISitePersonelClientServices _personelClient;
+        private readonly ISitePersonelService _personelService;
         private readonly ILogger<PersonelListesiPageResolver> _logger;
 
         public PersonelListesiPageResolver(
-            ISitePersonelClientServices personelClient,
+            ISitePersonelService personelService,
             ILogger<PersonelListesiPageResolver> logger)
         {
-            _personelClient = personelClient;
+            _personelService = personelService;
             _logger = logger;
         }
 
@@ -25,9 +25,9 @@ namespace Microservice.Web.Services.PageResolvers
 
         public async Task ResolveAsync(RouteResolveResult result)
         {
-            var response = await _personelClient.GetPersonelListAsync(result.Site.Id);
+            var response = await _personelService.GetPersonelListAsync(result.Site.Id);
 
-            if (!response.IsSuccessful || response.Content is null)
+            if (!response.IsSuccess || response.Data is null)
             {
                 _logger.LogWarning(
                     "Personel listesi bulunamadı. SiteId: {SiteId}, LanguageId: {LanguageId}",
@@ -37,7 +37,7 @@ namespace Microservice.Web.Services.PageResolvers
                 return;
             }
 
-            result.PersonelListesi = response.Content;
+            result.PersonelListesi = response.Data;
         }
     }
 }

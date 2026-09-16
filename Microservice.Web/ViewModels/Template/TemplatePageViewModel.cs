@@ -28,5 +28,7 @@ namespace Microservice.Web.ViewModels.Template
         public List<GetBilgiVm> Bilgiler { get; set; } = new();
         public List<GetEtkinlikVm> Etkinlikler { get; set; } = new();
         public List<GetShortcutButtonVm> ShortcutButtons { get; set; } = new();
+        public string HaberListUrl { get; set; } = "/";
+        public string DuyuruListUrl { get; set; } = "/";
     }
 }

@@ -25,7 +25,8 @@ namespace Microservice.Web.ViewComponents
             int dilId,
             List<GetMenuVm>? preloadedMenus = null,
             SiteDetailGetVm? preloadedSite = null,
-            string? languageCode = null)
+            string? languageCode = null,
+            string? searchPageSlug = null)
         {
             if (siteId <= 0 || dilId <= 0)
             {
@@ -50,7 +51,8 @@ namespace Microservice.Web.ViewComponents
                 Site = site,
                 Menus = rootMenus,
                 // Link'i bos olan menuler /{languageCode}/{PageTypeSlug} adresine yonlendirilir
-                LanguageCode = string.IsNullOrWhiteSpace(languageCode) ? "tr" : languageCode.Trim('/').ToLowerInvariant()
+                LanguageCode = string.IsNullOrWhiteSpace(languageCode) ? "tr" : languageCode.Trim('/').ToLowerInvariant(),
+                SearchPageSlug = searchPageSlug
             };
 
             return View(viewModel);

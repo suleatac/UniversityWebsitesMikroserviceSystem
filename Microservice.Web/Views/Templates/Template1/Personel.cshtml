@@ -1,20 +1,198 @@
-﻿@model Microservice.Web.ViewModels.SitePersonel.PersonelDetailVm
+﻿@model Microservice.Web.ViewModels.SitePersonel.PersonelDetayPageViewModel
 @{
-    ViewData["Title"] = Model.Adi ?? "Personel";
+    var personel = Model.Personel;
+    var adSoyad = $"{personel.Adi} {personel.Soyadi}".Trim();
+
+    ViewData["Title"] = personel.SeoTitle ?? adSoyad ?? "Personel";
+
+    if (!string.IsNullOrWhiteSpace(personel.SeoDescription))
+    {
+        ViewData["MetaDescription"] = personel.SeoDescription;
+    }
+
+    // Detay linki: /{dil}/{personeller-slug}/{seoUrl}
+    string BuildPersonelHref(Microservice.Web.ViewModels.SitePersonel.GetPersonelVm p)
+    {
+        if (!string.IsNullOrWhiteSpace(p.SeoUrl))
+        {
+            return $"{Model.PersonelListUrl}/{p.SeoUrl.Trim('/')}";
+        }
+
+        return "#";
+    }
+
+    // Profil sosyal medya adresleri (yalnizca dolu olanlar gosterilir)
+    var socialLinks = new List<(string Url, string Icon, string Title)>();
+
+    if (!string.IsNullOrWhiteSpace(personel.TwitterAdress))
+    {
+        socialLinks.Add((personel.TwitterAdress, "fa-twitter", "Twitter"));
+    }
+    if (!string.IsNullOrWhiteSpace(personel.FacebookAdress))
+    {
+        socialLinks.Add((personel.FacebookAdress, "fa-facebook", "Facebook"));
+    }
+    if (!string.IsNullOrWhiteSpace(personel.InstagramAdress))
+    {
+        socialLinks.Add((personel.InstagramAdress, "fa-instagram", "Instagram"));
+    }
+    if (!string.IsNullOrWhiteSpace(personel.BlogAdress))
+    {
+        socialLinks.Add((personel.BlogAdress, "fa-wordpress", "Blog"));
+    }
+
+    // Ilgi alanlari: virgul/noktali virgul ile ayrilmis metin -> etiket listesi
+    var ilgiAlanlari = string.IsNullOrWhiteSpace(personel.IlgiAlanlari)
+        ? Array.Empty<string>()
+        : personel.IlgiAlanlari
+            .Split(new[] { ',', ';', '\n' }, StringSplitOptions.RemoveEmptyEntries)
+            .Select(x => x.Trim())
+            .Where(x => !string.IsNullOrWhiteSpace(x))
+            .ToArray();
 }
 
-<div class="page-title parallax parallax1">
+<div class="page-title full-color">
     <div class="container">
-        <div class="flat-university">
-            <div class="post">
-                <h1 class="title">@(Model.Username ?? "Personel")</h1>
-            </div><!--/post -->
-        </div><!--/flat-university -->
-    </div><!--/container -->
-</div><!--/page-title -->
+        <div class="row">
+            <div class="col-md-12">
+                <div class="page-title-heading">
+                    <h2 class="title">@adSoyad</h2>
+                </div>
+                <div class="breadcrumbs">
+                    <ul>
+                        <li class="home"><a href="/">Anasayfa</a></li>
+                        <li> \ <a href="@Model.PersonelListUrl">Kadro</a></li>
+                    </ul>
+                </div>
+            </div><!-- /.col-md-12 -->
+        </div><!-- /.row -->
+    </div><!-- /.container -->
+</div><!-- /page-title -->
 
-<section class="flat-row">
+<section class="flat-row flat-member-single padding-v1">
     <div class="container">
-        @Model.Adi    @Model.Soyadi
+        <div class="row">
+            <div class="member-single">
+                <div class="col-md-9">
+                    <div class="member-single-post">
+                        <div class="row">
+                            <div class="col-md-4">
+                                @if (!string.IsNullOrWhiteSpace(personel.ResimUrl))
+                                {
+                                    <div class="item-thumbnail">
+                                        <img src="@personel.ResimUrl" alt="@adSoyad">
+                                    </div>
+                                }
+                            </div>
+
+                            <div class="col-md-8">
+                                <div class="content-pad">
+                                    <div class="item-content">
+                                        <h3 class="item-title">@adSoyad</h3>
+                                        <h4 class="small-text">@personel.PageType?.Name</h4>
+
+                                        @if (ilgiAlanlari.Length > 0)
+                                        {
+                                            <div class="member-tax small-text">
+                                                @foreach (var alan in ilgiAlanlari)
+                                                {
+                                                    <span class="cat-link">@alan</span>
+                                                }
+                                            </div>
+                                        }
+
+                                        @if (!string.IsNullOrWhiteSpace(personel.Hakkinda))
+                                        {
+                                            <p>@personel.Hakkinda</p>
+                                        }
+
+                                        @if (socialLinks.Count > 0)
+                                        {
+                                            <ul class="list-inline social-light">
+                                                @foreach (var social in socialLinks)
+                                                {
+                                                    <li>
+                                                        <a class="btn btn-default social-icon"
+                                                           href="@social.Url" target="_blank" rel="noopener"
+                                                           title="@social.Title"><i class="fa @social.Icon"></i></a>
+                                                    </li>
+                                                }
+                                            </ul>
+                                        }
+                                    </div>
+                                </div><!--/content-pad-->
+                            </div><!--/col-md-8-->
+                        </div><!--/row-->
+                    </div><!--/member-single-post-->
+
+                    @if (!string.IsNullOrWhiteSpace(personel.DeneyimVeCalismalari))
+                    {
+                        <div class="pure-content">
+                            <div class="content-pad">
+                                <h3 class="item-title">Deneyim ve Çalışmaları</h3>
+                                @Html.Raw(personel.DeneyimVeCalismalari)
+                            </div>
+                        </div>
+                    }
+
+                    <div class="content-pad calendar-import">
+                        <a class="flat-button" href="@Model.PersonelListUrl">
+                            <i class="fa fa-angle-left"></i> TÜM KADRO
+                        </a>
+                    </div>
+                </div><!-- /col-md-9 -->
+
+                <div class="col-md-3">
+                    <div class="sidebar">
+
+                        <!-- WIDGET SEARCH (personel listesi icinde arama) -->
+                        <div class="widget widget-search">
+                            <h2 class="widget-title">Kadro Arama</h2>
+                            <form role="search" method="get" id="searchform" class="u-course-search-form" action="@Model.PersonelListUrl">
+                                <div class="input-group">
+                                    <input type="text" value="" name="q" id="s" placeholder="Ad veya soyad..." class="form-control">
+                                    <span class="input-group-btn">
+                                        <button type="submit" id="searchsubmit" class="btn btn-default u-course-search-submit">
+                                            <i class="fa fa-search"></i>
+                                        </button>
+                                    </span>
+                                </div>
+                            </form>
+                        </div><!-- /widget-search -->
+
+                        <!-- WIDGET SON EKLENENLER -->
+                        @if (Model.LatestPersoneller.Any())
+                        {
+                            <div class="widget widget-posts">
+                                <div class="blog-box">
+                                    <h2 class="widget-title">SON EKLENENLER</h2>
+                                    <ul class="recent-posts clearfix">
+                                        @foreach (var item in Model.LatestPersoneller)
+                                        {
+                                            var itemAd = $"{item.Adi} {item.Soyadi}".Trim();
+
+                                            <li>
+                                                <div class="thumb item-thumbnail">
+                                                    <a href="@BuildPersonelHref(item)">
+                                                        <img src="@item.ResimUrl" alt="@itemAd" loading="lazy">
+                                                        <div class="thumbnail-hoverlay main-color-1-bg"></div>
+                                                        <div class="thumbnail-hoverlay-cross"></div>
+                                                    </a>
+                                                </div>
+                                                <div class="text">
+                                                    <a href="@BuildPersonelHref(item)">@itemAd</a>
+                                                    <p>@item.UnvanAd</p>
+                                                </div>
+                                            </li>
+                                        }
+                                    </ul><!-- /recent-posts -->
+                                </div>
+                            </div><!-- /widget-posts -->
+                        }
+
+                    </div><!-- sidebar -->
+                </div><!-- /col-md-3 -->
+            </div>
+        </div>
     </div>
 </section>

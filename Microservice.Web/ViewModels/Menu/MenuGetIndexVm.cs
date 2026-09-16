@@ -10,5 +10,8 @@ namespace Microservice.Web.ViewModels.Menu
 
         // Link'i bos olan menuler /{LanguageCode}/{PageTypeSlug} adresine yonlendirilir.
         public string LanguageCode { get; set; } = "tr";
+
+        // Navbar arama formunun gidecegi arama sayfasi slug'i (PageTypeKind.Search).
+        public string? SearchPageSlug { get; set; }
     }
 }

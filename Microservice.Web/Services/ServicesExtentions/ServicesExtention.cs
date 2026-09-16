@@ -24,6 +24,9 @@ namespace Microservice.Web.Services.ServicesExtentions
             services.AddScoped<IShortcutButtonService, ShortcutButtonService>();
             services.AddScoped<IBilgiService, BilgiService>();
             services.AddScoped<IBandLogoService, BandLogoService>();
+            services.AddScoped<IIcerikService, IcerikService>();
+            services.AddScoped<IPageTypeService, PageTypeService>();
+            services.AddScoped<ISitePersonelService, SitePersonelService>();
 
             services.AddScoped<IPageDetailResolver, HaberDetayResolver>();
             services.AddScoped<IPageDetailResolver, DuyuruDetayResolver>();

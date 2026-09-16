@@ -1,20 +1,263 @@
-﻿@model List<Microservice.Web.ViewModels.Duyuru.GetDuyuruVm>
+﻿@model Microservice.Web.ViewModels.Template.ContentListPageViewModel<Microservice.Web.ViewModels.Duyuru.GetDuyuruVm>
 @{
     ViewData["Title"] = "Duyurular";
+
+    // Sayfanin kendi adresi: /{dil}/{duyurular-slug}
+    var listPath = Context.Request.Path.ToString().TrimEnd('/');
+    if (string.IsNullOrWhiteSpace(listPath))
+    {
+        listPath = $"/{Model.LanguageCode}/duyurular";
+    }
+
+    // Sayfalama/arama icin query uretir.
+    string BuildQuery(int pageNumber)
+    {
+        var parts = new List<string>();
+
+        if (Model.HasQuery)
+        {
+            parts.Add($"q={Uri.EscapeDataString(Model.Query!)}");
+        }
+
+        if (pageNumber > 1)
+        {
+            parts.Add($"page={pageNumber}");
+        }
+
+        return parts.Count == 0 ? "" : "?" + string.Join("&", parts);
+    }
+
+    // Detay linki: Link dolu ise dogrudan, bos ise /{dil}/{pageTypeSlug}/{seoUrl}
+    string BuildContentHref(Microservice.Web.ViewModels.Duyuru.GetDuyuruVm duyuru)
+    {
+        if (!string.IsNullOrWhiteSpace(duyuru.Link))
+        {
+            var link = duyuru.Link.Trim();
+
+            return link.StartsWith("http", StringComparison.OrdinalIgnoreCase)
+                ? link
+                : "/" + link.Trim('/');
+        }
+
+        if (!string.IsNullOrWhiteSpace(duyuru.SeoUrl) && duyuru.PageType is not null)
+        {
+            return $"/{Model.LanguageCode}/{duyuru.PageType.Slug}/{duyuru.SeoUrl.Trim('/')}";
+        }
+
+        return "#";
+    }
+
+    var latestPosts = Model.Results.Data.Take(3).ToList();
 }
 
-<div class="page-title parallax parallax1">
-    <div class="container">
-        <div class="flat-university">
-            <div class="post">
-                <h1 class="title">Duyurular</h1>
-            </div><!--/post -->
-        </div><!--/flat-university -->
-    </div><!--/container -->
-</div><!--/page-title -->
 
-<section class="flat-row">
+
+<section class="flat-row padding-v1">
     <div class="container">
-        Toplam duyuru sayısı: @Model.Count()
-    </div>
-</section>
+        <div class="row">
+            <div id="content" class="col-md-9">
+
+                <!-- SONUC OZETI -->
+                @if (Model.HasQuery)
+                {
+                    <div class="item-content" style="margin-bottom:20px;">
+                        <p class="main-color-1" style="font-weight:600;margin:0;">
+                            "@Model.Query" için @Model.Results.TotalCount duyuru bulundu.
+                            <a href="@listPath" style="margin-left:10px;text-decoration:underline;">Tümünü göster</a>
+                        </p>
+                    </div>
+                }
+
+                <!-- SONUCLAR -->
+                @if (Model.Results.Data.Any())
+                {
+                    @foreach (var duyuru in Model.Results.Data)
+                    {
+                        var hasImage = !string.IsNullOrWhiteSpace(duyuru.ResimUrl);
+
+                        <div class="event-listing event-listing-classic">
+                            <article class="post-item row event-classic-item">
+                                @if (hasImage)
+                                {
+                                    <div class="col-md-4 col-sm-5">
+                                        <div class="content-pad">
+                                            <div class="item-thumbnail">
+                                                <a href="@BuildContentHref(duyuru)">
+                                                    <img src="@duyuru.ResimUrl" alt="@duyuru.Baslik" loading="lazy">
+                                                    <div class="date-block">
+                                                        <div class="month">@duyuru.YayimTarihi.ToString("MMM")</div>
+                                                        <div class="day">@duyuru.YayimTarihi.ToString("dd")</div>
+                                                    </div>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+
+                                <div class="@(hasImage ? "col-md-8" : "col-md-12") col-sm-7">
+                                    <div class="content-pad">
+                                        <div class="item-content">
+                                            <h3 class="item-title">
+                                                <a href="@BuildContentHref(duyuru)" class="main-color-1-hover">@duyuru.Baslik</a>
+                                            </h3>
+
+                                            @if (!string.IsNullOrWhiteSpace(duyuru.KisaAciklama))
+                                            {
+                                                <p>@duyuru.KisaAciklama</p>
+                                            }
+
+                                            <div class="event-time">@duyuru.YayimTarihi.ToString("dd.MM.yyyy")</div>
+                                        </div>
+                                        <div class="item-meta">
+                                            <a class="flat-button" href="@BuildContentHref(duyuru)">
+                                                DETAYLAR <i class="fa fa-angle-right"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </article>
+                        </div><!--/event-listing-->
+                    }
+
+                    <!-- SAYFALAMA -->
+                    @if (Model.Results.TotalPages > 1)
+                    {
+                        // Cok sayfali sonuclarda dar aralik goster (mevcut sayfa etrafi)
+                        var startPage = Math.Max(1, Model.Results.Page - 2);
+                        var endPage = Math.Min(Model.Results.TotalPages, Model.Results.Page + 2);
+
+                        <div class="flat-pagination">
+                            <ul class="page-numbers clearfix">
+                                @if (Model.Results.HasPrevious)
+                                {
+                                    <li>
+                                        <a class="prev page-numbers" href="@listPath@BuildQuery(Model.Results.Page - 1)">
+                                            <i class="fa fa-angle-left"></i> Önceki
+                                        </a>
+                                    </li>
+                                }
+
+                                @if (startPage > 1)
+                                {
+                                    <li><a class="page-numbers" href="@listPath@BuildQuery(1)">1</a></li>
+
+                                    if (startPage > 2)
+                                    {
+                                        <li><span class="page-numbers">...</span></li>
+                                    }
+                                }
+
+                                @for (var i = startPage; i <= endPage; i++)
+                                {
+                                    if (i == Model.Results.Page)
+                                    {
+                                        <li><span class="page-numbers current">@i</span></li>
+                                    }
+                                    else
+                                    {
+                                        <li><a class="page-numbers" href="@listPath@BuildQuery(i)">@i</a></li>
+                                    }
+                                }
+
+                                @if (endPage < Model.Results.TotalPages)
+                                {
+                                    if (endPage < Model.Results.TotalPages - 1)
+                                    {
+                                        <li><span class="page-numbers">...</span></li>
+                                    }
+
+                                    <li>
+                                        <a class="page-numbers" href="@listPath@BuildQuery(Model.Results.TotalPages)">
+                                            @Model.Results.TotalPages
+                                        </a>
+                                    </li>
+                                }
+
+                                @if (Model.Results.HasNext)
+                                {
+                                    <li>
+                                        <a class="next page-numbers" href="@listPath@BuildQuery(Model.Results.Page + 1)">
+                                            Sonraki <i class="fa fa-angle-right"></i>
+                                        </a>
+                                    </li>
+                                }
+                            </ul>
+                        </div><!--/flat-pagination -->
+                    }
+                }
+                else
+                {
+                    <div class="event-listing event-listing-classic">
+                        <article class="post-item row event-classic-item">
+                            <div class="col-md-12 col-sm-12">
+                                <div class="content-pad">
+                                    <div class="item-content">
+                                        <h3 class="item-title">
+                                            @if (Model.HasQuery)
+                                            {
+                                                <text>Aramanızla eşleşen duyuru bulunamadı.</text>
+                                            }
+                                            else
+                                            {
+                                                <text>Henüz duyuru bulunmamaktadır.</text>
+                                            }
+                                        </h3>
+                                    </div>
+                                </div>
+                            </div>
+                        </article>
+                    </div><!--/event-listing-->
+                }
+            </div><!-- /col-md-9 -->
+
+            <div class="col-md-3">
+                <div class="sidebar">
+
+                    <!-- WIDGET SEARCH (sayfa ici arama) -->
+                    <div class="widget widget-search">
+                        <h2 class="widget-title">DUYURU ARAMA</h2>
+                        <form role="search" method="get" id="searchform" class="u-course-search-form" action="@listPath">
+                            <div class="input-group">
+                                <input type="text" value="@Model.Query" name="q" id="s" placeholder="Arama Yap" class="form-control">
+                                <span class="input-group-btn">
+                                    <button type="submit" id="searchsubmit" class="btn btn-default u-course-search-submit">
+                                        <i class="fa fa-search"></i>
+                                    </button>
+                                </span>
+                            </div>
+                        </form>
+                    </div><!-- /widget-search -->
+
+                    <!-- WIDGET LATEST POST (mevcut listeden en yeni 3 duyuru) -->
+                    @if (latestPosts.Any())
+                    {
+                        <div class="widget widget-posts">
+                            <div class="blog-box">
+                                <h2 class="widget-title">En Son Duyurular</h2>
+                                <ul class="recent-posts clearfix">
+                                    @foreach (var duyuru in latestPosts)
+                                    {
+                                        <li>
+                                            <div class="thumb item-thumbnail">
+                                                <a href="@BuildContentHref(duyuru)">
+                                                    <img src="@duyuru.ResimUrl" alt="@duyuru.Baslik" loading="lazy">
+                                                    <div class="thumbnail-hoverlay main-color-1-bg"></div>
+                                                    <div class="thumbnail-hoverlay-cross"></div>
+                                                </a>
+                                            </div>
+                                            <div class="text">
+                                                <a href="@BuildContentHref(duyuru)">@duyuru.Baslik</a>
+                                                <p>@duyuru.YayimTarihi.ToString("dd.MM.yyyy")</p>
+                                            </div>
+                                        </li>
+                                    }
+                                </ul><!-- /recent-posts -->
+                            </div>
+                        </div><!-- /widget-posts -->
+                    }
+
+                </div><!-- /sidebar -->
+            </div><!-- /col-md-3 -->
+        </div><!-- /row -->
+    </div><!-- /container -->
+</section><!-- /flat-row -->

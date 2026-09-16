@@ -18,6 +18,7 @@ namespace Mikroservice.Site.Api.Endpoints.IcerikEndPoints
             group.MapToApiVersion(1.0);
 
             group.IsSeoUrlAvailableEndpointGroupItem();
+            group.SearchIcerikEndpointGroupItem();
             group.RequireAuthorization("ClientCredential");
         }
     }

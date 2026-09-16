@@ -29,7 +29,7 @@ namespace Mikroservice.Site.Application.Features.SitePersonelFeatures.GetSitePer
                 return ServiceResult<List<SitePersonelDto>>.SuccessAsOK(cached);
             }
 
-            var data = await repository.GetAllWithPersonelTipAndUnvanAsync(request.SiteId, cancellationToken);
+            var data = await repository.GetAllWithPersonelTipPageTypeAndUnvanAsync(request.SiteId, cancellationToken);
             var mappedData = mapper.Map<List<SitePersonelDto>>(data);
 
 

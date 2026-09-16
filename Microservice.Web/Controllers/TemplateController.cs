@@ -1,7 +1,17 @@
 using Microservice.Web.Models;
 using Microservice.Web.Services.Interfaces;
+using Microservice.Web.Services.ServiceResults;
 using Microservice.Web.Settings;
+using Microservice.Web.ViewModels.Bilgi;
+using Microservice.Web.ViewModels.Duyuru;
+using Microservice.Web.ViewModels.Etkinlik;
+using Microservice.Web.ViewModels.Haber;
+using Microservice.Web.ViewModels.Icerik;
+using Microservice.Web.ViewModels.Menu;
 using Microservice.Web.ViewModels.PageRoute;
+using Microservice.Web.ViewModels.SitePersonel;
+using Microservice.Web.ViewModels.Paged;
+using Microservice.Web.ViewModels.Search;
 using Microservice.Web.ViewModels.Template;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
@@ -21,6 +31,9 @@ namespace Microservice.Web.Controllers
         private readonly IShortcutButtonService _shortcutButtonService;
         private readonly IMenuService _menuService;
         private readonly ISiteService _siteService;
+        private readonly IIcerikService _icerikService;
+        private readonly IPageTypeService _pageTypeService;
+        private readonly ISitePersonelService _sitePersonelService;
         private readonly ILogger<TemplateController> _logger;
 
         public TemplateController(
@@ -33,6 +46,9 @@ namespace Microservice.Web.Controllers
             IMenuService menuService,
             ISiteService siteService,
             IShortcutButtonService shortcutButtonService,
+            IIcerikService icerikService,
+            IPageTypeService pageTypeService,
+            ISitePersonelService sitePersonelService,
             ILogger<TemplateController> logger)
         {
             _etkinlikService = etkinlikService;
@@ -44,6 +60,9 @@ namespace Microservice.Web.Controllers
             _menuService = menuService;
             _siteService = siteService;
             _shortcutButtonService = shortcutButtonService;
+            _icerikService = icerikService;
+            _pageTypeService = pageTypeService;
+            _sitePersonelService = sitePersonelService;
             _logger = logger;
         }
 
@@ -122,6 +141,15 @@ namespace Microservice.Web.Controllers
             ViewData["SiteId"] = route.Site.Id;
             ViewData["DilId"] = route.LanguageId;
             ViewData["LanguageCode"] = route.LanguageCode;
+
+            // Navbar'daki arama formunun gidecegi sayfanin slug'i (PageTypeKind.Search).
+            // Site API tarafinda 10 dk cache'lendigi icin her istekte ek maliyet olusturmaz.
+            var searchPageType = await _pageTypeService.GetPageTypeByKindAsync(
+                route.Site.TemplateId,
+                route.LanguageId,
+                (int)PageTypeKindEnum.Search);
+
+            ViewData["SearchPageSlug"] = searchPageType.Data?.Slug;
    
 
             return page.PageTypeKind switch {
@@ -158,6 +186,9 @@ namespace Microservice.Web.Controllers
                 PageTypeKindEnum.PersonelDetay when route.PersonelDetay is not null =>
                      await RenderPersonelDetayAsync(route),
 
+                PageTypeKindEnum.Search when route.DetailSlug is null =>
+                     await RenderSearchAsync(route),
+
                 PageTypeKindEnum.StaticPage => RenderStaticPage(route),
                 _ => RenderNotFound("Bu sayfa türü için tanımlı bir görünüm yok.")
             };
@@ -183,7 +214,27 @@ namespace Microservice.Web.Controllers
             var shortcutButtonsTask = _shortcutButtonService.GetShortcutButtonsAsync(siteId, languageId);
             var bilgiTask = _bilgiService.GetBilgisAsync(siteId, languageId);
             var etkinliklerTask = _etkinlikService.GetEtkinliklerAsync(siteId, languageId);
-            await Task.WhenAll(siteTask, menusTask, bannersTask, haberlerTask, duyurularTask, shortcutButtonsTask, bilgiTask, etkinliklerTask);
+            // Sidebar arama widget'i genel arama sayfasina yonlendirir.
+            var duyurularPageTypeTask = _pageTypeService.GetPageTypeByKindAsync(
+                route.Site.TemplateId,
+                route.LanguageId,
+                (int)PageTypeKindEnum.DuyuruListesi);
+            var haberlerPageTypeTask = _pageTypeService.GetPageTypeByKindAsync(
+                route.Site.TemplateId,
+                route.LanguageId,
+                (int)PageTypeKindEnum.HaberListesi);
+            await Task.WhenAll(
+                siteTask, 
+                menusTask, 
+                bannersTask, 
+                haberlerTask, 
+                duyurularTask, 
+                shortcutButtonsTask, 
+                bilgiTask, 
+                etkinliklerTask,
+                duyurularPageTypeTask,
+                haberlerPageTypeTask
+                );
 
             var siteResult = await siteTask;
 
@@ -200,9 +251,13 @@ namespace Microservice.Web.Controllers
             var duyurularResult = await duyurularTask;
             var shortcutButtonsResult = await shortcutButtonsTask;
             var etkinliklerResult = await etkinliklerTask;
+            var duyurularPageTypeResult = await duyurularPageTypeTask;
+            var haberlerPageTypeResult = await haberlerPageTypeTask;
 
             var model = new TemplatePageViewModel {
                 Site = siteResult.Data,
+                HaberListUrl= $"/{route.LanguageCode}/{haberlerPageTypeResult.Data.Slug}",
+                DuyuruListUrl= $"/{route.LanguageCode}/{duyurularPageTypeResult.Data.Slug}",
                 // Link'i bos olan icerikler /{LanguageCode}/{PageTypeSlug}/{SeoUrl} adresine yonlendirilir.
                 LanguageCode = route.LanguageCode,
                 Menus = menusResult.Data ?? [],
@@ -251,10 +306,27 @@ namespace Microservice.Web.Controllers
                 return RenderNotFound("Menü bulunamadı.");
             }
 
-            var model = route.MenuDetay;
+            var menu = route.MenuDetay;
 
+            // Sidebar arama widget'i genel arama sayfasina yonlendirir.
+            var searchPageType = await _pageTypeService.GetPageTypeByKindAsync(
+                route.Site.TemplateId,
+                route.LanguageId,
+                (int)PageTypeKindEnum.Search);
 
-            var viewPath = GetTemplateViewPath(route.Page.TemplateId, model.PageType.ViewName);
+            var model = new MenuDetayPageViewModel {
+                Menu = menu,
+                Site = route.Site,
+                LanguageCode = route.LanguageCode,
+                SearchUrl = searchPageType.Data is null
+                    ? "/"
+                    : $"/{route.LanguageCode}/{searchPageType.Data.Slug}"
+            };
+
+            // Navbar component'inin site bilgisini tekrar cekmesini engellemek icin paylasilir.
+            ViewData["Site"] = route.Site;
+
+            var viewPath = GetTemplateViewPath(route.Page.TemplateId, menu.PageType.ViewName);
 
             return View(viewPath, model);
         }
@@ -272,11 +344,36 @@ namespace Microservice.Web.Controllers
                 return RenderNotFound("Etkinlik bulunamadı.");
             }
 
-            var model = route.EtkinlikDetay;
+            var etkinlik = route.EtkinlikDetay;
+
+            // Sidebar "Son Eklenenler" widget'i icin en yeni etkinlikler (mevcut etkinlik haric).
+            var etkinliklerResult = await _etkinlikService.GetEtkinliklerAsync(route.Site.Id, route.LanguageId);
+            // Liste sayfasi adresi: route.Page, DuyuruDetay sayfa tipidir; liste icin DuyuruListesi cozulmeli.
+            var etkinlikListePageType = await _pageTypeService.GetPageTypeByKindAsync(
+                route.Site.TemplateId,
+                route.LanguageId,
+                (int)PageTypeKindEnum.Etkinlik);
 
 
+            var latestEtkinlikler = (etkinliklerResult.Data ?? [])
+                .Where(e => e.Id != etkinlik.Id)
+                .OrderByDescending(e => e.YayimTarihi)
+                .Take(3)
+                .ToList();
 
-            var viewPath = GetTemplateViewPath(route.Page.TemplateId, model.PageType.ViewName);
+            var model = new EtkinlikDetayPageViewModel {
+                Etkinlik = etkinlik,
+                Site = route.Site,
+                LanguageCode = route.LanguageCode,
+                // route.Page, /{dil}/{etkinlik-slug}/{seoUrl} icindeki liste sayfasi
+                EtkinlikListUrl = $"/{route.LanguageCode}/{etkinlikListePageType.Data.Slug}",
+                LatestEtkinlikler = latestEtkinlikler
+            };
+
+            // Navbar component'inin site bilgisini tekrar cekmesini engellemek icin paylasilir.
+            ViewData["Site"] = route.Site;
+
+            var viewPath = GetTemplateViewPath(route.Page.TemplateId, etkinlik.PageType.ViewName);
 
             return View(viewPath, model);
         }
@@ -295,11 +392,35 @@ namespace Microservice.Web.Controllers
                 return RenderNotFound("Bilgi bulunamadı.");
             }
 
-            var model = route.BilgiDetay;
+            var bilgi = route.BilgiDetay;
 
+            // Sidebar "Son Eklenenler" widget'i icin en yeni bilgiler (mevcut bilgi haric).
+            var bilgilerResult = await _bilgiService.GetBilgisAsync(route.Site.Id, route.LanguageId);
+            // Liste sayfasi adresi: route.Page, DuyuruDetay sayfa tipidir; liste icin DuyuruListesi cozulmeli.
+            var bilgiListePageType = await _pageTypeService.GetPageTypeByKindAsync(
+                route.Site.TemplateId,
+                route.LanguageId,
+                (int)PageTypeKindEnum.Etkinlik);
 
+            var latestBilgiler = (bilgilerResult.Data ?? [])
+                .Where(b => b.Id != bilgi.Id)
+                .OrderByDescending(b => b.YayimTarihi)
+                .Take(3)
+                .ToList();
 
-            var viewPath = GetTemplateViewPath(route.Page.TemplateId, model.PageType.ViewName);
+            var model = new BilgiDetayPageViewModel {
+                Bilgi = bilgi,
+                Site = route.Site,
+                LanguageCode = route.LanguageCode,
+                // route.Page, /{dil}/{bilgi-slug}/{seoUrl} icindeki liste sayfasi
+                BilgiListUrl = $"/{route.LanguageCode}/{bilgiListePageType.Data.Slug}",
+                LatestBilgiler = latestBilgiler
+            };
+
+            // Navbar component'inin site bilgisini tekrar cekmesini engellemek icin paylasilir.
+            ViewData["Site"] = route.Site;
+
+            var viewPath = GetTemplateViewPath(route.Page.TemplateId, bilgi.PageType.ViewName);
 
             return View(viewPath, model);
         }
@@ -311,18 +432,36 @@ namespace Microservice.Web.Controllers
         // ============================================================
 
         /// <summary>
-        /// /personeller
+        /// /personeller?q=kelime
+        /// A-Z harf filtreli (tema isotope) ve sayfa ici arama destekli personel listesi.
         /// </summary>
         private async Task<IActionResult> RenderPersonelListesiAsync(RouteResolveResult route)
         {
-            if (route.PersonelListesi is null)
+            // Route resolver personel listesini zaten getirdi; yoksa servis uzerinden cekilir.
+            var personeller = route.PersonelListesi;
+
+            if (personeller is null)
             {
-                return RenderNotFound("Personeller bulunamadı.");
+                var result = await _sitePersonelService.GetPersonelListAsync(route.Site.Id);
+                personeller = result.Data ?? [];
             }
+
+            var model = new PersonelListPageViewModel {
+                Site = route.Site,
+                LanguageCode = route.LanguageCode,
+                Query = Request.Query["q"].ToString(),
+                Personeller = personeller
+                    .OrderBy(p => p.Soyadi)
+                    .ThenBy(p => p.Adi)
+                    .ToList()
+            };
+
+            // Navbar component'inin site bilgisini tekrar cekmesini engellemek icin paylasilir.
+            ViewData["Site"] = route.Site;
 
             var viewPath = GetTemplateViewPath(route.Page.TemplateId, "PersonelListesi");
 
-            return View(viewPath, route.PersonelListesi);
+            return View(viewPath, model);
         }
 
         /// <summary>
@@ -335,11 +474,36 @@ namespace Microservice.Web.Controllers
                 return RenderNotFound("Personel bulunamadı.");
             }
 
-            var model = route.PersonelDetay;
+            var personel = route.PersonelDetay;
 
+            // Sidebar "Son Eklenenler" widget'i icin personel listesi (mevcut personel haric).
+            var personelListesiResult = await _sitePersonelService.GetPersonelListAsync(route.Site.Id);
 
+            var latestPersoneller = (personelListesiResult.Data ?? [])
+                .Where(p => p.Id != personel.Id)
+                .Take(3)
+                .ToList();
 
-            var viewPath = GetTemplateViewPath(route.Page.TemplateId, model.PageType.ViewName);
+            // Liste sayfasi adresi: route.Page PersonelDetay tipidir; liste icin PersonelListesi cozulmeli.
+            var personelListePageType = await _pageTypeService.GetPageTypeByKindAsync(
+                route.Site.TemplateId,
+                route.LanguageId,
+                (int)PageTypeKindEnum.PersonelListesi);
+
+            var model = new PersonelDetayPageViewModel {
+                Personel = personel,
+                Site = route.Site,
+                LanguageCode = route.LanguageCode,
+                PersonelListUrl = personelListePageType.Data is null
+                    ? "/"
+                    : $"/{route.LanguageCode}/{personelListePageType.Data.Slug}",
+                LatestPersoneller = latestPersoneller
+            };
+
+            // Navbar component'inin site bilgisini tekrar cekmesini engellemek icin paylasilir.
+            ViewData["Site"] = route.Site;
+
+            var viewPath = GetTemplateViewPath(route.Page.TemplateId, personel.PageType.ViewName);
 
             return View(viewPath, model);
         }
@@ -362,18 +526,19 @@ namespace Microservice.Web.Controllers
         // ============================================================
 
         /// <summary>
-        /// /haberler
+        /// /haberler?q=kelime&page=1&pageSize=5
+        /// Sayfali ve sayfa ici arama destekli haber listesi.
         /// </summary>
         private async Task<IActionResult> RenderHaberListesiAsync(RouteResolveResult route)
         {
-            if (route.HaberListesi is null)
-            {
-                return RenderNotFound("Haberler bulunamadı.");
-            }
+            var model = await BuildContentListAsync<GetHaberVm>(
+                (q, page, pageSize) => _haberService.GetPaginatedAsync(
+                    route.Site.Id, route.LanguageId, q, page, pageSize),
+                route);
 
-            var viewPath = GetTemplateViewPath( route.Page.TemplateId,"HaberListesi");
+            var viewPath = GetTemplateViewPath(route.Page.TemplateId, "HaberListesi");
 
-            return View(viewPath, route.HaberListesi);
+            return View(viewPath, model);
         }
 
         /// <summary>
@@ -386,11 +551,32 @@ namespace Microservice.Web.Controllers
                 return RenderNotFound("Haber bulunamadı.");
             }
 
-            var model = route.HaberDetay;
+            var haber = route.HaberDetay;
 
-           
+            // Sidebar "Son Eklenenler" widget'i icin en yeni haberler (mevcut haber haric).
+            var habersResult = await _haberService.GetHabersAsync(route.Site.Id, route.LanguageId);
+            // Sidebar "Son Eklenenler" widget'i icin en yeni haberler (mevcut haber haric).
+            var pageTypeResult = await _pageTypeService.GetPageTypeByKindAsync(route.Site.TemplateId,route.LanguageId, (int)PageTypeKindEnum.HaberListesi);
 
-            var viewPath = GetTemplateViewPath(route.Page.TemplateId,model.PageType.ViewName);
+            var latestHabers = (habersResult.Data ?? [])
+                .Where(h => h.Id != haber.Id)
+                .OrderByDescending(h => h.YayimTarihi)
+                .Take(3)
+                .ToList();
+
+            var model = new HaberDetayPageViewModel {
+                Haber = haber,
+                Site = route.Site,
+                LanguageCode = route.LanguageCode,
+                // route.Page, /{dil}/{haberler-slug}/{seoUrl} icindeki liste sayfasi
+                HaberListUrl = $"/{route.LanguageCode}/{pageTypeResult.Data.Slug}",
+                LatestHabers = latestHabers
+            };
+
+            // Navbar component'inin site bilgisini tekrar cekmesini engellemek icin paylasilir.
+            ViewData["Site"] = route.Site;
+
+            var viewPath = GetTemplateViewPath(route.Page.TemplateId, haber.PageType.ViewName);
 
             return View(viewPath, model);
         }
@@ -452,18 +638,19 @@ namespace Microservice.Web.Controllers
         // ============================================================
 
         /// <summary>
-        /// /duyurular
+        /// /duyurular?q=kelime&page=1&pageSize=5
+        /// Sayfali ve sayfa ici arama destekli duyuru listesi.
         /// </summary>
         private async Task<IActionResult> RenderDuyuruListesiAsync(RouteResolveResult route)
         {
-            if (route.DuyuruListesi is null)
-            {
-                return RenderNotFound("Duyurular bulunamadı.");
-            }
+            var model = await BuildContentListAsync<GetDuyuruVm>(
+                (q, page, pageSize) => _duyuruService.GetPaginatedAsync(
+                    route.Site.Id, route.LanguageId, q, page, pageSize),
+                route);
 
             var viewPath = GetTemplateViewPath(route.Page.TemplateId, "DuyuruListesi");
 
-            return View(viewPath, route.DuyuruListesi);
+            return View(viewPath, model);
         }
 
         /// <summary>
@@ -476,13 +663,95 @@ namespace Microservice.Web.Controllers
                 return RenderNotFound("Duyuru bulunamadı.");
             }
 
-            var model = route.DuyuruDetay;
+            var duyuru = route.DuyuruDetay;
 
+            // Sidebar "Son Eklenenler" widget'i icin en yeni duyurular (mevcut duyuru haric).
+            var duyurularResult = await _duyuruService.GetDuyurularAsync(route.Site.Id, route.LanguageId);
 
+            // Liste sayfasi adresi: route.Page, DuyuruDetay sayfa tipidir; liste icin DuyuruListesi cozulmeli.
+            var duyuruListePageType = await _pageTypeService.GetPageTypeByKindAsync(
+                route.Site.TemplateId,
+                route.LanguageId,
+                (int)PageTypeKindEnum.DuyuruListesi);
 
-            var viewPath = GetTemplateViewPath(route.Page.TemplateId, model.PageType.ViewName);
+            var latestDuyurular = (duyurularResult.Data ?? [])
+                .Where(d => d.Id != duyuru.Id)
+                .OrderByDescending(d => d.YayimTarihi)
+                .Take(3)
+                .ToList();
 
-            return View(viewPath, model); 
+            var model = new DuyuruDetayPageViewModel {
+                Duyuru = duyuru,
+                Site = route.Site,
+                LanguageCode = route.LanguageCode,
+                DuyuruListUrl = duyuruListePageType.Data is null
+                    ? "/"
+                    : $"/{route.LanguageCode}/{duyuruListePageType.Data.Slug}",
+                LatestDuyurular = latestDuyurular
+            };
+
+            // Navbar component'inin site bilgisini tekrar cekmesini engellemek icin paylasilir.
+            ViewData["Site"] = route.Site;
+
+            var viewPath = GetTemplateViewPath(route.Page.TemplateId, duyuru.PageType.ViewName);
+
+            return View(viewPath, model);
+        }
+
+        // ============================================================
+        // ARAMA
+        // ============================================================
+
+        /// <summary>
+        /// /arama?q=kelime&tip=1&page=1
+        /// Icerik (Haber, Duyuru, Bilgi, Etkinlik, Video) tabaninda sayfali arama.
+        /// </summary>
+        private async Task<IActionResult> RenderSearchAsync(RouteResolveResult route)
+        {
+            var siteId = route.Site.Id;
+            var languageId = route.LanguageId;
+
+            var query = Request.Query["q"].ToString();
+
+            int.TryParse(Request.Query["tip"], out var tipParam);
+            int.TryParse(Request.Query["page"], out var pageParam);
+            int.TryParse(Request.Query["pageSize"], out var pageSizeParam);
+
+            var page = pageParam < 1 ? 1 : pageParam;
+            var pageSize = pageSizeParam is > 0 and <= 100 ? pageSizeParam : 5;
+            int? tip = tipParam is >= 1 and <= 5 ? tipParam : null;
+
+            var searchResult = await _icerikService.SearchAsync(
+                siteId,
+                languageId,
+                query,
+                tip,
+                page,
+                pageSize);
+
+            if (searchResult.IsFail && !string.IsNullOrWhiteSpace(query))
+            {
+                _logger.LogWarning(
+                    "Arama sonuclari alinamadi. SiteId: {SiteId}, Query: {Query}",
+                    siteId,
+                    query);
+            }
+
+            var model = new SearchPageViewModel {
+                Site = route.Site,
+                LanguageCode = route.LanguageCode,
+                Query = query,
+                Tip = tip,
+                Page = page,
+                Results = searchResult.Data ?? new PagedResultVm<IcerikSearchVm>()
+            };
+
+            // Navbar component'inin site bilgisini tekrar cekmesini engellemek icin paylasilir.
+            ViewData["Site"] = route.Site;
+
+            var viewPath = GetTemplateViewPath(route.Page.TemplateId, "Search");
+
+            return View(viewPath, model);
         }
 
         // ============================================================
@@ -520,6 +789,48 @@ namespace Microservice.Web.Controllers
                 viewName);
 
             return View(viewPath);
+        }
+
+        // ============================================================
+        // LISTE SAYFALARI ICIN ORTAK SAYFALAMA/ARAMA KURUCU
+        // ============================================================
+
+        /// <summary>
+        /// ?q / ?page / ?pageSize query parametrelerini okuyup ilgili servisten
+        /// sayfali listeyi ceken ortak yardimci (HaberListesi, DuyuruListesi vb.).
+        /// </summary>
+        private async Task<ContentListPageViewModel<T>> BuildContentListAsync<T>(
+            Func<string?, int, int, Task<ServiceResult<PagedResultVm<T>>>> fetch,
+            RouteResolveResult route)
+        {
+            var query = Request.Query["q"].ToString();
+
+            int.TryParse(Request.Query["page"], out var pageParam);
+            int.TryParse(Request.Query["pageSize"], out var pageSizeParam);
+
+            var page = pageParam < 1 ? 1 : pageParam;
+            var pageSize = pageSizeParam is > 0 and <= 100 ? pageSizeParam : 5;
+
+            var listResult = await fetch(string.IsNullOrWhiteSpace(query) ? null : query, page, pageSize);
+
+            if (listResult.IsFail)
+            {
+                _logger.LogWarning(
+                    "Liste sayfasi verileri alinamadi. SiteId: {SiteId}, Query: {Query}",
+                    route.Site.Id,
+                    query);
+            }
+
+            // Navbar component'inin site bilgisini tekrar cekmesini engellemek icin paylasilir.
+            ViewData["Site"] = route.Site;
+
+            return new ContentListPageViewModel<T> {
+                Site = route.Site,
+                LanguageCode = route.LanguageCode,
+                Query = query,
+                Page = page,
+                Results = listResult.Data ?? new PagedResultVm<T>()
+            };
         }
 
         // ============================================================

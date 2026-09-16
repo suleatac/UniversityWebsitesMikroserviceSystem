@@ -2,6 +2,7 @@ using Microservice.Web.Clients.DuyuruClients;
 using Microservice.Web.Services.Interfaces;
 using Microservice.Web.Services.ServiceResults;
 using Microservice.Web.ViewModels.Duyuru;
+using Microservice.Web.ViewModels.Paged;
 using System.Text.Json;
 
 namespace Microservice.Web.Services
@@ -47,6 +48,37 @@ namespace Microservice.Web.Services
             }
 
             return ServiceResult<DuyuruDetailVm>.Success(response.Content!);
+        }
+
+        // PAGINATED + SEARCH
+        public async Task<ServiceResult<PagedResultVm<GetDuyuruVm>>> GetPaginatedAsync(
+            int siteId,
+            int dilId,
+            string? search,
+            int page,
+            int pageSize)
+        {
+            _logger.LogInformation(
+                "Sayfali duyuru listesi cekiliyor. SiteId: {SiteId}, DilId: {DilId}, Search: {Search}, Page: {Page}",
+                siteId, dilId, search, page);
+
+            var response = await _duyuruClient.GetPaginatedAsync(siteId, dilId, page, pageSize, search);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var problemDetails = response.Error != null
+                    ? JsonSerializer.Deserialize<Microsoft.AspNetCore.Mvc.ProblemDetails>(response.Error.Content!) : null;
+
+                _logger.LogError(
+                    "API Error -> StatusCode: {StatusCode}, Title: {Title}, Detail: {Detail}",
+                    response.StatusCode, problemDetails?.Title, problemDetails?.Detail);
+
+                return ServiceResult<PagedResultVm<GetDuyuruVm>>.Error(
+                    problemDetails?.Detail ?? problemDetails?.Title ?? "Duyurular alınamadı");
+            }
+
+            return ServiceResult<PagedResultVm<GetDuyuruVm>>.Success(
+                response.Content ?? new PagedResultVm<GetDuyuruVm>());
         }
 
       }
