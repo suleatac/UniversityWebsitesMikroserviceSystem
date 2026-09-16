@@ -29,5 +29,23 @@ namespace Microservice.Site.Persistence.Repositories
                 .AsNoTracking()
                 .ToListAsync(cancellationToken);
         }
+        public Task<bool> IsSeoUrlAvailableAsync(int siteId, int PageTypeId, string SeoUrl, int? ExcludeIcerikId, CancellationToken cancellationToken = default)
+        {
+            return _appDbContext.Set<SitePersonel>()
+                .AnyAsync(x => x.SiteId == siteId
+                                && x.SeoUrl == SeoUrl
+                                && x.PageTypeId == PageTypeId
+                                && (!ExcludeIcerikId.HasValue || x.Id != ExcludeIcerikId.Value),
+                    cancellationToken);
+        }
+
+        public Task<SitePersonel?> GetBySeoUrlAsync(int siteId, string seoUrl, CancellationToken cancellationToken = default)
+        {
+            return _appDbContext.Set<SitePersonel>()
+                .AsNoTracking()
+                .Include(x => x.PageType) // eager loading
+                .FirstOrDefaultAsync(x => x.SiteId == siteId && x.SeoUrl == seoUrl, cancellationToken);
+        }
+
     }
 }

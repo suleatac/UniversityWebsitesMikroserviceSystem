@@ -13,7 +13,6 @@ namespace Mikroservice.Site.Application.Features.PageTypeFeatures.CreatePageType
             var pageType = new PageType
             {
                 PageTypeKind = request.PageTypeKind,
-                Name = request.Name,
                 Slug = request.Slug,
                 TemplateId = request.TemplateId,
                 DilId = request.DilId,

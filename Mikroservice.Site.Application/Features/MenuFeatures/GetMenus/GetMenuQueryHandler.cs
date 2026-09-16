@@ -79,7 +79,6 @@ namespace Mikroservice.Site.Application.Features.MenuFeatures.GetMenus
                     {
                         Id = x.PageType.Id,
                         PageTypeKind = x.PageType.PageTypeKind,
-                        Name = x.PageType.Name,
                         Slug = x.PageType.Slug,
                         TemplateId = x.PageType.TemplateId,
                         ViewName = x.PageType.ViewName,

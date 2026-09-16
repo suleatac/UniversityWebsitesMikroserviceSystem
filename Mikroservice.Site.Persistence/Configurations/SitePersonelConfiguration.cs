@@ -21,6 +21,26 @@ namespace Mikroservice.Site.Persistence.Configurations
                 .WithMany(s => s.SitePersonels)
                 .HasForeignKey(x => x.SiteId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+
+            // =========================
+            // PageType (ZORUNLU)
+            // =========================
+            builder.HasOne(x => x.PageType)
+              .WithMany(x => x.SitePersonels)
+              .HasForeignKey(x => x.PageTypeId)
+              .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Property(x => x.PageTypeId)
+              .IsRequired();
+
+            // =========================
+            // SeoUrl (ZORUNLU)
+            // =========================
+            builder.Property(x => x.SeoUrl)
+              .IsRequired()
+              .HasMaxLength(300);
+
             // =========================
             // Telefon (ZORUNLU)
             // =========================
@@ -54,6 +74,17 @@ namespace Mikroservice.Site.Persistence.Configurations
                 .OnDelete(DeleteBehavior.Restrict);
 
             builder.HasIndex(x => new { x.SiteId, x.PersonelId }).IsUnique();
+
+
+
+            // Partial unique index: sadece aktif (silinmemis) kayitlar icin benzersizlik kontrolu.
+            // Soft delete edilen kayitlar Index'e dahil degil; boylece silinen kaydin SeoUrl'si yeniden kullanilabilir.
+            builder.HasIndex(x => new { x.SiteId, x.SeoUrl })
+                .IsUnique()
+                .HasFilter("\"IsDeleted\" = FALSE");
+
+
+
 
             // =========================
             // FILTER

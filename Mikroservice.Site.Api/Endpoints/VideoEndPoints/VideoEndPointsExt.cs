@@ -23,6 +23,7 @@ namespace Mikroservice.Site.Api.Endpoints.VideoEndPoints
             group.GetVideosEndpointGroupItem();
             group.GetVideoByIdEndpointGroupItem();
             group.GetPaginatedVideoEndpointGroupItem();
+            group.GetVideoBySeoUrlEndpointGroupItem();
             group.RequireAuthorization("ClientCredential");
         }
     }

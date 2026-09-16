@@ -25,7 +25,7 @@ namespace Microservice.Admin.Services.Interfaces
              int pageTypeId,
              string? baslik,
              string? kisaAciklama,
-             Action<string?> setSeoUrl,
+             Action<string> setSeoUrl,
              Action<string?>? setSeoTitle = null,
              Action<string?>? setSeoDescription = null,
              string fallbackSlug = "icerik",

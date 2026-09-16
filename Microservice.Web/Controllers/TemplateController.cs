@@ -127,20 +127,37 @@ namespace Microservice.Web.Controllers
             return page.PageTypeKind switch {
                 PageTypeKindEnum.Home =>
                      await RenderHomeAsync(route),
+
                 PageTypeKindEnum.HaberListesi when route.DetailSlug is null =>
                      await RenderHaberListesiAsync(route),
                 PageTypeKindEnum.HaberDetay  when route.HaberDetay is not null =>
                      await RenderHaberDetayAsync(route),
+
                 PageTypeKindEnum.Etkinlik when route.EtkinlikDetay is not null =>
                      await RenderEtkinlikDetayAsync(route),
+
                 PageTypeKindEnum.Bilgi when route.BilgiDetay is not null =>
                      await RenderBilgiDetayAsync(route),
+
                 PageTypeKindEnum.Menu when route.MenuDetay is not null =>
                      await RenderMenuDetailAsync(route),
+
                 PageTypeKindEnum.DuyuruListesi when route.DetailSlug is null =>
                      await RenderDuyuruListesiAsync(route),
                 PageTypeKindEnum.DuyuruDetay when route.DuyuruDetay is not null =>
                      await RenderDuyuruDetayAsync(route),
+
+                PageTypeKindEnum.VideoListesi when route.DetailSlug is null =>
+                     await RenderVideoListesiAsync(route),
+                PageTypeKindEnum.VideoDetay when route.VideoDetay is not null =>
+                     await RenderVideoDetayAsync(route),
+
+
+                PageTypeKindEnum.PersonelListesi when route.DetailSlug is null =>
+                     await RenderPersonelListesiAsync(route),
+                PageTypeKindEnum.PersonelDetay when route.PersonelDetay is not null =>
+                     await RenderPersonelDetayAsync(route),
+
                 PageTypeKindEnum.StaticPage => RenderStaticPage(route),
                 _ => RenderNotFound("Bu sayfa türü için tanımlı bir görünüm yok.")
             };
@@ -286,6 +303,60 @@ namespace Microservice.Web.Controllers
 
             return View(viewPath, model);
         }
+
+
+
+        // ============================================================
+        // PERSONELLER
+        // ============================================================
+
+        /// <summary>
+        /// /personeller
+        /// </summary>
+        private async Task<IActionResult> RenderPersonelListesiAsync(RouteResolveResult route)
+        {
+            if (route.PersonelListesi is null)
+            {
+                return RenderNotFound("Personeller bulunamadı.");
+            }
+
+            var viewPath = GetTemplateViewPath(route.Page.TemplateId, "PersonelListesi");
+
+            return View(viewPath, route.PersonelListesi);
+        }
+
+        /// <summary>
+        /// /personeller/personel-slug
+        /// </summary>
+        private async Task<IActionResult> RenderPersonelDetayAsync(RouteResolveResult route)
+        {
+            if (route.PersonelDetay is null)
+            {
+                return RenderNotFound("Personel bulunamadı.");
+            }
+
+            var model = route.PersonelDetay;
+
+
+
+            var viewPath = GetTemplateViewPath(route.Page.TemplateId, model.PageType.ViewName);
+
+            return View(viewPath, model);
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         // ============================================================
         // HABERLER
         // ============================================================
@@ -323,6 +394,58 @@ namespace Microservice.Web.Controllers
 
             return View(viewPath, model);
         }
+
+
+
+
+        // ============================================================
+        // VİDEOLAR
+        // ============================================================
+
+        /// <summary>
+        /// /videolar
+        /// </summary>
+        private async Task<IActionResult> RenderVideoListesiAsync(RouteResolveResult route)
+        {
+            if (route.DuyuruListesi is null)
+            {
+                return RenderNotFound("Duyurular bulunamadı.");
+            }
+
+            var viewPath = GetTemplateViewPath(route.Page.TemplateId, "DuyuruListesi");
+
+            return View(viewPath, route.DuyuruListesi);
+        }
+
+        /// <summary>
+        /// /videolar/video-slug
+        /// </summary>
+        private async Task<IActionResult> RenderVideoDetayAsync(RouteResolveResult route)
+        {
+            if (route.VideoDetay is null)
+            {
+                return RenderNotFound("Video bulunamadı.");
+            }
+
+            var model = route.VideoDetay;
+
+
+
+            var viewPath = GetTemplateViewPath(route.Page.TemplateId, model.PageType.ViewName);
+
+            return View(viewPath, model);
+        }
+
+
+
+
+
+
+
+
+
+
+
 
         // ============================================================
         // DUYURULAR

@@ -55,7 +55,13 @@
                     <div class="col-md-12">
                         <div class="mb-3">
                             <label class="form-label text-muted small">Hakkında</label>
-                            <div class="form-control-plaintext fw-semibold">@(Model.Hakkinda.Length > 200 ? Model.Hakkinda.Substring(0, 200) + "..." : Model.Hakkinda)</div>
+                            <div class="form-control-plaintext fw-semibold">
+                                @(string.IsNullOrEmpty(Model.Hakkinda)
+                                    ? "-"
+                                    : Model.Hakkinda.Length > 200
+                                        ? Model.Hakkinda.Substring(0, 200) + "..."
+                                        : Model.Hakkinda)
+                            </div>
                         </div>
                     </div>
                 </div>

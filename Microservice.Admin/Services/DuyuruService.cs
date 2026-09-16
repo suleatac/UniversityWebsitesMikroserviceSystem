@@ -73,7 +73,7 @@ namespace Microservice.Admin.Services
                 await _pageTypeService.GetPageTypeByTemplateIdAndPageTypeKindAsync(
                     siteResult.Data.TemplateId,
                     dto.DilId,
-                    PageTypeKind.Duyuru);
+                    PageTypeKind.DuyuruDetay);
 
             if (!duyuruPageTypeResult.IsSuccess || duyuruPageTypeResult.Data == null)
                 return ServiceResult<object>.Error(
@@ -121,7 +121,7 @@ namespace Microservice.Admin.Services
                 await _pageTypeService.GetPageTypeByTemplateIdAndPageTypeKindAsync(
                     siteResult.Data.TemplateId,
                     dto.DilId,
-                    PageTypeKind.Duyuru);
+                    PageTypeKind.DuyuruDetay);
 
             if (!duyuruPageTypeResult.IsSuccess || duyuruPageTypeResult.Data == null)
                 return ServiceResult<object>.Error(

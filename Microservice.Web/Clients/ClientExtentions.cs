@@ -9,6 +9,7 @@ using Microservice.Web.Clients.MenuClients;
 using Microservice.Web.Clients.PageTypeClients;
 using Microservice.Web.Clients.ShortcutButtonClients;
 using Microservice.Web.Clients.SiteClients;
+using Microservice.Web.Clients.SitePersonelClients;
 using Microservice.Web.Clients.VideoClients;
 using Microservice.Web.HttpHandlers;
 using Microservice.Web.Settings;
@@ -50,7 +51,10 @@ namespace Microservice.Web.Clients
             services.AddRefitClient<IBandLogoClientServices>()
                 .ConfigureHttpClient(c => c.BaseAddress = GetSiteBaseAddress(configuration))
                 .AddHttpMessageHandler<ClientAuthenticatedHttpClientHandler>();
-
+            //BandLogo Clients
+            services.AddRefitClient<ISitePersonelClientServices>()
+                .ConfigureHttpClient(c => c.BaseAddress = GetSiteBaseAddress(configuration))
+                .AddHttpMessageHandler<ClientAuthenticatedHttpClientHandler>();
 
             //Bilgi Clients
             services.AddRefitClient<IBilgiClientServices>()

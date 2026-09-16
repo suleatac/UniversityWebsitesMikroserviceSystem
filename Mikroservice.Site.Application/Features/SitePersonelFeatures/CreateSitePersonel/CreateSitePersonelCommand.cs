@@ -8,6 +8,11 @@ namespace Mikroservice.Site.Application.Features.SitePersonelFeatures.CreateSite
         public int PersonelId { get; init; }
         public int UnvanId { get; init; }
         public int PersonelTipId { get; init; }
+        public int PageTypeId { get; set; }
+
+        public string? Adi { get; set; }
+        public string? Soyadi { get; set; }
+        public string? Username { get; set; }
 
         public string? ResimUrl { get; init; } 
         public string? IlgiAlanlari { get; init; } 
@@ -15,7 +20,12 @@ namespace Mikroservice.Site.Application.Features.SitePersonelFeatures.CreateSite
         public string? TwitterAdress { get; init; } 
         public string? FacebookAdress { get; init; } 
         public string? InstagramAdress { get; init; } 
-        public string? GoogleplusAdress { get; init; } 
+        public string? GoogleplusAdress { get; init; }
+
+        // SEO
+        public string SeoUrl { get; set; } = default!;
+        public string? SeoTitle { get; set; }
+        public string? SeoDescription { get; set; }
 
         public string? Hakkinda { get; init; } 
         public string? DeneyimVeCalismalari { get; init; } 

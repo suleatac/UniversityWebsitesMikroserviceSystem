@@ -15,6 +15,9 @@ namespace Mikroservice.Site.Application.Features.DuyuruFeatures.CreateDuyuru
             RuleFor(x => x.HedefId)
                 .GreaterThan(0)
                 .WithMessage("HedefId 0'dan büyük olmalıdır.");
+            RuleFor(x => x.PageTypeId)
+            .GreaterThan(0)
+            .WithMessage("PageTypeId 0'dan büyük olmalıdır.");
 
             RuleFor(x => x.Baslik)
                 .NotEmpty().WithMessage("Başlık boş olamaz.")

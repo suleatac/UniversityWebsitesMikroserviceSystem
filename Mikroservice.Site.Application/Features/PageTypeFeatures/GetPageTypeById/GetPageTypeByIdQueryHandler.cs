@@ -20,7 +20,6 @@ namespace Mikroservice.Site.Application.Features.PageTypeFeatures.GetPageTypeByI
                 Id = entity.Id,
                 PageTypeKind = entity.PageTypeKind,
                 DilId = entity.DilId,
-                Name = entity.Name,
                 Slug = entity.Slug,
                 TemplateId = entity.TemplateId,
                 ViewName = entity.ViewName,

@@ -20,6 +20,11 @@ namespace Mikroservice.Site.Application.Features.SitePersonelFeatures.CreateSite
                 PersonelId = request.PersonelId,
                 UnvanId = request.UnvanId,
                 PersonelTipId = request.PersonelTipId,
+                PageTypeId = request.PageTypeId,
+
+                Adi = request.Adi,
+                Soyadi = request.Soyadi,
+                Username = request.Username,
 
                 ResimUrl = request.ResimUrl,
                 IlgiAlanlari = request.IlgiAlanlari,
@@ -31,6 +36,10 @@ namespace Mikroservice.Site.Application.Features.SitePersonelFeatures.CreateSite
 
                 Hakkinda = request.Hakkinda,
                 DeneyimVeCalismalari = request.DeneyimVeCalismalari,
+
+                SeoUrl = request.SeoUrl,
+                SeoTitle = request.SeoTitle,
+                SeoDescription = request.SeoDescription,
 
                 IsDeleted = false
             };

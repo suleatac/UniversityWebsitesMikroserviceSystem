@@ -6,7 +6,11 @@
 
         public int SiteId { get; set; }
         public int PersonelId { get; set; }
+        public string? Adi { get; set; }
+        public string? Soyadi { get; set; }
+        public string? Username { get; set; }
         public int UnvanId { get; set; }
+        public int PageTypeId { get; set; }
         public int PersonelTipId { get; set; }
         public string? ResimUrl { get; set; } = default!;
         public string? IlgiAlanlari { get; set; } = default!;
@@ -17,12 +21,20 @@
         public string? GoogleplusAdress { get; set; } = default!;
         public string? Hakkinda { get; set; } = default!;
         public string? DeneyimVeCalismalari { get; set; } = default!;
+
+
+        // SEO
+        public string SeoUrl { get; set; } = default!;
+        public string? SeoTitle { get; set; }
+        public string? SeoDescription { get; set; }
+
         public bool IsDeleted { get; set; } = false;
 
         public PersonelTip PersonelTip { get; set; } = default!; // 🔥 bool yerine
 
         // NAVIGATION
         public Site Site { get; set; } = default!;
+        public PageType PageType { get; set; } = default!;
         public Unvan Unvan { get; set; } = default!;
         public ICollection<PersonelTelefon> PersonelTelefons { get; set; } = new List<PersonelTelefon>();
     }

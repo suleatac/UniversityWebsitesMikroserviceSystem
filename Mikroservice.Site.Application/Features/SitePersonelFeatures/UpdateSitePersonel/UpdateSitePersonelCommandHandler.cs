@@ -20,6 +20,11 @@ namespace Mikroservice.Site.Application.Features.SitePersonelFeatures.UpdateSite
 
             entity.UnvanId = request.UnvanId;
             entity.PersonelTipId = request.PersonelTipId;
+            entity.PageTypeId = request.PageTypeId;
+
+            entity.Adi = request.Adi;
+            entity.Soyadi = request.Soyadi;
+            entity.Username = request.Username;
 
             entity.ResimUrl = request.ResimUrl;
             entity.IlgiAlanlari = request.IlgiAlanlari;
@@ -32,6 +37,9 @@ namespace Mikroservice.Site.Application.Features.SitePersonelFeatures.UpdateSite
 
             entity.Hakkinda = request.Hakkinda;
             entity.DeneyimVeCalismalari = request.DeneyimVeCalismalari;
+            entity.SeoUrl = request.SeoUrl;
+            entity.SeoTitle = request.SeoTitle;
+            entity.SeoDescription = request.SeoDescription;
 
             await unitOfWork.SaveChangesAsync(cancellationToken);
 

@@ -138,7 +138,7 @@ namespace Microservice.Admin.Services
                 await _pageTypeService.GetPageTypeByTemplateIdAndPageTypeKindAsync(
                     siteResult.Data.TemplateId,
                     dto.DilId,
-                    PageTypeKind.Haber);
+                    PageTypeKind.HaberDetay);
 
             if (!haberPageTypeResult.IsSuccess || haberPageTypeResult.Data == null)
                 return ServiceResult<object>.Error(
@@ -198,7 +198,7 @@ namespace Microservice.Admin.Services
                 await _pageTypeService.GetPageTypeByTemplateIdAndPageTypeKindAsync(
                     siteResult.Data.TemplateId,
                     dto.DilId,
-                    PageTypeKind.Haber);
+                    PageTypeKind.HaberDetay);
 
             if (!haberTypeResult.IsSuccess || haberTypeResult.Data == null)
                 return ServiceResult<object>.Error(

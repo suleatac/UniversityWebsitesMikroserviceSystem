@@ -72,10 +72,8 @@ namespace Microservice.Admin.Controllers
                 Id = result.Data.Id,
                 PageTypeKind = result.Data.PageTypeKind,
                 DilId = result.Data.DilId,
-                Name = result.Data.Name,
                 Slug = result.Data.Slug,
-                TemplateId = result.Data.TemplateId,
-                
+                TemplateId = result.Data.TemplateId, 
                 ViewName = result.Data.ViewName,
                 IsHomePage = result.Data.IsHomePage
             });

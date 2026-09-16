@@ -93,7 +93,13 @@
                                     <td>@item.Id</td>
                                     <td>@item.UnvanAd</td>
                                     <td>@item.PersonelTipAd</td>
-                                    <td>@(item.Hakkinda.Length > 80 ? item.Hakkinda.Substring(0, 80) + "..." : item.Hakkinda)</td>
+                                    <td>
+                                        @(string.IsNullOrEmpty(item.Hakkinda)
+                                            ? "-"
+                                            : item.Hakkinda.Length > 80
+                                                ? item.Hakkinda.Substring(0, 80) + "..."
+                                                : item.Hakkinda)
+                                    </td>
                                     <td>
                                         <a class="btn btn-outline-primary btn-sm" asp-action="Edit" asp-route-id="@item.Id" title="Düzenle">
                                             <i class="fas fa-pencil-alt"></i>

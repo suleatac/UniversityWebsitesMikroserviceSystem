@@ -424,11 +424,6 @@ namespace Mikroservice.Site.Persistence.Migrations
                     b.Property<bool>("IsHomePage")
                         .HasColumnType("boolean");
 
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("character varying(200)");
-
                     b.Property<int>("PageTypeKind")
                         .HasColumnType("integer");
 
@@ -839,6 +834,9 @@ namespace Mikroservice.Site.Persistence.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("Adi")
+                        .HasColumnType("text");
+
                     b.Property<string>("BlogAdress")
                         .HasMaxLength(250)
                         .HasColumnType("character varying(250)");
@@ -866,6 +864,9 @@ namespace Mikroservice.Site.Persistence.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
 
+                    b.Property<int>("PageTypeId")
+                        .HasColumnType("integer");
+
                     b.Property<int>("PersonelId")
                         .HasColumnType("integer");
 
@@ -876,8 +877,22 @@ namespace Mikroservice.Site.Persistence.Migrations
                         .HasMaxLength(500)
                         .HasColumnType("character varying(500)");
 
+                    b.Property<string>("SeoDescription")
+                        .HasColumnType("text");
+
+                    b.Property<string>("SeoTitle")
+                        .HasColumnType("text");
+
+                    b.Property<string>("SeoUrl")
+                        .IsRequired()
+                        .HasMaxLength(300)
+                        .HasColumnType("character varying(300)");
+
                     b.Property<int>("SiteId")
                         .HasColumnType("integer");
+
+                    b.Property<string>("Soyadi")
+                        .HasColumnType("text");
 
                     b.Property<string>("TwitterAdress")
                         .HasMaxLength(250)
@@ -886,7 +901,12 @@ namespace Mikroservice.Site.Persistence.Migrations
                     b.Property<int>("UnvanId")
                         .HasColumnType("integer");
 
+                    b.Property<string>("Username")
+                        .HasColumnType("text");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("PageTypeId");
 
                     b.HasIndex("PersonelTipId");
 
@@ -894,6 +914,10 @@ namespace Mikroservice.Site.Persistence.Migrations
 
                     b.HasIndex("SiteId", "PersonelId")
                         .IsUnique();
+
+                    b.HasIndex("SiteId", "SeoUrl")
+                        .IsUnique()
+                        .HasFilter("\"IsDeleted\" = FALSE");
 
                     b.ToTable("SitePersonelleri");
                 });
@@ -1301,6 +1325,12 @@ namespace Mikroservice.Site.Persistence.Migrations
 
             modelBuilder.Entity("Mikroservice.Site.Domain.Entities.SitePersonel", b =>
                 {
+                    b.HasOne("Mikroservice.Site.Domain.Entities.PageType", "PageType")
+                        .WithMany("SitePersonels")
+                        .HasForeignKey("PageTypeId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("Mikroservice.Site.Domain.Entities.PersonelTip", "PersonelTip")
                         .WithMany("SitePersonels")
                         .HasForeignKey("PersonelTipId")
@@ -1318,6 +1348,8 @@ namespace Mikroservice.Site.Persistence.Migrations
                         .HasForeignKey("UnvanId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.Navigation("PageType");
 
                     b.Navigation("PersonelTip");
 
@@ -1454,6 +1486,8 @@ namespace Mikroservice.Site.Persistence.Migrations
             modelBuilder.Entity("Mikroservice.Site.Domain.Entities.PageType", b =>
                 {
                     b.Navigation("Icerikler");
+
+                    b.Navigation("SitePersonels");
                 });
 
             modelBuilder.Entity("Mikroservice.Site.Domain.Entities.PersonelTip", b =>

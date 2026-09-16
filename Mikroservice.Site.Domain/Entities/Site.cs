@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Routing;
-
-namespace Mikroservice.Site.Domain.Entities
+﻿namespace Mikroservice.Site.Domain.Entities
 {
     public class Site
     {

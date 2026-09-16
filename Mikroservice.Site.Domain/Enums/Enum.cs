@@ -24,14 +24,17 @@
         Menu = 2,
         HaberListesi = 3,
         HaberDetay = 4,
-        DuyuruListesi = 5,
-        DuyuruDetay = 6,
-        Banner = 7,
-        Bilgi = 8,
-        Etkinlik = 9,
-        VideoList = 10,
-        VideoDetail = 11,
-        StaticPage = 12,
+        PersonelListesi = 5,
+        PersonelDetay = 6,
+        DuyuruListesi = 7,
+        DuyuruDetay = 8,
+        Banner = 9,
+        Bilgi = 10,
+        Etkinlik = 11,
+        VideoListesi = 12,
+        VideoDetay = 13,
+        StaticPage = 14,
+        Search=15
     }
 
 }

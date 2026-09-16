@@ -30,9 +30,13 @@ namespace Microservice.Web.Services.ServicesExtentions
             services.AddScoped<IPageDetailResolver, MenuDetayResolver>();
             services.AddScoped<IPageDetailResolver, BilgiDetayResolver>();
             services.AddScoped<IPageDetailResolver, EtkinlikDetayResolver>();
+            services.AddScoped<IPageDetailResolver, VideoDetayResolver>();
+            services.AddScoped<IPageDetailResolver, PersonelDetayResolver>();
 
             services.AddScoped<IPageResolver, HaberListesiPageResolver>();
             services.AddScoped<IPageResolver, DuyuruListesiPageResolver>();
+            services.AddScoped<IPageResolver, VideoListesiPageResolver>();
+            services.AddScoped<IPageResolver, PersonelListesiPageResolver>();
 
             return services;
         }

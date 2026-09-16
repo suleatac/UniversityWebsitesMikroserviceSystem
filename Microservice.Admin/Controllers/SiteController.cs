@@ -14,19 +14,22 @@ namespace Microservice.Admin.Controllers
         private readonly ILogger<SiteController> _logger;
         private readonly ITemplateService _templateService;
         private readonly IBirimService _birimService;
+        private readonly IDilService _dilService;
 
         public SiteController
             (
                ISiteService siteService, 
                ILogger<SiteController> logger, 
                ITemplateService templateService, 
-               IBirimService birimService
+               IBirimService birimService,
+                IDilService dilService
             )
         {
             _siteService = siteService;
             _logger = logger;
             _templateService = templateService;
             _birimService = birimService;
+            _dilService = dilService;
         }
 
         public IActionResult Index()
@@ -80,11 +83,12 @@ namespace Microservice.Admin.Controllers
         {
             var birimler = await _birimService.GetBirimsAsync();
             var templates = await _templateService.GetTemplatesAsync();
-
+            var diller = await _dilService.GetDilsAsync();
             var viewModel = new SiteIndexVm {
                 CreateSite = new CreateSiteVm(),
                 Birimler = birimler.Data!,
-                Templates = templates.Data!
+                Templates = templates.Data!,
+                Diller = diller.Data!
             };
 
             return View(viewModel);
@@ -132,11 +136,12 @@ namespace Microservice.Admin.Controllers
             // Load dropdowns
             var birimler = await _birimService.GetBirimsAsync();
             var templates = await _templateService.GetTemplatesAsync();
-
+            var diller = await _dilService.GetDilsAsync();
             var viewModel = new SiteEditVm {
                 Site = siteResult.Data!,
                 Birimler = birimler.Data!,
-                Templates = templates.Data!
+                Templates = templates.Data!,
+                Diller = diller.Data!
             };
 
             return View(viewModel);

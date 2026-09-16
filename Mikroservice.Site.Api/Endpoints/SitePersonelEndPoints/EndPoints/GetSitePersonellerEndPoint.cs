@@ -1,6 +1,6 @@
-﻿using Mikroservice.Site.Domain.Entities;
+﻿using MediatR;
 using Microservice.Shared.Extentions;
-using MediatR;
+using Mikroservice.Site.Application.DTOs.SitePersonelDtos;
 using Mikroservice.Site.Application.Features.SitePersonelFeatures.GetSitePersonels;
 
 namespace Mikroservice.Site.Api.Endpoints.SitePersonelEndPoints.EndPoints
@@ -24,7 +24,7 @@ namespace Mikroservice.Site.Api.Endpoints.SitePersonelEndPoints.EndPoints
             })
             .WithName("GetSitePersoneller")
             .MapToApiVersion(1.0)
-            .Produces<List<SitePersonel>>(StatusCodes.Status200OK)
+            .Produces<List<SitePersonelDetailDto>>(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status500InternalServerError);
 

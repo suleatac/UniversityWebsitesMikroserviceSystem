@@ -9,7 +9,6 @@ namespace Mikroservice.Site.Application.Features.PageTypeFeatures.CreatePageType
             RuleFor(x => x.TemplateId).GreaterThan(0);
             RuleFor(x => x.PageTypeKind).IsInEnum();
             RuleFor(x => x.DilId).GreaterThan(0);
-            RuleFor(x => x.Name).NotEmpty().MaximumLength(200);
             RuleFor(x => x.Slug).NotEmpty().MaximumLength(200);
             RuleFor(x => x.ViewName).NotEmpty().MaximumLength(200);
         }

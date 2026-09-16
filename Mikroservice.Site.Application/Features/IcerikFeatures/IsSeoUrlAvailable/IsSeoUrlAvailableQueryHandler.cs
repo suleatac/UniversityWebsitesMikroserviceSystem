@@ -5,7 +5,10 @@ using System.Net;
 
 namespace Mikroservice.Site.Application.Features.IcerikFeatures.IsSeoUrlAvailable
 {
-    public class IsSeoUrlAvailableQueryHandler(IIcerikRepository icerikRepository)
+    public class IsSeoUrlAvailableQueryHandler(
+        IIcerikRepository icerikRepository,
+        ISitePersonelRepository sitePersonelRepository
+        )
         : IRequestHandler<IsSeoUrlAvailableQuery, ServiceResult<bool>>
     {
         public async Task<ServiceResult<bool>> Handle(IsSeoUrlAvailableQuery request, CancellationToken cancellationToken)
@@ -16,10 +19,14 @@ namespace Mikroservice.Site.Application.Features.IcerikFeatures.IsSeoUrlAvailabl
             // Icerik tablosu (Haber, Duyuru, Bilgi, Etkinlik, Video, Banner - TPH) uzerinde
             // benzersiz index (SiteId, SeoUrl) oldugundan kontrol site genelinde yapilir.
             // Not: GetAll() uzerindeki soft-delete query filter otomatik uygulanir.
-            var icerikTaken = await icerikRepository
+            var isSeoUrlTakenByIcerik = await icerikRepository
+                .IsSeoUrlAvailableAsync(request.SiteId, request.PageTypeId, request.SeoUrl, request.ExcludeIcerikId, cancellationToken);
+            var isSeoUrlTakenBySitePersonel = await sitePersonelRepository
                 .IsSeoUrlAvailableAsync(request.SiteId, request.PageTypeId, request.SeoUrl, request.ExcludeIcerikId, cancellationToken);
 
-            if (icerikTaken)
+
+
+            if (isSeoUrlTakenByIcerik || isSeoUrlTakenBySitePersonel)
                 return ServiceResult<bool>.Success(false);
 
             return ServiceResult<bool>.Success(true);

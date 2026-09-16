@@ -134,7 +134,7 @@
                         </h6>
 
                         <div class="row">
-                            <div class="col-md-6">
+                            <div class="col-md-4">
                                 <div class="mb-3">
                                     <label asp-for="Site.BirimId" class="form-label">
                                         <i class="mdi mdi-office-building me-1"></i> Birim <span class="text-danger">*</span>
@@ -146,7 +146,7 @@
                                     <span asp-validation-for="Site.BirimId" class="text-danger small"></span>
                                 </div>
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-md-4">
                                 <div class="mb-3">
                                     <label asp-for="Site.TemplateId" class="form-label">
                                         <i class="mdi mdi-palette me-1"></i> Template <span class="text-danger">*</span>
@@ -156,6 +156,17 @@
                
                                     </select>
                                     <span asp-validation-for="Site.TemplateId" class="text-danger small"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label asp-for="Site.DefaultLanguageId" class="form-label">
+                                        <i class="mdi mdi-palette me-1"></i> Template <span class="text-danger">*</span>
+                                    </label>
+                                    <select asp-for="Site.DefaultLanguageId" class="form-select select2"
+                                            asp-items="@(new SelectList(Model.Diller, "Id", "DilAdi", Model.Site.DefaultLanguageId))">
+                                    </select>
+                                    <span asp-validation-for="Site.DefaultLanguageId" class="text-danger small"></span>
                                 </div>
                             </div>
                         </div>

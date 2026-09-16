@@ -1,0 +1,20 @@
+﻿@model Microservice.Web.ViewModels.SitePersonel.PersonelDetailVm
+@{
+    ViewData["Title"] = Model.Adi ?? "Personel";
+}
+
+<div class="page-title parallax parallax1">
+    <div class="container">
+        <div class="flat-university">
+            <div class="post">
+                <h1 class="title">@(Model.Username ?? "Personel")</h1>
+            </div><!--/post -->
+        </div><!--/flat-university -->
+    </div><!--/container -->
+</div><!--/page-title -->
+
+<section class="flat-row">
+    <div class="container">
+        @Model.Adi    @Model.Soyadi
+    </div>
+</section>

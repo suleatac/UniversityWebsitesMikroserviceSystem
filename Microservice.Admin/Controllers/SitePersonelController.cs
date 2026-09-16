@@ -173,6 +173,7 @@ namespace Microservice.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(SitePersonelEditIndexVm model)
         {
+            ModelState.Remove("EditSitePersonel.SeoUrl");
             if (!ModelState.IsValid)
             {
                 _logger.LogWarning("Update SitePersonel - ModelState geçersiz.");

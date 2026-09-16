@@ -13,13 +13,11 @@ namespace Mikroservice.Site.Application.Features.PageTypeFeatures.GetPageTypes
         {
             var pageTypes = await repository.GetAll()
                 .OrderBy(x => x.Id)
-                .ThenBy(x => x.Name)
                 .Select(x => new PageTypeDto
                 {
                     Id = x.Id,
                     PageTypeKind = x.PageTypeKind,
                     DilId = x.DilId,
-                    Name = x.Name,
                     Slug = x.Slug,
                     TemplateId = x.TemplateId,
                     ViewName = x.ViewName,

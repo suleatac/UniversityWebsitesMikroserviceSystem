@@ -45,6 +45,7 @@ namespace Microservice.Admin.Services.ServicesExtentions
             services.AddScoped<IAuditLogService, AuditLogService>();
             services.AddScoped<ISeoService, SeoService>();
             services.AddScoped<IBandLogoService, BandLogoService>();
+            services.AddScoped<IPersonelService, PersonelService>();
             return services;
         }
     }

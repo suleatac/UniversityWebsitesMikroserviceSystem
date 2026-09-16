@@ -4,7 +4,6 @@ namespace Microservice.Admin.ViewModels.PageType
     {
         public int Id { get; set; }
         public int PageTypeKind { get; set; }
-        public string Name { get; set; } = default!;
         public string Slug { get; set; } = default!;
         public int TemplateId { get; set; }
         public int DilId { get; set; }

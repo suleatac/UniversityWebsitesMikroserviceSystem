@@ -27,6 +27,7 @@ using Microservice.Admin.Clients.YonetimDuyuruClients;
 using Microservice.Admin.HttpHandlers;
 using Microservice.Admin.Settings;
 using Refit;
+using Microservice.Admin.Clients.PersonelClients;
 
 namespace Microservice.Admin.Clients
 {
@@ -34,6 +35,18 @@ namespace Microservice.Admin.Clients
     {
         public static IServiceCollection AddClientExtentions(this IServiceCollection services, IConfiguration configuration)
         {
+
+            //Personel Clients
+            services.AddRefitClient<IPersonelClientServices>()
+           .ConfigureHttpClient(c => {
+
+               var microserviceOption = configuration.GetSection(MicroservicesSetting.SectionName).Get<MicroservicesSetting>();
+               c.BaseAddress = new Uri(microserviceOption!.Personel.BaseUrl);
+           })
+           .AddHttpMessageHandler<AuthenticatedHttpClientHandler>()//bu usertoken için istek atarken kullanmak için
+           .AddHttpMessageHandler<ClientAuthenticatedHttpClientHandler>();//bu clientcredential için token alıp istek göndermek için
+
+
 
             //AuditLog Clients
             services.AddRefitClient<IAuditLogClientServices>()

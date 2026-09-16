@@ -13,7 +13,6 @@ namespace Microservice.Site.Application.Features.PageTypeFeatures.UpdatePageType
             if (pageType is null)
                 return ServiceResult.ErrorAsNotFound();
             pageType.PageTypeKind = request.PageTypeKind;
-            pageType.Name = request.Name;
             pageType.Slug = request.Slug;
             pageType.TemplateId = request.TemplateId;
             pageType.DilId = request.DilId;

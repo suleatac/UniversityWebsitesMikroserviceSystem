@@ -23,7 +23,6 @@ namespace Mikroservice.Site.Application.Features.PageTypeFeatures.GetPageTypeByS
                 Id = pageType.Id,
                 PageTypeKind = pageType.PageTypeKind,
                 DilId = pageType.DilId,
-                Name = pageType.Name,
                 Slug = pageType.Slug,
                 TemplateId = pageType.TemplateId,
                 ViewName = pageType.ViewName,

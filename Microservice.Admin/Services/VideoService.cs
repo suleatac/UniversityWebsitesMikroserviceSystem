@@ -73,7 +73,7 @@ namespace Microservice.Admin.Services
                 await _pageTypeService.GetPageTypeByTemplateIdAndPageTypeKindAsync(
                     siteResult.Data.TemplateId,
                     dto.DilId,
-                    PageTypeKind.Video);
+                    PageTypeKind.VideoDetay);
 
             if (!videoPageTypeResult.IsSuccess || videoPageTypeResult.Data == null)
                 return ServiceResult<object>.Error(
@@ -122,7 +122,7 @@ namespace Microservice.Admin.Services
                 await _pageTypeService.GetPageTypeByTemplateIdAndPageTypeKindAsync(
                     siteResult.Data.TemplateId,
                     dto.DilId,
-                    PageTypeKind.Video);
+                    PageTypeKind.VideoDetay);
 
             if (!videoPageTypeResult.IsSuccess || videoPageTypeResult.Data == null)
                 return ServiceResult<object>.Error(

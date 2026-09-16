@@ -22,7 +22,8 @@ namespace Mikroservice.Site.Api.Endpoints.SitePersonelEndPoints
             group.DeleteSitePersonelEndpointGroupItem();
             group.GetSitePersonellerEndpointGroupItem();
             group.GetSitePersonelByIdEndpointGroupItem();
-            group.RequireAuthorization("Password");
+            group.GetSitePersonelBySeoUrlEndpointGroupItem();
+            group.RequireAuthorization("ClientCredential");
         }
     }
 }

@@ -9,9 +9,10 @@ namespace Mikroservice.Site.Application.Mappings
         public SitePersonelMapping()
         {
 
-            CreateMap<SitePersonel, SitePersonelDetailDto>()
+            CreateMap<SitePersonel, SitePersonelDto>()
                 .ForMember(dest => dest.UnvanAd, opt => opt.MapFrom(src => src.Unvan != null ? src.Unvan.Ad : null))
                 .ForMember(dest => dest.PersonelTipAd, opt => opt.MapFrom(src => src.PersonelTip != null ? src.PersonelTip.Ad : null));
+            CreateMap<SitePersonel, SitePersonelDetailDto>();
         }
     }
 }

@@ -23,7 +23,6 @@ namespace Mikroservice.Site.Application.Features.PageTypeFeatures.GetHomePageTyp
                 PageTypeKind = pageType.PageTypeKind,
                 TemplateId = pageType.TemplateId,
                 DilId = pageType.DilId,
-                Name = pageType.Name,
                 Slug = pageType.Slug,
                 ViewName = pageType.ViewName,
                 IsHomePage = pageType.IsHomePage

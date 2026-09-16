@@ -4,7 +4,6 @@ namespace Mikroservice.Site.Domain.Entities
     {
         public int Id { get; set; }
         public Enums.PageTypeKind PageTypeKind { get; set; }
-        public string Name { get; set; } = default!;
         public string Slug { get; set; } = default!;
         public int TemplateId { get; set; }
         public string ViewName { get; set; } = default!;
@@ -14,6 +13,6 @@ namespace Mikroservice.Site.Domain.Entities
         public Dil Dil { get; set; } = default!;
         public Template Template { get; set; } = default!;
         public ICollection<Icerik> Icerikler { get; set; } = new List<Icerik>();
-
+        public ICollection<SitePersonel> SitePersonels { get; set; } = new List<SitePersonel>();
     }
 }

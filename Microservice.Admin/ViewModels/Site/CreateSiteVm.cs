@@ -12,5 +12,6 @@
         public string SiteEPostaHost { get; init; } = default!;
         public int SiteEPostaPort { get; init; }
         public int TemplateId { get; init; }
+        public int DefaultLanguageId { get; set; }
     }
 }

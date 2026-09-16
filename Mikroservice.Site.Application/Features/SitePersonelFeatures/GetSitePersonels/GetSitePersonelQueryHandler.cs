@@ -13,29 +13,29 @@ namespace Mikroservice.Site.Application.Features.SitePersonelFeatures.GetSitePer
        IRedisCacheService redis,
        ILogger<GetSitePersonelQueryHandler> logger,
        IMapper mapper
-   ) : IRequestHandler<GetSitePersonelQuery, ServiceResult<List<SitePersonelDetailDto>>>
+   ) : IRequestHandler<GetSitePersonelQuery, ServiceResult<List<SitePersonelDto>>>
     {
-        public async Task<ServiceResult<List<SitePersonelDetailDto>>> Handle(
+        public async Task<ServiceResult<List<SitePersonelDto>>> Handle(
             GetSitePersonelQuery request,
             CancellationToken cancellationToken)
         {
             var cacheKey = $"sitepersonel:list:{request.SiteId}";
 
-            var cached = await redis.GetListAsync<SitePersonelDetailDto>(cacheKey, cancellationToken);
+            var cached = await redis.GetListAsync<SitePersonelDto>(cacheKey, cancellationToken);
 
             if (cached is not null)
             {
                 logger.LogInformation("SitePersonel cache'den alındı. SiteId:{siteId}", request.SiteId);
-                return ServiceResult<List<SitePersonelDetailDto>>.SuccessAsOK(cached);
+                return ServiceResult<List<SitePersonelDto>>.SuccessAsOK(cached);
             }
 
             var data = await repository.GetAllWithPersonelTipAndUnvanAsync(request.SiteId, cancellationToken);
-            var mappedData = mapper.Map<List<SitePersonelDetailDto>>(data);
+            var mappedData = mapper.Map<List<SitePersonelDto>>(data);
 
 
             await redis.SetListAsync(cacheKey, mappedData, TimeSpan.FromHours(12), cancellationToken);
 
-            return ServiceResult<List<SitePersonelDetailDto>>.SuccessAsOK(mappedData);
+            return ServiceResult<List<SitePersonelDto>>.SuccessAsOK(mappedData);
         }
     }
 }
