@@ -1,0 +1,40 @@
+using Microservice.Web.ViewModels.Pages;
+using System.ComponentModel.DataAnnotations;
+
+namespace Microservice.Web.ViewModels.GaleriResim
+{
+    public class GaleriResimDetailVm
+    {
+        public int Id { get; set; }
+
+        public int SiteId { get; set; }
+        public int DilId { get; set; }
+        public int HedefId { get; set; }
+        public int PageTypeId { get; set; }
+
+        public string Baslik { get; set; } = default!;
+        public string? KisaAciklama { get; set; }
+        public string? IcerikMetni { get; set; }
+
+        public string? Link { get; set; }
+        public string? ResimUrl { get; set; }
+        public string? Kategori { get; set; }
+        public int Sira { get; set; }
+        public int GosterimSayisi { get; set; } = 0;
+
+        [DisplayFormat(DataFormatString = "{0:yyyy-MM-ddTHH:mm}", ApplyFormatInEditMode = true)]
+        public DateTime YayimTarihi { get; set; }
+        [DisplayFormat(DataFormatString = "{0:yyyy-MM-ddTHH:mm}", ApplyFormatInEditMode = true)]
+        public DateTime EklemeTarihi { get; set; }
+        [DisplayFormat(DataFormatString = "{0:yyyy-MM-ddTHH:mm}", ApplyFormatInEditMode = true)]
+        public DateTime? BaslamaTarihi { get; set; }
+        [DisplayFormat(DataFormatString = "{0:yyyy-MM-ddTHH:mm}", ApplyFormatInEditMode = true)]
+        public DateTime? BitisTarihi { get; set; }
+
+        public string SeoUrl { get; set; } = default!;
+        public string? SeoTitle { get; set; }
+        public string? SeoDescription { get; set; }
+
+        public PagesDetailVm PageType { get; set; } = default!;
+    }
+}

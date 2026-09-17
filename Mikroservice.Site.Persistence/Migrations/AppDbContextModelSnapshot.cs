@@ -1053,6 +1053,19 @@ namespace Mikroservice.Site.Persistence.Migrations
                     b.HasDiscriminator().HasValue(4);
                 });
 
+            modelBuilder.Entity("Mikroservice.Site.Domain.Entities.GaleriResim", b =>
+                {
+                    b.HasBaseType("Mikroservice.Site.Domain.Entities.Icerik");
+
+                    b.Property<string>("Kategori")
+                        .HasMaxLength(150)
+                        .HasColumnType("character varying(150)");
+
+                    b.HasIndex("SiteId", "DilId", "Kategori");
+
+                    b.HasDiscriminator().HasValue(8);
+                });
+
             modelBuilder.Entity("Mikroservice.Site.Domain.Entities.Haber", b =>
                 {
                     b.HasBaseType("Mikroservice.Site.Domain.Entities.Icerik");
@@ -1421,6 +1434,17 @@ namespace Mikroservice.Site.Persistence.Migrations
                 });
 
             modelBuilder.Entity("Mikroservice.Site.Domain.Entities.Etkinlik", b =>
+                {
+                    b.HasOne("Mikroservice.Site.Domain.Entities.Site", "Site")
+                        .WithMany()
+                        .HasForeignKey("SiteId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Site");
+                });
+
+            modelBuilder.Entity("Mikroservice.Site.Domain.Entities.GaleriResim", b =>
                 {
                     b.HasOne("Mikroservice.Site.Domain.Entities.Site", "Site")
                         .WithMany()

@@ -26,7 +26,7 @@ namespace Microservice.Web.ViewModels.Menu
 
 
 
-        // MenuLocation: 1=Header, 2=Footer, 3=Sidebar
+        // MenuLocation: 1=Header, 2=Footer
         public int Location { get; set; } = 1;
         public bool IsVisible { get; set; } = true;
 

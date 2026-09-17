@@ -4,6 +4,7 @@ using Microservice.Admin.Clients.BannerClients;
 using Microservice.Admin.Clients.BilgiClients;
 using Microservice.Admin.Clients.BirimClients;
 using Microservice.Admin.Clients.DilClients;
+using Microservice.Admin.Clients.GaleriResimClients;
 using Microservice.Admin.Clients.DuyuruClients;
 using Microservice.Admin.Clients.EtkinlikClients;
 using Microservice.Admin.Clients.HaberClients;
@@ -192,6 +193,16 @@ namespace Microservice.Admin.Clients
 
           //Video Clients
           services.AddRefitClient<IVideoClientServices>()
+         .ConfigureHttpClient(c => {
+
+             var microserviceOption = configuration.GetSection(MicroservicesSetting.SectionName).Get<MicroservicesSetting>();
+             c.BaseAddress = new Uri(microserviceOption!.Site.BaseUrl);
+         })
+         .AddHttpMessageHandler<AuthenticatedHttpClientHandler>()//bu usertoken için istek atarken kullanmak için
+         .AddHttpMessageHandler<ClientAuthenticatedHttpClientHandler>();//bu clientcredential için token alıp istek göndermek için
+
+          //GaleriResim Clients
+          services.AddRefitClient<IGaleriResimClientServices>()
          .ConfigureHttpClient(c => {
 
              var microserviceOption = configuration.GetSection(MicroservicesSetting.SectionName).Get<MicroservicesSetting>();

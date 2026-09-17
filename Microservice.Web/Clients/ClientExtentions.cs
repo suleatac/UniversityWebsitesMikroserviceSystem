@@ -2,6 +2,7 @@
 using Microservice.Web.Clients.BannerClients;
 using Microservice.Web.Clients.BilgiClients;
 using Microservice.Web.Clients.DilClients;
+using Microservice.Web.Clients.GaleriResimClients;
 using Microservice.Web.Clients.DuyuruClients;
 using Microservice.Web.Clients.EtkinlikClients;
 using Microservice.Web.Clients.HaberClients;
@@ -79,6 +80,11 @@ namespace Microservice.Web.Clients
 
             //ShortcutButton Clients
             services.AddRefitClient<IShortcutButtonClientServices>()
+                .ConfigureHttpClient(c => c.BaseAddress = GetSiteBaseAddress(configuration))
+                .AddHttpMessageHandler<ClientAuthenticatedHttpClientHandler>();
+
+            //GaleriResim Clients
+            services.AddRefitClient<IGaleriResimClientServices>()
                 .ConfigureHttpClient(c => c.BaseAddress = GetSiteBaseAddress(configuration))
                 .AddHttpMessageHandler<ClientAuthenticatedHttpClientHandler>();
 

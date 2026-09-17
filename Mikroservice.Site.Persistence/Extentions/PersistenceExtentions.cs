@@ -38,6 +38,7 @@ namespace Microservice.Site.Persistence.Extentions
             services.AddScoped<IDilRepository, DilRepository>();
             services.AddScoped<IDuyuruRepository, DuyuruRepository>();
             services.AddScoped<IEtkinlikRepository, EtkinlikRepository>();
+            services.AddScoped<IGaleriResimRepository, GaleriResimRepository>();
             services.AddScoped<IHaberRepository, HaberRepository>();
             services.AddScoped<IHedefRepository, HedefRepository>();
             services.AddScoped<IPageTypeRepository, PageTypeRepository>();

@@ -35,8 +35,8 @@ namespace Microservice.Admin.ViewModels.Menu
 
         public bool MegaMenu { get; set; }
 
-        // MenuLocation karsiligi: 1=Header (ust menu), 2=Footer (Hizli Erisim), 3=Sidebar
-        [Range(1, 3, ErrorMessage = "Gecerli bir menu konumu seciniz.")]
+        // MenuLocation karsiligi: 1=Header (ust menu), 2=Footer (Hizli Erisim)
+        [Range(1, 2, ErrorMessage = "Gecerli bir menu konumu seciniz.")]
         public int Location { get; set; } = 1;
 
         public bool IsVisible { get; set; } = true;

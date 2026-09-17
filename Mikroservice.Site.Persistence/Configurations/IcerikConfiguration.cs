@@ -20,7 +20,8 @@ namespace Mikroservice.Site.Persistence.Configurations
                 .HasValue<Etkinlik>(IcerikTip.Etkinlik)
                 .HasValue<Video>(IcerikTip.Video)
                 .HasValue<Banner>(IcerikTip.Banner)
-                .HasValue<Menu>(IcerikTip.Menu);
+                .HasValue<Menu>(IcerikTip.Menu)
+                .HasValue<GaleriResim>(IcerikTip.GaleriResim);
 
             // =========================
             // COMMON PROPERTIES

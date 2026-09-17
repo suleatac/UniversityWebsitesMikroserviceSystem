@@ -16,6 +16,8 @@
         VideoListesi = 12,
         VideoDetay = 13,
         StaticPage = 14,
-        Search = 15
+        Search = 15,
+        GaleriResimListesi = 16,
+        GaleriResimDetay = 17
     }
 }

@@ -7,7 +7,7 @@ namespace Mikroservice.Site.Domain.Entities
         public int? ParentId { get; set; } // 🔥 nullable
         public bool MegaMenu { get; set; }
 
-        // Menunun render edilecegi bolge (ust navbar / footer hizli erisim / sidebar)
+        // Menunun render edilecegi bolge (ust navbar / footer hizli erisim)
         public MenuLocation Location { get; set; } = MenuLocation.Header;
 
         // Yonetici panelinden gecici olarak gizlemek icin

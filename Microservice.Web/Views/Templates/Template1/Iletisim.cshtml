@@ -1,0 +1,153 @@
+﻿<div class="page-title full-color">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="page-title-heading">
+                    <h2 class="title">Contact Us</h2>
+                </div>
+                <div class="breadcrumbs">
+                    <ul>
+                        <li class="home"><a href="#">Home </a></li>
+                        <li>\ </li>
+                    </ul>
+                </div>
+            </div><!-- /.col-md-12 -->
+        </div><!-- /.row -->
+    </div><!-- /.container -->
+</div><!-- /page-title -->
+<!-- contact posts -->
+<section class="main-content contact-posts">
+    <div class="container">
+        <div class="row">
+            <div class="post-contact">
+                <div class="col-md-9">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="contact-form">
+                                <div class="line-box"></div>
+                                <form action="./contact/contact-process.php" method="post" id="contactform" class="comment-form" novalidate="">
+                                    <fieldset class="style-1 full-name">
+                                        <input type="text" id="name" placeholder="Your name" class="tb-my-input" name="author" tabindex="1" value="" size="32" aria-required="true">
+                                    </fieldset>
+
+                                    <fieldset class="style-1 email-address">
+                                        <input type="email" id="email" placeholder="Your email" class="tb-my-input" name="email" tabindex="2" value="" size="32" aria-required="true">
+                                    </fieldset>
+
+                                    <fieldset class="style-1 subject">
+                                        <input type="text" id="subject" placeholder="Subject" class="tb-my-input" name="subject" tabindex="2" value="" size="32" aria-required="true">
+                                    </fieldset>
+
+                                    <fieldset class="message-form">
+                                        <textarea id="comment-message" placeholder="Your Message" name="comment" rows="8" tabindex="4"></textarea>
+                                    </fieldset>
+
+                                    <div class="submit-wrap">
+                                        <button class="flat-button button-style style-v1">Send <i class="fa fa-angle-right"></i></button>
+                                    </div>
+                                </form>
+                            </div><!-- contact-form -->
+                        </div><!-- col-md-6 -->
+
+                        <div class="col-md-6">
+                            <div class="container-fluid">
+                                <div class="row">
+                                    <div id="map" style="width: 100%; height: 500px; "></div>
+                                </div>
+                            </div><!-- /container-fluid -->
+                        </div>
+                    </div><!-- /row-->
+                </div><!-- /col-md-9 -->
+
+                <div class="col-md-3">
+                    <div class="sidebar">
+           
+
+                        <div class="widget widget-search">
+                            <h2 class="widget-title">SEARCH</h2>
+                            <form role="search" method="get" id="searchform" class="u-course-search-form" action="http://university.cactusthemes.com/">
+                                <div class="input-group">
+                                    <div class="input-group-btn u-course-search-dropdown">
+                                        <button class="btn btn-default dropdown-toggle u-course-search-dropdown-button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="button-label">All</span> <span class="fa fa-angle-down"></span></button>
+                                        <ul class="dropdown-menu">
+                                            <li>
+                                                <a href="#" data-value="">All</a>
+                                            </li>
+                                            <li>
+                                                <a href="#" data-value="course-autumn-2014">Autumn Courses 2014</a>
+                                            </li>
+                                            <li>
+                                                <a href="#" data-value="bachelor">Bachelor</a>
+                                            </li>
+                                            <li>
+                                                <a href="#" data-value="course">Course</a>
+                                            </li>
+                                            <li>
+                                                <a href="#" data-value="study-2">Study</a>
+                                            </li>
+                                        </ul>
+                                    </div><!-- /btn-group -->
+
+                                    <input type="text" value="" name="s" id="s" placeholder="SEARCH" class="form-control">
+                                    <input type="hidden" name="post_type" value="u_course">
+                                    <input type="hidden" name="u_course_cat" class="u-course-search-cat" value="">
+                                    <span class="input-group-btn">
+                                        <button type="submit" id="searchsubmit" class="btn btn-default u-course-search-submit"><i class="fa fa-search"></i></button>
+                                    </span>
+                                </div>
+                            </form>
+                        </div><!-- /widget-search -->
+
+                        <div class="widget widget-posts">
+                            <div class="blog-box">
+                                <h2 class="widget-title">LATEST POST</h2>
+                                <ul class="recent-posts clearfix">
+                                    <li>
+                                        <div class="thumb item-thumbnail">
+                                            <a href="#">
+                                                <img src="images/blog/widget/1.jpg" alt="image">
+                                                <div class="thumbnail-hoverlay main-color-1-bg"></div>
+                                                <div class="thumbnail-hoverlay-cross"></div>
+                                            </a>
+                                        </div>
+                                        <div class="text">
+                                            <a href="#">Your Career Starts Here</a>
+                                            <p>JUNE 3, 2014</p>
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <div class="thumb item-thumbnail">
+                                            <a href="#">
+                                                <img src="images/blog/widget/2.jpg" alt="image">
+                                                <div class="thumbnail-hoverlay main-color-1-bg"></div>
+                                                <div class="thumbnail-hoverlay-cross"></div>
+                                            </a>
+                                        </div>
+                                        <div class="text">
+                                            <a href="#">Spark Of Genius</a>
+                                            <p>JUNE 3, 2014</p>
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <div class="thumb item-thumbnail">
+                                            <a href="#">
+                                                <img src="images/blog/widget/3.jpg" alt="image">
+                                                <div class="thumbnail-hoverlay main-color-1-bg"></div>
+                                                <div class="thumbnail-hoverlay-cross"></div>
+                                            </a>
+                                        </div>
+                                        <div class="text">
+                                            <a href="#">University Ranking</a>
+                                            <p>MAY 29, 2014</p>
+                                        </div>
+                                    </li>
+                                </ul><!-- /popular-news clearfix -->
+                            </div>
+                        </div><!-- /widget-posts -->
+
+                    </div><!-- /col-md-9 -->
+                </div><!-- /col-md-3 -->
+            </div>
+        </div>
+    </div>
+</section>

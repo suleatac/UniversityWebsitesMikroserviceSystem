@@ -1,0 +1,32 @@
+using Microservice.Shared;
+
+namespace Mikroservice.Site.Application.Features.GaleriResimFeatures.CreateGaleriResim
+{
+    public record CreateGaleriResimCommand : IRequestByServiceResult<CreateGaleriResimResponse>
+    {
+        public int SiteId { get; init; }
+        public int PageTypeId { get; init; }
+        public int DilId { get; init; }
+        public int HedefId { get; init; }
+
+        public string Baslik { get; init; } = default!;
+        public string? KisaAciklama { get; init; }
+        public string? IcerikMetni { get; init; }
+
+        public string? Link { get; init; }
+        public string? ResimUrl { get; init; }
+
+        public string? Kategori { get; init; }
+        public int Sira { get; init; } = 0;
+
+        public DateTime YayimTarihi { get; init; }
+        public DateTime EklemeTarihi { get; init; }
+
+        public DateTime? BaslamaTarihi { get; init; }
+        public DateTime? BitisTarihi { get; init; }
+
+        public string SeoUrl { get; init; }=default!;
+        public string? SeoTitle { get; init; }
+        public string? SeoDescription { get; init; }
+    }
+}

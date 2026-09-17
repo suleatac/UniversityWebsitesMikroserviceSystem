@@ -109,12 +109,6 @@
                             <i class="mdi mdi-shape-rectangle-plus me-1"></i> Alt Menü - Hızlı Erişim
                         </a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link @(ViewBag.Location != null && (int)ViewBag.Location == Microservice.Admin.ViewModels.Menu.MenuLocationOption.Sidebar ? "active" : "")"
-                           asp-action="Index" asp-route-location="@Microservice.Admin.ViewModels.Menu.MenuLocationOption.Sidebar">
-                            <i class="mdi mdi-drawer-left me-1"></i> Sidebar
-                        </a>
-                    </li>
                 </ul>
             </div>
 

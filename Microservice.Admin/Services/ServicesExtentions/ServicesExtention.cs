@@ -31,6 +31,7 @@ namespace Microservice.Admin.Services.ServicesExtentions
             services.AddScoped<IDuyuruService, DuyuruService>();
             services.AddScoped<IEtkinlikService, EtkinlikService>();
             services.AddScoped<IVideoService, VideoService>();
+            services.AddScoped<IGaleriResimService, GaleriResimService>();
             services.AddScoped<ISikcaSorulanSoruService, SikcaSorulanSoruService>();
             services.AddScoped<ISitePersonelService, SitePersonelService>();
             services.AddScoped<IBilgiService, BilgiService>();

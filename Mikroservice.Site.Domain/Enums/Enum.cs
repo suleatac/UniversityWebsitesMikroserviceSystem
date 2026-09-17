@@ -8,14 +8,14 @@
         Etkinlik = 4,
         Video = 5,
         Banner = 6,
-        Menu = 7
+        Menu = 7,
+        GaleriResim = 8
     }
 
     public enum MenuLocation
     {
         Header = 1,
-        Footer = 2,
-        Sidebar = 3
+        Footer = 2
     }
 
     public enum PageTypeKind
@@ -34,7 +34,9 @@
         VideoListesi = 12,
         VideoDetay = 13,
         StaticPage = 14,
-        Search=15
+        Search=15,
+        GaleriResimListesi = 16,
+        GaleriResimDetay = 17
     }
 
 }

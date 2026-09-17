@@ -5,6 +5,7 @@ using Microservice.Web.Settings;
 using Microservice.Web.ViewModels.Bilgi;
 using Microservice.Web.ViewModels.Duyuru;
 using Microservice.Web.ViewModels.Etkinlik;
+using Microservice.Web.ViewModels.GaleriResim;
 using Microservice.Web.ViewModels.Haber;
 using Microservice.Web.ViewModels.Icerik;
 using Microservice.Web.ViewModels.Menu;
@@ -34,6 +35,7 @@ namespace Microservice.Web.Controllers
         private readonly IIcerikService _icerikService;
         private readonly IPageTypeService _pageTypeService;
         private readonly ISitePersonelService _sitePersonelService;
+        private readonly IGaleriResimService _galeriResimService;
         private readonly ILogger<TemplateController> _logger;
 
         public TemplateController(
@@ -49,6 +51,7 @@ namespace Microservice.Web.Controllers
             IIcerikService icerikService,
             IPageTypeService pageTypeService,
             ISitePersonelService sitePersonelService,
+            IGaleriResimService galeriResimService,
             ILogger<TemplateController> logger)
         {
             _etkinlikService = etkinlikService;
@@ -63,6 +66,7 @@ namespace Microservice.Web.Controllers
             _icerikService = icerikService;
             _pageTypeService = pageTypeService;
             _sitePersonelService = sitePersonelService;
+            _galeriResimService = galeriResimService;
             _logger = logger;
         }
 
@@ -188,6 +192,11 @@ namespace Microservice.Web.Controllers
 
                 PageTypeKindEnum.Search when route.DetailSlug is null =>
                      await RenderSearchAsync(route),
+
+                PageTypeKindEnum.GaleriResimListesi when route.DetailSlug is null =>
+                     await RenderGaleriResimListesiAsync(route),
+                PageTypeKindEnum.GaleriResimDetay when route.GaleriResimDetay is not null =>
+                     await RenderGaleriResimDetayAsync(route),
 
                 PageTypeKindEnum.StaticPage => RenderStaticPage(route),
                 _ => RenderNotFound("Bu sayfa türü için tanımlı bir görünüm yok.")
@@ -632,6 +641,130 @@ namespace Microservice.Web.Controllers
 
 
 
+
+        // ============================================================
+        // GALERİ RESİMLERİ
+        // ============================================================
+
+        /// <summary>
+        /// /galeri-resimler?q=kelime&kategori=x&page=1&pageSize=8
+        /// Sayfali; kategori ve sayfa ici arama destekli galeri resmi listesi.
+        /// </summary>
+        private async Task<IActionResult> RenderGaleriResimListesiAsync(RouteResolveResult route)
+        {
+            var query = Request.Query["q"].ToString();
+            var kategori = Request.Query["kategori"].ToString();
+
+            int.TryParse(Request.Query["page"], out var pageParam);
+            int.TryParse(Request.Query["pageSize"], out var pageSizeParam);
+
+            var page = pageParam < 1 ? 1 : pageParam;
+            // Galeri grid'i icin varsayilan 8; 100 ust sinir.
+            var pageSize = pageSizeParam is > 0 and <= 100 ? pageSizeParam : 8;
+
+            var listResult = await _galeriResimService.GetPaginatedAsync(
+                route.Site.Id,
+                route.LanguageId,
+                string.IsNullOrWhiteSpace(query) ? null : query,
+                string.IsNullOrWhiteSpace(kategori) ? null : kategori,
+                page,
+                pageSize);
+
+            if (listResult.IsFail)
+            {
+                _logger.LogWarning(
+                    "Galeri resmi liste verileri alinamadi. SiteId: {SiteId}, Query: {Query}, Kategori: {Kategori}",
+                    route.Site.Id,
+                    query,
+                    kategori);
+            }
+
+            // Filtre cabugu icin benzersiz kategoriler (site geneli, API tarafinda 12 saat cache'li).
+            var allResult = await _galeriResimService.GetGaleriResimlerAsync(route.Site.Id, route.LanguageId);
+
+            var kategoriler = (allResult.Data ?? [])
+                .Where(g => !string.IsNullOrWhiteSpace(g.Kategori))
+                .Select(g => g.Kategori!)
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .OrderBy(k => k)
+                .ToList();
+
+            var model = new GaleriResimListPageViewModel {
+                Site = route.Site,
+                LanguageCode = route.LanguageCode,
+                Query = query,
+                Kategori = kategori,
+                Page = page,
+                PageSize = pageSize,
+                Results = listResult.Data ?? new PagedResultVm<GetGaleriResimVm>(),
+                Kategoriler = kategoriler
+            };
+
+            // Navbar component'inin site bilgisini tekrar cekmesini engellemek icin paylasilir.
+            ViewData["Site"] = route.Site;
+
+            var viewPath = GetTemplateViewPath(route.Page.TemplateId, "GaleriResimListesi");
+
+            return View(viewPath, model);
+        }
+
+        /// <summary>
+        /// /galeri-resimler/resim-slug
+        /// Detay + onceki/sonraki navigasyonu + iliskili resimler.
+        /// </summary>
+        private async Task<IActionResult> RenderGaleriResimDetayAsync(RouteResolveResult route)
+        {
+            if (route.GaleriResimDetay is null)
+            {
+                return RenderNotFound("Galeri resmi bulunamadı.");
+            }
+
+            var galeriResim = route.GaleriResimDetay;
+
+            // Navigasyon ve iliskili resimler icin sitenin tam resmi listesi.
+            var galeriResimleriResult = await _galeriResimService.GetGaleriResimlerAsync(route.Site.Id, route.LanguageId);
+
+            // Liste sayfasi adresi: route.Page, GaleriResimDetay sayfa tipidir; liste icin GaleriResimListesi cozulmeli.
+            var galeriListePageType = await _pageTypeService.GetPageTypeByKindAsync(
+                route.Site.TemplateId,
+                route.LanguageId,
+                (int)PageTypeKindEnum.GaleriResimListesi);
+
+            var galeriListUrl = galeriListePageType.Data is null
+                ? "/"
+                : $"/{route.LanguageCode}/{galeriListePageType.Data.Slug}";
+
+            var sirali = (galeriResimleriResult.Data ?? [])
+                .OrderBy(g => g.Sira)
+                .ThenByDescending(g => g.YayimTarihi)
+                .ToList();
+
+            var currentIndex = sirali.FindIndex(g => g.Id == galeriResim.Id);
+
+            // Ayni kategoriden (yetersizse listeden) en fazla 4 iliskili resim.
+            var iliskili = sirali
+                .Where(g => g.Id != galeriResim.Id)
+                .OrderByDescending(g => string.Equals(g.Kategori, galeriResim.Kategori, StringComparison.OrdinalIgnoreCase))
+                .Take(4)
+                .ToList();
+
+            var model = new GaleriResimDetayPageViewModel {
+                GaleriResim = galeriResim,
+                Site = route.Site,
+                LanguageCode = route.LanguageCode,
+                GaleriResimListUrl = galeriListUrl,
+                OncekiResim = currentIndex > 0 ? sirali[currentIndex - 1] : null,
+                SonrakiResim = currentIndex >= 0 && currentIndex < sirali.Count - 1 ? sirali[currentIndex + 1] : null,
+                IliskiliResimler = iliskili
+            };
+
+            // Navbar component'inin site bilgisini tekrar cekmesini engellemek icin paylasilir.
+            ViewData["Site"] = route.Site;
+
+            var viewPath = GetTemplateViewPath(route.Page.TemplateId, galeriResim.PageType.ViewName);
+
+            return View(viewPath, model);
+        }
 
         // ============================================================
         // DUYURULAR

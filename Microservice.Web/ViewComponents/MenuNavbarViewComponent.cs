@@ -35,7 +35,7 @@ namespace Microservice.Web.ViewComponents
 
             var menus = preloadedMenus ?? await GetMenusAsync(siteId, dilId);
 
-            // Footer/sidebar menuleri navbar'da gorunmemeli
+            // Footer menuleri navbar'da gorunmemeli
             var rootMenus = menus
                 .Where(menu => menu.ParentId is null
                                && menu.IsVisible

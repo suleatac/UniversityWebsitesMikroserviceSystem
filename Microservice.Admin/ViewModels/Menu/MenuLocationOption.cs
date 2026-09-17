@@ -6,13 +6,11 @@ namespace Microservice.Admin.ViewModels.Menu
     {
         public const int Header = 1;
         public const int Footer = 2;
-        public const int Sidebar = 3;
 
         public static List<(int Value, string Label)> All => new()
         {
             (Header, "Üst Menü (Header)"),
-            (Footer, "Alt Menü - Hızlı Erişim (Footer)"),
-            (Sidebar, "Kenar Çubuğu (Sidebar)")
+            (Footer, "Alt Menü - Hızlı Erişim (Footer)")
         };
 
         public static string Label(int location) =>
