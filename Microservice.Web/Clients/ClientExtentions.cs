@@ -7,6 +7,7 @@ using Microservice.Web.Clients.DuyuruClients;
 using Microservice.Web.Clients.EtkinlikClients;
 using Microservice.Web.Clients.HaberClients;
 using Microservice.Web.Clients.IcerikClients;
+using Microservice.Web.Clients.IletisimClients;
 using Microservice.Web.Clients.MenuClients;
 using Microservice.Web.Clients.PageTypeClients;
 using Microservice.Web.Clients.ShortcutButtonClients;
@@ -113,6 +114,11 @@ namespace Microservice.Web.Clients
 
             //Icerik (arama) Clients
             services.AddRefitClient<IIcerikClientServices>()
+                .ConfigureHttpClient(c => c.BaseAddress = GetSiteBaseAddress(configuration))
+                .AddHttpMessageHandler<ClientAuthenticatedHttpClientHandler>();
+
+            //Iletisim Clients
+            services.AddRefitClient<IIletisimClientServices>()
                 .ConfigureHttpClient(c => c.BaseAddress = GetSiteBaseAddress(configuration))
                 .AddHttpMessageHandler<ClientAuthenticatedHttpClientHandler>();
 

@@ -224,10 +224,8 @@
     </div>
 </div>
 
-<script src="~/assets/js/app.js"></script>
 <script src="~/assets/libs/jquery/jquery.min.js"></script>
 <script src="~/assets/libs/bootstrap/js/bootstrap.bundle.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/jquery/dist/jquery.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jquery.fancytree/dist/jquery.fancytree-all-deps.min.js"></script>
 
  <script>
@@ -247,6 +245,30 @@
         let clipboard = {
         type: null, // "cut" | "copy"
         nodes: []
+        };
+
+        // Icerik Dosya seciminde tam bilgi gonderir (url, ad, boyut, tur)
+        window.selectIcerikDosya = function (urlEnc, adEnc, boyut, tur) {
+            const payload = {
+                type: "icerik-dosya-selected",
+                url: decodeURIComponent(urlEnc),
+                dosyaAdi: decodeURIComponent(adEnc),
+                dosyaBoyut: boyut || 0,
+                dosyaTuru: tur || ""
+            };
+
+            if (window.parent && window.parent !== window) {
+                window.parent.postMessage(payload, "*");
+            }
+            else if (window.top && window.top !== window) {
+                window.top.postMessage(payload, "*");
+            }
+            else if (window.opener && !window.opener.closed) {
+                window.opener.postMessage(payload, "*");
+            }
+            else {
+                alert("Ana pencere bulunamadı.");
+            }
         };
 
         // TinyMCE'ye URL'yi gönderen fonksiyon
@@ -390,7 +412,19 @@
         // EĞER PICKER MODUNDAYSANIZ VE BİR DOSYA SEÇİLDİYSE "SEÇ" BUTONU EKLEYELİM
         if (pickerMode === "picker" && !data.node.folder) {
         const fileUrl = baseUrl + data.node.key;
+        const dosyaAdi = data.node.title || "";
+        const dosyaBoyut = data.node.data?.size || 0;
+        const dosyaTuru = (dosyaAdi.split('.').pop() || '').toLowerCase();
 
+        if (filterType === "dosya") {
+        // Icerik (Haber/Duyuru) dosya secimi: tam bilgi gonder
+        $("#fileDetails").append(`
+        <hr>
+        <button onclick="window.selectIcerikDosya('${encodeURIComponent(fileUrl)}','${encodeURIComponent(dosyaAdi)}',${dosyaBoyut},'${dosyaTuru}')" class="btn btn-success w-100">
+        <i class="fa fa-check"></i> Dosyayı Seç
+        </button>
+        `);
+        } else {
         // Detay kısmına "Bu Dosyayı Seç" butonu ekle
         $("#fileDetails").append(`
         <hr>
@@ -398,6 +432,7 @@
         <i class="fa fa-check"></i> Seç
         </button>
         `);
+        }
         }
 
 

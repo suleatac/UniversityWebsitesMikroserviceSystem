@@ -26,6 +26,7 @@ namespace Microservice.Site.Persistence
         public DbSet<GaleriResim> GaleriResimler { get; set; }
         public DbSet<Haber> Haberler { get; set; }
         public DbSet<Hedef> Hedefler { get; set; }
+        public DbSet<IcerikDosya> IcerikDosyalar { get; set; }
         public DbSet<Menu> Menuler { get; set; }
         public DbSet<PersonelTelefon> PersonelTelefonlar { get; set; }
         public DbSet<PersonelTip> PersonelTipleri { get; set; }

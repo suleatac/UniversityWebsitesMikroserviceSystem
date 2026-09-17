@@ -1,20 +1,74 @@
-﻿<div class="page-title full-color">
+﻿@model Microservice.Web.ViewModels.Iletisim.IletisimPageViewModel
+@{
+    var site = Model.Site;
+    var ozellikler = site.SiteOzellikleri;
+
+    ViewData["Title"] = "İletişim";
+
+    // Harita: SiteOzellikleri.SiteHaritaAdress google maps "embed" linki icerir.
+    var haritaUrl = ozellikler?.SiteHaritaAdress;
+    var haritaVar = !string.IsNullOrWhiteSpace(haritaUrl);
+
+    // Form gonderim adresi ve gonderim sonrasi donus adresi
+    var gonderUrl = Url.Action("Gonder", "Iletisim") ?? "/Iletisim/Gonder";
+    var returnUrl = Context.Request.Path.ToString() + Context.Request.QueryString;
+
+    string BuildHaberHref(Microservice.Web.ViewModels.Haber.GetHaberVm haber)
+    {
+        if (!string.IsNullOrWhiteSpace(haber.Link))
+        {
+            var link = haber.Link.Trim();
+
+            return link.StartsWith("http", StringComparison.OrdinalIgnoreCase)
+                ? link
+                : "/" + link.Trim('/');
+        }
+
+        if (!string.IsNullOrWhiteSpace(haber.SeoUrl) && haber.PageType is not null)
+        {
+            return $"/{Model.LanguageCode}/{haber.PageType.Slug}/{haber.SeoUrl.Trim('/')}";
+        }
+
+        return "#";
+    }
+}
+
+<div class="page-title full-color">
     <div class="container">
         <div class="row">
             <div class="col-md-12">
                 <div class="page-title-heading">
-                    <h2 class="title">Contact Us</h2>
+                    <h2 class="title">İletişim</h2>
                 </div>
                 <div class="breadcrumbs">
                     <ul>
-                        <li class="home"><a href="#">Home </a></li>
-                        <li>\ </li>
+                        <li class="home"><a href="/@Model.LanguageCode">Ana Sayfa </a></li>
+                        <li>\ İletişim</li>
                     </ul>
                 </div>
             </div><!-- /.col-md-12 -->
         </div><!-- /.row -->
     </div><!-- /.container -->
 </div><!-- /page-title -->
+
+<!-- alert mesajlari -->
+@if (TempData["IletisimBasari"] is string basariMesaji)
+{
+    <div class="container" style="margin-top:20px;">
+        <div class="alert alert-success" role="alert">
+            <i class="fa fa-check-circle"></i> @basariMesaji
+        </div>
+    </div>
+}
+@if (TempData["IletisimHata"] is string hataMesaji)
+{
+    <div class="container" style="margin-top:20px;">
+        <div class="alert alert-danger" role="alert">
+            <i class="fa fa-exclamation-circle"></i> @hataMesaji
+        </div>
+    </div>
+}
+
 <!-- contact posts -->
 <section class="main-content contact-posts">
     <div class="container">
@@ -25,25 +79,74 @@
                         <div class="col-md-6">
                             <div class="contact-form">
                                 <div class="line-box"></div>
-                                <form action="./contact/contact-process.php" method="post" id="contactform" class="comment-form" novalidate="">
+
+                                <form asp-action="Gonder"
+                                      asp-controller="Iletisim"
+                                      asp-route-returnUrl="@returnUrl"
+                                      method="post"
+                                      id="contactform"
+                                      class="comment-form">
+
+                                    @Html.AntiForgeryToken()
+
+                                    <input type="hidden" asp-for="Form.SiteId" />
+
                                     <fieldset class="style-1 full-name">
-                                        <input type="text" id="name" placeholder="Your name" class="tb-my-input" name="author" tabindex="1" value="" size="32" aria-required="true">
+                                        <input asp-for="Form.AdSoyad"
+                                               type="text"
+                                               placeholder="Adınız Soyadınız"
+                                               class="tb-my-input"
+                                               tabindex="1"
+                                               size="32"
+                                               aria-required="true">
+                                        <span asp-validation-for="Form.AdSoyad" class="text-danger small"></span>
                                     </fieldset>
 
                                     <fieldset class="style-1 email-address">
-                                        <input type="email" id="email" placeholder="Your email" class="tb-my-input" name="email" tabindex="2" value="" size="32" aria-required="true">
+                                        <input asp-for="Form.Eposta"
+                                               type="email"
+                                               placeholder="E-posta Adresiniz"
+                                               class="tb-my-input"
+                                               tabindex="2"
+                                               size="32"
+                                               aria-required="true">
+                                        <span asp-validation-for="Form.Eposta" class="text-danger small"></span>
                                     </fieldset>
 
                                     <fieldset class="style-1 subject">
-                                        <input type="text" id="subject" placeholder="Subject" class="tb-my-input" name="subject" tabindex="2" value="" size="32" aria-required="true">
+                                        <input asp-for="Form.Telefon"
+                                               type="text"
+                                               placeholder="Telefon Numaranız (isteğe bağlı)"
+                                               class="tb-my-input"
+                                               tabindex="2"
+                                               size="32">
+                                        <span asp-validation-for="Form.Telefon" class="text-danger small"></span>
+                                    </fieldset>
+
+                                    <fieldset class="style-1 subject">
+                                        <input asp-for="Form.Konu"
+                                               type="text"
+                                               placeholder="Konu"
+                                               class="tb-my-input"
+                                               tabindex="2"
+                                               size="32"
+                                               aria-required="true">
+                                        <span asp-validation-for="Form.Konu" class="text-danger small"></span>
                                     </fieldset>
 
                                     <fieldset class="message-form">
-                                        <textarea id="comment-message" placeholder="Your Message" name="comment" rows="8" tabindex="4"></textarea>
+                                        <textarea asp-for="Form.Mesaj"
+                                                  id="comment-message"
+                                                  placeholder="Mesajınız"
+                                                  rows="8"
+                                                  tabindex="4"></textarea>
+                                        <span asp-validation-for="Form.Mesaj" class="text-danger small"></span>
                                     </fieldset>
 
                                     <div class="submit-wrap">
-                                        <button class="flat-button button-style style-v1">Send <i class="fa fa-angle-right"></i></button>
+                                        <button type="submit" class="flat-button button-style style-v1">
+                                            Gönder <i class="fa fa-angle-right"></i>
+                                        </button>
                                     </div>
                                 </form>
                             </div><!-- contact-form -->
@@ -52,7 +155,53 @@
                         <div class="col-md-6">
                             <div class="container-fluid">
                                 <div class="row">
-                                    <div id="map" style="width: 100%; height: 500px; "></div>
+                                    @if (haritaVar)
+                                    {
+                                        <div class="col-md-12">
+                                            <iframe src="@haritaUrl"
+                                                    style="width: 100%; height: 500px; border:0;"
+                                                    loading="lazy"
+                                                    referrerpolicy="no-referrer-when-downgrade"
+                                                    title="@site.SiteAdi konumu"></iframe>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div id="map" style="width: 100%; height: 500px;"></div>
+                                    }
+                                </div>
+
+                                <!-- site iletisim bilgileri -->
+                                <div class="row" style="margin-top:20px;">
+                                    <div class="col-md-12">
+                                        <ul class="list-inline" style="list-style:none;padding-left:0;">
+                                            @if (!string.IsNullOrWhiteSpace(site.SiteEPosta))
+                                            {
+                                                <li style="margin-bottom:8px;">
+                                                    <i class="fa fa-envelope main-color-1"></i>
+                                                    <a href="mailto:@site.SiteEPosta" class="main-color-1-hover">@site.SiteEPosta</a>
+                                                </li>
+                                            }
+                                            @if (!string.IsNullOrWhiteSpace(ozellikler?.SiteTelNo))
+                                            {
+                                                <li style="margin-bottom:8px;">
+                                                    <i class="fa fa-phone main-color-1"></i> @ozellikler.SiteTelNo
+                                                </li>
+                                            }
+                                            @if (!string.IsNullOrWhiteSpace(ozellikler?.SiteFaxNo))
+                                            {
+                                                <li style="margin-bottom:8px;">
+                                                    <i class="fa fa-fax main-color-1"></i> @ozellikler.SiteFaxNo
+                                                </li>
+                                            }
+                                            @if (!string.IsNullOrWhiteSpace(ozellikler?.SiteAdress))
+                                            {
+                                                <li style="margin-bottom:8px;">
+                                                    <i class="fa fa-map-marker main-color-1"></i> @ozellikler.SiteAdress
+                                                </li>
+                                            }
+                                        </ul>
+                                    </div>
                                 </div>
                             </div><!-- /container-fluid -->
                         </div>
@@ -61,36 +210,12 @@
 
                 <div class="col-md-3">
                     <div class="sidebar">
-           
 
                         <div class="widget widget-search">
-                            <h2 class="widget-title">SEARCH</h2>
-                            <form role="search" method="get" id="searchform" class="u-course-search-form" action="http://university.cactusthemes.com/">
+                            <h2 class="widget-title">ARAMA</h2>
+                            <form role="search" method="get" id="searchform" class="u-course-search-form" action="@Model.SearchUrl">
                                 <div class="input-group">
-                                    <div class="input-group-btn u-course-search-dropdown">
-                                        <button class="btn btn-default dropdown-toggle u-course-search-dropdown-button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="button-label">All</span> <span class="fa fa-angle-down"></span></button>
-                                        <ul class="dropdown-menu">
-                                            <li>
-                                                <a href="#" data-value="">All</a>
-                                            </li>
-                                            <li>
-                                                <a href="#" data-value="course-autumn-2014">Autumn Courses 2014</a>
-                                            </li>
-                                            <li>
-                                                <a href="#" data-value="bachelor">Bachelor</a>
-                                            </li>
-                                            <li>
-                                                <a href="#" data-value="course">Course</a>
-                                            </li>
-                                            <li>
-                                                <a href="#" data-value="study-2">Study</a>
-                                            </li>
-                                        </ul>
-                                    </div><!-- /btn-group -->
-
-                                    <input type="text" value="" name="s" id="s" placeholder="SEARCH" class="form-control">
-                                    <input type="hidden" name="post_type" value="u_course">
-                                    <input type="hidden" name="u_course_cat" class="u-course-search-cat" value="">
+                                    <input type="text" value="" name="q" id="s" placeholder="Arama Yap" class="form-control">
                                     <span class="input-group-btn">
                                         <button type="submit" id="searchsubmit" class="btn btn-default u-course-search-submit"><i class="fa fa-search"></i></button>
                                     </span>
@@ -98,52 +223,34 @@
                             </form>
                         </div><!-- /widget-search -->
 
-                        <div class="widget widget-posts">
-                            <div class="blog-box">
-                                <h2 class="widget-title">LATEST POST</h2>
-                                <ul class="recent-posts clearfix">
-                                    <li>
-                                        <div class="thumb item-thumbnail">
-                                            <a href="#">
-                                                <img src="images/blog/widget/1.jpg" alt="image">
-                                                <div class="thumbnail-hoverlay main-color-1-bg"></div>
-                                                <div class="thumbnail-hoverlay-cross"></div>
-                                            </a>
-                                        </div>
-                                        <div class="text">
-                                            <a href="#">Your Career Starts Here</a>
-                                            <p>JUNE 3, 2014</p>
-                                        </div>
-                                    </li>
-                                    <li>
-                                        <div class="thumb item-thumbnail">
-                                            <a href="#">
-                                                <img src="images/blog/widget/2.jpg" alt="image">
-                                                <div class="thumbnail-hoverlay main-color-1-bg"></div>
-                                                <div class="thumbnail-hoverlay-cross"></div>
-                                            </a>
-                                        </div>
-                                        <div class="text">
-                                            <a href="#">Spark Of Genius</a>
-                                            <p>JUNE 3, 2014</p>
-                                        </div>
-                                    </li>
-                                    <li>
-                                        <div class="thumb item-thumbnail">
-                                            <a href="#">
-                                                <img src="images/blog/widget/3.jpg" alt="image">
-                                                <div class="thumbnail-hoverlay main-color-1-bg"></div>
-                                                <div class="thumbnail-hoverlay-cross"></div>
-                                            </a>
-                                        </div>
-                                        <div class="text">
-                                            <a href="#">University Ranking</a>
-                                            <p>MAY 29, 2014</p>
-                                        </div>
-                                    </li>
-                                </ul><!-- /popular-news clearfix -->
-                            </div>
-                        </div><!-- /widget-posts -->
+                        @if (Model.LatestHabers.Any())
+                        {
+                            <div class="widget widget-posts">
+                                <div class="blog-box">
+                                    <h2 class="widget-title">SON EKLENENLER</h2>
+                                    <ul class="recent-posts clearfix">
+                                        @foreach (var haber in Model.LatestHabers)
+                                        {
+                                            var haberHref = BuildHaberHref(haber);
+
+                                            <li>
+                                                <div class="thumb item-thumbnail">
+                                                    <a href="@haberHref">
+                                                        <img src="@(haber.ResimUrl ?? "/template1/images/blog/widget/1.jpg")" alt="@haber.Baslik" loading="lazy">
+                                                        <div class="thumbnail-hoverlay main-color-1-bg"></div>
+                                                        <div class="thumbnail-hoverlay-cross"></div>
+                                                    </a>
+                                                </div>
+                                                <div class="text">
+                                                    <a href="@haberHref">@haber.Baslik</a>
+                                                    <p>@haber.YayimTarihi.ToString("dd.MM.yyyy")</p>
+                                                </div>
+                                            </li>
+                                        }
+                                    </ul><!-- /popular-news clearfix -->
+                                </div>
+                            </div><!-- /widget-posts -->
+                        }
 
                     </div><!-- /col-md-9 -->
                 </div><!-- /col-md-3 -->

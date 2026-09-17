@@ -36,5 +36,8 @@
         public Dil Dil { get; set; } = default!;
         public Hedef Hedef { get; set; } = default!;
         public PageType PageType { get; set; } = default!;
+
+        // Bu icerige ait ek dosyalar (Haber/Duyuru vb.)
+        public ICollection<IcerikDosya> Dosyalar { get; set; } = new List<IcerikDosya>();
     }
 }

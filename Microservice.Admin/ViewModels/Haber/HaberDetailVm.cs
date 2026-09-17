@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microservice.Admin.ViewModels.IcerikDosya;
+using System.ComponentModel.DataAnnotations;
 
 namespace Microservice.Admin.ViewModels.Haber
 {
@@ -8,6 +9,9 @@ namespace Microservice.Admin.ViewModels.Haber
     // (null deger [Range] tarafindan ihlal sayilmaz).
     public class HaberDetailVm : IValidatableObject
     {
+        // Icerige bagli ek dosyalar (istenilen kadar)
+        public List<IcerikDosyaVm> Dosyalar { get; set; } = new();
+
         public int Id { get; set; }
 
         public int PageTypeId { get; set; }

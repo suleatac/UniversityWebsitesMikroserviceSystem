@@ -27,8 +27,6 @@
 
 
 
-
-
 <div class="menu-hover">
     <div class="btn-menu">
         <span></span>
@@ -188,6 +186,29 @@
                                 {
                                     <li><a href="@href">@menu.Ad</a></li>
                                 }
+                                else if (menu.MegaMenu)
+                                {
+                                    @* Mega menu: her alt menu bir kolon (baslik), onun altindakiler kolon linkleri *@
+                                    <li class="has-mega-menu">
+                                        <a href="@href">@menu.Ad</a>
+                                        <ul class="submenu submenu-right mega-menu">
+                                            @foreach (var column in menu.Children.Where(c => c.IsVisible).OrderBy(c => c.Sira))
+                                            {
+                                                var columnHref = BuildHref(column);
+                                                <li class="menu-column">
+                                                    <ul>
+                                                        <li><a href="@columnHref" class="menu-link sub-menu-link">@column.Ad</a></li>
+                                                        @foreach (var item in column.Children.Where(c => c.IsVisible).OrderBy(c => c.Sira))
+                                                        {
+                                                            var itemHref = BuildHref(item);
+                                                            <li><a href="@itemHref" class="menu-link sub-menu-link">@item.Ad</a></li>
+                                                        }
+                                                    </ul>
+                                                </li>
+                                            }
+                                        </ul><!-- /.mega-menu -->
+                                    </li>
+                                }
                                 else
                                 {
                                     <li>
@@ -209,20 +230,3 @@
         </div><!-- /.container-->
     </div><!-- /.header-wrap-->
 </header><!-- /.header -->
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

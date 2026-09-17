@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microservice.Admin.ViewModels.IcerikDosya;
+using System.ComponentModel.DataAnnotations;
 
 namespace Microservice.Admin.ViewModels.Haber
 {
@@ -6,6 +7,9 @@ namespace Microservice.Admin.ViewModels.Haber
     // kurallariyla paralel tutulmustur (istemci tarafi on dogrulama).
     public class CreateHaberVm : IValidatableObject
     {
+        // Icerige bagli ek dosyalar (istenilen kadar)
+        public List<IcerikDosyaVm> Dosyalar { get; set; } = new();
+
         [Range(1, int.MaxValue, ErrorMessage = "SiteId 0'dan büyük olmalıdır.")]
         public int SiteId { get; set; }
 

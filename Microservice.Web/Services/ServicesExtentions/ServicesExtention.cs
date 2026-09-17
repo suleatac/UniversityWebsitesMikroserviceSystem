@@ -28,6 +28,7 @@ namespace Microservice.Web.Services.ServicesExtentions
             services.AddScoped<IPageTypeService, PageTypeService>();
             services.AddScoped<ISitePersonelService, SitePersonelService>();
             services.AddScoped<IGaleriResimService, GaleriResimService>();
+            services.AddScoped<IIletisimService, IletisimService>();
 
             services.AddScoped<IPageDetailResolver, HaberDetayResolver>();
             services.AddScoped<IPageDetailResolver, DuyuruDetayResolver>();

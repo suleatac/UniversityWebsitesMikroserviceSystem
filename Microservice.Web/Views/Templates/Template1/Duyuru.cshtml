@@ -35,6 +35,29 @@
     }
 
     var siteOzellikleri = Model.Site?.SiteOzellikleri;
+
+    // Dosya turune gore FontAwesome ikon
+    string DosyaIkon(string? tur) => tur?.ToLowerInvariant() switch
+    {
+        "pdf" => "fa-file-pdf-o",
+        "doc" or "docx" => "fa-file-word-o",
+        "xls" or "xlsx" or "csv" => "fa-file-excel-o",
+        "ppt" or "pptx" => "fa-file-powerpoint-o",
+        "zip" or "rar" or "7z" or "tar" or "gz" => "fa-file-archive-o",
+        "jpg" or "jpeg" or "png" or "gif" or "webp" or "bmp" or "svg" => "fa-file-image-o",
+        "mp4" or "avi" or "mkv" or "mov" or "wmv" => "fa-file-video-o",
+        "mp3" or "wav" => "fa-file-audio-o",
+        "txt" => "fa-file-text-o",
+        _ => "fa-file-o"
+    };
+
+    string DosyaBoyutMetni(long bayt)
+    {
+        if (bayt <= 0) return "";
+        if (bayt < 1024) return $"{bayt} B";
+        if (bayt < 1024 * 1024) return $"{bayt / 1024.0:0.#} KB";
+        return $"{bayt / (1024.0 * 1024.0):0.#} MB";
+    }
 }
 
 <div class="page-title full-color">
@@ -238,7 +261,34 @@
                             </div><!-- /widget-posts -->
                         }
 
-                    </div><!-- sidebar -->
+                       <!-- WIDGET DOSYALAR -->
+                       @if (duyuru.Dosyalar is { Count: > 0 })
+                       {
+                           <div class="widget widget-dosyalar">
+                               <h2 class="widget-title">Dosyalar</h2>
+                               <ul class="recent-posts clearfix" style="list-style:none; padding-left:0;">
+                                   @foreach (var dosya in duyuru.Dosyalar.OrderBy(d => d.Sira))
+                                   {
+                                       <li style="margin-bottom:12px;">
+                                           <div class="text" style="padding-left:0;">
+                                               <a href="@dosya.DosyaUrl" target="_blank" rel="noopener" download="@dosya.DosyaAdi">
+                                                   <i class="fa @DosyaIkon(dosya.DosyaTuru)" style="margin-right:8px;"></i>@(string.IsNullOrWhiteSpace(dosya.Baslik) ? dosya.DosyaAdi : dosya.Baslik)
+                                               </a>
+                                               <p style="margin-bottom:0;">
+                                                   @dosya.DosyaAdi
+                                                   @if (dosya.DosyaBoyut > 0)
+                                                   {
+                                                       <text> &middot; @DosyaBoyutMetni(dosya.DosyaBoyut)</text>
+                                                   }
+                                               </p>
+                                           </div>
+                                       </li>
+                                   }
+                               </ul>
+                           </div><!-- /widget-dosyalar -->
+                       }
+
+                   </div><!-- sidebar -->
                 </div><!-- /col-md-3 -->
             </div>
         </div>

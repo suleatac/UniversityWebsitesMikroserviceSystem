@@ -63,7 +63,8 @@ app.UseRouting();
 
 app.MapStaticAssets();
 
-
+// Attribute routed controller'lar (IletisimController gibi) catch-all'dan once eslesmeli
+app.MapControllers();
 
 // catch-all'dan önce eşleşmeli, yoksa her zaman Template/Index'e düşer
 app.MapControllerRoute(

@@ -1,4 +1,5 @@
-﻿using Mikroservice.Site.Application.DTOs.PageTypeDtos;
+﻿using Mikroservice.Site.Application.DTOs.IcerikDosyaDtos;
+using Mikroservice.Site.Application.DTOs.PageTypeDtos;
 
 namespace Mikroservice.Site.Application.DTOs.HaberDtos
 {
@@ -30,5 +31,8 @@ namespace Mikroservice.Site.Application.DTOs.HaberDtos
         public string? SeoDescription { get; set; }
         // Eager loading ile gelen PageType bilgisi
         public PageTypeDto PageType { get; set; } = default!;
+
+        // Icerige bagli ek dosyalar (sidebar "Dosyalar" bolumu)
+        public List<IcerikDosyaDto> Dosyalar { get; set; } = new();
     }
 }

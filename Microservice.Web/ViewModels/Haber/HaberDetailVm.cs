@@ -1,4 +1,5 @@
-﻿using Microservice.Web.ViewModels.Pages;
+﻿using Microservice.Web.ViewModels.IcerikDosya;
+using Microservice.Web.ViewModels.Pages;
 using System.ComponentModel.DataAnnotations;
 
 namespace Microservice.Web.ViewModels.Haber
@@ -33,5 +34,7 @@ namespace Microservice.Web.ViewModels.Haber
         public string? SeoDescription { get; set; }
 
         public PagesDetailVm PageType { get; set; } = default!;
+
+        public List<IcerikDosyaVm> Dosyalar { get; set; } = new();
     }
 }

@@ -1,3 +1,4 @@
+using Microservice.Admin.ViewModels.IcerikDosya;
 using System.ComponentModel.DataAnnotations;
 
 namespace Microservice.Admin.ViewModels.Duyuru
@@ -6,6 +7,9 @@ namespace Microservice.Admin.ViewModels.Duyuru
     // kurallariyla paralel tutulmustur (istemci tarafi on dogrulama).
     public class CreateDuyuruVm : IValidatableObject
     {
+        // Icerige bagli ek dosyalar (istenilen kadar)
+        public List<IcerikDosyaVm> Dosyalar { get; set; } = new();
+
         public int PageTypeId { get; set; }
 
         [Range(1, int.MaxValue, ErrorMessage = "SiteId 0'dan büyük olmalıdır.")]

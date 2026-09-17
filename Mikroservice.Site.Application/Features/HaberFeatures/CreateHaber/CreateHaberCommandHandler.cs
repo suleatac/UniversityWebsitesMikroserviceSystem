@@ -2,6 +2,7 @@
 using Microservice.Shared;
 using Microservice.Shared.Services.RedisServiceItems;
 using Microservice.Site.Application.Contracts.IRepositories;
+using Mikroservice.Site.Application.Features.Common;
 using Mikroservice.Site.Domain.Entities;
 
 namespace Mikroservice.Site.Application.Features.HaberFeatures.CreateHaber
@@ -36,6 +37,10 @@ namespace Mikroservice.Site.Application.Features.HaberFeatures.CreateHaber
                 IsDeleted = false
 
             };
+
+            // Ek dosyalari parent navigation kumesine ekle (parent Added -> EF cascade ile kaydeder)
+            IcerikDosyaSync.Apply(newHaber.Dosyalar, request.Dosyalar, icerikId: 0);
+
             await haberRepository.AddAsync(newHaber);
             await unitOfWork.SaveChangesAsync(cancellationToken);
 

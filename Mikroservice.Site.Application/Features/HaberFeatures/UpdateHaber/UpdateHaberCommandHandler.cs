@@ -2,11 +2,13 @@
 using Microservice.Shared;
 using Microservice.Shared.Services.RedisServiceItems;
 using Microservice.Site.Application.Contracts.IRepositories;
+using Mikroservice.Site.Application.Features.Common;
 
 namespace Mikroservice.Site.Application.Features.HaberFeatures.UpdateHaber
 {
     public class UpdateHaberCommandHandler(
           IHaberRepository haberRepository,
+          IIcerikDosyaRepository icerikDosyaRepository,
           IUnitOfWork unitOfWork,
           IRedisCacheService redisCache
         )
@@ -35,6 +37,15 @@ namespace Mikroservice.Site.Application.Features.HaberFeatures.UpdateHaber
             haber.DilId = request.DilId;
             haber.HedefId = request.HedefId;
             haber.PageTypeId = request.PageTypeId;
+
+            // Ek dosyalari senkronize et: mevcutlar TRACKED okunur (guncelleme/silme izlenir),
+            // yeni dosyalar ayrica AddAsync edilir.
+            var mevcutDosyalar = await icerikDosyaRepository.GetTrackedByIcerikIdsAsync(new[] { haber.Id }, cancellationToken);
+            var yeniDosyalar = IcerikDosyaSync.Apply(mevcutDosyalar, request.Dosyalar, haber.Id);
+
+            foreach (var yeni in yeniDosyalar)
+                await icerikDosyaRepository.AddAsync(yeni);
+
             await unitOfWork.SaveChangesAsync(cancellationToken);
 
             //Cache temizleme işlemini yapabilsin diye bu event eklendi.

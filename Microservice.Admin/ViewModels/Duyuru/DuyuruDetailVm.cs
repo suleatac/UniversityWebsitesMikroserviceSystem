@@ -1,3 +1,4 @@
+using Microservice.Admin.ViewModels.IcerikDosya;
 using System.ComponentModel.DataAnnotations;
 
 namespace Microservice.Admin.ViewModels.Duyuru
@@ -6,6 +7,9 @@ namespace Microservice.Admin.ViewModels.Duyuru
     // kurallariyla paralel tutulmustur (istemci tarafi on dogrulama).
     public class DuyuruDetailVm : IValidatableObject
     {
+        // Icerige bagli ek dosyalar (istenilen kadar)
+        public List<IcerikDosyaVm> Dosyalar { get; set; } = new();
+
         public int Id { get; set; }
 
         public int PageTypeId { get; set; }

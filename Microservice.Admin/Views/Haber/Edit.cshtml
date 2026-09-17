@@ -239,6 +239,88 @@
                         </div>
                     </div>
 
+                    <!-- Dosyalar -->
+                    <div class="mb-4">
+                        <h6 class="text-primary border-bottom pb-2">
+                            <i class="mdi mdi-paperclip me-1"></i> Dosyalar
+                        </h6>
+
+                        <p class="text-muted small mb-2">
+                            Habere istediğiniz kadar dosya ekleyebilirsiniz. Kaldırmak istediğiniz
+                            dosyanın çöp ikonu ile silip kaydedin.
+                        </p>
+
+                        <div class="mb-3">
+                            <button type="button" class="btn btn-outline-primary btn-sm" id="btnIcerikDosyaSec">
+                                <i class="mdi mdi-folder-open-outline me-1"></i>
+                                Dosya Yöneticisinden Seç
+                            </button>
+                            <span class="ms-2 text-muted small">
+                                MinIO'ya daha önce yüklediğiniz dosyalardan seçin. Yeni dosyalarınızı
+                                Dosya Yöneticisi ekranından yükleyebilirsiniz.
+                            </span>
+                        </div>
+
+                        <style>
+                            .dosya-drag-handle {
+                                cursor: grab;
+                                color: #adb5bd;
+                                font-size: 1.25rem;
+                                min-width: 28px;
+                                min-height: 28px;
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                                touch-action: none;
+                                -webkit-user-select: none;
+                                user-select: none;
+                            }
+
+                                .dosya-drag-handle:active {
+                                    cursor: grabbing;
+                                }
+
+                            .icerik-dosya-ghost {
+                                background: #e7f1ff !important;
+                                opacity: 0.6;
+                            }
+                        </style>
+
+                        <div id="dosyaListesi">
+                            @for (int i = 0; i < Model.HaberDetail.Dosyalar.Count; i++)
+                            {
+                                var dosya = Model.HaberDetail.Dosyalar[i];
+                                <div class="row g-2 align-items-center mb-2 icerik-dosya-row border rounded p-2 bg-light">
+                                    <input type="hidden" name="HaberDetail.Dosyalar[@i].Id" value="@dosya.Id" />
+                                    <input type="hidden" name="HaberDetail.Dosyalar[@i].DosyaUrl" value="@dosya.DosyaUrl" />
+                                    <input type="hidden" name="HaberDetail.Dosyalar[@i].DosyaAdi" value="@dosya.DosyaAdi" />
+                                    <input type="hidden" name="HaberDetail.Dosyalar[@i].DosyaBoyut" value="@dosya.DosyaBoyut" />
+                                    <input type="hidden" name="HaberDetail.Dosyalar[@i].DosyaTuru" value="@dosya.DosyaTuru" />
+                                    <input type="hidden" name="HaberDetail.Dosyalar[@i].Sira" value="@dosya.Sira" class="dosya-sira" />
+                                    <div class="col-auto dosya-drag-handle" title="Sürükleyerek sırala">
+                                        <i class="mdi mdi-drag-vertical-variant"></i>
+                                    </div>
+                                    <div class="col-md-2 text-center">
+                                        <i class="mdi mdi-file-document-outline fs-4 text-secondary"></i>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <span class="dosya-adi fw-semibold">@dosya.DosyaAdi</span>
+                                        <small class="text-muted d-block">@dosya.DosyaBoyut bytes</small>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <input type="text" name="HaberDetail.Dosyalar[@i].Baslik" value="@dosya.Baslik"
+                                               class="form-control form-control-sm" placeholder="Dosya başlığı (opsiyonel)" />
+                                    </div>
+                                    <div class="col-md-1 text-end">
+                                        <button type="button" class="btn btn-outline-danger btn-sm btn-dosya-kaldir" title="Kaldır">
+                                            <i class="mdi mdi-delete-outline"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+
                     <!-- Form Actions -->
                     <div class="d-flex justify-content-between align-items-center pt-3 border-top">
                         <a asp-action="Index" class="btn btn-outline-secondary">
@@ -276,6 +358,24 @@
     </div>
 </div>
 
+<!-- Dosya Picker Modal (IcerikDosya secimi) -->
+<div class="modal fade" id="dosyaPickerModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="mdi mdi-folder-open-outline me-1"></i>
+                    Dosya Yöneticisinden Seç
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
+            </div>
+            <div class="modal-body p-0" style="height: 600px;">
+                <iframe id="dosyaPickerFrame" src="" style="width:100%; height:100%; border:none;"></iframe>
+            </div>
+        </div>
+    </div>
+</div>
+
 @section scripts {
     <script src="~/assets/js/app.js"></script>
     <!-- Validation Scripts -->
@@ -283,6 +383,8 @@
 
     <!-- TinyMCE -->
     <script src="~/assets/libs/tinymce/tinymce.min.js"></script>
+    <!-- SortableJS (dosya siralama) -->
+    <script src="~/assets/libs/sortablejs/Sortable.min.js"></script>
     <script>
         // ============================================
         // TinyMCE Editör Başlatma
@@ -390,6 +492,110 @@
                 }
             });
         }
+
+        // ============================================
+        // Dosyalar (IcerikDosya) - Yonetici secimi + surukle siralama
+        // ============================================
+        $(function () {
+            const $liste = $('#dosyaListesi');
+            const $btnSec = $('#btnIcerikDosyaSec');
+            const formPrefix = 'HaberDetail';
+
+            function reindexDosyalar() {
+                $liste.find('.icerik-dosya-row').each(function (idx) {
+                    $(this).find('[name]').each(function () {
+                        const name = $(this).attr('name');
+                        $(this).attr('name', name.replace(/Dosyalar\[\d+\]/, 'Dosyalar[' + idx + ']'));
+                    });
+                    // Siralama, listedeki konuma gore otomatik guncellenir
+                    $(this).find('.dosya-sira').val(idx);
+                });
+            }
+
+            function dosyaRowHtml(d) {
+                const i = 0; // index atılırken yeniden düzenlenir
+                const p = formPrefix + '.Dosyalar[' + i + ']';
+                return '' +
+                    '<div class="row g-2 align-items-center mb-2 icerik-dosya-row border rounded p-2 bg-light">' +
+                    '<input type="hidden" name="' + p + '.Id" value="' + (d.id || 0) + '" />' +
+                    '<input type="hidden" name="' + p + '.DosyaUrl" value="' + (d.url || '') + '" />' +
+                    '<input type="hidden" name="' + p + '.DosyaAdi" value="' + (d.dosyaAdi || '') + '" />' +
+                    '<input type="hidden" name="' + p + '.DosyaBoyut" value="' + (d.dosyaBoyut || 0) + '" />' +
+                    '<input type="hidden" name="' + p + '.DosyaTuru" value="' + (d.dosyaTuru || '') + '" />' +
+                    '<input type="hidden" name="' + p + '.Sira" value="0" class="dosya-sira" />' +
+                    '<div class="col-auto dosya-drag-handle" title="Sürükleyerek sırala"><i class="mdi mdi-drag-vertical-variant"></i></div>' +
+                    '<div class="col-md-2 text-center"><i class="mdi mdi-file-document-outline fs-4 text-secondary"></i></div>' +
+                    '<div class="col-md-4"><span class="dosya-adi fw-semibold"></span><small class="text-muted d-block"></small></div>' +
+                    '<div class="col-md-3"><input type="text" name="' + p + '.Baslik" value="" class="form-control form-control-sm" placeholder="Dosya başlığı (opsiyonel)" /></div>' +
+                    '<div class="col-md-1 text-end">' +
+                    '<button type="button" class="btn btn-outline-danger btn-sm btn-dosya-kaldir" title="Kaldır"><i class="mdi mdi-delete-outline"></i></button>' +
+                    '</div></div>';
+            }
+
+            function formatBytes(b) {
+                if (!b) return '';
+                if (b < 1024) return b + ' B';
+                if (b < 1048576) return (b / 1024).toFixed(1) + ' KB';
+                return (b / 1048576).toFixed(1) + ' MB';
+            }
+
+            $btnSec.on('click', function () {
+                $('#dosyaPickerFrame').attr('src', '/File?mode=picker&type=dosya');
+                $('#dosyaPickerModal').modal('show');
+            });
+
+            // Dosya Yöneticisi'nden seçilen dosya (MinIO'da zaten yüklü)
+            window.addEventListener('message', function (event) {
+                if (!event.data || event.data.type !== 'icerik-dosya-selected') return;
+
+                const $row = $(dosyaRowHtml(event.data));
+                $row.find('.dosya-adi').text(event.data.dosyaAdi);
+                $row.find('small').text(formatBytes(event.data.dosyaBoyut));
+                $liste.append($row);
+                reindexDosyalar();
+
+                $('#dosyaPickerModal').modal('hide');
+            });
+
+            $liste.on('click', '.btn-dosya-kaldir', function () {
+                $(this).closest('.icerik-dosya-row').remove();
+                reindexDosyalar();
+            });
+
+            // Siralama: surukle-birak (SortableJS) - banner listesindeki gibi
+            function initDosyaSiralama() {
+                if (!window.Sortable) {
+                    console.warn('SortableJS yuklenmedi - dosya siralama devre disi.');
+                    return;
+                }
+
+                var liste = document.getElementById('dosyaListesi');
+                if (!liste || liste._dosyaSortable) return; // tek sefer baslat
+
+                liste._dosyaSortable = new Sortable(liste, {
+                    handle: '.dosya-drag-handle',
+                    animation: 200,
+                    ghostClass: 'icerik-dosya-ghost',
+                    forceFallback: true,
+                    fallbackTolerance: 3,
+                    onEnd: function () {
+                        reindexDosyalar();
+                    }
+                });
+            }
+
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', initDosyaSiralama);
+            } else {
+                initDosyaSiralama();
+            }
+
+            // Mevcut satırlardaki boyut bilgisini güzelleştir
+            $liste.find('.icerik-dosya-row').each(function () {
+                const boyut = parseInt($(this).find('input[name$=".DosyaBoyut"]').val() || '0', 10);
+                $(this).find('small').text(formatBytes(boyut));
+            });
+        });
 
         // ============================================
         // Validation Summary Göster/Gizle

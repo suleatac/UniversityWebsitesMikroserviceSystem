@@ -8,6 +8,7 @@ using Microservice.Web.ViewModels.Etkinlik;
 using Microservice.Web.ViewModels.GaleriResim;
 using Microservice.Web.ViewModels.Haber;
 using Microservice.Web.ViewModels.Icerik;
+using Microservice.Web.ViewModels.Iletisim;
 using Microservice.Web.ViewModels.Menu;
 using Microservice.Web.ViewModels.PageRoute;
 using Microservice.Web.ViewModels.SitePersonel;
@@ -198,7 +199,7 @@ namespace Microservice.Web.Controllers
                 PageTypeKindEnum.GaleriResimDetay when route.GaleriResimDetay is not null =>
                      await RenderGaleriResimDetayAsync(route),
 
-                PageTypeKindEnum.StaticPage => RenderStaticPage(route),
+                PageTypeKindEnum.StaticPage => await RenderStaticPageAsync(route),
                 _ => RenderNotFound("Bu sayfa türü için tanımlı bir görünüm yok.")
             };
         }
@@ -904,7 +905,7 @@ namespace Microservice.Web.Controllers
         /// /yonetim
         /// /birimler
         /// </summary>
-        private IActionResult RenderStaticPage(RouteResolveResult route)
+        private async Task<IActionResult> RenderStaticPageAsync(RouteResolveResult route)
         {
             var viewName = route.Page.ViewName;
 
@@ -920,6 +921,32 @@ namespace Microservice.Web.Controllers
             var viewPath = GetTemplateViewPath(
                 route.Page.TemplateId,
                 viewName);
+
+            // Iletisim sayfasi form + site iletisim bilgileri gerektirir; model ile render edilir.
+            if (string.Equals(viewName, "Iletisim", StringComparison.OrdinalIgnoreCase))
+            {
+                var habersResult = await _haberService.GetHabersAsync(route.Site.Id, route.LanguageId);
+
+                var latestHabers = (habersResult.Data ?? [])
+                    .OrderByDescending(h => h.YayimTarihi)
+                    .Take(3)
+                    .ToList();
+
+                // Navbar component'inin site bilgisini tekrar cekmesini engellemek icin paylasilir.
+                ViewData["Site"] = route.Site;
+
+                var model = new IletisimPageViewModel {
+                    Site = route.Site,
+                    LanguageCode = route.LanguageCode,
+                    Form = new IletisimMesajiVm { SiteId = route.Site.Id },
+                    SearchUrl = ViewData["SearchPageSlug"] is string searchSlug && !string.IsNullOrWhiteSpace(searchSlug)
+                        ? $"/{route.LanguageCode}/{searchSlug}"
+                        : "/",
+                    LatestHabers = latestHabers
+                };
+
+                return View(viewPath, model);
+            }
 
             return View(viewPath);
         }

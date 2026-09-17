@@ -2,11 +2,13 @@
 using Microservice.Shared;
 using Microservice.Shared.Services.RedisServiceItems;
 using Microservice.Site.Application.Contracts.IRepositories;
+using Mikroservice.Site.Application.Features.Common;
 
 namespace Mikroservice.Site.Application.Features.DuyuruFeatures.UpdateDuyuru
 {
     public class UpdateDuyuruCommandHandler(
           IDuyuruRepository duyuruRepository,
+          IIcerikDosyaRepository icerikDosyaRepository,
           IUnitOfWork unitOfWork,
           IRedisCacheService redisCache
         )
@@ -35,6 +37,15 @@ namespace Mikroservice.Site.Application.Features.DuyuruFeatures.UpdateDuyuru
             duyuru.DilId = request.DilId;
             duyuru.HedefId = request.HedefId;
             duyuru.PageTypeId = request.PageTypeId;
+
+            // Ek dosyalari senkronize et: mevcutlar TRACKED okunur (guncelleme/silme izlenir),
+            // yeni dosyalar ayrica AddAsync edilir.
+            var mevcutDosyalar = await icerikDosyaRepository.GetTrackedByIcerikIdsAsync(new[] { duyuru.Id }, cancellationToken);
+            var yeniDosyalar = IcerikDosyaSync.Apply(mevcutDosyalar, request.Dosyalar, duyuru.Id);
+
+            foreach (var yeni in yeniDosyalar)
+                await icerikDosyaRepository.AddAsync(yeni);
+
             await unitOfWork.SaveChangesAsync(cancellationToken);
 
             //Cache temizleme işlemi.

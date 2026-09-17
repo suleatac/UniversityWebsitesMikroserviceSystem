@@ -371,6 +371,58 @@ namespace Mikroservice.Site.Persistence.Migrations
                     b.UseTphMappingStrategy();
                 });
 
+            modelBuilder.Entity("Mikroservice.Site.Domain.Entities.IcerikDosya", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Baslik")
+                        .HasMaxLength(300)
+                        .HasColumnType("character varying(300)");
+
+                    b.Property<string>("DosyaAdi")
+                        .IsRequired()
+                        .HasMaxLength(300)
+                        .HasColumnType("character varying(300)");
+
+                    b.Property<long>("DosyaBoyut")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("DosyaTuru")
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
+                    b.Property<string>("DosyaUrl")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)");
+
+                    b.Property<int>("IcerikId")
+                        .HasColumnType("integer");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<int>("Sira")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValue(0);
+
+                    b.Property<DateTime>("YuklemeTarihi")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp without time zone")
+                        .HasDefaultValueSql("NOW()");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("IcerikId", "Sira");
+
+                    b.ToTable("IcerikDosya", (string)null);
+                });
+
             modelBuilder.Entity("Mikroservice.Site.Domain.Entities.MediaFile", b =>
                 {
                     b.Property<int>("Id")
@@ -1177,6 +1229,17 @@ namespace Mikroservice.Site.Persistence.Migrations
                     b.Navigation("PageType");
                 });
 
+            modelBuilder.Entity("Mikroservice.Site.Domain.Entities.IcerikDosya", b =>
+                {
+                    b.HasOne("Mikroservice.Site.Domain.Entities.Icerik", "Icerik")
+                        .WithMany("Dosyalar")
+                        .HasForeignKey("IcerikId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Icerik");
+                });
+
             modelBuilder.Entity("Mikroservice.Site.Domain.Entities.MediaFile", b =>
                 {
                     b.HasOne("Mikroservice.Site.Domain.Entities.Dil", "Dil")
@@ -1505,6 +1568,11 @@ namespace Mikroservice.Site.Persistence.Migrations
                     b.Navigation("Children");
 
                     b.Navigation("Sites");
+                });
+
+            modelBuilder.Entity("Mikroservice.Site.Domain.Entities.Icerik", b =>
+                {
+                    b.Navigation("Dosyalar");
                 });
 
             modelBuilder.Entity("Mikroservice.Site.Domain.Entities.PageType", b =>

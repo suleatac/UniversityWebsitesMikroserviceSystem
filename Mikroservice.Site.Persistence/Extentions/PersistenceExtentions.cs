@@ -43,6 +43,7 @@ namespace Microservice.Site.Persistence.Extentions
             services.AddScoped<IHedefRepository, HedefRepository>();
             services.AddScoped<IPageTypeRepository, PageTypeRepository>();
             services.AddScoped<IIcerikRepository, IcerikRepository>();
+            services.AddScoped<IIcerikDosyaRepository, IcerikDosyaRepository>();
             services.AddScoped<IMediaFileRepository, MediaFileRepository>();
             services.AddScoped<IMenuRepository, MenuRepository>();
             services.AddScoped<IPersonelTelefonRepository, PersonelTelefonRepository>();

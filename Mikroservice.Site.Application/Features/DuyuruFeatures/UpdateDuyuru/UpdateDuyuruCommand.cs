@@ -1,9 +1,13 @@
 ﻿using Microservice.Shared;
+using Mikroservice.Site.Application.DTOs.IcerikDosyaDtos;
 
 namespace Mikroservice.Site.Application.Features.DuyuruFeatures.UpdateDuyuru
 {
     public record UpdateDuyuruCommand : IRequestByServiceResult
     {
+        // Icerige bagli ek dosyalar (istege bagli, istenilen kadar)
+        public List<IcerikDosyaInputDto> Dosyalar { get; init; } = new();
+
         public int Id { get; init; }
         public int SiteId { get; init; }
         public int PageTypeId { get; init; }

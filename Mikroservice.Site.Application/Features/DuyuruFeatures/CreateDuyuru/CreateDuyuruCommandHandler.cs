@@ -2,6 +2,7 @@
 using Microservice.Shared;
 using Microservice.Shared.Services.RedisServiceItems;
 using Microservice.Site.Application.Contracts.IRepositories;
+using Mikroservice.Site.Application.Features.Common;
 using Mikroservice.Site.Domain.Entities;
 
 namespace Mikroservice.Site.Application.Features.DuyuruFeatures.CreateDuyuru
@@ -37,6 +38,10 @@ namespace Mikroservice.Site.Application.Features.DuyuruFeatures.CreateDuyuru
                 IsDeleted = false
 
             };
+
+            // Ek dosyalari parent navigation kumesine ekle (parent Added -> EF cascade ile kaydeder)
+            IcerikDosyaSync.Apply(newDuyuru.Dosyalar, request.Dosyalar, icerikId: 0);
+
             await duyuruRepository.AddAsync(newDuyuru);
             await unitOfWork.SaveChangesAsync(cancellationToken);
 

@@ -23,6 +23,7 @@ namespace Microservice.Site.Persistence.Repositories
             return _appDbContext.Set<Duyuru>()
                 .AsNoTracking()
                 .Include(x => x.PageType) // eager loading
+                .Include(x => x.Dosyalar.OrderBy(d => d.Sira)) // ek dosyalar, surukle-birak sirasiyla
                 .FirstOrDefaultAsync(x => x.SiteId == siteId && x.DilId == dilId && x.SeoUrl == seoUrl, cancellationToken);
         }
         public async Task<Duyuru?> GetByIdWithPageTypeAsync(int id, CancellationToken cancellationToken = default)
@@ -30,6 +31,7 @@ namespace Microservice.Site.Persistence.Repositories
             return await _appDbContext.Set<Duyuru>()
                 .AsNoTracking()
                 .Include(x => x.PageType) // eager loading
+                .Include(x => x.Dosyalar.OrderBy(d => d.Sira)) // ek dosyalar, surukle-birak sirasiyla
                 .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
         }
         public async Task<List<Duyuru>> GetBySiteAndLanguageAsync(int siteId, int dilId, CancellationToken cancellationToken)
