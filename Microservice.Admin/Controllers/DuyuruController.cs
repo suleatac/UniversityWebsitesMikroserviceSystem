@@ -140,6 +140,7 @@ namespace Microservice.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(DuyuruEditIndexVm model)
         {
+            ModelState.Remove("DuyuruDetail.SeoUrl");
             if (!ModelState.IsValid)
             {
                 _logger.LogWarning("Update Duyuru - ModelState geçersiz.");

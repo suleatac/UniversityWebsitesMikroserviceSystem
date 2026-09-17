@@ -8,8 +8,6 @@ namespace Microservice.Web.ViewModels.Pages
 
         public PageTypeKindEnum PageTypeKind { get; set; }
 
-        public string Name { get; set; } = null!;
-
         public string Slug { get; set; } = null!;
 
         public int TemplateId { get; set; }

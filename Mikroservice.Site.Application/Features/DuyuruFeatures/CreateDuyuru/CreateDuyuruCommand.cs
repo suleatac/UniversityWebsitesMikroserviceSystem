@@ -1,5 +1,6 @@
 ﻿using Microservice.Shared;
 using Mikroservice.Site.Application.DTOs.IcerikDosyaDtos;
+using Mikroservice.Site.Application.DTOs.IcerikResimDtos;
 
 namespace Mikroservice.Site.Application.Features.DuyuruFeatures.CreateDuyuru
 {
@@ -7,6 +8,9 @@ namespace Mikroservice.Site.Application.Features.DuyuruFeatures.CreateDuyuru
     {
         // Icerige bagli ek dosyalar (istege bagli, istenilen kadar)
         public List<IcerikDosyaInputDto> Dosyalar { get; init; } = new();
+
+        // Icerige bagli galeri resimleri (istege bagli, slider icin)
+        public List<IcerikResimInputDto> Resimler { get; init; } = new();
 
         public int SiteId { get; init; }
         public int PageTypeId { get; init; }

@@ -1,4 +1,5 @@
 ﻿using Microservice.Admin.ViewModels.IcerikDosya;
+using Microservice.Admin.ViewModels.IcerikResim;
 using System.ComponentModel.DataAnnotations;
 
 namespace Microservice.Admin.ViewModels.Haber
@@ -11,6 +12,9 @@ namespace Microservice.Admin.ViewModels.Haber
     {
         // Icerige bagli ek dosyalar (istenilen kadar)
         public List<IcerikDosyaVm> Dosyalar { get; set; } = new();
+
+        // Icerige bagli galeri resimleri (icerik alti slider)
+        public List<IcerikResimVm> Resimler { get; set; } = new();
 
         public int Id { get; set; }
 
@@ -30,11 +34,12 @@ namespace Microservice.Admin.ViewModels.Haber
         public string Baslik { get; set; } = default!;
 
  
+        [Required(ErrorMessage = "Kısa açıklama boş olamaz.")]
         [StringLength(500, ErrorMessage = "Kısa açıklama en fazla 500 karakter olabilir.")]
-        public string? KisaAciklama { get; set; } 
+        public string? KisaAciklama { get; set; }
 
-    
-        public string? IcerikMetni { get; set; } 
+        [Required(ErrorMessage = "İçerik metni boş olamaz.")]
+        public string? IcerikMetni { get; set; }
 
         [StringLength(500, ErrorMessage = "Link en fazla 500 karakter olabilir.")]
         [Url(ErrorMessage = "Geçerli bir link giriniz.")]

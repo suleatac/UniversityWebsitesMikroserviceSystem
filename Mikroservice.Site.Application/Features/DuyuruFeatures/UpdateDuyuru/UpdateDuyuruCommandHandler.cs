@@ -9,6 +9,7 @@ namespace Mikroservice.Site.Application.Features.DuyuruFeatures.UpdateDuyuru
     public class UpdateDuyuruCommandHandler(
           IDuyuruRepository duyuruRepository,
           IIcerikDosyaRepository icerikDosyaRepository,
+          IIcerikResimRepository icerikResimRepository,
           IUnitOfWork unitOfWork,
           IRedisCacheService redisCache
         )
@@ -45,6 +46,13 @@ namespace Mikroservice.Site.Application.Features.DuyuruFeatures.UpdateDuyuru
 
             foreach (var yeni in yeniDosyalar)
                 await icerikDosyaRepository.AddAsync(yeni);
+
+            // Galeri resimlerini senkronize et
+            var mevcutResimler = await icerikResimRepository.GetTrackedByIcerikIdsAsync(new[] { duyuru.Id }, cancellationToken);
+            var yeniResimler = IcerikResimSync.Apply(mevcutResimler, request.Resimler, duyuru.Id);
+
+            foreach (var yeni in yeniResimler)
+                await icerikResimRepository.AddAsync(yeni);
 
             await unitOfWork.SaveChangesAsync(cancellationToken);
 

@@ -247,6 +247,28 @@
         nodes: []
         };
 
+        // Icerik Galeri resmi seciminde bilgi gonderir (url, ad)
+        window.selectIcerikResim = function (urlEnc, adEnc) {
+            const payload = {
+                type: "icerik-resim-selected",
+                url: decodeURIComponent(urlEnc),
+                dosyaAdi: decodeURIComponent(adEnc)
+            };
+
+            if (window.parent && window.parent !== window) {
+                window.parent.postMessage(payload, "*");
+            }
+            else if (window.top && window.top !== window) {
+                window.top.postMessage(payload, "*");
+            }
+            else if (window.opener && !window.opener.closed) {
+                window.opener.postMessage(payload, "*");
+            }
+            else {
+                alert("Ana pencere bulunamadı.");
+            }
+        };
+
         // Icerik Dosya seciminde tam bilgi gonderir (url, ad, boyut, tur)
         window.selectIcerikDosya = function (urlEnc, adEnc, boyut, tur) {
             const payload = {
@@ -321,10 +343,10 @@
         if (!result) return;
 
         var allowedExtensions = [];
-        if (filterType === "image") {
-        allowedExtensions = imageExtensions;
+        if (filterType === "image" || filterType === "resim") {
+            allowedExtensions = imageExtensions;
         } else if (filterType === "video") {
-        allowedExtensions = videoExtensions;
+            allowedExtensions = videoExtensions;
         }
 
         if (allowedExtensions.length > 0) {
@@ -416,14 +438,23 @@
         const dosyaBoyut = data.node.data?.size || 0;
         const dosyaTuru = (dosyaAdi.split('.').pop() || '').toLowerCase();
 
-        if (filterType === "dosya") {
-        // Icerik (Haber/Duyuru) dosya secimi: tam bilgi gonder
-        $("#fileDetails").append(`
-        <hr>
-        <button onclick="window.selectIcerikDosya('${encodeURIComponent(fileUrl)}','${encodeURIComponent(dosyaAdi)}',${dosyaBoyut},'${dosyaTuru}')" class="btn btn-success w-100">
-        <i class="fa fa-check"></i> Dosyayı Seç
-        </button>
-        `);
+        if (filterType === "resim") {
+            // Icerik (Haber/Duyuru) galeri resmi secimi
+            $("#fileDetails").append(`
+            <hr>
+            <button onclick="window.selectIcerikResim('${encodeURIComponent(fileUrl)}','${encodeURIComponent(dosyaAdi)}')" class="btn btn-success w-100">
+            <i class="fa fa-check"></i> Resmi Seç
+            </button>
+            `);
+        }
+        else if (filterType === "dosya") {
+            // Icerik (Haber/Duyuru) dosya secimi: tam bilgi gonder
+            $("#fileDetails").append(`
+            <hr>
+            <button onclick="window.selectIcerikDosya('${encodeURIComponent(fileUrl)}','${encodeURIComponent(dosyaAdi)}',${dosyaBoyut},'${dosyaTuru}')" class="btn btn-success w-100">
+            <i class="fa fa-check"></i> Dosyayı Seç
+            </button>
+            `);
         } else {
         // Detay kısmına "Bu Dosyayı Seç" butonu ekle
         $("#fileDetails").append(`

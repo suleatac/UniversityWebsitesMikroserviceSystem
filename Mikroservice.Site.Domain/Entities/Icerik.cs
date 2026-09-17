@@ -39,5 +39,8 @@
 
         // Bu icerige ait ek dosyalar (Haber/Duyuru vb.)
         public ICollection<IcerikDosya> Dosyalar { get; set; } = new List<IcerikDosya>();
+
+        // Bu icerige ait galeri resimleri (Haber/Duyuru slider)
+        public ICollection<IcerikResim> Resimler { get; set; } = new List<IcerikResim>();
     }
 }

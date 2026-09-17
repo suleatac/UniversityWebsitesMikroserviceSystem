@@ -42,6 +42,9 @@ namespace Mikroservice.Site.Application.Features.DuyuruFeatures.CreateDuyuru
             // Ek dosyalari parent navigation kumesine ekle (parent Added -> EF cascade ile kaydeder)
             IcerikDosyaSync.Apply(newDuyuru.Dosyalar, request.Dosyalar, icerikId: 0);
 
+            // Galeri resimlerini parent navigation kumesine ekle
+            IcerikResimSync.Apply(newDuyuru.Resimler, request.Resimler, icerikId: 0);
+
             await duyuruRepository.AddAsync(newDuyuru);
             await unitOfWork.SaveChangesAsync(cancellationToken);
 

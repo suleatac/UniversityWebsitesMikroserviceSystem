@@ -1,4 +1,5 @@
 ﻿using Mikroservice.Site.Application.DTOs.IcerikDosyaDtos;
+using Mikroservice.Site.Application.DTOs.IcerikResimDtos;
 using Mikroservice.Site.Application.DTOs.PageTypeDtos;
 
 namespace Mikroservice.Site.Application.DTOs.HaberDtos
@@ -34,5 +35,8 @@ namespace Mikroservice.Site.Application.DTOs.HaberDtos
 
         // Icerige bagli ek dosyalar (sidebar "Dosyalar" bolumu)
         public List<IcerikDosyaDto> Dosyalar { get; set; } = new();
+
+        // Icerige bagli galeri resimleri (icerik alti slider)
+        public List<IcerikResimDto> Resimler { get; set; } = new();
     }
 }

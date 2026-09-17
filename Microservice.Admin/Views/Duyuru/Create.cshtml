@@ -132,7 +132,7 @@
                             <div class="col-md-4">
                                 <div class="mb-3">
                                     <label asp-for="CreateDuyuru.KisaAciklama" class="form-label">
-                                        Kısa Açıklama 
+                                        Kısa Açıklama <span class="text-danger">*</span>
                                     </label>
 
                                     <div class="input-group">
@@ -163,7 +163,7 @@
                         <!-- İçerik -->
                         <div class="mb-3">
                             <label asp-for="CreateDuyuru.IcerikMetni" class="form-label">
-                                İçerik Metni 
+                                İçerik Metni <span class="text-danger">*</span>
                             </label>
 
                             <textarea asp-for="CreateDuyuru.IcerikMetni"
@@ -399,6 +399,56 @@
                         </div>
                     </div>
 
+                    <!-- Galeri Resimleri -->
+                    <div class="mb-4">
+                        <h6 class="text-primary border-bottom pb-2">
+                            <i class="mdi mdi-image-multiple me-1"></i>
+                            Galeri Resimleri
+                        </h6>
+
+                        <p class="text-muted small mb-2">
+                            Bu resimler site tarafinda icerik metninin altindaki slider bolumunda
+                            gosterilir. Istediğiniz kadar resim ekleyebilir, tutamacdan surukleyerek siralayabilirsiniz.
+                        </p>
+
+                        <div class="mb-3">
+                            <button type="button" class="btn btn-outline-primary btn-sm" id="btnIcerikResimSec">
+                                <i class="mdi mdi-image-plus me-1"></i>
+                                Dosya Yöneticisinden Resim Seç
+                            </button>
+                            <span class="ms-2 text-muted small">
+                                Resimleri once Dosya Yoneticisi ile MinIO'ya yukleyin, ardindan buradan secin.
+                            </span>
+                        </div>
+
+                        <div id="resimListesi">
+                            @for (int i = 0; i < Model.CreateDuyuru.Resimler.Count; i++)
+                            {
+                                var resim = Model.CreateDuyuru.Resimler[i];
+                                <div class="row g-2 align-items-center mb-2 icerik-resim-row border rounded p-2 bg-light">
+                                    <input type="hidden" name="CreateDuyuru.Resimler[@i].Id" value="@resim.Id" />
+                                    <input type="hidden" name="CreateDuyuru.Resimler[@i].ResimUrl" value="@resim.ResimUrl" />
+                                    <input type="hidden" name="CreateDuyuru.Resimler[@i].Sira" value="@resim.Sira" class="resim-sira" />
+                                    <div class="col-auto dosya-drag-handle" title="Sürükleyerek sırala">
+                                        <i class="mdi mdi-drag-vertical-variant"></i>
+                                    </div>
+                                    <div class="col-auto">
+                                        <img src="@resim.ResimUrl" alt="" style="width:64px; height:44px; object-fit:cover; border-radius:4px; border:1px solid #dee2e6;" />
+                                    </div>
+                                    <div class="col-md-6">
+                                        <input type="text" name="CreateDuyuru.Resimler[@i].Baslik" value="@resim.Baslik"
+                                               class="form-control form-control-sm" placeholder="Resim başlığı / alt yazı (opsiyonel)" />
+                                    </div>
+                                    <div class="col-md-1 text-end">
+                                        <button type="button" class="btn btn-outline-danger btn-sm btn-resim-kaldir" title="Kaldır">
+                                            <i class="mdi mdi-delete-outline"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+
                     <!-- Buttons -->
                     <div class="d-flex justify-content-end gap-2 pt-3 border-top">
 
@@ -466,6 +516,24 @@
             </div>
             <div class="modal-body p-0" style="height: 600px;">
                 <iframe id="dosyaPickerFrame" src="" style="width:100%; height:100%; border:none;"></iframe>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Resim Picker Modal (IcerikResim secimi) -->
+<div class="modal fade" id="resimPickerModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="mdi mdi-image-multiple me-1"></i>
+                    Dosya Yöneticisinden Resim Seç
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
+            </div>
+            <div class="modal-body p-0" style="height: 600px;">
+                <iframe id="resimPickerFrame" src="" style="width:100%; height:100%; border:none;"></iframe>
             </div>
         </div>
     </div>
@@ -715,6 +783,89 @@
                 const boyut = parseInt($(this).find('input[name$=".DosyaBoyut"]').val() || '0', 10);
                 $(this).find('small').text(formatBytes(boyut));
             });
+        })();
+
+        // ===== Galeri Resimleri (IcerikResim) - Yonetici secimi + surukle siralama =====
+        (function () {
+            const $liste = $('#resimListesi');
+            if (!$liste.length) return;
+
+            const $btnSec = $('#btnIcerikResimSec');
+            const formPrefix = 'CreateDuyuru';
+
+            function reindexResimler() {
+                $liste.find('.icerik-resim-row').each(function (idx) {
+                    $(this).find('[name]').each(function () {
+                        const name = $(this).attr('name');
+                        $(this).attr('name', name.replace(/Resimler\[\d+\]/, 'Resimler[' + idx + ']'));
+                    });
+                    // Siralama, listedeki konuma gore otomatik guncellenir
+                    $(this).find('.resim-sira').val(idx);
+                });
+            }
+
+            function resimRowHtml(d) {
+                const p = formPrefix + '.Resimler[0]';
+                return '' +
+                    '<div class="row g-2 align-items-center mb-2 icerik-resim-row border rounded p-2 bg-light">' +
+                    '<input type="hidden" name="' + p + '.Id" value="0" />' +
+                    '<input type="hidden" name="' + p + '.ResimUrl" value="' + (d.url || '') + '" />' +
+                    '<input type="hidden" name="' + p + '.Sira" value="0" class="resim-sira" />' +
+                    '<div class="col-auto dosya-drag-handle" title="Sürükleyerek sırala"><i class="mdi mdi-drag-vertical-variant"></i></div>' +
+                    '<div class="col-auto"><img src="' + (d.url || '') + '" alt="" style="width:64px; height:44px; object-fit:cover; border-radius:4px; border:1px solid #dee2e6;" /></div>' +
+                    '<div class="col-md-6"><input type="text" name="' + p + '.Baslik" value="" class="form-control form-control-sm" placeholder="Resim başlığı / alt yazı (opsiyonel)" /></div>' +
+                    '<div class="col-md-1 text-end">' +
+                    '<button type="button" class="btn btn-outline-danger btn-sm btn-resim-kaldir" title="Kaldır"><i class="mdi mdi-delete-outline"></i></button>' +
+                    '</div></div>';
+            }
+
+            $btnSec.on('click', function () {
+                $('#resimPickerFrame').attr('src', '/File?mode=picker&type=resim');
+                $('#resimPickerModal').modal('show');
+            });
+
+            // Dosya Yöneticisi'nden secilen resim (MinIO'da zaten yuklu)
+            window.addEventListener('message', function (event) {
+                if (!event.data || event.data.type !== 'icerik-resim-selected') return;
+
+                $liste.append($(resimRowHtml(event.data)));
+                reindexResimler();
+
+                $('#resimPickerModal').modal('hide');
+            });
+
+            $liste.on('click', '.btn-resim-kaldir', function () {
+                $(this).closest('.icerik-resim-row').remove();
+                reindexResimler();
+            });
+
+            // Siralama: surukle-birak (SortableJS)
+            function initResimSiralama() {
+                if (!window.Sortable) {
+                    console.warn('SortableJS yuklenmedi - resim siralama devre disi.');
+                    return;
+                }
+
+                var liste = document.getElementById('resimListesi');
+                if (!liste || liste._resimSortable) return; // tek sefer baslat
+
+                liste._resimSortable = new Sortable(liste, {
+                    handle: '.dosya-drag-handle',
+                    animation: 200,
+                    ghostClass: 'icerik-dosya-ghost',
+                    forceFallback: true,
+                    fallbackTolerance: 3,
+                    onEnd: function () {
+                        reindexResimler();
+                    }
+                });
+            }
+
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', initResimSiralama);
+            } else {
+                initResimSiralama();
+            }
         })();
 
         // TinyMCE File Manager

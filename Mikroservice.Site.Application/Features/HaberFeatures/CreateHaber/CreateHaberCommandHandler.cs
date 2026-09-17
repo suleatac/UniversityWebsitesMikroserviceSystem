@@ -41,6 +41,9 @@ namespace Mikroservice.Site.Application.Features.HaberFeatures.CreateHaber
             // Ek dosyalari parent navigation kumesine ekle (parent Added -> EF cascade ile kaydeder)
             IcerikDosyaSync.Apply(newHaber.Dosyalar, request.Dosyalar, icerikId: 0);
 
+            // Galeri resimlerini parent navigation kumesine ekle
+            IcerikResimSync.Apply(newHaber.Resimler, request.Resimler, icerikId: 0);
+
             await haberRepository.AddAsync(newHaber);
             await unitOfWork.SaveChangesAsync(cancellationToken);
 

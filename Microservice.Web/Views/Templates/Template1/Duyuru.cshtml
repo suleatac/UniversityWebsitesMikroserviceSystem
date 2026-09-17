@@ -140,22 +140,12 @@
 
                                             <div class="col-md-6 col-sm-6">
                                                 <h4 class="text small-text">KATEGORİ</h4>
-                                                <p>@duyuru.PageType?.Name</p>
+                                                <p>@duyuru.PageType?.PageTypeKind</p>
                                             </div>
 
                                         </div><!--/course-info-->
-                                        <div class="content-content">
-                                            <div class="content-dropcap v1">
-                                                @if (!string.IsNullOrWhiteSpace(duyuru.IcerikMetni))
-                                                {
-                                                    @Html.Raw(duyuru.IcerikMetni)
-                                                }
-                                                else
-                                                {
-                                                    <p>Bu duyuru için içerik girilmemiş.</p>
-                                                }
-                                            </div>
 
+                                        <div class="content-content">
                                             <div class="content-pad v1">
                                                 <ul class="list-inline social-light">
                                                     <li>
@@ -202,6 +192,39 @@
                                                     </li>
                                                 </ul>
                                             </div>
+                                            <div class="content-dropcap v1">
+                                                @if (!string.IsNullOrWhiteSpace(duyuru.IcerikMetni))
+                                                {
+                                                    @Html.Raw(duyuru.IcerikMetni)
+                                                }
+                                                else
+                                                {
+                                                    <p>Bu duyuru için içerik girilmemiş.</p>
+                                                }
+                                            </div>
+
+                                            @* Galeri Resimleri Slider (Admin > Duyuru > Galeri Resimleri) *@
+                                            @if (duyuru.Resimler is { Count: > 0 })
+                                            {
+                                                <div class="content-pad icerik-resim-slider">
+                                                    <div class="owl-carousel owl-theme icerik-resim-carousel">
+                                                        @foreach (var resim in duyuru.Resimler.OrderBy(r => r.Sira))
+                                                        {
+                                                            <div class="item">
+                                                                <a href="@resim.ResimUrl" target="_blank" rel="noopener" title="Büyütmek için tıklayın">
+                                                                    <img src="@resim.ResimUrl" alt="@(string.IsNullOrWhiteSpace(resim.Baslik) ? duyuru.Baslik : resim.Baslik)" loading="lazy" />
+                                                                </a>
+                                                                @if (!string.IsNullOrWhiteSpace(resim.Baslik))
+                                                                {
+                                                                    <p class="slider-caption">@resim.Baslik</p>
+                                                                }
+                                                            </div>
+                                                        }
+                                                    </div>
+                                                </div><!-- /icerik-resim-slider -->
+                                            }
+
+                                        
 
                                             <div class="content-pad calendar-import">
                                                 <a class="flat-button" href="@Model.DuyuruListUrl">
@@ -264,7 +287,7 @@
                        <!-- WIDGET DOSYALAR -->
                        @if (duyuru.Dosyalar is { Count: > 0 })
                        {
-                           <div class="widget widget-dosyalar">
+                           <div class="widget widget-dosyalar ">
                                <h2 class="widget-title">Dosyalar</h2>
                                <ul class="recent-posts clearfix" style="list-style:none; padding-left:0;">
                                    @foreach (var dosya in duyuru.Dosyalar.OrderBy(d => d.Sira))
@@ -297,6 +320,24 @@
 
 @section Scripts {
     <script type="text/javascript">
+        // Galeri resimleri slider (owlCarousel)
+        (function () {
+            var $car = $('.icerik-resim-carousel');
+            if (!$car.length || !$.fn.owlCarousel) return;
+
+            $car.owlCarousel({
+                loop: $car.children('.item').length > 1,
+                nav: true,
+                dots: true,
+                margin: 10,
+                items: 1,
+                autoplay: true,
+                autoplayTimeout: 5000,
+                autoplayHoverPause: true,
+                navText: ['', '']
+            });
+        })();
+
         // Baglanti kopyalama butonu
         (function () {
             var btn = document.getElementById('copy-link-btn');

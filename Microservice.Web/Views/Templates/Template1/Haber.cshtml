@@ -148,7 +148,7 @@
 
                                             <div class="col-md-6 col-sm-6">
                                                 <h4 class="text small-text">KATEGORİ</h4>
-                                                <p>@haber.PageType?.Name</p>
+                                                <p>@haber.PageType?.PageTypeKind</p>
                                             </div>
 
                                         </div><!--/course-info-->
@@ -163,6 +163,27 @@
                                                     <p>Bu haber için içerik girilmemiş.</p>
                                                 }
                                             </div>
+
+                                            @* Galeri Resimleri Slider (Admin > Haber > Galeri Resimleri) *@
+                                            @if (haber.Resimler is { Count: > 0 })
+                                            {
+                                                <div class="content-pad icerik-resim-slider">
+                                                    <div class="owl-carousel owl-theme icerik-resim-carousel">
+                                                        @foreach (var resim in haber.Resimler.OrderBy(r => r.Sira))
+                                                        {
+                                                            <div class="item">
+                                                                <a href="@resim.ResimUrl" target="_blank" rel="noopener" title="Büyütmek için tıklayın">
+                                                                    <img src="@resim.ResimUrl" alt="@(string.IsNullOrWhiteSpace(resim.Baslik) ? haber.Baslik : resim.Baslik)" loading="lazy" />
+                                                                </a>
+                                                                @if (!string.IsNullOrWhiteSpace(resim.Baslik))
+                                                                {
+                                                                    <p class="slider-caption">@resim.Baslik</p>
+                                                                }
+                                                            </div>
+                                                        }
+                                                    </div>
+                                                </div><!-- /icerik-resim-slider -->
+                                            }
 
                                             <div class="content-pad v1">
                                                 <ul class="list-inline social-light">
@@ -305,6 +326,24 @@
 
 @section Scripts {
     <script type="text/javascript">
+        // Galeri resimleri slider (owlCarousel)
+        (function () {
+            var $car = $('.icerik-resim-carousel');
+            if (!$car.length || !$.fn.owlCarousel) return;
+
+            $car.owlCarousel({
+                loop: $car.children('.item').length > 1,
+                nav: true,
+                dots: true,
+                margin: 10,
+                items: 1,
+                autoplay: true,
+                autoplayTimeout: 5000,
+                autoplayHoverPause: true,
+                navText: ['', '']
+            });
+        })();
+
         // Baglanti kopyalama butonu
         (function () {
             var btn = document.getElementById('copy-link-btn');

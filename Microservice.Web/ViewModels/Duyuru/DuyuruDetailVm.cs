@@ -1,4 +1,5 @@
 using Microservice.Web.ViewModels.IcerikDosya;
+using Microservice.Web.ViewModels.IcerikResim;
 using Microservice.Web.ViewModels.Pages;
 using System.ComponentModel.DataAnnotations;
 
@@ -37,6 +38,8 @@ namespace Microservice.Web.ViewModels.Duyuru
         public PagesDetailVm PageType { get; set; } = default!;
 
         public List<IcerikDosyaVm> Dosyalar { get; set; } = new();
+
+        public List<IcerikResimVm> Resimler { get; set; } = new();
 
     }
 }

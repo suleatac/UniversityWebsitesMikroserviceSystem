@@ -3305,3 +3305,63 @@ body.mac .dropcap {
 	}
 }
 
+/* ============================================================
+	  Icerik Galeri Resimleri Slider (Duyuru / Haber detay)
+	  ============================================================ */
+.icerik-resim-slider {
+	margin-top: 10px;
+	margin-bottom: 10px;
+}
+
+	.icerik-resim-slider .owl-carousel .item {
+		position: relative;
+		border: 1px solid #e2e6ea;
+		border-radius: 6px;
+		overflow: hidden;
+		background: #f7f9fb;
+	}
+
+	.icerik-resim-slider .owl-carousel .item img {
+		display: block;
+		width: 100%;
+		height: 380px;
+		object-fit: cover;
+	}
+
+	.icerik-resim-slider .slider-caption {
+		margin: 0;
+		padding: 10px 14px;
+		background: rgba(255, 255, 255, 0.92);
+		color: #333;
+		font-size: 14px;
+		line-height: 1.4;
+		text-align: center;
+		border-top: 1px solid #e2e6ea;
+	}
+
+	.icerik-resim-slider .owl-theme .owl-controls .owl-nav div {
+		background: #179bd7;
+		color: #fff;
+		opacity: 0.85;
+	}
+
+		.icerik-resim-slider .owl-theme .owl-controls .owl-nav div:hover {
+			opacity: 1;
+			background: #1287bd;
+		}
+
+	.icerik-resim-slider .owl-theme .owl-dots .owl-dot span {
+		background: #d7dde3;
+	}
+
+	.icerik-resim-slider .owl-theme .owl-dots .owl-dot.active span,
+	.icerik-resim-slider .owl-theme .owl-dots .owl-dot:hover span {
+		background: #179bd7;
+	}
+
+@media only screen and (max-width: 767px) {
+	.icerik-resim-slider .owl-carousel .item img {
+		height: 220px;
+	}
+}
+
