@@ -32,9 +32,11 @@ namespace Microservice.Admin.Services
                 .WithObjectSize(file.Length)
                 .WithContentType(file.ContentType));
 
-            // ❗ artık presigned yok
-            var url = $"{_settings.Endpoint}/{_settings.BucketName}/{objectName}";
-            return url;
+            // Iceriklere artik goreceli yol kaydedilir (ornek: /media/site/1/haber/abc.jpg).
+            // Ziyaretci tarayicisi bu yolu icinde bulunulan sitenin DNS'i uzerinden ister;
+            // nginx /media/ isteklerini ic agdaki MinIO'ya proxy'ler.
+            var prefix = string.IsNullOrWhiteSpace(_settings.PublicPrefix) ? "/media/" : _settings.PublicPrefix;
+            return $"{prefix.TrimEnd('/')}/{objectName}";
         }
     }
 }

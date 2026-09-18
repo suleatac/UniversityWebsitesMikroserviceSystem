@@ -2,6 +2,14 @@
     ViewData["Title"] = "File Manager";
     Layout =  null ;
     var siteId = ViewBag.SiteId ?? 0;
+
+    // Iceriklere kaydedilecek goreceli yol on eki (nginx /media -> MinIO proxy).
+    var publicBaseUrl = (string?)(ViewBag.PublicPrefix) ?? "/media/";
+
+    // Admin panelinin kendi onizlemesi icin adres (dev'de dogrudan MinIO).
+    var previewBaseUrl = string.IsNullOrWhiteSpace((string?)(ViewBag.PreviewBaseUrl))
+        ? publicBaseUrl
+        : (string)ViewBag.PreviewBaseUrl;
 }
 <link href="~/assets/css/bootstrap.min.css" id="bootstrap-style" rel="stylesheet" type="text/css" />
     <link href="https://cdn.jsdelivr.net/npm/jquery.fancytree/dist/skin-win8/ui.fancytree.min.css" rel="stylesheet">
@@ -231,7 +239,12 @@
  <script>
         let selectedNode = null;
         const siteId = @siteId;
-        const baseUrl = "http://localhost:9000/site-media/"; // MinIO CDN linkin
+
+        // publicBaseUrl: icerige kaydedilen goreceli adres (/media/site/1/...)
+        // previewBaseUrl: yalnizca admin panelindeki onizeme/indirme icin kullanilir
+        const publicBaseUrl = "@publicBaseUrl";
+        const previewBaseUrl = "@previewBaseUrl";
+        const baseUrl = previewBaseUrl;
 
 
         const pickerMode = '@ViewBag.Mode'; // "picker" olup olmadığını kontrol et
@@ -433,7 +446,8 @@
 
         // EĞER PICKER MODUNDAYSANIZ VE BİR DOSYA SEÇİLDİYSE "SEÇ" BUTONU EKLEYELİM
         if (pickerMode === "picker" && !data.node.folder) {
-        const fileUrl = baseUrl + data.node.key;
+        // Secilen dosya icerige goreceli yolla yazilir
+        const fileUrl = publicBaseUrl + data.node.key;
         const dosyaAdi = data.node.title || "";
         const dosyaBoyut = data.node.data?.size || 0;
         const dosyaTuru = (dosyaAdi.split('.').pop() || '').toLowerCase();

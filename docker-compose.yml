@@ -7,10 +7,15 @@ services:
       - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD}
     command: server /data --console-address ":9001"
     networks:
+      # university-network: Admin/API'lerin ic erisimi
+      # nginx_network: nginx'in /media proxy'si icin (dis DNS'e asla acilmaz)
       - university-network
+      - nginx_network
     volumes:
       - minio_data:/data
     ports:
+      # Yalnizca sunucunun kendisinden erisilebilir (nginx container'i network uzerinden
+      # zaten "minio:9000" ile ulasir; bu baglama sadece host uzerinden yonetis/teslim icin).
       - "9000:9000"
       - "9001:9001"
     restart: unless-stopped
@@ -335,8 +340,9 @@ volumes:
 
 networks:
   university-network:
-    # external: true
-    driver: bridge
+    external: true
+    # driver: bridge
+
 
 
 

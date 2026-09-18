@@ -14,6 +14,10 @@ namespace Mikroservice.Site.Persistence.Services
 
         private const string ProxyPassUrl = "http://microservice.web:8080";//Ana web projesine yönlendirme için kullanılan URL.
 
+        // Admin panelinin yukladigi dosyalarin (MinIO) okundugu ic adres.
+        // nginx container'i minio ile ayni agda (nginx_network) olmali.
+        private const string MediaProxyPassUrl = "http://minio:9000/site-media/";
+
         public async Task ApplyAsync(
         string siteAlanAdi,
         string? previousSiteAlanAdi,
@@ -91,6 +95,16 @@ namespace Mikroservice.Site.Persistence.Services
                 ssl_certificate_key {{CertificateDirectory}}/{{CertificateBaseName}}.key;
 
                 ssl_protocols TLSv1.2 TLSv1.3;
+
+                # Admin panelinden yuklenen medya dosyalari (MinIO).
+                # Iceriklerdeki goreceli /media/... yollari buradan ic agdaki MinIO'ya gider;
+                # MinIO dis DNS'e asla acilmaz.
+                location /media/ {
+                    proxy_pass {{MediaProxyPassUrl}};
+                    proxy_buffering off;
+                    expires 30d;
+                    add_header Cache-Control "public, max-age=2592000";
+                }
 
                 location / {
                     proxy_pass {{ProxyPassUrl}};

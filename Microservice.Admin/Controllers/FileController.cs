@@ -1,6 +1,8 @@
 ﻿using Microservice.Admin.Services.Interfaces;
+using Microservice.Admin.Settings;
 using Microservice.Admin.ViewModels.File;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 
 namespace Microservice.Admin.Controllers
 {
@@ -8,10 +10,12 @@ namespace Microservice.Admin.Controllers
     public class FileController : Controller
     {
         private readonly IMinioService _minioService;
+        private readonly MinioSetting _minioSettings;
 
-        public FileController(IMinioService minioService)
+        public FileController(IMinioService minioService, IOptions<MinioSetting> minioSettings)
         {
             _minioService = minioService;
+            _minioSettings = minioSettings.Value;
         }
         public async Task<IActionResult> Index( string? mode = null, string? type = null)
         {
@@ -20,6 +24,14 @@ namespace Microservice.Admin.Controllers
             ViewBag.SiteId = currentSiteId;
             ViewBag.Mode = mode;
             ViewBag.Type = type;
+
+            // Iceriklere kaydedilecek goreceli yol on eki (nginx /media -> MinIO proxy'ler).
+            ViewBag.PublicPrefix = _minioSettings.PublicPrefix;
+
+            // Admin panelinin kendi onizlemesi icin adres; bos birakilirsa PublicPrefix kullanilir.
+            ViewBag.PreviewBaseUrl = string.IsNullOrWhiteSpace(_minioSettings.PreviewBaseUrl)
+                ? _minioSettings.PublicPrefix
+                : _minioSettings.PreviewBaseUrl;
 
             // ✅ picker modunda layout kullanma
             if (mode == "picker")
