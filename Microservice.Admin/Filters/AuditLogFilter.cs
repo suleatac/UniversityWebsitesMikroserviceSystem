@@ -3,6 +3,7 @@ using Microservice.Admin.Services.Interfaces;
 using Microservice.Admin.ViewModels.AuditLog;
 using Microsoft.AspNetCore.Mvc.Filters;
 using System.Diagnostics;
+using System.Security.Claims;
 
 namespace Microservice.Admin.Filters
 {
@@ -98,7 +99,9 @@ namespace Microservice.Admin.Filters
 
                 var log = new CreateAuditLogVm
                 {
-                    UserId = user.FindFirst("sub")?.Value ?? "-1",
+                    UserId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value
+                             ?? user.FindFirst("sub")?.Value
+                             ?? "-1",
                     Username = user.Identity?.Name?? "Anonymous",
                     Action = actionType,
                     TraceId = Activity.Current?.TraceId.ToString()

@@ -13,21 +13,28 @@ namespace Microservice.Admin.Services
 {
     public class AuthService : IAuthService
     {
+        // LDAP kullanıcıları için Keycloak sub claim'i her zaman GUID olmayabilir.
+        // Bu durumda deterministik bir GUID üretilir (v5 benzeri).
+        private static readonly Guid UserIdNamespace = new("6ba7b812-9dad-11d1-80b4-00c04fd430c8");
+
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly ITokenService _tokenService;
         private readonly ILogger<AuthService> _logger;
         private readonly LdapSetting _ldapSettings;
+        private readonly AuthCookieSetting _authCookieSettings;
 
         public AuthService(
             IHttpContextAccessor httpContextAccessor,
             ITokenService tokenService,
             ILogger<AuthService> logger,
-            IOptions<LdapSetting> ldapSettings)
+            IOptions<LdapSetting> ldapSettings,
+            IOptions<AuthCookieSetting> authCookieSettings)
         {
             _httpContextAccessor = httpContextAccessor;
             _tokenService = tokenService;
             _logger = logger;
             _ldapSettings = ldapSettings.Value;
+            _authCookieSettings = authCookieSettings.Value;
         }
 
         public async Task<ServiceResult> AuthenticateAsync(SignInVm signInViewModel)
@@ -84,17 +91,16 @@ namespace Microservice.Admin.Services
                     );
                 }
 
-                // Claimleri çıkar
+                // Claimleri çıkar ve minimum sete indir.
+                // Access token içindeki jti/iat/nbf/iss/aud/sid gibi kullanılmayan
+                // claim'ler cookie'ye taşınmaz. Token'ın kendisi de cookie'ye yazılmaz.
                 var userClaims = _tokenService
                     .ExtractClaims(tokenResponse.Data.AccessToken);
 
-                var filteredClaims = userClaims
-                    .Where(c =>
-                        c.Type == "sub" ||
-                        c.Type == ClaimTypes.Name ||
-                        c.Type == ClaimTypes.NameIdentifier ||
-                        c.Type == ClaimTypes.Role)
-                    .ToList();
+                var filteredClaims = AuthClaimsFactory.Build(userClaims, _authCookieSettings);
+
+                // sub claim'i yoksa veya GUID değilse UserId doğrulaması kırılmasın diye tamamla.
+                EnsureSubjectClaim(filteredClaims, signInViewModel.Username);
 
                 var claimsIdentity = new ClaimsIdentity(
                     filteredClaims,
@@ -131,6 +137,68 @@ namespace Microservice.Admin.Services
                     "System Error",
                     "Beklenmeyen bir hata oluştu.");
             }
+        }
+
+        /// <summary>
+        /// sub claim'i yoksa veya Guid'e çevrilemiyorsa, kullanıcı adından deterministik bir
+        /// Guid üretip <c>sub</c> ve <see cref="ClaimTypes.NameIdentifier"/> claim'lerine ekler.
+        /// </summary>
+        private static void EnsureSubjectClaim(List<Claim> claims, string? username)
+        {
+            var subject = claims
+                .FirstOrDefault(c => string.Equals(c.Type, ClaimTypes.NameIdentifier, StringComparison.Ordinal))
+                ?.Value
+                ?? claims.FirstOrDefault(c => string.Equals(c.Type, "sub", StringComparison.Ordinal))?.Value;
+
+            if (Guid.TryParse(subject, out _))
+            {
+                return;
+            }
+
+            var normalizedUserName = string.IsNullOrWhiteSpace(username) ? "unknown" : username.Trim();
+            var generated = CreateDeterministicGuid(UserIdNamespace, normalizedUserName.ToLowerInvariant());
+
+            claims.RemoveAll(c =>
+                string.Equals(c.Type, ClaimTypes.NameIdentifier, StringComparison.Ordinal) ||
+                string.Equals(c.Type, "sub", StringComparison.Ordinal));
+
+            claims.Add(new Claim(ClaimTypes.NameIdentifier, generated.ToString()));
+            claims.Add(new Claim("sub", generated.ToString()));
+        }
+
+        /// <summary>
+        /// RFC 4122 v5 benzeri (isim tabanlı) deterministik GUID üretir.
+        /// </summary>
+        private static Guid CreateDeterministicGuid(Guid namespaceId, string name)
+        {
+            var namespaceBytes = namespaceId.ToByteArray();
+            SwapByteOrder(namespaceBytes);
+
+            var nameBytes = System.Text.Encoding.UTF8.GetBytes(name);
+            var data = new byte[namespaceBytes.Length + nameBytes.Length];
+
+            Buffer.BlockCopy(namespaceBytes, 0, data, 0, namespaceBytes.Length);
+            Buffer.BlockCopy(nameBytes, 0, data, namespaceBytes.Length, nameBytes.Length);
+
+            var hash = System.Security.Cryptography.SHA1.HashData(data);
+            var newGuid = new byte[16];
+            Array.Copy(hash, newGuid, 16);
+
+            newGuid[6] = (byte)((newGuid[6] & 0x0F) | 0x50); // version 5
+            newGuid[8] = (byte)((newGuid[8] & 0x3F) | 0x80); // variant
+
+            SwapByteOrder(newGuid);
+            return new Guid(newGuid);
+        }
+
+        private static void SwapByteOrder(byte[] guid)
+        {
+            // Guid.ToByteArray(): [0-3] int (little endian), [4-5] short (little endian),
+            // [6-7] short (little endian), [8-15] big endian
+            (guid[0], guid[3]) = (guid[3], guid[0]);
+            (guid[1], guid[2]) = (guid[2], guid[1]);
+            (guid[4], guid[5]) = (guid[5], guid[4]);
+            (guid[6], guid[7]) = (guid[7], guid[6]);
         }
 
         private async Task<bool> LdapAuthenticationAsync(string username, string password)

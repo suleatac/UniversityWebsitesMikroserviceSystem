@@ -15,6 +15,15 @@ namespace Microservice.Admin.Services
         private ClaimsPrincipal User =>
             _httpContextAccessor.HttpContext!.User;
 
+        /// <summary>
+        /// Kimlik sağlayıcıdan gelen subject claim'i. Token farklı kaynaklardan
+        /// üretilebildiği için hem "sub" hem de <see cref="ClaimTypes.NameIdentifier"/>
+        /// kontrol edilir.
+        /// </summary>
+        private string? Subject =>
+            User?.FindFirst(ClaimTypes.NameIdentifier)?.Value
+            ?? User?.FindFirst("sub")?.Value;
+
         public bool IsAuthenticated =>
             User?.Identity?.IsAuthenticated == true;
 
@@ -25,12 +34,15 @@ namespace Microservice.Admin.Services
                 if (!IsAuthenticated)
                     throw new Exception("User is not authenticated");
 
-                var sub = User?.FindFirst("sub")?.Value;
+                var subject = Subject;
 
-                if (string.IsNullOrEmpty(sub))
+                if (string.IsNullOrEmpty(subject))
                     throw new Exception("UserId (sub claim) not found");
 
-                return Guid.Parse(sub);
+                if (!Guid.TryParse(subject, out var userId))
+                    throw new Exception($"UserId (sub claim) is not a valid Guid: {subject}");
+
+                return userId;
             }
         }
 
@@ -41,12 +53,12 @@ namespace Microservice.Admin.Services
                 if (!IsAuthenticated)
                     throw new Exception("User is not authenticated");
 
-                var sub = User?.FindFirst("sub")?.Value;
+                var subject = Subject;
 
-                if (string.IsNullOrEmpty(sub))
+                if (string.IsNullOrEmpty(subject))
                     throw new Exception("KeycloakUserId (sub claim) not found");
 
-                return sub;
+                return subject;
             }
         }
 

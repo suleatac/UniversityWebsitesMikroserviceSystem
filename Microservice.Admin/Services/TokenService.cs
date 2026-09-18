@@ -4,6 +4,7 @@ using Microservice.Admin.Services.ServiceResults;
 using Microservice.Admin.Settings;
 using Microservice.Admin.ViewModels.SignIn;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.Extensions.Options;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 
@@ -12,7 +13,8 @@ namespace Microservice.Admin.Services
     public class TokenService(
         IHttpClientFactory httpClientFactory,
         IdentitySetting identitySetting,
-        IRedisCacheService redisCacheService
+        IRedisCacheService redisCacheService,
+        IOptions<AuthCookieSetting> authCookieSetting
         ):ITokenService
     {
 
@@ -25,33 +27,29 @@ namespace Microservice.Admin.Services
         }
         public AuthenticationProperties CreateAuthenticationProperties(TokenResponse tokenResponse)
         {
-            var expiresAt = DateTime.UtcNow.AddSeconds(tokenResponse.ExpiresIn);
+            var expiresAt = DateTimeOffset.UtcNow.AddSeconds(tokenResponse.ExpiresIn);
 
             var props = new AuthenticationProperties {
                 IsPersistent = true,
                 ExpiresUtc = expiresAt
             };
 
-            var tokens = new List<AuthenticationToken>
+            // Token'lar cookie'ye YAZILMAZ (StoreTokens kaldırıldı).
+            // Aksine AuthenticationProperties.Items içinde saklanır:
+            //  - RedisTicketStore aktifken ticket sunucu tarafında tutulur, cookie'de
+            //    yalnızca kısa bir anahtar bulunur.
+            //  - Ticket store kapalı olsa bile token'lar chunk'lanmış cookie yerine
+            //    tek, ölçülü bir Properties alanında taşınır.
+            if (!string.IsNullOrEmpty(tokenResponse.AccessToken))
             {
-                new AuthenticationToken
-                {
-                  Name = "access_token",
-                  Value = tokenResponse.AccessToken!
-                },
-                new AuthenticationToken
-                {
-                  Name = "refresh_token",
-                  Value = tokenResponse.RefreshToken ?? ""
-                },
-                new AuthenticationToken
-                {
-                  Name = "expires_at",
-                  Value = expiresAt.ToString("o")
-                }
-            };
+                props.Items[AuthTokenKeys.AccessToken] = tokenResponse.AccessToken;
+            }
 
-            props.StoreTokens(tokens);
+            if (!string.IsNullOrEmpty(tokenResponse.RefreshToken))
+            {
+                props.Items[AuthTokenKeys.RefreshToken] = tokenResponse.RefreshToken;
+            }
+
             return props;
         }
 
@@ -164,13 +162,16 @@ namespace Microservice.Admin.Services
             if (discovery.IsError)
                 return ServiceResult<TokenResponse>.Error(discovery.Error!);
 
+            // Kimlik doğrulama LDAP ile yapıldığı için token yalnızca API çağrıları ve
+            // yenileme amacıyla kullanılır. "profile" ve "email" scope'ları access token'ı
+            // gereksiz claim'lerle şişirdiği için kaldırılmıştır.
             var tokenResponse = await client.RequestPasswordTokenAsync(new PasswordTokenRequest {
                 Address = discovery.TokenEndpoint,
                 ClientId = identitySetting.WebAdmin.ClientId,
                 ClientSecret = identitySetting.WebAdmin.ClientSecret,
                 UserName = signInViewModel.Username!,
                 Password = signInViewModel.Password,
-                Scope = "openid profile email offline_access"
+                Scope = authCookieSetting.Value.KeycloakScope
             });
 
             if (tokenResponse.IsError)
