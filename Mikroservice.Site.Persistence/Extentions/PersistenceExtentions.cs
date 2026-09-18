@@ -4,17 +4,11 @@ using Microservice.Site.Persistence.UnitOfWorks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using Microservice.Shared.Options;
 using Mikroservice.Site.Application.Contracts.IRepositories;
 using Mikroservice.Site.Application.Contracts.Services;
 using Mikroservice.Site.Persistence;
 using Mikroservice.Site.Persistence.Repositories;
 using Mikroservice.Site.Persistence.Services;
-using Mikroservice.Site.Persistence.Services.Nginx;
-using Mikroservice.Site.Persistence.Settings;
-using StackExchange.Redis;
 namespace Microservice.Site.Persistence.Extentions
 {
     public static class PersistenceExtentions
@@ -66,41 +60,14 @@ namespace Microservice.Site.Persistence.Extentions
             services.AddScoped<IYonetimDuyuruRepository, YonetimDuyuruRepository>();
             services.AddScoped<IYonetimDuyuruOkunduRepository, YonetimDuyuruOkunduRepository>();
             services.AddScoped<IShortcutButtonRepository, ShortcutButtonRepository>();
-
-            // nginx yapılandırma üretimi.
-            services.Configure<NginxConfigSetting>(
-                configuration.GetSection(NginxConfigSetting.SectionName));
-
-            services.AddScoped<SiteNginxConfigService>();
-
-            // Dosya sistemi erişimi ve kilitleme durumsuzdur; singleton olarak tutulabilir.
-            services.AddSingleton<INginxConfigStore, FileSystemNginxConfigStore>();
-
-            // IConnectionMultiplexer yalnızca AddRedisCacheExt çağrıldığında kayıtlıdır.
-            // GetService ile alınması, Redis kayıtlı değilse kilidin süreç içi moda
-            // düşmesini sağlar; böylece bu servis farklı host'larda da çözülebilir.
-            services.AddSingleton<INginxConfigLockProvider>(serviceProvider =>
-                new RedisNginxConfigLockProvider(
-                    serviceProvider.GetService<IConnectionMultiplexer>(),
-                    serviceProvider.GetRequiredService<IOptions<NginxConfigSetting>>(),
-                    serviceProvider.GetRequiredService<ILogger<RedisNginxConfigLockProvider>>()));
-
-            // Reloader, ilk reload isteğinde arka plan işini kendisi (tembel olarak) başlatır;
-            // EnableConfigReload=false iken hiç kaynak tüketmez. IHostedService olarak
-            // kaydedilmesi gereksizdir, çünkü yapacağı iş yalnızca istek üzerine tetiklenir.
-            services.AddSingleton<INginxReloader, NginxReloader>();
-
-            // Şablon sürümü yükseltmelerini ve drift'i periyodik olarak onarır.
-            services.AddHostedService<NginxConfigReconcileHostedService>();
-
             services.AddScoped<ISeedService, UnvanSeedService>();
             services.AddScoped<ISeedService, PersonelTipSeedService>();
             services.AddScoped<ISeedService, HedefSeedService>();
             services.AddScoped<ISeedService, DilSeedService>();
             services.AddScoped<ISeedService, BirimSeedService>();
             services.AddScoped<ISeedService, TemplateSeedService>();
+            services.AddScoped<SiteNginxConfigService>();
 
-            
             services.AddScoped<IUserContextService, UserContextService>();
 
 
