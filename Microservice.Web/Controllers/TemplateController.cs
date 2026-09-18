@@ -101,7 +101,7 @@ namespace Microservice.Web.Controllers
             if (route is null)
             {
                 return RenderNotFound(
-                    $"'{path}' adresi için geçerli bir sayfa bulunamadı.");
+                    $"'{path}' adresi ve '{host}' için geçerli bir sayfa bulunamadı.");
      
             }
 
