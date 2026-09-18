@@ -72,13 +72,13 @@
                                     {
                                         <li><a href="https://api.whatsapp.com/send?phone=@Model.Site.SiteOzellikleri.SiteFaxNo">Fax</a></li>
                                     }
-                                    @if (!string.IsNullOrWhiteSpace(Model.Site?.SiteOzellikleri?.SiteWatsappAdress))
+                                    @if (!string.IsNullOrWhiteSpace(Model.Site?.SiteOzellikleri?.SiteInstagramAdress))
                                     {
-                                        <li><a href="https://api.whatsapp.com/send?phone=@Model.Site.SiteOzellikleri.SiteWatsappAdress">Instagram</a></li>
+                                        <li><a href="https://api.whatsapp.com/send?phone=@Model.Site.SiteOzellikleri.SiteInstagramAdress">Instagram</a></li>
                                     }
-                                    @if (!string.IsNullOrWhiteSpace(Model.Site?.SiteOzellikleri?.SiteWatsappAdress))
+                                    @if (!string.IsNullOrWhiteSpace(Model.Site?.SiteOzellikleri?.SiteFacebookAdress))
                                     {
-                                        <li><a href="https://api.whatsapp.com/send?phone=@Model.Site.SiteOzellikleri.SiteWatsappAdress">Whatsapp</a></li>
+                                        <li><a href="https://api.whatsapp.com/send?phone=@Model.Site.SiteOzellikleri.SiteFacebookAdress">Facebook</a></li>
                                     }
                                     @if (!string.IsNullOrWhiteSpace(Model.Site?.SiteOzellikleri?.SiteLinkedinAdress))
                                     {

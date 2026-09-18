@@ -40,11 +40,9 @@ namespace Microservice.Admin.ViewModels.Duyuru
         public string? IcerikMetni { get; set; }
 
         [StringLength(500, ErrorMessage = "Link en fazla 500 karakter olabilir.")]
-        [Url(ErrorMessage = "Geçerli bir link giriniz.")]
         public string? Link { get; set; }
 
         [StringLength(500, ErrorMessage = "Resim URL en fazla 500 karakter olabilir.")]
-        [Url(ErrorMessage = "Geçerli bir resim URL giriniz.")]
         public string? ResimUrl { get; set; }
 
         public int GosterimSayisi { get; set; } = 0;

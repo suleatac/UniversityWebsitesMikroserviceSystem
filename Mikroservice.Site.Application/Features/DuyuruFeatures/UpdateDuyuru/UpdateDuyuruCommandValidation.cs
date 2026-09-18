@@ -28,10 +28,7 @@ namespace Mikroservice.Site.Application.Features.DuyuruFeatures.UpdateDuyuru
                 .NotEmpty().WithMessage("İçerik metni boş olamaz.");
 
             RuleFor(x => x.ResimUrl)
-                .MaximumLength(500)
-                .When(x => !string.IsNullOrEmpty(x.ResimUrl))
-                .Must(uri => string.IsNullOrEmpty(uri) || Uri.TryCreate(uri, UriKind.Absolute, out _))
-                .WithMessage("Geçerli bir resim URL giriniz.");
+                .MaximumLength(500);
 
             RuleFor(x => x.Link)
                 .MaximumLength(500)

@@ -87,7 +87,7 @@ namespace Microservice.Web.Controllers
             var host = Request.Host.Host;
             var path = Request.Path.Value ?? "/";
 
-            //var host = "default.sivas.edu.tr";
+            //var host = "test91.sivas.edu.tr";
             //var path = "/tr/";
 
             ViewData["Host"] = host;
