@@ -77,12 +77,9 @@
                     <div class="member-single-post">
                         <div class="row">
                             <div class="col-md-4">
-                                @if (!string.IsNullOrWhiteSpace(personel.ResimUrl))
-                                {
-                                    <div class="item-thumbnail">
-                                        <img src="@personel.ResimUrl" alt="@adSoyad">
-                                    </div>
-                                }
+                                <div class="item-thumbnail">
+                                    <img person-src="@personel.ResimUrl" person-name="@adSoyad" />
+                                </div>
                             </div>
 
                             <div class="col-md-8">
@@ -174,7 +171,7 @@
                                             <li>
                                                 <div class="thumb item-thumbnail">
                                                     <a href="@BuildPersonelHref(item)">
-                                                        <img src="@item.ResimUrl" alt="@itemAd" loading="lazy">
+                                                        <img person-src="@item.ResimUrl" person-name="@itemAd" loading="lazy" />
                                                         <div class="thumbnail-hoverlay main-color-1-bg"></div>
                                                         <div class="thumbnail-hoverlay-cross"></div>
                                                     </a>

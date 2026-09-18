@@ -17,6 +17,13 @@ namespace Microservice.Web.ViewModels.SitePersonel
         public string? ResimUrl { get; set; }
         public string? Hakkinda { get; set; }
         public string? UnvanAd { get; set; }
+
+        /// <summary>
+        /// Unvanin sira numarasi (Unvan.Sira). Kucuk deger ust sirada anlamina gelir;
+        /// liste bu alana gore siralanir.
+        /// </summary>
+        public int UnvanSira { get; set; }
+
         public string? PersonelTipAd { get; set; }
 
         // SEO

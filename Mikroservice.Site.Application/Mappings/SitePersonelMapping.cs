@@ -11,6 +11,7 @@ namespace Mikroservice.Site.Application.Mappings
 
             CreateMap<SitePersonel, SitePersonelDto>()
                 .ForMember(dest => dest.UnvanAd, opt => opt.MapFrom(src => src.Unvan != null ? src.Unvan.Ad : null))
+                .ForMember(dest => dest.UnvanSira, opt => opt.MapFrom(src => src.Unvan != null ? src.Unvan.Sira : int.MaxValue))
                 .ForMember(dest => dest.PersonelTipAd, opt => opt.MapFrom(src => src.PersonelTip != null ? src.PersonelTip.Ad : null));
             CreateMap<SitePersonel, SitePersonelDetailDto>();
         }

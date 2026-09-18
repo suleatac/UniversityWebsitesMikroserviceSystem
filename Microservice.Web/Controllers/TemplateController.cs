@@ -460,8 +460,10 @@ namespace Microservice.Web.Controllers
                 Site = route.Site,
                 LanguageCode = route.LanguageCode,
                 Query = Request.Query["q"].ToString(),
+                // Once unvanin sira numarasi (kucuk = ust unvan), sonra soyad/ad alfabetik.
                 Personeller = personeller
-                    .OrderBy(p => p.Soyadi)
+                    .OrderBy(p => p.UnvanSira)
+                    .ThenBy(p => p.Soyadi)
                     .ThenBy(p => p.Adi)
                     .ToList()
             };
@@ -491,6 +493,9 @@ namespace Microservice.Web.Controllers
 
             var latestPersoneller = (personelListesiResult.Data ?? [])
                 .Where(p => p.Id != personel.Id)
+                .OrderBy(p => p.UnvanSira)
+                .ThenBy(p => p.Soyadi)
+                .ThenBy(p => p.Adi)
                 .Take(3)
                 .ToList();
 

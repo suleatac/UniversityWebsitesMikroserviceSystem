@@ -19,6 +19,7 @@ namespace Mikroservice.Site.Application.DTOs.SitePersonelDtos
         public string? ResimUrl { get; set; }
         public string? Hakkinda { get; set; }
         public string? UnvanAd { get; set; }
+        public int UnvanSira { get; set; }
         public string? PersonelTipAd { get; set; }
 
         // SEO
