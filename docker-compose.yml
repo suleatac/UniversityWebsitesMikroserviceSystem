@@ -12,10 +12,10 @@ services:
     volumes:
       - minio_data:/data
     ports:
-      # Yalnizca sunucunun kendisinden erisilebilir (nginx container'i network uzerinden
-      # zaten "minio:9000" ile ulasir; bu baglama sadece host uzerinden yonetis/teslim icin).
-      - "9000:9000"
-      - "9001:9001"
+      # YALNIZCA localhost'a baglanir; boylece MinIO dis DNS'e asla acilmaz.
+      # Yonetim konsolu ve API'ye erisim sunucunun kendisinden (SSH tuneli) yapilir.
+      - "127.0.0.1:9000:9000"
+      - "127.0.0.1:9001:9001"
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
@@ -304,6 +304,9 @@ services:
       dockerfile: Mikroservice.Site.Api/Dockerfile
     volumes:
       - /home/suleatac/docker/nginx/conf.d:/nginx-conf
+    # NOT: EnableConfigReload=true yapilirsa bu servise /var/run/docker.sock
+    # mount edilmeli ve image'a docker CLI eklenmelidir. Aksi halde reload icin
+    # EnableConfigReload=false birakilip reload harici servise devredilmelidir.
     networks:
       - university-network
   microservice.admin:
