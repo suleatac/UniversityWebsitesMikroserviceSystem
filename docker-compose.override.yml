@@ -76,7 +76,7 @@ services:
       - ASPNETCORE_HTTP_PORTS=8080
       - ConnectionStrings:Redis=redis.db.api:6379,password=Password12
       - Minio:Endpoint=minio:9000
-      - Minio:PreviewBaseUrl=http://minio:9000/site-media/
+      - Minio:PreviewBaseUrl=http://10.58.5.91:9000/site-media/
       - ElasticSearch:BaseUrl=http://elasticsearch.db.log:9200
       - Identity:Address=http://keycloak:8080/realms/UniversityRealm
       - Identity:BaseAddress=http://keycloak:8080

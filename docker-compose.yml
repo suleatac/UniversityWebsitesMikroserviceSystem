@@ -14,8 +14,8 @@ services:
     ports:
       # YALNIZCA localhost'a baglanir; boylece MinIO dis DNS'e asla acilmaz.
       # Yonetim konsolu ve API'ye erisim sunucunun kendisinden (SSH tuneli) yapilir.
-      - "127.0.0.1:9000:9000"
-      - "127.0.0.1:9001:9001"
+      - "9000:9000"
+      - "9001:9001"
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
