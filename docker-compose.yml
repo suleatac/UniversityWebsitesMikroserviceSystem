@@ -8,9 +8,7 @@ services:
     command: server /data --console-address ":9001"
     networks:
       # university-network: Admin/API'lerin ic erisimi
-      # nginx_network: nginx'in /media proxy'si icin (dis DNS'e asla acilmaz)
       - university-network
-      - nginx_network
     volumes:
       - minio_data:/data
     ports:
