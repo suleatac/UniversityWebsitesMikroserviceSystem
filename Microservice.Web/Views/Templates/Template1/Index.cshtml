@@ -108,9 +108,12 @@
                                                                             <div class="duyuru-thumb">
                                                                                 <div class="calendar">
                                                                                     <span class="date">@duyuru.YayimTarihi.ToString("dd")</span>
-                                                                                    <span class="month">@duyuru.YayimTarihi.ToString("MMM")</span>
+                                                                                    <span class="month">@duyuru.YayimTarihi.ToString("MMMM")</span>
                                                                                 </div>
-                                                                                <div class="duyuru_yeni">Yeni</div>
+                                                                                @if (duyuru.YayimTarihi.Date == DateTime.Today)
+                                                                                {
+                                                                                    <div class="duyuru_yeni">Yeni</div>
+                                                                                }
                                                                             </div>
 
                                                                         </a>
@@ -315,8 +318,9 @@
                                                         </div><!-- /event-thumbnail -->
 
                                                         <div class="date-block">
-                                                            <div class="month">@haber.YayimTarihi.ToString("MMM")</div>
+
                                                             <div class="day">@haber.YayimTarihi.ToString("dd")</div>
+                                                            <div class="month">@haber.YayimTarihi.ToString("MMMM")</div>
                                                         </div><!-- /date-block -->
 
                                                         <div class="event-overlay">
@@ -384,8 +388,9 @@
                                                         </div><!-- /event-thumbnail -->
 
                                                         <div class="date-block">
-                                                            <div class="month">@etkinlik.YayimTarihi.ToString("MMM")</div>
+
                                                             <div class="day">@etkinlik.YayimTarihi.ToString("dd")</div>
+                                                            <div class="month">@etkinlik.YayimTarihi.ToString("MMMM")</div>
                                                         </div><!-- /date-block -->
 
                                                         <div class="event-overlay">
@@ -396,7 +401,7 @@
                                                                     </a>
 
                                                                     <div class="overlay-footer">
-                                                                        <div>At @etkinlik.YayimTarihi.ToString("dd.MM.yyyy")</div>
+                                                                        <div> @etkinlik.YayimTarihi.ToString("dd.MM.yyyy")</div>
                                                                         <div>@etkinlik.KisaAciklama</div>
                                                                     </div>
                                                                 </div>
