@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Mikroservice.Site.Persistence.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260917110927_IcerikDosyaEklendi")]
-    partial class IcerikDosyaEklendi
+    [Migration("20260921122303_initial")]
+    partial class initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -286,7 +286,6 @@ namespace Mikroservice.Site.Persistence.Migrations
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("Baslik")
-                        .IsRequired()
                         .HasMaxLength(300)
                         .HasColumnType("character varying(300)");
 
@@ -424,6 +423,46 @@ namespace Mikroservice.Site.Persistence.Migrations
                     b.HasIndex("IcerikId", "Sira");
 
                     b.ToTable("IcerikDosya", (string)null);
+                });
+
+            modelBuilder.Entity("Mikroservice.Site.Domain.Entities.IcerikResim", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Baslik")
+                        .HasMaxLength(300)
+                        .HasColumnType("character varying(300)");
+
+                    b.Property<int>("IcerikId")
+                        .HasColumnType("integer");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("ResimUrl")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)");
+
+                    b.Property<int>("Sira")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValue(0);
+
+                    b.Property<DateTime>("YuklemeTarihi")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp without time zone")
+                        .HasDefaultValueSql("NOW()");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("IcerikId", "Sira");
+
+                    b.ToTable("IcerikResim", (string)null);
                 });
 
             modelBuilder.Entity("Mikroservice.Site.Domain.Entities.MediaFile", b =>
@@ -1243,6 +1282,17 @@ namespace Mikroservice.Site.Persistence.Migrations
                     b.Navigation("Icerik");
                 });
 
+            modelBuilder.Entity("Mikroservice.Site.Domain.Entities.IcerikResim", b =>
+                {
+                    b.HasOne("Mikroservice.Site.Domain.Entities.Icerik", "Icerik")
+                        .WithMany("Resimler")
+                        .HasForeignKey("IcerikId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Icerik");
+                });
+
             modelBuilder.Entity("Mikroservice.Site.Domain.Entities.MediaFile", b =>
                 {
                     b.HasOne("Mikroservice.Site.Domain.Entities.Dil", "Dil")
@@ -1576,6 +1626,8 @@ namespace Mikroservice.Site.Persistence.Migrations
             modelBuilder.Entity("Mikroservice.Site.Domain.Entities.Icerik", b =>
                 {
                     b.Navigation("Dosyalar");
+
+                    b.Navigation("Resimler");
                 });
 
             modelBuilder.Entity("Mikroservice.Site.Domain.Entities.PageType", b =>
