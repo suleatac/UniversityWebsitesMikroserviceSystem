@@ -10,7 +10,7 @@ services:
       # university-network: Admin/API'lerin ic erisimi
       - university-network
     volumes:
-      - /home/suleatac/docker/docker_data/minio:/data
+      - minio_data:/data
     ports:
       # YALNIZCA localhost'a baglanir; boylece MinIO dis DNS'e asla acilmaz.
       # Yonetim konsolu ve API'ye erisim sunucunun kendisinden (SSH tuneli) yapilir.
@@ -31,7 +31,7 @@ services:
     ports:
       - "9090:9090"
     volumes:
-      - /home/suleatac/docker/docker_data/prometheus:/prometheus
+      - prometheus_data:/prometheus
     command:
       - "--config.file=/etc/prometheus/prometheus.yml"
       - "--storage.tsdb.path=/prometheus"
@@ -57,7 +57,7 @@ services:
     ports:
       - "9201:9200"
     volumes:
-      - /home/suleatac/docker/docker_data/elasticsearch-log:/usr/share/elasticsearch/data
+      - esdatalog:/usr/share/elasticsearch/data
     networks:
       - university-network
   
@@ -80,7 +80,7 @@ services:
       timeout: 10s
       retries: 120
     volumes:
-      - /home/suleatac/docker/docker_data/kibana:/usr/share/kibana/data
+      - kibanadata:/usr/share/kibana/data
     networks:
       - university-network
 
@@ -92,7 +92,7 @@ services:
     ports:
       - "6379:6379"
     volumes:
-      - /home/suleatac/docker/docker_data/redis:/data
+      - redis.db.api.volume:/data
     networks:
       - university-network
 
@@ -124,7 +124,7 @@ services:
       RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER}
       RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}
     volumes:
-      - /home/suleatac/docker/docker_data/rabbitmq:/var/lib/rabbitmq
+      - rabbitmq_data:/var/lib/rabbitmq
     networks:
       - university-network
 
@@ -141,7 +141,7 @@ services:
     ports:
       - "9200:9200"
     volumes:
-      - /home/suleatac/docker/docker_data/elasticsearch-jaeger:/usr/share/elasticsearch/data
+      - esdatajaeger:/usr/share/elasticsearch/data
     networks:
       - university-network
 
@@ -167,7 +167,7 @@ services:
     depends_on:
       - elasticsearch.db.Jaeger
     volumes:
-      - /home/suleatac/docker/docker_data/jaeger:/opt/jaeger/data
+      - jaeger.data.volume:/opt/jaeger/data
     networks:
       - university-network
   postgres.db.site:
@@ -181,7 +181,7 @@ services:
     ports:
       - "5433:5432"
     volumes:
-      - /home/suleatac/docker/docker_data/postgres-site:/var/lib/postgresql/data
+      -  /home/suleatac/docker/docker_data/postgres-site:/var/lib/postgresql/data
     networks:
       - university-network
   postgres.db.ogrenci:
@@ -195,7 +195,7 @@ services:
     ports:
       - "5434:5432"
     volumes:
-      - /home/suleatac/docker/docker_data/postgres-ogrenci:/var/lib/postgresql/data
+      -  postgres.db.ogrenci.volume:/var/lib/postgresql/data
     networks:
       - university-network
 
@@ -210,7 +210,7 @@ services:
     ports:
       - "5435:5432"
     volumes:
-      - /home/suleatac/docker/docker_data/postgres-personel:/var/lib/postgresql/data
+      -  postgres.db.personel.volume:/var/lib/postgresql/data
     networks:
       - university-network
 
@@ -239,7 +239,7 @@ services:
     ports:
       - "8081:8080"
     volumes:
-      - /home/suleatac/docker/docker_data/keycloak:/opt/keycloak/data
+      - keycloak-data:/opt/keycloak/data  
     depends_on:
       - postgres.db.keycloak
     networks:
@@ -256,7 +256,7 @@ services:
     ports:
       - "5436:5432"
     volumes:
-      - /home/suleatac/docker/docker_data/postgres-keycloak:/var/lib/postgresql/data
+      -  postgres.db.keycloak.volume:/var/lib/postgresql/data
     networks:
       - university-network
 
@@ -270,7 +270,7 @@ services:
       PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
       PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
     volumes:
-      - /home/suleatac/docker/docker_data/pgadmin:/var/lib/pgadmin
+      - postgres.db.ui.data:/var/lib/pgadmin
     networks:
       - university-network
 
@@ -323,12 +323,22 @@ services:
       dockerfile: Microservice.Web/Dockerfile
     networks:
       - university-network
-
-# Tum servis verileri sunucu uzerinde /home/suleatac/docker/docker_data altinda
-# bind mount olarak tutulur; named volume kullanimi birakilmistir.
-volumes: {}
+volumes:
+  jaeger.data.volume:
+  postgres.db.keycloak.volume:
+  postgres.db.ui.data:
+  keycloak-data:
+  postgres.db.ogrenci.volume:  
+  postgres.db.personel.volume: 
+  esdatajaeger:
+  redis.db.api.volume:    
+  rabbitmq_data:
+  esdatalog:
+  kibanadata:
+  prometheus_data:
+  minio_data:
 
 networks:
   university-network:
-     external: true
-    #driver: bridge
+    external: true
+    # driver: bridge
