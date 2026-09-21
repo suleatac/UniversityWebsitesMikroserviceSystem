@@ -66,6 +66,8 @@ namespace Microservice.Site.Persistence.Extentions
             services.AddScoped<ISeedService, DilSeedService>();
             services.AddScoped<ISeedService, BirimSeedService>();
             services.AddScoped<ISeedService, TemplateSeedService>();
+            // Template'lere bagimli oldugu icin TemplateSeedService'ten SONRA eklenir (Sira=7).
+            services.AddScoped<ISeedService, PageTypeSeedService>();
             services.AddScoped<SiteNginxConfigService>();
 
             services.AddScoped<IUserContextService, UserContextService>();

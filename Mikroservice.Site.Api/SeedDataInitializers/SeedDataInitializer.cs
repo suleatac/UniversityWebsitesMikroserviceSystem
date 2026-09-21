@@ -20,7 +20,7 @@ namespace Mikroservice.Site.Api.SeedDataInitializers
                     if (await seedService.IsDatabaseSeededAsync())
                     {
                         logger.LogInformation($"{seedService.GetType().Name} için veritabanı boş değil veya zaten seed edilmiş. Atlanıyor.");
-                        return;
+                        continue;
                     }
 
                     logger.LogInformation($"Seed çalışıyor: {seedService.GetType().Name}");
