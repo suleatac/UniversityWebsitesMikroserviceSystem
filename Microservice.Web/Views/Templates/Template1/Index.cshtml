@@ -102,12 +102,16 @@
                                                                         <a href="@BuildContentHref(duyuru.Link, duyuru.SeoUrl, duyuru.PageType.Slug)"
                                                                            title="@duyuru.Baslik">
 
-                                                                            <img src="@duyuru.ResimUrl"
+@*                                                                             <img src="@duyuru.ResimUrl"
                                                                                  alt="@duyuru.Baslik"
-                                                                                 loading="lazy">
-
-                                                                            <div class="thumbnail-hoverlay main-color-1-bg"></div>
-                                                                            <div class="thumbnail-hoverlay-cross"></div>
+                                                                                 loading="lazy"> *@
+                                                                            <div class="duyuru-thumb">
+                                                                                <div class="calendar">
+                                                                                    <span class="date">@duyuru.YayimTarihi.ToString("dd")</span>
+                                                                                    <span class="month">@duyuru.YayimTarihi.ToString("MMM")</span>
+                                                                                </div>
+                                                                                <div class="duyuru_yeni">Yeni</div>
+                                                                            </div>
 
                                                                         </a>
 
