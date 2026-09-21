@@ -10,7 +10,7 @@ namespace Mikroservice.Site.Application.Features.BannerFeatures.UpdateBanner
         public int DilId { get; init; }
         public int HedefId { get; init; }
 
-        public string Baslik { get; init; } = default!;
+        public string? Baslik { get; init; }
         public string? KisaAciklama { get; init; } 
         public string? IcerikMetni { get; init; } 
 

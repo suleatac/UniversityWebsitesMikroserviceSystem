@@ -26,9 +26,7 @@ namespace Mikroservice.Site.Persistence.Configurations
             // =========================
             // COMMON PROPERTIES
             // =========================
-            builder.Property(x => x.Baslik)
-                .IsRequired()
-                .HasMaxLength(300);
+            builder.Property(x => x.Baslik).HasMaxLength(300);
 
             builder.Property(x => x.KisaAciklama)
                 .HasMaxLength(500);

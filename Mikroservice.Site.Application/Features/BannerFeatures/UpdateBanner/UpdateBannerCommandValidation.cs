@@ -17,7 +17,6 @@ namespace Mikroservice.Site.Application.Features.BannerFeatures.UpdateBanner
                 .WithMessage("HedefId 0'dan büyük olmalıdır.");
 
             RuleFor(x => x.Baslik)
-                .NotEmpty().WithMessage("Başlık boş olamaz.")
                 .MaximumLength(200).WithMessage("Başlık en fazla 200 karakter olabilir.");
 
             RuleFor(x => x.KisaAciklama)

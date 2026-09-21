@@ -9,9 +9,9 @@ namespace Mikroservice.Site.Application.DTOs.BannerDtos
         public int DilId { get; set; }
         public int HedefId { get; set; }
         public int PageTypeId { get; set; }
-        public string Baslik { get; set; } = default!;
-        public string KisaAciklama { get; set; } = default!;
-        public string IcerikMetni { get; set; } = default!;
+        public string? Baslik { get; set; } 
+        public string? KisaAciklama { get; set; }
+        public string? IcerikMetni { get; set; }
         public string? Link { get; set; }
         public string ResimUrl { get; set; }=default!;
         public int GosterimSayisi { get; set; } = 0;

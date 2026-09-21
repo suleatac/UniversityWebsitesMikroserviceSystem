@@ -9,7 +9,7 @@
         public int DilId { get; set; }
         public int HedefId { get; set; }
 
-        public string Baslik { get; set; } = default!;
+        public string? Baslik { get; set; } 
         public string? KisaAciklama { get; set; } 
         public string? IcerikMetni { get; set; } 
 
