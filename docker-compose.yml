@@ -330,5 +330,5 @@ volumes: {}
 
 networks:
   university-network:
-    # external: true
-    driver: bridge
+     external: true
+    #driver: bridge
