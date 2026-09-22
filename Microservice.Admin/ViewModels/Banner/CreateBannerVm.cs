@@ -16,9 +16,8 @@ namespace Microservice.Admin.ViewModels.Banner
         [Range(1, int.MaxValue, ErrorMessage = "Hedef seçimi zorunludur.")]
         public int HedefId { get; set; }
 
-        [Required(ErrorMessage = "Başlık boş olamaz.")]
         [StringLength(200, ErrorMessage = "Başlık en fazla 200 karakter olabilir.")]
-        public string Baslik { get; set; } = default!;
+        public string? Baslik { get; set; } 
 
 
         [StringLength(500, ErrorMessage = "Kısa açıklama en fazla 500 karakter olabilir.")]

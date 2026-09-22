@@ -8,8 +8,8 @@ namespace Microservice.Admin.ViewModels.Banner
         public int SiteId { get; set; }
         public int DilId { get; set; }
         public int HedefId { get; set; }
-        public string? Baslik { get; set; } = default!;
-        public string? KisaAciklama { get; set; } = default!;
+        public string? Baslik { get; set; } 
+        public string? KisaAciklama { get; set; } 
 
         [Required(ErrorMessage = "Banner için resim URL'si gereklidir.")]
         public string ResimUrl { get; set; }= default!;
