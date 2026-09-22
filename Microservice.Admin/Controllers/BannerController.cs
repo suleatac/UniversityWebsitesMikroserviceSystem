@@ -145,7 +145,7 @@ namespace Microservice.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(BannerEditIndexVm model)
         {
-            ModelState.Remove("CreateBanner.SeoUrl");
+            ModelState.Remove("BannerDetail.SeoUrl");
             if (!ModelState.IsValid)
             {
                 _logger.LogWarning("Update Banner - ModelState geçersiz.");
