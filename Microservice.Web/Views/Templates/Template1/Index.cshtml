@@ -35,6 +35,184 @@
 
 
 
+<!-- START SECTION BANNER AND DUYURULAR -->
+<section style="position:relative;">
+    <!-- START BANNER -->
+    <div class="tp-banner-container">
+
+        <div class="tp-banner">
+            <ul>
+
+                @foreach (var banner in Model.Banners)
+                {
+
+                    <li data-transition="slidedown" data-slotamount="7" data-masterspeed="100" data-saveperformance="on">
+                        <img src="@banner.ResimUrl" alt="slider-image">
+
+                        <div class="tp-caption sft desc-slide center color-white color-full" data-x="770" data-y="479" data-speed="100" data-start="100" data-easing="Power3.easeInOut">
+                            <div class="title main-color-1 font-2">@banner.Baslik</div>
+                            <div class="content">@banner.KisaAciklama</div>
+                        </div>
+
+                    </li>
+
+            
+                }
+
+            </ul>
+        </div>
+    </div>
+    <!-- END BANNER -->
+    <!-- START DUYURULAR -->
+    <div class="header-overlay-content header-overlay-scroller">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-5">
+
+                    <section class="un-post-scroller un-post-scroller-2901"
+                             data-delay="0">
+
+                        <div class="section-inner-no-padding">
+
+                            <div class="post-scroller-wrap verticalCarousel">
+                                <h4 class="title">Duyurular</h4>
+                                <div class="post-scroller-carousel">
+
+                                    <div class="post-scroller-carousel-inner verticalCarouselGroup vc_list">
+
+                                        @if (Model.Duyurular != null && Model.Duyurular.Any())
+                                        {
+                                            var index = 0;
+
+                                            foreach (var duyuru in Model.Duyurular)
+                                            {
+                                                <div class="item post-scroller-item @(index == 0 ? "active" : "")">
+
+                                                    <div class="scroller-item-inner">
+
+                                                        <div class="scroller-item-content post-item-mini">
+
+                                                            <div class="row">
+
+                                                                <!-- Resim -->
+                                                                <div class="col-md-3 col-sm-4 col-xs-4 post-thumbnail-mini">
+
+                                                                    <div class="item-thumbnail">
+
+                                                                        <a href="@BuildContentHref(duyuru.Link, duyuru.SeoUrl, duyuru.PageType.Slug)"
+                                                                           title="@duyuru.Baslik">
+
+                                                                            @*                                                                             <img src="@duyuru.ResimUrl"
+                                                                                 alt="@duyuru.Baslik"
+                                                                                 loading="lazy"> *@
+                                                                            <div class="duyuru-thumb">
+                                                                                <div class="calendar">
+                                                                                    <span class="date">@duyuru.YayimTarihi.ToString("dd")</span>
+                                                                                    <span class="month">@duyuru.YayimTarihi.ToString("MMMM")</span>
+                                                                                </div>
+                                                                                @if (duyuru.YayimTarihi.Date == DateTime.Today)
+                                                                                {
+                                                                                    <div class="duyuru_yeni">Yeni</div>
+                                                                                }
+                                                                            </div>
+
+                                                                        </a>
+
+                                                                    </div>
+
+                                                                </div>
+
+                                                                <!-- İçerik -->
+                                                                <div class="col-md-9 col-sm-8 col-xs-8 post-content-mini">
+
+                                                                    <h4>
+                                                                        <a class="post-title-mini main-color-1-hover"
+                                                                           href="@BuildContentHref(duyuru.Link, duyuru.SeoUrl, duyuru.PageType.Slug)"
+                                                                           title="@duyuru.Baslik">
+
+                                                                            @duyuru.Baslik
+
+                                                                        </a>
+                                                                    </h4>
+
+                                                                    @if (!string.IsNullOrWhiteSpace(duyuru.KisaAciklama))
+                                                                    {
+                                                                        <div class="post-excerpt-mini">
+                                                                            @duyuru.KisaAciklama
+                                                                        </div>
+                                                                    }
+
+                                                                </div>
+
+                                                            </div>
+
+                                                        </div>
+
+                                                    </div>
+
+                                                </div>
+
+                                                index++;
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <div class="item post-scroller-item active">
+                                                <div class="scroller-item-inner">
+                                                    <div class="scroller-item-content post-item-mini">
+                                                        <div class="post-content-mini">
+                                                            <div class="post-excerpt-mini">
+                                                                Henüz duyuru bulunmamaktadır.
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        }
+
+                                    </div>
+
+                                </div>
+
+                                <!-- Carousel Kontrolleri -->
+                                <div class="verticalCarouselHeader">
+
+                                    <a href="#"
+                                       class="vc_goDown btn btn-primary post-scroller-button post-scroller-down">
+                                        <i class="fa fa-angle-down"></i>
+                                    </a>
+
+                                    <a href="#"
+                                       class="vc_goUp btn btn-primary post-scroller-button post-scroller-up">
+                                        <i class="fa fa-angle-up"></i>
+                                    </a>
+
+                                    @if (Model.Duyurular != null && Model.Duyurular.Any())
+                                    {
+                                        <a href="@Model.DuyuruListUrl"
+                                           style="float:right;font-weight:600;text-decoration:underline;">
+                                            Tümü
+                                        </a>
+                                    }
+
+
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </section>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- END DUYURULAR -->
+</section>
+
+<!-- END SECTION BANNER AND DUYURULAR -->
 @if (Model.ShortcutButtons != null && Model.ShortcutButtons.Any())
 {
     <!-- START SECTION SHORTCUT BUTTONS -->
