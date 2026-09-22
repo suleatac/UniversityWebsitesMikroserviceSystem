@@ -35,11 +35,7 @@ namespace Mikroservice.Site.Application.Features.MenuFeatures.CreateMenu
             RuleFor(x => x.SeoUrl).NotEmpty()
                 .MaximumLength(200);
 
-            // 🔹 IcerikMetni (opsiyonel)
-            RuleFor(x => x.IcerikMetni)
-                .MaximumLength(2000)
-                .When(x => !string.IsNullOrEmpty(x.IcerikMetni))
-                .WithMessage("İçerik en fazla 2000 karakter olabilir.");
+       
         }
     }
 }

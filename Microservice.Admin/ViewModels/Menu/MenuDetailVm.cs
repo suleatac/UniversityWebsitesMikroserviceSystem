@@ -27,7 +27,7 @@ namespace Microservice.Admin.ViewModels.Menu
         public string? Link { get; set; } = default!;
 
 
-        [StringLength(2000, ErrorMessage = "İçerik en fazla 2000 karakter olabilir.")]
+       
         public string? IcerikMetni { get; set; }
 
         [Range(0, int.MaxValue, ErrorMessage = "Sıra 0 veya daha büyük olmalıdır.")]
