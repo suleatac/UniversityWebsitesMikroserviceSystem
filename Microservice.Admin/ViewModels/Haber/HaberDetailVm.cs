@@ -46,7 +46,6 @@ namespace Microservice.Admin.ViewModels.Haber
         public string? Link { get; set; }
 
         [StringLength(500, ErrorMessage = "Resim URL en fazla 500 karakter olabilir.")]
-        [Url(ErrorMessage = "Geçerli bir resim URL giriniz.")]
         public string? ResimUrl { get; set; }
 
         public int GosterimSayisi { get; set; } = 0;

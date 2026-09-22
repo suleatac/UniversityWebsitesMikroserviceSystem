@@ -42,7 +42,6 @@ namespace Microservice.Admin.ViewModels.Haber
         public string? Link { get; set; }
 
         [StringLength(500, ErrorMessage = "Resim URL en fazla 500 karakter olabilir.")]
-        [Url(ErrorMessage = "Geçerli bir resim URL giriniz.")]
         public string? ResimUrl { get; set; }
 
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-ddTHH:mm}", ApplyFormatInEditMode = true)]
