@@ -57,21 +57,21 @@ namespace Microservice.Web.Services
             string host,
             string path)
         {
-            var cacheKey = $"route:{host.ToLowerInvariant()}:{path.Trim('/').ToLowerInvariant()}";
+            //var cacheKey = $"route:{host.ToLowerInvariant()}:{path.Trim('/').ToLowerInvariant()}";
 
-            var cached = await _redisCacheService.GetAsync<RouteResolveResult>(cacheKey);
-            if (cached is not null)
-            {
-                _logger.LogInformation("Route cache'den alındı. Host: {Host}, Path: {Path}", host, path);
-                return cached;
-            }
+            //var cached = await _redisCacheService.GetAsync<RouteResolveResult>(cacheKey);
+            //if (cached is not null)
+            //{
+            //    _logger.LogInformation("Route cache'den alındı. Host: {Host}, Path: {Path}", host, path);
+            //    return cached;
+            //}
 
             var result = await ResolveInternalAsync(host, path);
 
-            if (result is not null)
-            {
-                await _redisCacheService.SetAsync(cacheKey, result, CacheDuration);
-            }
+            //if (result is not null)
+            //{
+            //    await _redisCacheService.SetAsync(cacheKey, result, CacheDuration);
+            //}
 
             return result;
         }
