@@ -35,32 +35,32 @@
 
 
 
-
-
-
 <!-- START SECTION BANNER AND DUYURULAR -->
-<section class="tp-banner-container">
+<section style="position:relative;">
     <!-- START BANNER -->
-    <div class="tp-banner">
-        <ul>
+    <div class="tp-banner-container">
 
-            @foreach (var banner in Model.Banners)
-            {
+        <div class="tp-banner">
+            <ul>
 
-                <li data-transition="slidedown" data-slotamount="7" data-masterspeed="100" data-saveperformance="on">
-                    <img src="@banner.ResimUrl" alt="slider-image">
+                @foreach (var banner in Model.Banners)
+                {
 
-                    <div class="tp-caption sft desc-slide center color-white color-full" data-x="770" data-y="479" data-speed="100" data-start="100" data-easing="Power3.easeInOut">
-                        <div class="title main-color-1 font-2">@banner.Baslik</div>
-                        <div class="content">@banner.KisaAciklama</div>
-                    </div>
+                    <li data-transition="slidedown" data-slotamount="7" data-masterspeed="100" data-saveperformance="on">
+                        <img src="@banner.ResimUrl" alt="slider-image">
 
-                </li>
+                        <div class="tp-caption sft desc-slide center color-white color-full" data-x="770" data-y="479" data-speed="100" data-start="100" data-easing="Power3.easeInOut">
+                            <div class="title main-color-1 font-2">@banner.Baslik</div>
+                            <div class="content">@banner.KisaAciklama</div>
+                        </div>
+
+                    </li>
 
             
-            }
+                }
 
-        </ul>
+            </ul>
+        </div>
     </div>
     <!-- END BANNER -->
     <!-- START DUYURULAR -->
@@ -102,7 +102,7 @@
                                                                         <a href="@BuildContentHref(duyuru.Link, duyuru.SeoUrl, duyuru.PageType.Slug)"
                                                                            title="@duyuru.Baslik">
 
-@*                                                                             <img src="@duyuru.ResimUrl"
+                                                                            @*                                                                             <img src="@duyuru.ResimUrl"
                                                                                  alt="@duyuru.Baslik"
                                                                                  loading="lazy"> *@
                                                                             <div class="duyuru-thumb">
@@ -210,18 +210,19 @@
         </div>
     </div>
     <!-- END DUYURULAR -->
-
 </section>
-<!-- END SECTION BANNER AND DUYURULAR -->
-<!-- START SECTION SHORTCUT BUTTONS -->
-<section class="flat-row padding-top">
-    <div class="container">
-        <div class="row">
-            <div class="col-md-12">
-                <div class="flat-icon">
 
-                    @if (Model.ShortcutButtons != null && Model.ShortcutButtons.Any())
-                    {
+<!-- END SECTION BANNER AND DUYURULAR -->
+@if (Model.ShortcutButtons != null && Model.ShortcutButtons.Any())
+{
+    <!-- START SECTION SHORTCUT BUTTONS -->
+    <section class="flat-row padding-top">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="flat-icon">
+
+                    
                         @foreach (var shortcutButton in Model.ShortcutButtons)
                         {
                             <div class="iconbox left v1">
@@ -238,20 +239,21 @@
                                 </div>
                             </div><!-- /.iconbox -->
                         }
-                    }
 
 
 
 
-                
 
-                   
-                </div><!-- /flat-icon -->
+
+
+
+                    </div><!-- /flat-icon -->
+                </div>
             </div>
-        </div>
-    </div><!-- /.container -->
-</section><!--/flat-row -->
-<!-- END SECTION SHORTCUT BUTTONS -->
+        </div><!-- /.container -->
+    </section><!--/flat-row -->
+    <!-- END SECTION SHORTCUT BUTTONS -->
+}
 <!-- START SECTION HAKKINDA -->
 @{
     var siteOzellikleri = Model.Site.SiteOzellikleri;
@@ -266,12 +268,14 @@
                         <p>@siteOzellikleri?.SiteBaslangicHakkimizda</p>
                         <a class="flat-button" href="@siteOzellikleri?.SiteHakkindaLink"><i class="fa fa-leaf"></i>DETAYLARI GÖRÜN</a>
                     </div>
-
-                    <div class="col-md-6">
-                        <div class="thumb-information">
-                            <img src="@siteOzellikleri?.SiteHakkindaResim" alt="image">
+                    @if (siteOzellikleri?.SiteHakkindaResim != null)
+                    {
+                        <div class="col-md-6">
+                            <div class="thumb-information">
+                                <img src="@siteOzellikleri?.SiteHakkindaResim" alt="image">
+                            </div>
                         </div>
-                    </div>
+                    }
                 </div>
             </div>
         </div>
@@ -433,16 +437,17 @@
     </div><!-- /container -->
 </section><!-- /page-title -->
 <!-- END SECTION HABERLER VE ETKİNLİKLER -->
-<!-- START SECTION BİLGİLER -->
-<section class="flat-row no-padding">
-    <div class="flat-fluid">
-        <div class="container">
-            <div class="row">
+@if (Model.Bilgiler != null && Model.Bilgiler.Any())
+{
+    <!-- START SECTION BİLGİLER -->
+    <section class="flat-row no-padding">
+        <div class="flat-fluid">
+            <div class="container">
+                <div class="row">
 
 
 
-                @if (Model.Bilgiler != null && Model.Bilgiler.Any())
-                {
+             
                     @foreach (var bilgi in Model.Bilgiler)
                     {
 
@@ -458,23 +463,24 @@
 
                     }
 
-                }
+               
 
 
                
-            </div><!--/row-->
-        </div><!--/flat-fluid-->
-    </div><!--/container-->
-</section><!--/flat-row -->
-<!-- END SECTION BİLGİLER -->
+                </div><!--/row-->
+            </div><!--/flat-fluid-->
+        </div><!--/container-->
+    </section><!--/flat-row -->
+    <!-- END SECTION BİLGİLER -->
+}
 <!-- START SOSYAL MEDYA PAYLAŞIMLARI -->
 <section class="flat-row flat-ev-carousel">
 
     <div class="container">
+        <div class="row">
 
-
-        <h4 class="title">Sosyal Medya Paylaşımları</h4>
-
+            <h4 class="title sosyalmedia">Sosyal Medya Paylaşımları</h4>
+        </div>
         <div class="row pt-1">
 
             <div class="col-md-6">
@@ -488,7 +494,7 @@
             </div>
 
             <div class="col-md-6">
-                 @if (!string.IsNullOrWhiteSpace(Model.Site?.SiteOzellikleri?.SiteInstagramAdress))
+                @if (!string.IsNullOrWhiteSpace(Model.Site?.SiteOzellikleri?.SiteInstagramAdress))
                 {
                     <!-- INSTAGRAM-->
                     <div class="row ScrollBar">
@@ -496,11 +502,11 @@
                         <script async src="//www.instagram.com/embed.js"></script>
                         <iframe class="instagram-media"
                                 src="@Model.Site?.SiteOzellikleri?.SiteInstagramAdress/embed"
-                        width="100%"
-                        height="500"
-                        frameborder="0"
-                        scrolling="no"
-                        allowtransparency="true">
+                                width="100%"
+                                height="500"
+                                frameborder="0"
+                                scrolling="no"
+                                allowtransparency="true">
                         </iframe>
                     </div>
                 }
@@ -510,7 +516,7 @@
 
     </div>
 
-    <script async defer crossorigin="anonymous" src="https://connect.facebook.net/tr_TR/sdk.js#xfbml=1&version=v13.0" nonce="OPTJJ8lo"></script>';
+    <script async defer crossorigin="anonymous" src="https://connect.facebook.net/tr_TR/sdk.js#xfbml=1&version=v13.0" nonce="OPTJJ8lo"></script>
 </section>
 <!-- END SOSYAL MEDYA PAYLAŞIMLARI -->
 <!-- START SECTION PARALLAX VİDEO-->

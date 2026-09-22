@@ -1,5 +1,4 @@
 using Microservice.Admin.Services.Interfaces;
-using Microservice.Admin.ViewModels.PageType;
 using Microservice.Admin.ViewModels.Popup;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

@@ -101,13 +101,15 @@
 		}
 		
 		.post-scroller-wrap {
-			display: none;
+			display: block;
 			padding: 15px;
 		    background: #fff;
 		}
-
+		.header-overlay-content {
+			position: static;
+		}
 		.header-content-scroller .header-overlay-content .un-post-scroller {
-		    padding: 20px 5px;
+			padding: 20px 5px;
 		}
 
 		.flat-fluid .post {

@@ -207,7 +207,7 @@
                                     <label asp-for="CreateDuyuru.ResimUrl" class="form-label">
                                         Resim URL
                                     </label>
-
+                                   
                                     <div class="input-group">
                                         <span class="input-group-text">
                                             <i class="mdi mdi-image"></i>
@@ -225,7 +225,9 @@
                                             <i class="mdi mdi-folder-open-outline"></i>
                                         </button>
                                     </div>
-
+                                    <p class="text-muted small mt-2">
+                                        Önerilen resim genişliği 265 x 265 değerlerindedir. Diğer boyutlarda eklenirse sünme veya esneme gibi problemler oluşabilir.
+                                    </p>
                                     <span asp-validation-for="CreateDuyuru.ResimUrl"
                                           class="text-danger small"></span>
 

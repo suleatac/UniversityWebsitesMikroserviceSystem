@@ -1395,6 +1395,14 @@ body.mobile .event-item:hover .event-thumbnail img {
 }
 /* Flat Ev Carousel
 -------------------------------------------------------------- */
+.flat-ev-carousel .title.sosyalmedia {
+    font-family: "Bitter", sans-serif;
+    font-size: 28px;
+    color: #343434;
+    margin-bottom: 20px;
+      padding-bottom:10px;
+    border-bottom: 1px solid #EBEBEB;
+}
 .flat-ev-carousel .title.haber {
     font-family: "Bitter", sans-serif;
     font-size: 28px;

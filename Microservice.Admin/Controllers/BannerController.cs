@@ -96,6 +96,7 @@ namespace Microservice.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(BannerCreateIndexVm model)
         {
+            ModelState.Remove("CreateBanner.SeoUrl");
             if (!ModelState.IsValid)
             {
                 _logger.LogWarning("Create Banner - ModelState geçersiz.");
@@ -144,6 +145,7 @@ namespace Microservice.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(BannerEditIndexVm model)
         {
+            ModelState.Remove("CreateBanner.SeoUrl");
             if (!ModelState.IsValid)
             {
                 _logger.LogWarning("Update Banner - ModelState geçersiz.");
