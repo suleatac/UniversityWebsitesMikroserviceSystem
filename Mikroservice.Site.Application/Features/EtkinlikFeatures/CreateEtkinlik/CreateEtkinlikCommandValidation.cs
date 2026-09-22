@@ -27,13 +27,10 @@ namespace Mikroservice.Site.Application.Features.EtkinlikFeatures.CreateEtkinlik
 
 
             RuleFor(x => x.ResimUrl)
-                .MaximumLength(500)
-                .When(x => !string.IsNullOrEmpty(x.ResimUrl))
-                .Must(uri => string.IsNullOrEmpty(uri) || Uri.TryCreate(uri, UriKind.Absolute, out _))
-                .WithMessage("Geçerli bir resim URL giriniz.");
+                .MaximumLength(500).WithMessage("Resim URL en fazla 500 karakter olabilir.");
 
             RuleFor(x => x.Link)
-                .MaximumLength(500)
+                .MaximumLength(500).WithMessage("Link en fazla 500 karakter olabilir.")
                 .When(x => !string.IsNullOrEmpty(x.Link))
                 .Must(uri => string.IsNullOrEmpty(uri) || Uri.TryCreate(uri, UriKind.Absolute, out _))
                 .WithMessage("Geçerli bir link giriniz.");

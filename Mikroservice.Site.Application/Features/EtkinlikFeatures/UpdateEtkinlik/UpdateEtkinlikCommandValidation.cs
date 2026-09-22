@@ -26,10 +26,7 @@ namespace Mikroservice.Site.Application.Features.EtkinlikFeatures.UpdateEtkinlik
 
 
             RuleFor(x => x.ResimUrl)
-                .MaximumLength(500)
-                .When(x => !string.IsNullOrEmpty(x.ResimUrl))
-                .Must(uri => string.IsNullOrEmpty(uri) || Uri.TryCreate(uri, UriKind.Absolute, out _))
-                .WithMessage("Geçerli bir resim URL giriniz.");
+                 .MaximumLength(500).WithMessage("Resim URL en fazla 500 karakter olabilir.");
 
             RuleFor(x => x.Link)
                 .MaximumLength(500)
