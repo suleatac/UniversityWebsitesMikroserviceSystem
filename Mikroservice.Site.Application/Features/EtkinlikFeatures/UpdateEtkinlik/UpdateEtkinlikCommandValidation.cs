@@ -24,8 +24,6 @@ namespace Mikroservice.Site.Application.Features.EtkinlikFeatures.UpdateEtkinlik
                 .NotEmpty().WithMessage("Kısa açıklama boş olamaz.")
                 .MaximumLength(500).WithMessage("Kısa açıklama en fazla 500 karakter olabilir.");
 
-            RuleFor(x => x.IcerikMetni)
-                .NotEmpty().WithMessage("İçerik metni boş olamaz.");
 
             RuleFor(x => x.ResimUrl)
                 .MaximumLength(500)
