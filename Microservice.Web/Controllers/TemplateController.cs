@@ -84,11 +84,10 @@ namespace Microservice.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            var host = Request.Host.Host;
+            //var host = Request.Host.Host;
             var path = Request.Path.Value ?? "/";
 
-            //var host = "test91.sivas.edu.tr";
-            //var path = "/tr/";
+            var host = "default.sivas.edu.tr";
 
             ViewData["Host"] = host;
             ViewData["Path"] = path;

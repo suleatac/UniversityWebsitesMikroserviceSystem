@@ -181,7 +181,7 @@ services:
     ports:
       - "5433:5432"
     volumes:
-      -  /home/suleatac/docker/docker_data/postgres-site:/var/lib/postgresql/data
+      -  postgres.db.site.volume:/var/lib/postgresql/data
     networks:
       - university-network
   postgres.db.ogrenci:
@@ -337,8 +337,9 @@ volumes:
   kibanadata:
   prometheus_data:
   minio_data:
+  postgres.db.site.volume:
 
 networks:
   university-network:
-    external: true
-    # driver: bridge
+    # external: true
+    driver: bridge
