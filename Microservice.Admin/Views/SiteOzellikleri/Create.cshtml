@@ -22,12 +22,11 @@
                 </div>
             </div>
             <div class="card-body p-4">
-                <form 
-                    asp-action="Create" 
-                    method="post" 
-                    id="siteOzellikleriCreateForm" 
-                    class="needs-validation" 
-                    novalidate>
+                <form asp-action="Create"
+                      method="post"
+                      id="siteOzellikleriCreateForm"
+                      class="needs-validation"
+                      novalidate>
 
                     <div id="validationSummary"
                          asp-validation-summary="ModelOnly"
@@ -100,12 +99,13 @@
                             <div class="col-md-4">
                                 <div class="mb-3">
                                     <label asp-for="SiteFacebookAdress" class="form-label">Facebook</label>
-                                    <div class="input-group"><span class="input-group-text">
-                                        <i class="mdi mdi-facebook"></i>
+                                    <div class="input-group">
+                                        <span class="input-group-text">
+                                            <i class="mdi mdi-facebook"></i>
                                         </span>
                                         <input asp-for="SiteFacebookAdress" class="form-control" placeholder="Facebook URL" />
                                     </div>
-                                    </div>
+                                </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="mb-3"><label asp-for="SiteTwitterAdress" class="form-label">Twitter</label><div class="input-group"><span class="input-group-text"><i class="mdi mdi-twitter"></i></span><input asp-for="SiteTwitterAdress" class="form-control" placeholder="Twitter URL" /></div></div>
@@ -131,7 +131,13 @@
                         <h6 class="text-primary border-bottom pb-2"><i class="mdi mdi-video me-1"></i> Video ve Görsel</h6>
                         <div class="row">
                             <div class="col-md-6">
-                                <div class="mb-3"><label asp-for="SiteHaritaAdress" class="form-label">Harita Adresi</label><div class="input-group"><span class="input-group-text"><i class="mdi mdi-map-marker"></i></span><input asp-for="SiteHaritaAdress" class="form-control" placeholder="Google Maps embed URL" /></div></div>
+                                <div class="mb-3">
+                                    <label asp-for="SiteHaritaAdress" class="form-label">Harita Adresi</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="mdi mdi-map-marker"></i></span><input asp-for="SiteHaritaAdress" class="form-control" placeholder="Google Maps embed URL" />
+                                    </div>
+                                    <p>Harita embed linkini giriniz.</p>
+                                </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="mb-3">
@@ -151,6 +157,7 @@
                                             <i class="mdi mdi-folder-open-outline"></i>
                                         </button>
                                     </div>
+                                    <p>Eğer youtube linki kullanıyorsanız, embed linkini giriniz.</p>
                                 </div>
                             </div>
                         </div>
@@ -263,10 +270,10 @@
         // Dosya Yöneticisi - Modal (Resim URL alanı için)
         // ============================================
         let currentInput = null;
-        $(function () {
+        $(function() {
 
             // Butona tıklanınca
-            $('.open-file-manager').on('click', function () {
+            $('.open-file-manager').on('click', function() {
 
                 currentInput = $(this).closest('.input-group').find('.file-picker-input');
 
@@ -281,7 +288,7 @@
             });
 
             // FileManager'dan dosya seçildiğinde
-            window.addEventListener('message', function (event) {
+            window.addEventListener('message', function(event) {
 
                 if (event.data.type === 'file-selected') {
 
@@ -297,7 +304,7 @@
         // ============================================
         // Validation Summary
         // ============================================
-        $(document).ready(function () {
+        $(document).ready(function() {
 
             var validationSummary = $('#validationSummary');
 
