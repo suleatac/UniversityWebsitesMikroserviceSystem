@@ -148,6 +148,8 @@ namespace Microservice.Admin.Controllers
             ModelState.Remove("BannerDetail.SeoUrl");
             if (!ModelState.IsValid)
             {
+                var hedefler = await _hedefService.GetHedefsAsync();
+                model.Hedefler = hedefler.Data ?? new List<ViewModels.Hedef.GetHedefVm>();
                 _logger.LogWarning("Update Banner - ModelState geçersiz.");
                 return View(model);
             }
