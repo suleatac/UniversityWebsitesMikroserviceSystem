@@ -17,15 +17,14 @@ namespace Mikroservice.Site.Application.Features.EtkinlikFeatures.UpdateEtkinlik
                 .WithMessage("HedefId 0'dan büyük olmalıdır.");
 
             RuleFor(x => x.Baslik)
-                .NotEmpty().WithMessage("Başlık boş olamaz.")
                 .MaximumLength(200).WithMessage("Başlık en fazla 200 karakter olabilir.");
 
             RuleFor(x => x.KisaAciklama)
-                .NotEmpty().WithMessage("Kısa açıklama boş olamaz.")
                 .MaximumLength(500).WithMessage("Kısa açıklama en fazla 500 karakter olabilir.");
 
 
             RuleFor(x => x.ResimUrl)
+                 .NotEmpty().WithMessage("Resim URL boş olamaz.")
                  .MaximumLength(500).WithMessage("Resim URL en fazla 500 karakter olabilir.");
 
             RuleFor(x => x.Link)

@@ -15,13 +15,12 @@ namespace Microservice.Admin.ViewModels.Etkinlik
 
         [Range(1, int.MaxValue, ErrorMessage = "DilId 0'dan büyük olmalıdır.")]
         public int DilId { get; set; }
-        [Required(ErrorMessage = "Hedef boş olamaz.")]
+
         [Range(1, int.MaxValue, ErrorMessage = "Hedef seçimi zorunludur.")]
         public int HedefId { get; set; }
 
-        [Required(ErrorMessage = "Başlık boş olamaz.")]
         [StringLength(200, ErrorMessage = "Başlık en fazla 200 karakter olabilir.")]
-        public string Baslik { get; set; } = default!;
+        public string? Baslik { get; set; }
 
 
         [StringLength(500, ErrorMessage = "Kısa açıklama en fazla 500 karakter olabilir.")]
@@ -32,7 +31,7 @@ namespace Microservice.Admin.ViewModels.Etkinlik
         [StringLength(500, ErrorMessage = "Link en fazla 500 karakter olabilir.")]
         [Url(ErrorMessage = "Geçerli bir link giriniz.")]
         public string? Link { get; set; }
-
+        [Required(ErrorMessage = "Resim URL boş olamaz.")]
         [StringLength(500, ErrorMessage = "Resim URL en fazla 500 karakter olabilir.")]
         public string? ResimUrl { get; set; }
 
