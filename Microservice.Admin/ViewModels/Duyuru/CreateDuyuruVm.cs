@@ -22,6 +22,7 @@ namespace Microservice.Admin.ViewModels.Duyuru
         [Range(1, int.MaxValue, ErrorMessage = "DilId 0'dan büyük olmalıdır.")]
         public int DilId { get; set; }
 
+        [Required(ErrorMessage = "Hedef boş olamaz.")]
         [Range(1, int.MaxValue, ErrorMessage = "Hedef seçimi zorunludur.")]
         public int HedefId { get; set; }
 

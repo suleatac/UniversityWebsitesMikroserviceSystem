@@ -29,13 +29,16 @@ namespace Microservice.Site.Persistence.Repositories
                 .AsNoTracking()
                 .ToListAsync(cancellationToken);
         }
-        public Task<bool> IsSeoUrlAvailableAsync(int siteId, int PageTypeId, string SeoUrl, int? ExcludeIcerikId, CancellationToken cancellationToken = default)
+        public Task<bool> IsSeoUrlTakenAsync(int siteId, string SeoUrl, int? ExcludeSitePersonelId, CancellationToken cancellationToken = default)
         {
+            // Unique index "IX_SitePersonelleri_SiteId_SeoUrl" (SiteId, SeoUrl) uzerindedir.
+            // Eskiden buraya Icerik tablosunun PK'si (ExcludeIcerikId) veriliyordu; farkli
+            // tablonun Id'siyle eslesen personel kaydi yanlislikla muaf sayiliyordu.
+            // Artik yalnizca SitePersonel Id exclude edilir.
             return _appDbContext.Set<SitePersonel>()
                 .AnyAsync(x => x.SiteId == siteId
                                 && x.SeoUrl == SeoUrl
-                                && x.PageTypeId == PageTypeId
-                                && (!ExcludeIcerikId.HasValue || x.Id != ExcludeIcerikId.Value),
+                                && (!ExcludeSitePersonelId.HasValue || x.Id != ExcludeSitePersonelId.Value),
                     cancellationToken);
         }
 

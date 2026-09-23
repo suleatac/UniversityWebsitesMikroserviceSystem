@@ -17,12 +17,16 @@ namespace Mikroservice.Site.Application.Features.IcerikFeatures.IsSeoUrlAvailabl
                 return ServiceResult<bool>.Error("SeoUrl bos olamaz", HttpStatusCode.BadRequest);
 
             // Icerik tablosu (Haber, Duyuru, Bilgi, Etkinlik, Video, Banner - TPH) uzerinde
-            // benzersiz index (SiteId, SeoUrl) oldugundan kontrol site genelinde yapilir.
+            // benzersiz index (SiteId, SeoUrl) oldugundan kontrol site genelinde ve TUM
+            // sayfa tipleri icin yapilir. PageTypeId filtresi index ile eslesmiyordu:
+            // slug'i baska bir icerik tipi almussa kontrol "bos" diyor, DB 23505 patlatiyordu.
+            // Ayni sekilde ExcludeIcerikId yalnizca Icerik sorgusuna verilir; SitePersonel
+            // ayri bir tablo/primary-key alani oldugundan oraya ExcludeSitePersonelId gecerlidir.
             // Not: GetAll() uzerindeki soft-delete query filter otomatik uygulanir.
             var isSeoUrlTakenByIcerik = await icerikRepository
-                .IsSeoUrlAvailableAsync(request.SiteId, request.PageTypeId, request.SeoUrl, request.ExcludeIcerikId, cancellationToken);
+                .IsSeoUrlTakenAsync(request.SiteId, request.SeoUrl, request.ExcludeIcerikId, cancellationToken);
             var isSeoUrlTakenBySitePersonel = await sitePersonelRepository
-                .IsSeoUrlAvailableAsync(request.SiteId, request.PageTypeId, request.SeoUrl, request.ExcludeIcerikId, cancellationToken);
+                .IsSeoUrlTakenAsync(request.SiteId, request.SeoUrl, request.ExcludeSitePersonelId, cancellationToken);
 
 
 

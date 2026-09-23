@@ -16,13 +16,15 @@ namespace Mikroservice.Site.Api.Endpoints.IcerikEndPoints.EndPoints
                     int siteId,
                     string seoUrl,
                     int pageTypeId,
-                    int? excludeIcerikId) => {
+                    int? excludeIcerikId,
+                    int? excludeSitePersonelId) => {
                         var result = await mediator.Send(
                         new IsSeoUrlAvailableQuery(
                             siteId,
                             seoUrl,
                             pageTypeId,
-                            excludeIcerikId));
+                            excludeIcerikId,
+                            excludeSitePersonelId));
 
                         return result.ToGenericResult();
                     })
