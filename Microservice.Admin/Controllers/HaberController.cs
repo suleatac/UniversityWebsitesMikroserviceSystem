@@ -127,6 +127,7 @@ namespace Microservice.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(HaberCreateIndexVm model)
         {
+            ModelState.Remove("CreateHaber.SeoUrl");
             if (!ModelState.IsValid)
             {
                 _logger.LogWarning("Create Haber - ModelState geçersiz.");
@@ -191,6 +192,7 @@ namespace Microservice.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(HaberEditIndexVm model)
         {
+            ModelState.Remove("HaberDetail.SeoUrl");
             if (!ModelState.IsValid)
             {
                 _logger.LogWarning("Update Haber - ModelState geçersiz.");
