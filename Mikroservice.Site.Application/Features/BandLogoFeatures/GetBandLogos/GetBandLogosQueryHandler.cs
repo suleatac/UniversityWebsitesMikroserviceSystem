@@ -17,7 +17,7 @@ namespace Mikroservice.Site.Application.Features.BandLogoFeatures.GetBandLogos
         public async Task<ServiceResult<List<BandLogo>>> Handle(GetBandLogosQuery request, CancellationToken cancellationToken)
         {
             // Önce cache'e bak
-            var cacheKey = $"bandlogos:list:{request.SiteId}:{request.DilId}";
+            var cacheKey = $"bandlogo:list:{request.SiteId}:{request.DilId}";
             var cached = await redisCacheService.GetListAsync<BandLogo>(cacheKey, cancellationToken);
             if (cached is not null)
             {
