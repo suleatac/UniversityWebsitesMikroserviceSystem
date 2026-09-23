@@ -34,12 +34,10 @@ namespace Microservice.Admin.ViewModels.User
         public int PersonId { get; init; }
 
         [Display(Name = "Password")]
-        [Required(ErrorMessage = "Password is required")]
         [DataType(DataType.Password)]
         public string? Password { get; init; }
 
         [Display(Name = "Password Confirm")]
-        [Required(ErrorMessage = "PasswordConfirm is required")]
         [Compare(nameof(Password), ErrorMessage = "Password and PasswordConfirm must be the same")]
         [DataType(DataType.Password)]
         public string? PasswordConfirm { get; init; }

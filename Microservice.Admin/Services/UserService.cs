@@ -123,28 +123,29 @@ namespace Microservice.Admin.Services
 
         private static KeycloakUserCreateRequest CreateUserRequest(UserAddVm model)
         {
-
-
-            var keycloakRequestModel = new KeycloakUserCreateRequest{
+            var keycloakRequestModel = new KeycloakUserCreateRequest
+            {
                 Username = model.Username,
                 Enabled = model.Enabled,
                 FirstName = model.FirstName,
                 LastName = model.LastName,
                 Email = model.Email,
                 Attributes = new Dictionary<string, string[]>
-   {
-                   { "personId", new[] { model.PersonId.ToString() } }
-                 },
-                Credentials = new List<KeycloakCredential>
-   {
-                      new()
-                       {
-                         Type = "password",
-                         Value = model.Password,
-                         Temporary = false
-                        }
-                 }
+                {
+                    { "personId", new[] { model.PersonId.ToString() } }
+                }
             };
+
+            // Sifre bos birakildiksa kullanicinin sadece kullanic1 adi ile olusturulur
+            if (!string.IsNullOrWhiteSpace(model.Password))
+            {
+                keycloakRequestModel.Credentials.Add(new KeycloakCredential
+                {
+                    Type = "password",
+                    Value = model.Password,
+                    Temporary = false
+                });
+            }
 
             return keycloakRequestModel;
         }
