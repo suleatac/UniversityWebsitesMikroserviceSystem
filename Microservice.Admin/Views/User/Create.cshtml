@@ -7,7 +7,41 @@
 }
 
 @section styles {
+    <link href="~/assets/libs/select2/css/select2.min.css" rel="stylesheet" />
     <style>
+        /* Select2 Bootstrap 5 uyumlu stil */
+        .select2-container--default .select2-selection--single {
+            height: calc(1.5em + 0.9rem + 2px) !important;
+            border: 1px solid #ced4da !important;
+            border-radius: 0.3rem !important;
+            padding: 0.45rem 0.9rem !important;
+        }
+        .select2-container--default .select2-selection--single .select2-selection__rendered {
+            line-height: 1.5 !important;
+            padding-left: 0 !important;
+            color: #495057;
+        }
+        .select2-container--default .select2-selection--single .select2-selection__arrow {
+            height: calc(1.5em + 0.9rem + 2px) !important;
+        }
+        .select2-container--default .select2-selection--single .select2-selection__clear {
+            display: none !important;
+        }
+        .select2-container--default.select2-container--focus .select2-selection--single,
+        .select2-container--default.select2-container--open .select2-selection--single {
+            border-color: #80bdff !important;
+            box-shadow: 0 0 0 0.2rem rgba(0,123,255,0.25) !important;
+        }
+        .select2-container--default .select2-results__option--highlighted[aria-selected] {
+            background-color: #556ee6 !important;
+        }
+        .select2-dropdown {
+            border-color: #ced4da !important;
+        }
+        /* Sonraki validation mesaji container'in altinda kalsin */
+        .select2-container {
+            margin-bottom: 0.25rem;
+        }
         .page-header-card {
             background: linear-gradient(135deg, #6f42c1 0%, #d63384 100%);
             border-radius: 12px;
@@ -105,16 +139,13 @@
                                     <label asp-for="UserAdd.PersonId" class="form-label">
                                         Personel Seç <span class="text-danger">*</span>
                                     </label>
-                                    <div class="input-group">
-                                        <span class="input-group-text"><i class="mdi mdi-account-tie"></i></span>
-                                        <select asp-for="UserAdd.PersonId" class="form-select" id="personelSelect">
-                                            <option value="">-- Personel Seçin --</option>
-                                            @foreach (var personel in Model.TumPersoneller)
-                                            {
-                                                <option value="@personel.Id" data-firstname="@personel.Adi" data-lastname="@personel.Soyadi" data-email="@personel.Eposta">@personel.Adi @personel.Soyadi</option>
-                                            }
-                                        </select>
-                                    </div>
+                                    <select asp-for="UserAdd.PersonId" class="form-select select2" id="personelSelect">
+                                        <option value="">-- Personel Seçin --</option>
+                                        @foreach (var personel in Model.TumPersoneller)
+                                        {
+                                            <option value="@personel.Id" data-firstname="@personel.Adi" data-lastname="@personel.Soyadi" data-email="@personel.Eposta">@personel.Adi @personel.Soyadi</option>
+                                        }
+                                    </select>
                                     <span asp-validation-for="UserAdd.PersonId" class="text-danger small"></span>
                                     <small class="text-muted">Personel seçildiğinde ad, soyad ve e-posta alanları otomatik doldurulur.</small>
                                 </div>
@@ -193,31 +224,33 @@
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label asp-for="UserAdd.Password" class="form-label">
-                                        Şifre <span class="text-danger">*</span>
+                                        Şifre <small class="text-muted">(opsiyonel)</small>
                                     </label>
                                     <div class="input-group">
                                         <span class="input-group-text"><i class="mdi mdi-lock"></i></span>
-                                        <input asp-for="UserAdd.Password" class="form-control" type="password" placeholder="Şifre girin" id="passwordInput" />
+                                        <input asp-for="UserAdd.Password" class="form-control" type="password" placeholder="Şifre girin" id="passwordInput" autocomplete="new-password" />
                                         <span class="input-group-text" id="togglePassword" style="cursor: pointer;">
                                             <i class="mdi mdi-eye-off" id="toggleIcon"></i>
                                         </span>
                                     </div>
                                     <span asp-validation-for="UserAdd.Password" class="text-danger small"></span>
+                                    <small class="text-muted">Boş bırakırsanız kullanıcı şifresiz oluşturulur.</small>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label asp-for="UserAdd.PasswordConfirm" class="form-label">
-                                        Şifre Tekrar <span class="text-danger">*</span>
+                                        Şifre Tekrar <small class="text-muted">(opsiyonel)</small>
                                     </label>
                                     <div class="input-group">
                                         <span class="input-group-text"><i class="mdi mdi-lock-check"></i></span>
-                                        <input asp-for="UserAdd.PasswordConfirm" class="form-control" type="password" placeholder="Şifre tekrar" id="passwordConfirmInput" />
+                                        <input asp-for="UserAdd.PasswordConfirm" class="form-control" type="password" placeholder="Şifre tekrar" id="passwordConfirmInput" autocomplete="new-password" />
                                         <span class="input-group-text" id="togglePasswordConfirm" style="cursor: pointer;">
                                             <i class="mdi mdi-eye-off" id="toggleIconConfirm"></i>
                                         </span>
                                     </div>
                                     <span asp-validation-for="UserAdd.PasswordConfirm" class="text-danger small"></span>
+                                    <small class="text-muted">Şifre girdiyseniz tekrarını da girin.</small>
                                 </div>
                             </div>
                         </div>
@@ -289,7 +322,17 @@
 
 @section scripts {
     <script src="~/assets/js/app.js"></script>
+    <script src="~/assets/libs/select2/js/select2.full.min.js"></script>
+    <script src="~/assets/libs/select2/js/i18n/tr.js"></script>
     <script>
+        // Select2 (yazarak aranabilir personel seçimi)
+        $(document).ready(function () {
+            $('.select2').select2({
+                language: 'tr',
+                width: '100%'
+            });
+        });
+
         // Personel seçildiğinde ad, soyad ve e-posta alanlarını otomatik doldur
         document.getElementById('personelSelect').addEventListener('change', function() {
             var selectedOption = this.options[this.selectedIndex];
