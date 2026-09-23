@@ -136,17 +136,6 @@
 
                                         </div><!--/course-info-->
                                         <div class="content-content">
-                                            <div class="content-dropcap v1">
-                                                @if (!string.IsNullOrWhiteSpace(etkinlik.IcerikMetni))
-                                                {
-                                                    @Html.Raw(etkinlik.IcerikMetni)
-                                                }
-                                                else
-                                                {
-                                                    <p>Bu etkinlik için içerik girilmemiş.</p>
-                                                }
-                                            </div>
-
                                             <div class="content-pad v1">
                                                 <ul class="list-inline social-light">
                                                     <li>
@@ -193,6 +182,18 @@
                                                     </li>
                                                 </ul>
                                             </div>
+                                            <div class="content-dropcap v1">
+                                                @if (!string.IsNullOrWhiteSpace(etkinlik.IcerikMetni))
+                                                {
+                                                    @Html.Raw(etkinlik.IcerikMetni)
+                                                }
+                                                else
+                                                {
+                                                    <p>Bu etkinlik için içerik girilmemiş.</p>
+                                                }
+                                            </div>
+
+                                        
 
                                             <div class="content-pad calendar-import">
                                                 @if (googleCalendarUrl is not null)
