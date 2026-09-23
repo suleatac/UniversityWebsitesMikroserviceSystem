@@ -143,6 +143,9 @@ builder.Host.UseSerilog(Logging.ConfigureLogging);
 
 
 
+builder.WebHost.ConfigureKestrel(o => o.Limits.MaxRequestBodySize = 100L * 1024 * 1024);
+builder.Services.Configure<Microsoft.AspNetCore.Http.Features.FormOptions>(o =>
+    o.MultipartBodyLengthLimit = 100L * 1024 * 1024);
 
 
 
