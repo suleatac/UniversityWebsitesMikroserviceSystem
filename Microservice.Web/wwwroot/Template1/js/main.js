@@ -321,14 +321,16 @@
     };
 
     var flatClient2 = function() {
-        $('.flat-carousel.v2').each(function() {            
+        $('.flat-carousel.v2').each(function() {
             if ( $().owlCarousel ) {
-                $(this).find('.flat-blog-carousel').owlCarousel({
-                    loop: true,
+                var $carousel = $(this).find('.flat-blog-carousel');
+                var itemCount = $carousel.children('.grid-item').length;
+                $carousel.owlCarousel({
+                    loop: itemCount > 1,
                     margin: true,
-                    nav: true,
-                    dots: true,                     
-                    autoplay: false,                    
+                    nav: itemCount > 1,
+                    dots: true,
+                    autoplay: false,
                     responsive:{
                         0:{
                             items: 1
@@ -352,14 +354,16 @@
     };
 
     var flatClient3 = function() {
-        $('.flat-carousel.v3').each(function() {            
+        $('.flat-carousel.v3').each(function() {
             if ( $().owlCarousel ) {
-                $(this).find('.flat-blog-carousel').owlCarousel({
-                    loop: true,
+                var $carousel = $(this).find('.flat-blog-carousel');
+                var itemCount = $carousel.children('.grid-item').length;
+                $carousel.owlCarousel({
+                    loop: itemCount > 1,
                     margin: true,
-                    nav: true,
-                    dots: true,                     
-                    autoplay: false,                    
+                    nav: itemCount > 1,
+                    dots: true,
+                    autoplay: false,
                     responsive:{
                         0:{
                             items: 1
