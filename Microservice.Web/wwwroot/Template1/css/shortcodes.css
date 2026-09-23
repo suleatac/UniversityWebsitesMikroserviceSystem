@@ -2731,7 +2731,7 @@ body.mobile .event-item:hover .event-thumbnail img {
 }
 
 .posts-carousel.v4 .owl-theme .owl-controls .owl-nav div.owl-prev {
-    left: -3px;
+    left: 0px;
     top: 37%;
 }
 
