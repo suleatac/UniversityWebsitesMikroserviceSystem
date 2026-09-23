@@ -17,9 +17,9 @@ namespace Microservice.Admin.ViewModels.Etkinlik
         [Range(1, int.MaxValue, ErrorMessage = "Hedef seçimi zorunludur.")]
         public int HedefId { get; set; }
 
-        [Required(ErrorMessage = "Başlık boş olamaz.")]
+    
         [StringLength(200, ErrorMessage = "Başlık en fazla 200 karakter olabilir.")]
-        public string Baslik { get; set; } = default!;
+        public string? Baslik { get; set; } 
 
         [StringLength(500, ErrorMessage = "Kısa açıklama en fazla 500 karakter olabilir.")]
         public string? KisaAciklama { get; set; } 
@@ -30,8 +30,9 @@ namespace Microservice.Admin.ViewModels.Etkinlik
         [Url(ErrorMessage = "Geçerli bir link giriniz.")]
         public string? Link { get; set; }
 
+        [Required(ErrorMessage = "Resim URL boş olamaz.")]
         [StringLength(500, ErrorMessage = "Resim URL en fazla 500 karakter olabilir.")]
-        public string? ResimUrl { get; set; }
+        public string ResimUrl { get; set; } = default!;
 
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-ddTHH:mm}", ApplyFormatInEditMode = true)]
         public DateTime YayimTarihi { get; set; } = DateTime.Now;

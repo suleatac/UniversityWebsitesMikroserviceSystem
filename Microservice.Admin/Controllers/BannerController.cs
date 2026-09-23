@@ -1,7 +1,5 @@
 using Microservice.Admin.Services.Interfaces;
 using Microservice.Admin.ViewModels.Banner;
-using Microservice.Admin.ViewModels.Duyuru;
-using Microservice.Admin.ViewModels.PageType;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

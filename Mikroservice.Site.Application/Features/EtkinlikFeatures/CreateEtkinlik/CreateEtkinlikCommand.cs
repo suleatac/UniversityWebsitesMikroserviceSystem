@@ -9,12 +9,12 @@ namespace Mikroservice.Site.Application.Features.EtkinlikFeatures.CreateEtkinlik
         public int DilId { get; init; }
         public int HedefId { get; init; }
 
-        public string Baslik { get; init; } = default!;
+        public string? Baslik { get; init; } 
         public string? KisaAciklama { get; init; }
         public string? IcerikMetni { get; init; }
 
         public string? Link { get; init; }
-        public string? ResimUrl { get; init; }
+        public string ResimUrl { get; init; } = default!;
 
         public DateTime YayimTarihi { get; init; }
         public DateTime? BaslamaTarihi { get; init; }
