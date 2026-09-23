@@ -23,9 +23,7 @@ namespace Mikroservice.Site.Application.Features.BandLogoFeatures.CreateBandLogo
 
             RuleFor(x => x.ImgUrl)
                 .NotEmpty().WithMessage("Görsel URL boş olamaz.")
-                .MaximumLength(500).WithMessage("Görsel URL en fazla 500 karakter olabilir")
-                .Must(uri => Uri.TryCreate(uri, UriKind.Absolute, out _))
-                .WithMessage("Geçerli bir URL giriniz.");
+                .MaximumLength(500).WithMessage("Görsel URL en fazla 500 karakter olabilir");
 
             RuleFor(x => x.Link)
                 .MaximumLength(500).WithMessage("Link en fazla 500 karakter olabilir.")

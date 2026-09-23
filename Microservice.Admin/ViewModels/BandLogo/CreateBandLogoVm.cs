@@ -18,7 +18,6 @@ namespace Microservice.Admin.ViewModels.BandLogo
 
         [Required(ErrorMessage = "Görsel URL boş olamaz.")]
         [StringLength(500, ErrorMessage = "Görsel URL en fazla 500 karakter olabilir.")]
-        [Url(ErrorMessage = "Geçerli bir URL giriniz.")]
         public string ImgUrl { get; set; } = default!;
 
         [StringLength(500, ErrorMessage = "Link en fazla 500 karakter olabilir.")]
