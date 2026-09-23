@@ -156,12 +156,14 @@ namespace Microservice.Admin.Services
             dto.PageTypeId = personelPageTypeResult.Data.Id;
 
 
-            // SEO bilgileri kullanıcıdan alınmaz; başlıktan otomatik üretilir
+            // SEO bilgileri kullanıcıdan alınmaz; başlıktan otomatik üretilir.
+            // excludeSitePersonelId: guncellemede kayd'in kendi slug'i carpisma sayilmamali.
             await _seoService.ApplyAutoSeoAsync(dto.SiteId, dto.PageTypeId, dto.Adi + dto.Soyadi, dto.Username,
                 seoUrl => dto.SeoUrl = seoUrl,
                 seoTitle => dto.SeoTitle = seoTitle,
                 seoDescription => dto.SeoDescription = seoDescription,
-                fallbackSlug: "personel");
+                fallbackSlug: "personel",
+                excludeSitePersonelId: dto.Id);
 
 
             // Site Personeli teyit amaçlı tekrar apiden çekilir ve 3 alan (Adi, Soyadi, Username) client tarafında güncellenir. Bu sayede kullanıcı yanlışlıkla farklı bir personel seçse bile doğru bilgilerle kayıt yapılır.

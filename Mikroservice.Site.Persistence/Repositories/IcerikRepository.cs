@@ -17,12 +17,15 @@ namespace Microservice.Site.Persistence.Repositories
         {
             return await _appDbContext.Set<Icerik>().AnyAsync(cancellationToken);
         }
-        public Task<bool> IsSeoUrlAvailableAsync(int siteId, int PageTypeId, string SeoUrl, int? ExcludeIcerikId, CancellationToken cancellationToken = default)
+        public Task<bool> IsSeoUrlTakenAsync(int siteId, string SeoUrl, int? ExcludeIcerikId, CancellationToken cancellationToken = default)
         {
+            // Unique index "IX_Icerik_SiteId_SeoUrl" (SiteId, SeoUrl) uzerindedir ve
+            // sayfa tipi/dil ayrimi yapmaz. PageTypeId filtresi buradan kaldirildi;
+            // aksi halde baska bir icerik tipinin aldigi slug "musait" gorunup
+            // SaveChanges'te 23505 (unique violation) firlatiyordu.
             return _appDbContext.Set<Icerik>()
                 .AnyAsync(x => x.SiteId == siteId
                                 && x.SeoUrl == SeoUrl
-                                && x.PageTypeId == PageTypeId
                                 && (!ExcludeIcerikId.HasValue || x.Id != ExcludeIcerikId.Value),
                     cancellationToken);
         }

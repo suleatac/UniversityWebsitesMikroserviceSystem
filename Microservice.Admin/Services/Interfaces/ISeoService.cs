@@ -20,6 +20,7 @@ namespace Microservice.Admin.Services.Interfaces
         /// <param name="setSeoDescription">Uretilen aciklamayi yazacak setter (null gecilebilir).</param>
         /// <param name="fallbackSlug">Baslik'tan slug uretilemezse kullanilacak taban slug.</param>
         /// <param name="excludeIcerikId">Guncellemede kendisinin carpisma sayilmamasi icin Icerik Id.</param>
+        /// <param name="excludeSitePersonelId">Guncellemede kendisinin carpisma sayilmamasi icin SitePersonel Id (personel akisi icin).</param>
         Task ApplyAutoSeoAsync(
              int siteId,
              int pageTypeId,
@@ -29,6 +30,7 @@ namespace Microservice.Admin.Services.Interfaces
              Action<string?>? setSeoTitle = null,
              Action<string?>? setSeoDescription = null,
              string fallbackSlug = "icerik",
-             int? excludeIcerikId = null);
+             int? excludeIcerikId = null,
+             int? excludeSitePersonelId = null);
     }
 }

@@ -134,8 +134,6 @@ namespace Microservice.Admin.Controllers
 
                 // Dropdown'ları yeniden yükle
                 var hedefler = await _hedefService.GetHedefsAsync();
-                var siteler = await _siteService.GetSitesAsync();
-                var diller = await _dilService.GetDilsAsync();
                 model.Hedefler = hedefler.Data ?? new List<ViewModels.Hedef.GetHedefVm>();
 
                 return View(model);
@@ -151,8 +149,6 @@ namespace Microservice.Admin.Controllers
 
                 // Dropdown'ları yeniden yükle
                 var hedefler = await _hedefService.GetHedefsAsync();
-                var siteler = await _siteService.GetSitesAsync();
-                var diller = await _dilService.GetDilsAsync();
                 model.Hedefler = hedefler.Data ?? new List<ViewModels.Hedef.GetHedefVm>();
 
                 return View(model);
@@ -195,6 +191,8 @@ namespace Microservice.Admin.Controllers
             ModelState.Remove("HaberDetail.SeoUrl");
             if (!ModelState.IsValid)
             {
+                var hedefler = await _hedefService.GetHedefsAsync();
+                model.Hedefler = hedefler.Data ?? new List<ViewModels.Hedef.GetHedefVm>();
                 _logger.LogWarning("Update Haber - ModelState geçersiz.");
                 return View(model);
             }
@@ -203,6 +201,9 @@ namespace Microservice.Admin.Controllers
 
             if (!result.IsSuccess)
             {
+                // Dropdown'ları yeniden yükle
+                var hedefler = await _hedefService.GetHedefsAsync();
+                model.Hedefler = hedefler.Data ?? new List<ViewModels.Hedef.GetHedefVm>();
                 _logger.LogError("Haber güncellenemedi. Id: {Id}, Hata: {Error}", model.HaberDetail.Id, result.Fail?.Detail);
 
                 ModelState.AddModelError("", result.Fail?.Detail ?? result.Fail?.Title ?? "Güncelleme başarısız");

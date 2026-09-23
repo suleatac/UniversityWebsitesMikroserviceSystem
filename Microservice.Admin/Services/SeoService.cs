@@ -19,7 +19,8 @@ namespace Microservice.Admin.Services
             Action<string?>? setSeoTitle = null,
             Action<string?>? setSeoDescription = null,
             string fallbackSlug = "icerik",
-            int? excludeIcerikId = null)
+            int? excludeIcerikId = null,
+            int? excludeSitePersonelId = null)
         {
             setSeoTitle?.Invoke(SeoHelper.BuildSeoTitle(baslik));
             setSeoDescription?.Invoke(SeoHelper.BuildSeoDescription(baslik, kisaAciklama));
@@ -35,7 +36,7 @@ namespace Microservice.Admin.Services
 
             while (occurrence <= MaxAttempts)
             {
-                var isTaken = await IsSeoUrlTakenAsync(siteId, pageTypeId, candidate, excludeIcerikId);
+                var isTaken = await IsSeoUrlTakenAsync(siteId, pageTypeId, candidate, excludeIcerikId, excludeSitePersonelId);
                 if (!isTaken)
                     break;
 
@@ -48,20 +49,24 @@ namespace Microservice.Admin.Services
 
         /// <summary>
         /// Slug site genelinde kullanilip kullanilmadigini sorgular.
-        /// Kontrol servisine erisilemezse kaydin kaydedilmesini engellememek icin
-        /// "kullanilabilir" varsayilir (fail-open); buyuk carpisma DB tarafinda yakalanir.
+        /// Kontrol servisine hic erisilemezse (exception / HTTP hatasi) kaydin kaydedilmesini
+        /// engellememek icin "kullanilabilir" varsayilir (fail-open); buyuk carpisma DB tarafinda
+        /// 409 olarak yakalanir. ANCAK sunucu "alinmis" (Content=false) dediyse bu cevap
+        /// kesinlikle "taken" sayilmalidir - eski kod bunu yanlislikla fail-open dalinda
+        /// "kullanilabilir" yorumluyor ve DB'ye 23505 unique violation gidiyordu.
         /// </summary>
-        private async Task<bool> IsSeoUrlTakenAsync(int siteId, int pageTypeId, string seoUrl, int? excludeIcerikId)
+        private async Task<bool> IsSeoUrlTakenAsync(int siteId, int pageTypeId, string seoUrl, int? excludeIcerikId, int? excludeSitePersonelId)
         {
             try
             {
-                var response = await seoCheckClient.IsSeoUrlAvailableAsync(siteId, pageTypeId, seoUrl, excludeIcerikId);
+                var response = await seoCheckClient.IsSeoUrlAvailableAsync(siteId, pageTypeId, seoUrl, excludeIcerikId, excludeSitePersonelId);
 
-                // Content true => kullanilabilir (bos), false => alinmis.
-                if (response.IsSuccessStatusCode && response.Content)
-                    return !response.Content;
+                // Gecerli cevap alinamadiysa fail-open: kullanilabilir varsay.
+                if (!response.IsSuccessStatusCode)
+                    return false;
 
-                return false;
+                // Content true => kullanilabilir (taken degil), Content false => alinmis (taken).
+                return !response.Content;
             }
             catch
             {

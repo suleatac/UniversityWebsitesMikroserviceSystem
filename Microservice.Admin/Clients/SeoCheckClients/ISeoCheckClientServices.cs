@@ -11,6 +11,7 @@ namespace Microservice.Admin.Clients.SeoCheckClients
         // "no method parameter matches" hatasi verir. Bu yuzden kisitlamalar olmadan yazilmali.
         [Get("/api/v1/icerikler/seo-available/{siteId}/{pageTypeId}/{seoUrl}")]
         Task<ApiResponse<bool>> IsSeoUrlAvailableAsync(int siteId, int pageTypeId, string seoUrl,
-            [AliasAs("excludeIcerikId")] int? excludeIcerikId = null);
+            [AliasAs("excludeIcerikId")] int? excludeIcerikId = null,
+            [AliasAs("excludeSitePersonelId")] int? excludeSitePersonelId = null);
     }
 }
