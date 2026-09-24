@@ -36,6 +36,10 @@ namespace Mikroservice.Site.Domain.SeedDatas
             new() { Kind = PageTypeKind.GaleriResimListesi, ViewName = "GaleriResimListesi", SlugTR = "galeri",      SlugEN = "gallery" },
             new() { Kind = PageTypeKind.GaleriResimDetay,   ViewName = "GaleriResmi",        SlugTR = "galeri-resim",SlugEN = "gallery-image" },
             new() { Kind = PageTypeKind.Search,             ViewName = "Search",             SlugTR = "arama",       SlugEN = "search" },
+            new() { Kind = PageTypeKind.StaticPage,         ViewName = "Iletisim",           SlugTR = "iletisim",    SlugEN = "contact" },
+            new() { Kind = PageTypeKind.Banner,             ViewName = "Banner",             SlugTR = "banner",      SlugEN = "banner" },
+            new() { Kind = PageTypeKind.VideoListesi,       ViewName = "VideoListesi",       SlugTR = "videolar",    SlugEN = "videos" },
+            new() { Kind = PageTypeKind.VideoDetay,         ViewName = "Video",              SlugTR = "video",       SlugEN = "video" },
         };
 
         public static List<PageTypeSeedDefinition> GetPageTypeSeedDefinitions()
