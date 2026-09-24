@@ -11,7 +11,7 @@ namespace Microservice.Web.ViewModels.Bilgi
         public int PageTypeId { get; set; }
         public string Baslik { get; set; } = default!;
         public string KisaAciklama { get; set; } = default!;
-        public string IcerikMetni { get; set; } = default!;
+        public string? IcerikMetni { get; set; }
         public string? Link { get; set; }
         public string? ResimUrl { get; set; }
         public int GosterimSayisi { get; set; } = 0;

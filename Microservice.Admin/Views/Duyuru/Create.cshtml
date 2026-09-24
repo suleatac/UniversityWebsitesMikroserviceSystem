@@ -140,9 +140,10 @@
                                             <i class="mdi mdi-text-short"></i>
                                         </span>
 
-                                        <input asp-for="CreateDuyuru.KisaAciklama"
-                                               class="form-control"
-                                               placeholder="Kısa açıklama giriniz" />
+                                        <textarea asp-for="CreateDuyuru.KisaAciklama"
+                                                  class="form-control"
+                                                  rows="5"
+                                                  placeholder="Kısa açıklama giriniz..."></textarea>
                                     </div>
 
                                     <span asp-validation-for="CreateDuyuru.KisaAciklama"

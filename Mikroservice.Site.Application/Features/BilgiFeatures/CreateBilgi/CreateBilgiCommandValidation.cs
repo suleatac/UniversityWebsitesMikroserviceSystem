@@ -24,14 +24,8 @@ namespace Mikroservice.Site.Application.Features.BilgiFeatures.CreateBilgi
                 .NotEmpty().WithMessage("Kısa açıklama boş olamaz.")
                 .MaximumLength(500).WithMessage("Kısa açıklama en fazla 500 karakter olabilir.");
 
-            RuleFor(x => x.IcerikMetni)
-                .NotEmpty().WithMessage("İçerik metni boş olamaz.");
-
             RuleFor(x => x.ResimUrl)
-                .MaximumLength(500)
-                .When(x => !string.IsNullOrEmpty(x.ResimUrl))
-                .Must(uri => string.IsNullOrEmpty(uri) || Uri.TryCreate(uri, UriKind.Absolute, out _))
-                .WithMessage("Geçerli bir resim URL giriniz.");
+                .MaximumLength(500).WithMessage("Resim URL en fazla 500 karakter olabilir.");
 
             RuleFor(x => x.Link)
                 .MaximumLength(500)

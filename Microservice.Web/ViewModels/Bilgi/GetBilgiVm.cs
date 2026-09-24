@@ -10,7 +10,7 @@ namespace Microservice.Web.ViewModels.Bilgi
         public int PageTypeId { get; set; }
         public string Baslik { get; set; } = string.Empty;
         public string KisaAciklama { get; set; } = string.Empty;
-        public string IcerikMetni { get; set; } = string.Empty;
+        public string? IcerikMetni { get; set; } 
         public string? Link { get; set; }
         public string? ResimUrl { get; set; }
         public string? VideoUrl { get; set; }

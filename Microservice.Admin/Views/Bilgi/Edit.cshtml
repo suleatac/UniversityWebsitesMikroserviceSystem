@@ -204,10 +204,11 @@
                                         <span class="input-group-text">
                                             <i class="mdi mdi-text-short"></i>
                                         </span>
-
-                                        <input asp-for="BilgiDetail.KisaAciklama"
-                                               class="form-control"
-                                               placeholder="Kısa açıklama" />
+                                        <textarea asp-for="BilgiDetail.KisaAciklama"
+                                                  class="form-control"
+                                                  rows="5"
+                                                  placeholder="Kısa açıklama giriniz..."></textarea>
+                              
 
                                     </div>
 
@@ -239,7 +240,6 @@
                                    class="form-label">
 
                                 İçerik Metni
-                                <span class="text-danger">*</span>
 
                             </label>
 
@@ -442,79 +442,7 @@
 
                     </div>
 
-                    <!-- SEO -->
-
-                    <div class="mb-4">
-
-                        <h6 class="text-primary border-bottom pb-2">
-
-                            <i class="mdi mdi-magnify me-1"></i>
-                            SEO Bilgileri
-
-                        </h6>
-
-                        <div class="row">
-
-                            <div class="col-md-4">
-
-                                <div class="mb-3">
-
-                                    <label asp-for="BilgiDetail.SeoUrl"
-                                           class="form-label">
-
-                                        SEO URL
-
-                                    </label>
-
-                                    <input asp-for="BilgiDetail.SeoUrl"
-                                           class="form-control"
-                                           placeholder="seo-url" />
-
-                                </div>
-
-                            </div>
-
-                            <div class="col-md-4">
-
-                                <div class="mb-3">
-
-                                    <label asp-for="BilgiDetail.SeoTitle"
-                                           class="form-label">
-
-                                        SEO Title
-
-                                    </label>
-
-                                    <input asp-for="BilgiDetail.SeoTitle"
-                                           class="form-control"
-                                           placeholder="SEO başlık" />
-
-                                </div>
-
-                            </div>
-
-                            <div class="col-md-4">
-
-                                <div class="mb-3">
-
-                                    <label asp-for="BilgiDetail.SeoDescription"
-                                           class="form-label">
-
-                                        SEO Description
-
-                                    </label>
-
-                                    <input asp-for="BilgiDetail.SeoDescription"
-                                           class="form-control"
-                                           placeholder="SEO açıklama" />
-
-                                </div>
-
-                            </div>
-
-                        </div>
-
-                    </div>
+             
 
                     <!-- Butonlar -->
 
