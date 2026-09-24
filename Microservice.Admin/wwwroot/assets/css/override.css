@@ -1,0 +1,48 @@
+/* ------------------------------------------------------------------
+   Custom overrides for Microservice.Admin
+   Loaded AFTER bootstrap.min.css and app.min.css on purpose (later in
+   source order = wins on equal specificity).
+   ------------------------------------------------------------------ */
+
+/* Fix: the compiled Bootstrap in this project sets .form-control to
+   line-height: 1.25 (node_modules/bootstrap/scss/forms/_form-control.scss).
+   With that tight line-box the dots of Turkish uppercase glyphs with
+   diacritics (Ü, İ, Ğ, Ş, Ö) get visually clipped inside inputs.
+   Restore Bootstrap's default 1.5 line-height and recompute the control
+   height: line-height + vertical padding + 2 * 1px border. */
+
+.form-control {
+  line-height: 1.5;
+  min-height: calc(1.5em + 0.6rem + 2px);
+}
+
+.form-control-sm {
+  min-height: calc(1.5em + 0.5rem + 2px);
+  height: calc(1.5em + 0.5rem + 2px);
+}
+
+.form-control-lg {
+  min-height: calc(1.5em + 1rem + 2px);
+  height: calc(1.5em + 1rem + 2px);
+}
+
+/* Same clipping applies to selects and to the floating-label inputs. */
+.form-select {
+  line-height: 1.5;
+  height: calc(1.5em + 0.6rem + 2px);
+  min-height: calc(1.5em + 0.6rem + 2px);
+}
+
+.form-select-sm {
+  height: calc(1.5em + 0.5rem + 2px);
+}
+
+.form-select-lg {
+  height: calc(1.5em + 1rem + 2px);
+}
+
+/* input-group sibling sizing stays consistent. */
+.input-group > .form-control,
+.input-group > .form-select {
+  line-height: 1.5;
+}
