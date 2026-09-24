@@ -1,39 +1,146 @@
+@using Microservice.Web.ViewModels.Menu
+@using Microservice.Web.ViewModels.Site
 <!DOCTYPE html>
 <html lang="@(ViewData["LanguageCode"] ?? "tr")">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="author" content="Sivas Bilim ve Teknoloji Üniversitesi">
+    <meta name="description" content="Sivas Bilim ve Teknoloji Üniversitesi">
+    <meta name="keywords" content="
+       academy,
+       course,
+       university,
+       student,
+       education,
+       elearning,
+       learning">
+
     <title>@ViewData["Title"]</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <!-- Favicon and touch icons  -->
+    <link rel="shortcut icon" type="image/x-icon" href="~/template2/images/sbtu.ico" >
+
+
+    <!-- Animation CSS -->
+    <link rel="stylesheet" href="~/template2/css/animate.css">
+    <!-- Latest Bootstrap min CSS -->
+    <link rel="stylesheet" href="~/template2/bootstrap/css/bootstrap.min.css">
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css?family=Rubik:300,400,500,700,900" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Roboto:100,100i,300,300i,400,400i,500,500i,700,700i,900,900i" rel="stylesheet">
+    <!-- Icon Font CSS -->
+    <link rel="stylesheet" href="~/template2/css/ionicons.min.css">
+    <link rel="stylesheet" href="~/template2/css/themify-icons.css">
+    <!-- FontAwesome CSS -->
+    <link rel="stylesheet" href="~/template2/css/all.min.css">
+    <!--- owl carousel CSS-->
+    <link rel="stylesheet" href="~/template2/owlcarousel/css/owl.carousel.min.css">
+    <link rel="stylesheet" href="~/template2/owlcarousel/css/owl.theme.css">
+    <link rel="stylesheet" href="~/template2/owlcarousel/css/owl.theme.default.min.css">
+    <!-- Magnific Popup CSS -->
+    <link rel="stylesheet" href="~/template2/css/magnific-popup.css">
+    <!-- Style CSS -->
+    <link rel="stylesheet" href="~/template2/css/style.css">
+    <link rel="stylesheet" href="~/template2/css/responsive.css">
+    <link rel="stylesheet" id="layoutstyle" href="~/template2/color/theme-red.css">
+
+
+
+
 </head>
-<body class="bg-light">
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-light bg-white shadow-sm rounded-bottom">
-            <div class="container">
-                <a class="navbar-brand fw-bold" href="/">Template 2</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    @await Component.InvokeAsync("MenuNavbar", new { siteId = (int)(ViewData["SiteId"] ?? 0), dilId = (int)(ViewData["DilId"] ?? 0), preloadedMenus = ViewData["Menus"] as List<Microservice.Web.ViewModels.Menu.GetMenuVm>, languageCode = ViewData["LanguageCode"] as string })
-                </div>
-            </div>
-        </nav>
-    </header>
+<body>
+    <!-- LOADER -->
+    <div id="preloader">
+        <span class="spinner"></span>
+        <div class="loader-section section-left"></div>
+        <div class="loader-section section-right"></div>
+    </div>
+    <!-- END LOADER -->
 
-    <main role="main">
+
+        @await Component.InvokeAsync("MenuTemplate2",
+        new {
+            siteId = (int)(ViewData["SiteId"] ?? 0),
+            dilId = (int)(ViewData["DilId"] ?? 0),
+            preloadedMenus = ViewData["Menus"] as List<GetMenuVm>,
+            preloadedSite = ViewData["Site"] as SiteDetailGetVm,
+            languageCode = ViewData["LanguageCode"] as string,
+            searchPageSlug = ViewData["SearchPageSlug"] as string
+        })
+
+        
         @RenderBody()
-    </main>
 
-    <footer class="text-muted mt-4">
-        <div class="container py-3">
-            &copy; @DateTime.Now.Year
-        </div>
-    </footer>
 
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    @await RenderSectionAsync("Scripts", required: false)
+
+        @await Component.InvokeAsync("FooterTemplate2", new {
+            siteId = (int)(ViewData["SiteId"] ?? 0),
+            dilId = (int)(ViewData["DilId"] ?? 0),
+            preloadedSite = ViewData["Site"] as SiteDetailGetVm,
+            languageCode = ViewData["LanguageCode"] as string
+        })
+
+
+
+
+
+    <!-- Latest jQuery -->
+    <script src="~/assets/@ViewBag.TemplateName/js/jquery-1.12.4.min.js"></script>
+    <!-- jquery-ui -->
+    <script src="~/assets/@ViewBag.TemplateName/js/jquery-ui.js"></script>
+    <!-- popper min js -->
+    <script src="~/assets/@ViewBag.TemplateName/js/popper.min.js"></script>
+    <!-- Latest compiled and minified Bootstrap -->
+    <script src="~/assets/@ViewBag.TemplateName/bootstrap/js/bootstrap.min.js"></script>
+    <!-- owl-carousel min js  -->
+    <script src="~/assets/@ViewBag.TemplateName/owlcarousel/js/owl.carousel.min.js"></script>
+    <!-- magnific-popup min js  -->
+    <script src="~/assets/@ViewBag.TemplateName/js/magnific-popup.min.js"></script>
+    <!-- waypoints min js  -->
+    <script src="~/assets/@ViewBag.TemplateName/js/waypoints.min.js"></script>
+    <!-- parallax js  -->
+    <script src="~/assets/@ViewBag.TemplateName/js/parallax.js"></script>
+    <!-- countdown js  -->
+    <script src="~/assets/@ViewBag.TemplateName/js/jquery.countdown.min.js"></script>
+    <!-- jquery.counterup.min js -->
+    <script src="~/assets/@ViewBag.TemplateName/js/jquery.counterup.min.js"></script>
+    <!-- imagesloaded js -->
+    <script src="~/assets/@ViewBag.TemplateName/js/imagesloaded.pkgd.min.js"></script>
+    <!-- isotope min js -->
+    <script src="~/assets/@ViewBag.TemplateName/js/isotope.min.js"></script>
+    <!-- jquery.parallax-scroll js -->
+    <script src="~/assets/@ViewBag.TemplateName/js/jquery.parallax-scroll.js"></script>
+
+    <!-- scripts js -->
+    <script src="~/assets/@ViewBag.TemplateName/js/scripts.js"></script>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-3CP7SPV3PL"></script>
+
+
+
+
+        <!-- Language translate -->
+
+        <script>
+                    function googleTranslateElementInit() {
+                        new google.translate.TranslateElement({
+                            pageLanguage: 'tr',
+                            includedLanguages: 'en,tr,fr,es,de,ru,el,zh-CN',
+                            layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
+                            autoDisplay: false
+                        }, 'google_translate_element');
+                    }
+        </script>
+
+        <script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
+    <script src='https://www.google.com/recaptcha/api.js'></script>
+
+
+
+
+
+        @await RenderSectionAsync("Scripts", required: false)
+ 
 </body>
 </html>
