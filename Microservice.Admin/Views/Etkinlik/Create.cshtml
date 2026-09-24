@@ -106,7 +106,10 @@
 
                             <div class="col-md-4">
                                 <label class="form-label">Kısa Açıklama</label>
-                                <input asp-for="CreateEtkinlik.KisaAciklama" class="form-control" />
+                                <textarea asp-for="CreateEtkinlik.KisaAciklama"
+                                          class="form-control"
+                                          rows="5"
+                                          placeholder="Kısa açıklama giriniz..."></textarea>
                                 <span asp-validation-for="CreateEtkinlik.KisaAciklama" class="text-danger small"></span>
                             </div>
                         </div>

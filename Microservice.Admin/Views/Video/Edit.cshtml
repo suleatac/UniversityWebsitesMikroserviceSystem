@@ -116,7 +116,10 @@
 
                             <div class="col-md-4">
                                 <label class="form-label">Kısa Açıklama</label>
-                                <input asp-for="VideoDetail.KisaAciklama" class="form-control" />
+                                <textarea asp-for="VideoDetail.KisaAciklama"
+                                          class="form-control"
+                                          rows="5"
+                                          placeholder="Kısa açıklama giriniz..."></textarea>
                             </div>
                         </div>
                     </div>

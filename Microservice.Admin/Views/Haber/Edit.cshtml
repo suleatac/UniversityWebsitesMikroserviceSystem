@@ -73,7 +73,10 @@
                                     </label>
                                     <div class="input-group">
                                         <span class="input-group-text"><i class="mdi mdi-text-short"></i></span>
-                                        <input asp-for="HaberDetail.KisaAciklama" class="form-control" placeholder="Kısa açıklama giriniz" />
+                                        <textarea asp-for="HaberDetail.KisaAciklama"
+                                                  class="form-control"
+                                                  rows="5"
+                                                  placeholder="Kısa açıklama giriniz..."></textarea>
                                     </div>
                                     <span asp-validation-for="HaberDetail.KisaAciklama" class="text-danger small"></span>
                                 </div>

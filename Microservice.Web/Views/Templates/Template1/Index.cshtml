@@ -48,11 +48,14 @@
 
                     <li data-transition="slidedown" data-slotamount="7" data-masterspeed="100" data-saveperformance="on">
                         <img src="@banner.ResimUrl" alt="slider-image">
-
-                        <div class="tp-caption sft desc-slide center color-white color-full" data-x="770" data-y="479" data-speed="100" data-start="100" data-easing="Power3.easeInOut">
-                            <div class="title main-color-1 font-2">@banner.Baslik</div>
-                            <div class="content">@banner.KisaAciklama</div>
-                        </div>
+                        @if (!string.IsNullOrEmpty(banner.Baslik))
+                        {
+                            <div class="tp-caption sft desc-slide center color-white color-full" data-x="770" data-y="479" data-speed="100" data-start="100" data-easing="Power3.easeInOut">
+                                <div class="title main-color-1 font-2">@banner.Baslik</div>
+                                <div class="content">@banner.KisaAciklama</div>
+                            </div>
+                        }
+                   
 
                     </li>
 
