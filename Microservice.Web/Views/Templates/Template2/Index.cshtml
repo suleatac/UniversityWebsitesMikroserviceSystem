@@ -3,64 +3,959 @@
     ViewData["Title"] = Model.Site.SiteAdi;
 }
 
-<section class="container py-5">
-    <div class="border rounded-4 p-4">
-        <h1 class="fw-bold">@Model.Site.SiteAdi</h1>
-        <p class="text-secondary">Template 2</p>
+@{
+    // Duyuru / Haber / Etkinlik icerikleri icin href uretimi:
+    // - Link dolu ise dogrudan o link kullanilir.
+    // - Link bos ise bagli oldugu sayfa tipine (PageType) yonlendirilir: /{dil}/{slug}/{seoUrl}
 
-        <div class="row g-2 mt-2">
-            @foreach (var menu in Model.Menus.OrderBy(x => x.Sira))
+
+    string BuildContentHref(string? link, string? seoUrl, string? pageTypeSlug)
+    {
+        if (!string.IsNullOrWhiteSpace(link))
+        {
+            var trimmedLink = link.Trim();
+
+            return trimmedLink.StartsWith("http", StringComparison.OrdinalIgnoreCase)
+                ? trimmedLink
+                : "/" + trimmedLink.Trim('/');
+        }
+
+        if (!string.IsNullOrWhiteSpace(seoUrl) && !string.IsNullOrWhiteSpace(pageTypeSlug))
+        {
+            return $"/{Model.LanguageCode}/{pageTypeSlug}/{seoUrl.Trim('/')}";
+        }
+
+        return "#";
+    }
+
+
+
+
+}
+
+
+
+
+@{
+    ViewBag.Title = "Index";
+    Layout = $"~/Views/Shared/{ViewBag.TemplateName}/_WebMainLayout.cshtml";
+}
+
+
+
+@{
+    var etkinlikListesi = ViewBag.etkinlikListesi
+        as List<DAL.Etkinlik>; // ViewBag'dan Liste'yi çek ve cast et
+    Popup popupitem = ViewBag.popupItem as DAL.Popup;
+}
+
+
+<style>
+    /* Modal içeriğini ortalamak için */
+    .mfp-content {
+        max-width: 600px;
+    }
+
+    .popup-content {
+        text-align: center;
+    }
+
+        .popup-content img {
+            max-width: 100%;
+            cursor: pointer;
+        }
+
+    .banner_section .carousel-item {
+        cursor: pointer;
+    }
+</style>
+@if (popupitem != null)
+{
+
+    <div class="modal fade lr_popup" id="Login" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered " role="document">
+            <div class="modal-content border-0">
+                <div class="modal-body p-0">
+                    <button type="button" id="popupKapatmaButonu" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+
+                    <a href="@popupitem.link" class="logo" target="_blank">
+                        <img id="popupImage" src="@popupitem.resim_url" alt="" class="img-fluid">
+                    </a>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+}
+
+
+<div class="news_ticker " style="background-color:#ddd;">
+    <div class="container">
+        <marquee behavior="scroll" direction="left" onmouseover="this.stop();" onmouseout="this.start();">
+
+
+
+
+
+
+            @foreach (Duyuru item in ViewBag.duyuruList)
             {
-                // Link bos ise menunun sayfa tipine (PageType) yonlendir
-                var langCode = (ViewData["LanguageCode"] as string) ?? "tr";
-                var href = !string.IsNullOrWhiteSpace(menu.Link)
-                    ? (menu.Link.StartsWith("http", StringComparison.OrdinalIgnoreCase) ? menu.Link : "/" + menu.Link.Trim('/'))
-                    : (!string.IsNullOrWhiteSpace(menu.SeoUrl) ? $"/{langCode}/{menu.PageType.Slug}/{menu.SeoUrl.Trim('/')}" : "#");
-                <div class="col-md-4">
-                    <a class="btn btn-outline-dark w-100" href="@href">@menu.Ad</a>
+                <a href="@item.getAdresDuyuru()" target="_blank">@item.baslik</a> <span>||</span>
+            }
+
+
+        </marquee>
+    </div>
+</div>
+
+
+<!-- START SECTION BANNER -->
+<section class="banner_section p-0 full_screen">
+    <div id="carouselExampleControls" class="banner_content_wrap carousel slide" data-ride="carousel">
+        <div class="carousel-inner">
+            @for (int i = 0; i < ViewBag.bannerListesi.Count; i++)
+            {
+                <div class="carousel-item @(i == 0 ? "active" : "")">
+                    <a target="@ViewBag.bannerListesi[i].Hedef.tur" href="@ViewBag.bannerListesi[i].link">
+                        <img src="@ViewBag.bannerListesi[i].resim_yol" class="d-block w-100 img-fluid banner-img" alt="Banner Image">
+                    </a>
+                    <div class="banner_slide_content">
+                        <div class="container">
+                            <div class="row justify-content-center">
+                                <div class="col-lg-12 col-sm-12 text-center">
+                                    <div class="banner_content animation text_white"
+                                         data-animation="@ViewBag.bannerListesi[i].BannerYaziYon.css_yon"
+                                         data-animation-delay="0.2s">
+                                        <div class="font-weight-bold animation text-uppercase"
+                                             data-animation="@ViewBag.bannerListesi[i].BannerYaziYon.css_yon"
+                                             data-animation-delay="0.2s">
+                                            @Html.Raw(ViewBag.bannerListesi[i].baslik)
+                                        </div>
+                                        <div class="animation"
+                                             data-animation="@ViewBag.bannerListesi[i].BannerYaziYon.css_yon"
+                                             data-animation-delay="1.5s">
+                                            @Html.Raw(ViewBag.bannerListesi[i].kisa_aciklama)
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             }
         </div>
 
-        @if (Model.Banners.Count > 0)
-        {
-            <div class="row g-3 mt-4">
-                @foreach (var banner in Model.Banners)
-                {
-                    <div class="col-md-4">
-                        <div class="card border-0 shadow-sm h-100">
-                            @if (!string.IsNullOrWhiteSpace(banner.ResimUrl))
-                            {
-                                <img src="@banner.ResimUrl" class="card-img-top" alt="@banner.Baslik" />
-                            }
-                            <div class="card-body">
-                                <h6 class="card-title">@banner.Baslik</h6>
+        <ol class="carousel-indicators">
+            @for (int i = 0; i < ViewBag.bannerListesi.Count; i++)
+            {
+                <li data-target="#carouselExampleControls" data-slide-to="@i" class="@(i == 0 ? "active" : "")"></li>
+            }
+        </ol>
+
+        <div class="carousel-nav">
+            <a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev">
+                <i class="ion-chevron-left"></i>
+            </a>
+            <a class="carousel-control-next" href="#carouselExampleControls" role="button" data-slide="next">
+                <i class="ion-chevron-right"></i>
+            </a>
+        </div>
+    </div>
+</section>
+<!-- END SECTION BANNER -->
+<!-- START SECTION KISAYOL BUTONLARI -->
+<section class="small_pb">
+
+    <div class="">
+        <div class="row">
+            <div class="col-12 ">
+                <div class="course_categories carousel_slider owl-carousel owl-theme nav_style1" data-margin="15" data-loop="true" data-nav="true" data-dots="false" data-autoplay="true" data-responsive='{"0":{"items": "1"}, "380":{"items": "2"}, "576":{"items": "3"}, "1000":{"items": "5"}, "1199":{"items": "8"}}'>
+                    @foreach (var item in ViewBag.hizliErisim)
+                    {
+                        <div class="item">
+                            <div class="single_categories">
+                                <a href="@item.link" style="background-color: @(item.renk == null ? "gray" : item.renk)">
+                                    @if (item.is_icon_image)
+                                    {
+                                        <img class=" mx-auto" style="width:40px;" src="@item.resim_url" alt="icon image">
+                                    }
+                                    else
+                                    {
+                                        <i class="@item.icon_name"></i>
+                                    }
+
+                                    @item.baslik
+                                </a>
                             </div>
                         </div>
-                    </div>
-                }
-            </div>
-        }
-
-        <div class="row mt-4 g-4">
-            <div class="col-md-6">
-                <h5 class="fw-bold">Güncel Haberler</h5>
-                <ul class="list-group list-group-flush">
-                    @foreach (var haber in Model.Haberler)
-                    {
-                        <li class="list-group-item">@haber.Baslik</li>
                     }
-                </ul>
-            </div>
-            <div class="col-md-6">
-                <h5 class="fw-bold">Güncel Duyurular</h5>
-                <ul class="list-group list-group-flush">
-                    @foreach (var duyuru in Model.Duyurular)
-                    {
-                        <li class="list-group-item">@duyuru.Baslik</li>
-                    }
-                </ul>
+                </div>
             </div>
         </div>
     </div>
 </section>
+<!-- END SECTION KISAYOL BUTONLARI -->
+<!-- START SECTION DUYURULAR -->
+<section>
+    <div class="container">
+
+
+
+        <div class="row event_list anasayfa_duyuru justify-content-center">
+
+            <div class="col-lg-8 justify-content-center anouncement_list">
+                <div class="row justify-content-center">
+                    <div class="col-xl-6 col-lg-8">
+                        <div class="text-center animation" data-animation="fadeInUp" data-animation-delay="0.01s">
+                            <div class="heading_s1 text-center">
+                                <h2 class="py-3">@(ViewBag.dilObj.id == (int)DilTuru.Ingilizce ? "All Anouncements" : "Tüm Duyurular")</h2>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="row ">
+                    <div class="col-md-6">
+
+                        @foreach (Duyuru item in ViewBag.solDuyuruList)
+                        {
+                            <div class="content_box event_box box_shadow1 animation" data-animation="fadeInUp" data-animation-delay="0.03s">
+                                <div class="event_date bg_default">
+                                    <h5 class="text-white"><span>@item.tarih.Day</span> @item.tarih.ToString("MMMM")</h5>
+                                </div>
+                                <div class="content_desc bg-white">
+                                    <a href="@item.getAdresDuyuru()"><h4 class="content_title">@item.baslik</h4></a>
+                                </div>
+                            </div>
+                        }
+
+
+                    </div>
+                    <div class="col-md-6">
+                        @foreach (Duyuru item in ViewBag.sagDuyuruList)
+                        {
+                            <div class="content_box event_box box_shadow1 animation" data-animation="fadeInUp" data-animation-delay="0.03s">
+                                <div class="event_date bg_default">
+                                    <h5 class="text-white"><span>@item.tarih.Day</span> @item.tarih.ToString("MMMM")</h5>
+                                </div>
+                                <div class="content_desc bg-white">
+                                    <a href="@item.getAdresDuyuru()"><h4 class="content_title">@item.baslik</h4></a>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                    <div class="col-12">
+                        <div class="text-center animation" data-animation="fadeInUp" data-animation-delay="0.2s">
+                            <div class="medium_divider"></div>
+                            <a href="/tumduyurular/@ViewBag.dilObj.dil_kisa_adi" class="btn btn-default rounded-0">@(ViewBag.dilObj.id == (int)DilTuru.Turkce ? "Tüm Duyuruları Görün" : "See All Announcement") <i class="ion-ios-arrow-thin-right ml-1"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4 only_events">
+                <div class="row justify-content-center">
+                    <div class="col-xl-8 col-lg-10">
+                        <div class="text-center animation" data-animation="fadeInUp" data-animation-delay="0.01s">
+                            <div class="heading_s1 text-center">
+                                <h2 class="py-3">@(ViewBag.dilObj.id == (int)DilTuru.Ingilizce ? "For Knowledge" : "İlan Panosu")</h2>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+
+
+
+
+                <div class="col-lg-12 col-md-6 col-sm-6 animation" data-animation="fadeInUp" data-animation-delay="0.02s">
+                    <div class="course_categories carousel_slider owl-carousel owl-theme nav_style1" data-margin="15" data-loop="true" data-nav="true" data-dots="true" data-autoplay="true" data-responsive='{"0":{"items": "1"}, "380":{"items": "1"}, "576":{"items": "1"}, "1000":{"items": "1"}, "1199":{"items": "1"}}'>
+
+                        @foreach (BilgiPanosu item in ViewBag.bilgiPanosuListesi)
+                        {
+
+                            <div class="item">
+                                <div class="content_box event_box box_shadow1 animation mb-4 " data-animation="fadeInUp" data-animation-delay="0.02s">
+                                    <div class="content_img">
+                                        <a href="@item.link"><img src="@item.resim_url" alt="event_img1" /></a>
+                                    </div>
+                                    <div class="event_date bg-secondary">
+                                        <h5 class="text-white">
+                                            <span>
+                                                @(item.tarih == null ? "" : item.tarih.Day.ToString())
+                                            </span>
+                                            @if (item.tarih != null)
+                                            {
+                                                @item.tarih.ToString("MMMM")
+                                            }
+                                        </h5>
+                                    </div>
+                                    <div class="content_desc bg-white">
+                                        <h4 class="content_title"><a href="@item.link">@item.baslik</a></h4>
+                                        <hr />
+                                        <p>@item.kisa_aciklama</p>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+
+
+
+
+
+                    </div>
+                </div>
+
+
+
+            </div>
+        </div>
+
+    </div>
+</section>
+<!-- START SECTION DUYURULAR -->
+<!-- START SECTION BİLGİ-->
+<section class="bg_blue_dark background_bg " data-img-src="/assets/@ViewBag.TemplateName/images/pattern_bg2.png">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-xl-6 col-lg-8">
+                <div class="text-center animation" data-animation="fadeInUp" data-animation-delay="0.01s">
+                    <div class="heading_s1 text-center">
+                        <span class="sub_heading">Kısa Bilgiler</span>
+                        <h2>BİLGİLER</h2>
+                    </div>
+                    <p>If you are going to use a passage of Lorem Ipsum, you need to be sure there isn't anything embarrassing hidden in the middle of text</p>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="course_list">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="content_box box_shadow1 animation" data-animation="fadeInUp" data-animation-delay="0.02s">
+                                <div class="content_img">
+                                    <a href="#"><img src="assets/images/course_img1.jpg" alt="course_img1" /></a>
+                                </div>
+                                <div class="content_desc">
+                                    <h4 class="content_title"><a href="#">Nullam id varius nunc id varius nunc</a></h4>
+                                    <p>If you are going to use a passage of Lorem Ipsum you need to be sure anything embarrassing hidden in the middle of text.</p>
+                                    <div class="courses_info">
+                                        <div class="rating_stars">
+                                            <i class="ion-android-star"></i>
+                                            <i class="ion-android-star"></i>
+                                            <i class="ion-android-star"></i>
+                                            <i class="ion-android-star"></i>
+                                            <i class="ion-android-star-half"></i>
+                                        </div>
+                                        <ul class="list_none content_meta">
+                                            <li><a href="#"><i class="ti-user"></i>31</a></li>
+                                            <li><a href="#"><i class="ti-heart"></i>10</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="content_footer">
+                                    <div class="teacher">
+                                        <a href="#"><img src="assets/images/user1.jpg" alt="user1"><span>Alia Noor</span></a>
+                                    </div>
+                                    <div class="price">
+                                        <span class="alert alert-success">Free</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="content_box box_shadow1 animation" data-animation="fadeInUp" data-animation-delay="0.03s">
+                                <div class="content_img">
+                                    <a href="#"><img src="assets/images/course_img2.jpg" alt="course_img2" /></a>
+                                </div>
+                                <div class="content_desc">
+                                    <h4 class="content_title"><a href="#">Nullam id varius nunc id varius nunc</a></h4>
+                                    <p>If you are going to use a passage of Lorem Ipsum you need to be sure anything embarrassing hidden in the middle of text.</p>
+                                    <div class="courses_info">
+                                        <div class="rating_stars">
+                                            <i class="ion-android-star"></i>
+                                            <i class="ion-android-star"></i>
+                                            <i class="ion-android-star"></i>
+                                            <i class="ion-android-star"></i>
+                                            <i class="ion-android-star-half"></i>
+                                        </div>
+                                        <ul class="list_none content_meta">
+                                            <li><a href="#"><i class="ti-user"></i>31</a></li>
+                                            <li><a href="#"><i class="ti-heart"></i>10</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="content_footer">
+                                    <div class="teacher">
+                                        <a href="#"><img src="assets/images/user2.jpg" alt="user2"><span>Dany Core</span></a>
+                                    </div>
+                                    <div class="price">
+                                        <span class="alert alert-info">$49</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="content_box box_shadow1 animation" data-animation="fadeInUp" data-animation-delay="0.04s">
+                                <div class="content_img">
+                                    <a href="#"><img src="assets/images/course_img3.jpg" alt="course_img3" /></a>
+                                </div>
+                                <div class="content_desc">
+                                    <h4 class="content_title"><a href="#">Nullam id varius nunc id varius nunc</a></h4>
+                                    <p>If you are going to use a passage of Lorem Ipsum you need to be sure anything embarrassing hidden in the middle of text.</p>
+                                    <div class="courses_info">
+                                        <div class="rating_stars">
+                                            <i class="ion-android-star"></i>
+                                            <i class="ion-android-star"></i>
+                                            <i class="ion-android-star"></i>
+                                            <i class="ion-android-star"></i>
+                                            <i class="ion-android-star-half"></i>
+                                        </div>
+                                        <ul class="list_none content_meta">
+                                            <li><a href="#"><i class="ti-user"></i>31</a></li>
+                                            <li><a href="#"><i class="ti-heart"></i>10</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="content_footer">
+                                    <div class="teacher">
+                                        <a href="#"><img src="assets/images/user3.jpg" alt="user3"><span>Smith Parker</span></a>
+                                    </div>
+                                    <div class="price">
+                                        <span class="alert alert-success">Free</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <div class="text-center animation" data-animation="fadeInUp" data-animation-delay="0.02s">
+                    <div class="medium_divider"></div>
+                    <a href="#" class="btn btn-default">View All Courses <i class="ion-ios-arrow-thin-right ml-1"></i></a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- END SECTION BİLGİ -->
+<!-- START SECTION HABERLER -->
+<section class="bg_gray">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-xl-6 col-lg-8 mb-5">
+                <div class="text-center ">
+                    <div class=" text-center">
+                        <h2>@(ViewBag.dilObj.id == (int)DilTuru.Ingilizce ? "News and Activities" : "Haberler ")</h2>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <div class="row news_list">
+
+            <div class=" course_categories carousel_slider owl-carousel owl-theme nav_style1" data-margin="15" data-nav="true" data-dots="true" data-loop="false" data-autoplay="false" data-responsive='{"0":{"items": "1"}, "380":{"items": "1"}, "576":{"items": "3"}, "1000":{"items": "3"}, "1199":{"items": "3"}}'>
+
+
+                @foreach (Haber haberitem in ViewBag.haberList)
+                {
+                    <div class="item">
+                        <div class="content_box event_box box_shadow1 animation mb-4 " data-animation="fadeInUp" data-animation-delay="0.02s">
+                            <div class="content_img">
+                                <a href="@haberitem.getAdresHaber()"><img src="@haberitem.resim_url" alt="event_img1" /></a>
+                            </div>
+                            <div class="row mx-1">
+                                <div class="event_date">
+                                    <h5><span class="event_time bg_default"><span>@haberitem.tarih.Day.ToString()</span> @haberitem.tarih.ToString("MMMM")</span></h5>
+                                </div>
+                                <h4 class="content_title"><a href="@haberitem.getAdresHaber()">@haberitem.baslik</a></h4>
+                            </div>
+                            <hr />
+                            <div class="content_desc bg-white">
+                                <p>@haberitem.kisa_aciklama</p>
+                            </div>
+                        </div>
+                    </div>
+                }
+
+            </div>
+
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <div class="text-center animation" data-animation="fadeInUp" data-animation-delay="0.2s">
+                    <div class="medium_divider"></div>
+                    <a href="/tumhaberler/@ViewBag.dilObj.dil_kisa_adi" class="btn btn-default rounded-0">@(ViewBag.dilObj.id == (int)DilTuru.Turkce ? "Tüm Haberleri Görün" : "See All News") <i class="ion-ios-arrow-thin-right ml-1"></i></a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</section>
+<!-- END SECTION HABERLER -->
+<!-- START SECTION SOCIAL MEDIA  -->
+<style>
+    .ScrollBar {
+        overflow-y: scroll;
+        max-height: 700px;
+        text-align: center;
+        background-color: #1c1e21;
+    }
+</style>
+<section>
+    <div class="container">
+        <div class="row mb-5">
+            <h2 class="mx-auto">@(ViewBag.dilObj.id == (int)DilTuru.Ingilizce ? "Social Media Shares" : "Sosyal Medya Paylaşımları")</h2>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="fb-page" data-href="https://www.facebook.com/sivastto" data-hide-cover="false" data-tabs="timeline" data-height="540" data-width="500" data-small-header="true" data-adapt-container-width="true" data-hide-cover="true" data-show-facepile="true"></div>
+                <div id="fb-root"></div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="row ScrollBar">
+                    <iframe class="instagram-media"
+                            src="https://www.instagram.com/sivastto/embed"
+                            width="100%"
+                            height="700"
+                            frameborder="0"
+                            scrolling="no"
+                            allowtransparency="true">
+                    </iframe>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- END SECTION SOCIAL MEDIA  -->
+@if (etkinlikListesi != null && etkinlikListesi.Any()) // Null veya boş kontrolü
+{
+    Etkinlik firstEvent = etkinlikListesi.First();
+    <!-- START SECTION ETKİNLİKLER -->
+    <section>
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-xl-6 col-lg-8">
+                    <div class="text-center">
+                        <div class="heading_s1 text-center">
+                            <h2>Yaklaşan Etkinlikler</h2>
+                        </div>
+                        <p>Yaklaşan etkinlikleri aşağıda görebilirsiniz.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="row event_list justify-content-center">
+
+
+
+                <div class="col-lg-6">
+                    <div class="content_box event_box box_shadow1 mb-4 mb-lg-0">
+                        <div class="content_img">
+                            <a href="@firstEvent.getAdresEtkinlik()" target="@firstEvent.Hedef.tur"><img src="@firstEvent.image_path" alt="@firstEvent.title" /></a>
+                        </div>
+                        <div class="event_date">
+                            <h5><span>@firstEvent.event_date.ToString("dd")</span> @firstEvent.event_date.ToString("MMM")</h5>
+                            <span class="event_time bg_default">
+                                @(firstEvent.start_time.HasValue && firstEvent.end_time.HasValue
+        ? firstEvent.start_time.Value.ToString("dd MMMM HH:mm") + " - " + firstEvent.end_time.Value.ToString("dd MMMM HH:mm")
+        : firstEvent.event_date.ToString("YYYY"))
+                            </span>
+
+                        </div>
+                        <div class="content_desc bg-white">
+                            <h4 class="content_title"><a href="@firstEvent.getAdresEtkinlik()" target="@firstEvent.Hedef.tur">@firstEvent.title</a></h4>
+                            <ul class="list_none content_meta">
+                                <li><i class="ti-location-pin"></i><span class="text_default">@firstEvent.location</span></li>
+                            </ul>
+                            <p>@firstEvent.description</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-6">
+                    <div class="row">
+                        <div class="col-md-12">
+                            @foreach (Etkinlik eventItem in etkinlikListesi.Skip(1))
+                            {
+                                <div class="content_box event_box box_shadow1">
+                                    <div class="event_date">
+                                        <h5><span>@eventItem.event_date.ToString("dd")</span> @eventItem.event_date.ToString("MMMM")</h5>
+                                        <span class="event_time bg_default">
+                                            @(eventItem.start_time.HasValue && eventItem.end_time.HasValue
+        ? eventItem.start_time.Value.ToString("dd MMMM HH:mm") + " - " + eventItem.end_time.Value.ToString("dd MMMM HH:mm")
+        : eventItem.event_date.ToString("YYYY"))
+                                        </span>
+
+                                    </div>
+                                    <div class="content_desc bg-white">
+                                        <h4 class="content_title"><a href="@eventItem.getAdresEtkinlik()" target="@eventItem.Hedef.tur">@eventItem.title</a></h4>
+                                        <ul class="list_none content_meta">
+                                            <li><i class="ti-location-pin"></i><span class="text_default">@eventItem.location</span></li>
+                                        </ul>
+                                        <p>@eventItem.description</p>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+}
+<!-- END SECTION ETKİNLİKLER -->
+<!-- START SECTION HAKKINDA -->
+<section class="small_pt small_pb overflow-hidden">
+    <div class="container-fluid p-0">
+        <div class="row no-gutters align-items-center">
+            @if (ViewBag.siteObj.baslangic_hakkimizda != null)
+            {
+                <div class="col-md-6">
+                    <div class="box_shadow1 bg-white overlap_section padding_eight_all">
+                        <div class="">
+                            <div class="heading_s1">
+                                <h2>@(ViewBag.dilObj.id == (int)DilTuru.Ingilizce ? "About us" : "Hakkımızda")</h2>
+                            </div>
+                            @Html.Raw(ViewBag.siteObj.baslangic_hakkimizda)
+                            <ul class="list_none list_item">
+                                <li>
+                                    <div class="counter_content">
+                                        <h3 class="h1 text_danger"><span class="counter">@(ViewBag.IdariPersonelSayisi + ViewBag.AkademikPersonelSayisi)</span></h3>
+                                        <h6>Personel</h6>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="counter_content">
+                                        <h3 class="h1 text_light_green"><span class="counter">@ViewBag.OgrenciSayisi</span></h3>
+                                        <h6>Öğrenci</h6>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            }
+
+            @if (ViewBag.siteObj.baslangic_video_link != null)
+            {
+                <div class="col-md-6">
+                    <div class="">
+                        <div class="overlay_bg_30 about_img z_index_minus1">
+                            <img class="w-100" src="@ViewBag.siteObj.baslangic_video_resim_adress" alt="about_img" />
+                        </div>
+                        <a href="@ViewBag.siteObj.baslangic_video_link" class="video_popup video_play">
+                            <span class="ripple"><i class="ion-play ml-1"></i></span>
+                        </a>
+                    </div>
+                </div>
+
+            }
+        </div>
+    </div>
+</section>
+
+<!-- END SECTION HAKKINDA -->
+<!-- START SECTION TANITIM VİDEOLARI -->
+<section class="small_pt">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-xl-6 col-lg-8">
+                <div class="text-center ">
+                    <div class="heading_s1 text-center">
+                        <h2>Tanıtım Videolarımız</h2>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        @if (ViewBag.videoList != null)
+        {
+            <div class="row">
+                @foreach (var item in ViewBag.videoList)
+                {
+                    <div class="col-lg-4 col-sm-6">
+                        <div class="content_box radius_all_10 box_shadow1 ">
+                            <div class="content_img radius_ltrt_10">
+                                <div class="">
+                                    <div class="overlay_bg_30 about_img ">
+                                        <img class="w-100" src="@item.image_url" alt="about_img" />
+                                    </div>
+                                    <a href="@item.video_link" class="video_popup video_play">
+                                        <span class="ripple"><i class="ion-play ml-1"></i></span>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="content_desc">
+                                <h4 class="content_title"><a href="#">@item.baslik</a></h4>
+                                <p>@item.video_aciklama</p>
+                            </div>
+                            <div class="content_footer">
+                                <div class="price">
+                                    <div class="">
+                                        <a href="@item.video_link" class="video_popup ">
+                                            <span class="alert alert-success">Şimdi İzle <i class="fa fa-arrow-circle-right"></i></span>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+
+
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <div class="text-center ">
+                        <div class="medium_divider"></div>
+                        <a href="/tumvideolar/@ViewBag.dilObj.dil_kisa_adi" class="btn btn-default">@(ViewBag.dilObj.id == (int)DilTuru.Turkce ? "Tüm Videoları Görüntüle" : "See All Videos") <i class="ion-ios-arrow-thin-right ml-1"></i></a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</section>
+<!-- END SECTION TANITIM VİDEOLARI -->
+<!-- START SECTION COUNTER -->
+<section class="parallax_bg overlay_bg_blue_70" data-parallax-bg-image="/assets/@ViewBag.TemplateName/images/counter_bg.jpg">
+
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-3 col-md-3 col-6 ">
+                <div class="box_counter counter_style1 text_white text-center ">
+                    <div class="counter_icon">
+                        <img src="~/assets/@ViewBag.TemplateName/images/counter_icon1.png" alt="counter_icon1" />
+                    </div>
+                    <div class="counter_content">
+                        <h3 class="counter_text"><span class="counter">@ViewBag.OgrenciSayisi</span>+</h3>
+                        <p> </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-3 col-6 ">
+                <div class="box_counter counter_style1 text_white text-center ">
+                    <div class="counter_icon">
+                        <img src="~/assets/@ViewBag.TemplateName/images/counter_icon3.png" alt="counter_icon2" />
+                    </div>
+                    <div class="counter_content">
+                        <h3 class="counter_text"><span class="counter">@ViewBag.IdariPersonelSayisi</span>+</h3>
+                        <p>   @(ViewBag.dilObj.id == (int)DilTuru.Turkce ? "İdari Personel" : "administrative staff") </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-3 col-6 ">
+                <div class="box_counter counter_style1 text_white text-center ">
+                    <div class="counter_icon">
+                        <img src="~/assets/@ViewBag.TemplateName/images/counter_icon2.png" alt="counter_icon3" />
+                    </div>
+                    <div class="counter_content">
+                        <h3 class="counter_text"><span class="counter">@ViewBag.AkademikPersonelSayisi</span>+</h3>
+                        <p>@(ViewBag.dilObj.id == (int)DilTuru.Turkce ? "Akademik Personel" : "Academic staff") </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-3 col-6 ">
+                <div class="box_counter counter_style1 text_white text-center ">
+                    <div class="counter_icon">
+                        <img src="~/assets/@ViewBag.TemplateName/images/counter_icon4.png" alt="counter_icon4" />
+                    </div>
+                    <div class="counter_content">
+                        <h3 class="counter_text"><span class="counter">@ViewBag.MezunOgrenciSayisi</span>+</h3>
+                        <p>@(ViewBag.dilObj.id == (int)DilTuru.Turkce ? "Mezun Öğrenci" : "Graduated Student")</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- END SECTION COUNTER -->
+<!-- START SECTION GALLERY -->
+<section>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-xl-6 col-lg-8">
+                <div class="text-center ">
+                    <div class="heading_s1 text-center">
+                        <h2>@(ViewBag.dilObj.id == (int)DilTuru.Ingilizce ? "Our Gallery" : "Galeri")</h2>
+                    </div>
+                    @if (ViewBag.galeriAciklama != null)
+                    {
+                        <p>@ViewBag.galeriAciklama</p>
+                    }
+                    <div class="small_divider"></div>
+                </div>
+            </div>
+        </div>
+
+        @if (ViewBag.galeriKategoriler != null)
+        {
+            <div class="row">
+                <div class="col-md-12 text-center">
+                    <ul class="list_none grid_filter ">
+                        <li><a href="#" class="current" data-filter="*">@(ViewBag.dilObj.id == (int)DilTuru.Ingilizce ? "all" : "tümü")</a></li>
+                        @foreach (var kategori in ViewBag.galeriKategoriler)
+                        {
+                            <li><a href="#" data-filter=".@kategori.css_sinif">@kategori.ad</a></li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        }
+
+        @if (ViewBag.galeriItems != null)
+        {
+            <div class="row">
+                <div class="col-md-12">
+                    <ul class="grid_container gutter_medium grid_col3 ">
+                        <li class="grid-sizer"></li>
+
+                        @foreach (SiteGaleri item in ViewBag.galeriItems)
+                        {
+                            <li class="grid_item @item.SiteGaleriKategori.css_sinif">
+                                <div class="gallery_item radius_all_10">
+                                    @if (item.tip == "carousel")
+                                    {
+                                        <div class="carousel_slider owl-carousel owl-theme dots_white" data-autoplay="true" data-loop="true" data-autoplay-timeout="3000" data-items="1">
+                                            @foreach (SiteGaleriResimleri resim in item.SiteGaleriResimleri)
+                                            {
+                                                <a href="#" class="image_link">
+                                                    <img src="@resim.kucuk_resim_url" alt="@resim.alt_text">
+                                                </a>
+                                            }
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <a href="#" class="image_link">
+                                            <img src="@item.galeri_kucuk_resim_url" alt="@item.alt_text">
+                                        </a>
+                                    }
+
+                                    <div class="gallery_content">
+                                        <div class="link_container">
+
+
+                                            @if (item.tip == "carousel")
+                                            {
+                                                if (item.SiteGaleriResimleri.Any())
+                                                {
+                                                    var ilkResim = item.SiteGaleriResimleri.First();
+                                                    <a href="@ilkResim.buyuk_resim_url" class="image_popup">
+                                                        <span class="ripple"><i class="ion-image"></i></span>
+                                                    </a>
+                                                    <a href="@(string.IsNullOrEmpty(item.link) ? "javascript:void(0);" : item.link)" class="ml-3">
+                                                        <span class="ripple"><i class="ion-link"></i></span>
+                                                    </a>
+                                                    foreach (SiteGaleriResimleri resim in item.SiteGaleriResimleri.Skip(1))
+                                                    {
+                                                        <a href="@resim.buyuk_resim_url" class="image_popup d-none"></a>
+                                                    }
+                                                }
+                                            }
+                                            else
+                                            {
+
+                                                <a href="@item.galeri_buyuk_resim_url" class="image_popup">
+                                                    <span class="ripple"><i class="ion-image"></i></span>
+                                                </a>
+                                                <a href="@(string.IsNullOrEmpty(item.link) ? "javascript:void(0);" : item.link)" class="ml-3">
+                                                    <span class="ripple"><i class="ion-link"></i></span>
+                                                </a>
+                                            }
+
+                                        </div>
+                                        <div class="text_holder text_white">
+                                            <h5>@item.baslik</h5>
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        }
+    </div>
+</section>
+<!-- END SECTION GALLERY -->
+<!-- START SECTION GEZİNTİ VIDEO -->
+<section class="parallax_bg overlay_bg_blue_70" data-parallax-bg-image="/assets/@ViewBag.TemplateName/images/banner_images/resim4.png">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="text-center ">
+
+                    <a href="/Content/360.html" class="video_popup">
+
+                        <span class="ripple"><i class="ion-play ml-1"></i></span>
+                    </a>
+                    <div class="mt-md-5 mt-4 text_white ">
+                        <h2>@(ViewBag.dilObj.id == (int)DilTuru.Ingilizce ? "See Our University" : "Üniversitemizde Gezinti Yapın")</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- END SECTION GEZİNTİ VIDEO -->
+}
+
+<!-- START SECTION LOGOLAR -->
+@if (ViewBag.logoObj != null)
+{
+    <!-- START SECTION CLIENT LOGO -->
+    <section class="light_gray_bg">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-xl-6 col-lg-8">
+                    <div class="text-center ">
+                        <div class="heading_s1 text-center">
+                            <h2>@(ViewBag.dilObj.id == (int)DilTuru.Turkce ? "Üniversite Bağlantılarımız" : "Our University Connections")</h2>
+                        </div>
+                        <p>@(ViewBag.dilObj.id == (int)DilTuru.Turkce ? "Üniversitemizin bir çok kuruluşla bağlantısı mevcuttur. Diğer kurum ve kuruluşlarla yapılan çalışmalarla öğrencilerimize daha iyi hizmet vermekteyiz." : "Our university has connections with many organizations. We provide better service to our students through our work with other institutions and organizations.")</p>
+                        <div class="small_divider"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12 ">
+                    <div class="cl_logo_slider carousel_slider owl-carousel owl-theme" data-margin="15" data-loop="true" data-autoplay="true" data-dots="false" data-responsive='{"0":{"items": "2"}, "380":{"items": "3"}, "600":{"items": "4"}, "1000":{"items": "5"}, "1199":{"items": "6"}}'>
+
+                        @foreach (BandLogo item in ViewBag.logoObj)
+                        {
+
+                            <div class="item">
+                                <a href=" @(item.link == null ? item.img_url : item.link)">
+                                    <img src="@item.img_url" alt="cl_logo1" />
+                                </a>
+                            </div>
+                        }
+
+
+
+
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- END SECTION CLIENT LOGO -->
+}
+<!-- END SECTION LOGOLAR -->
+
+<a href="#" class="scrollup" style="display: none;"><i class="ion-ios-arrow-up"></i></a>

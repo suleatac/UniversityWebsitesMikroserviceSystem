@@ -1,20 +1,180 @@
-@model Microservice.Web.ViewModels.Template.TemplatePageViewModel
+@model Microservice.Web.ViewModels.Menu.MenuDetayPageViewModel
 @{
-    ViewData["Title"] = Model.CurrentMenu?.Ad ?? "Menu";
+    var menu = Model.Menu;
+
+    ViewData["Title"] = menu.SeoTitle ?? menu.Baslik ?? "Menu";
+
+    if (!string.IsNullOrWhiteSpace(menu.SeoDescription))
+    {
+        ViewData["MetaDescription"] = menu.SeoDescription;
+    }
+
+    // Paylasim linkleri icin mevcut sayfa adresi
+    var currentPageUrl = $"{Context.Request.Scheme}://{Context.Request.Host}{Context.Request.Path}";
+    var encodedUrl = Uri.EscapeDataString(currentPageUrl);
+    var encodedTitle = Uri.EscapeDataString(menu.Baslik ?? "");
+
+    var siteOzellikleri = Model.Site?.SiteOzellikleri;
 }
 
-<section class="container py-5">
-    <div class="p-4 bg-light border rounded-4">
-        <h2 class="mb-3">@(Model.CurrentMenu?.Ad ?? "Menu")</h2>
-        <p class="small text-muted mb-4">Template 2</p>
+<div class="page-title full-color">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="page-title-heading">
+                    @if (!string.IsNullOrWhiteSpace(menu.Baslik))
+                    {
+                        <h2 class="title">@menu.Baslik</h2>
+                    }
+                </div>
+                <div class="breadcrumbs">
+                    <ul>
+                        <li class="home"><a href="/">Ana Sayfa </a></li>
 
-        @if (!string.IsNullOrWhiteSpace(Model.CurrentMenu?.Icerik))
-        {
-            <div>@Model.CurrentMenu!.Icerik</div>
-        }
-        else
-        {
-            <p>Bu menü için içerik yok.</p>
-        }
+                        <li>\ Menu</li>
+
+                    </ul>
+                </div>
+            </div><!-- /.col-md-12 -->
+        </div><!-- /.row -->
+    </div><!-- /.container -->
+</div><!-- /page-title -->
+
+<section class="main-content course-single">
+    <div class="container">
+        <div class="content-course">
+            <div class="row">
+                <div class="col-md-9">
+                    <article class="post-course">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="content-pad single-course-detail">
+                                    <div class="course-detail">
+                                        <div class="content-pad v1">
+                                            <ul class="list-inline social-light">
+                                                <li>
+                                                    <a class="btn btn-default btn-lighter social-icon"
+                                                       target="_blank" rel="noopener"
+                                                       href="https://www.facebook.com/sharer/sharer.php?u=@encodedUrl"
+                                                       title="Facebook'ta paylaş"><i class="fa fa-facebook"></i></a>
+                                                </li>
+                                                <li>
+                                                    <a class="btn btn-default btn-lighter social-icon"
+                                                       target="_blank" rel="noopener"
+                                                       href="https://twitter.com/intent/tweet?url=@encodedUrl&text=@encodedTitle"
+                                                       title="Twitter'da paylaş"><i class="fa fa-twitter"></i></a>
+                                                </li>
+                                                @* Instagram'in web paylasim API'si yok; site profil sayfasina yonlendirir *@
+                                                @if (!string.IsNullOrWhiteSpace(siteOzellikleri?.SiteInstagramAdress))
+                                                {
+                                                    <li>
+                                                        <a class="btn btn-default btn-lighter social-icon"
+                                                           target="_blank" rel="noopener"
+                                                           href="@siteOzellikleri.SiteInstagramAdress"
+                                                           title="Instagram hesabımız"><i class="fa fa-instagram"></i></a>
+                                                    </li>
+                                                }
+
+                                                <li>
+                                                    <a class="btn btn-default btn-lighter social-icon"
+                                                       target="_blank" rel="noopener"
+                                                       href="https://www.linkedin.com/sharing/share-offsite/?url=@encodedUrl"
+                                                       title="LinkedIn'de paylaş"><i class="fa fa-linkedin"></i></a>
+                                                </li>
+
+                                                <li>
+                                                    <a class="btn btn-default btn-lighter social-icon"
+                                                       href="mailto:?subject=@encodedTitle&body=@encodedUrl"
+                                                       title="E-posta ile gönder"><i class="fa fa-envelope"></i></a>
+                                                </li>
+                                                <li>
+                                                    <a class="btn btn-default btn-lighter social-icon"
+                                                       href="javascript:void(0)"
+                                                       id="copy-link-btn"
+                                                       data-url="@currentPageUrl"
+                                                       title="Bağlantıyı kopyala"><i class="fa fa-link"></i></a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                        <div class="content-content">
+                                            <div class="content-dropcap v1">
+                                                @if (!string.IsNullOrWhiteSpace(menu.IcerikMetni))
+                                                {
+                                                    @Html.Raw(menu.IcerikMetni)
+                                                }
+                                                else
+                                                {
+                                                    <p>Bu menü için içerik girilmemiş.</p>
+                                                }
+                                            </div>
+
+                                           
+                                        </div><!--/content-content-->
+                                    </div><!--/course-detail-->
+                                </div><!--/single-content-detail-->
+                            </div>
+                        </div>
+                    </article>
+                </div>
+
+                <div class="col-md-3">
+                    <div class="sidebar">
+
+                        <!-- WIDGET SEARCH (genel arama sayfasi) -->
+                        <div class="widget widget-search">
+                            <h2 class="widget-title">Arama Yap</h2>
+                            <form role="search" method="get" id="searchform" class="u-course-search-form" action="@Model.SearchUrl">
+                                <div class="input-group">
+                                    <input type="text" value="" name="q" id="s" placeholder="Arama Yap" class="form-control">
+                                    <span class="input-group-btn">
+                                        <button type="submit" id="searchsubmit" class="btn btn-default u-course-search-submit">
+                                            <i class="fa fa-search"></i>
+                                        </button>
+                                    </span>
+                                </div>
+                            </form>
+                        </div><!-- /widget-search -->
+
+                    </div><!-- sidebar -->
+                </div><!-- /col-md-3 -->
+            </div>
+        </div>
     </div>
 </section>
+
+@section Scripts {
+    <script type="text/javascript">
+        // Baglanti kopyalama butonu
+        (function () {
+            var btn = document.getElementById('copy-link-btn');
+            if (!btn) return;
+
+            btn.addEventListener('click', function () {
+                var url = btn.getAttribute('data-url');
+
+                function done() {
+                    var icon = btn.querySelector('i');
+                    icon.className = 'fa fa-check';
+                    btn.title = 'Kopyalandı!';
+                    setTimeout(function () {
+                        icon.className = 'fa fa-link';
+                        btn.title = 'Bağlantıyı kopyala';
+                    }, 2000);
+                }
+
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    navigator.clipboard.writeText(url).then(done);
+                } else {
+                    // Eski tarayicilar icin fallback
+                    var input = document.createElement('input');
+                    input.value = url;
+                    document.body.appendChild(input);
+                    input.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(input);
+                    done();
+                }
+            });
+        })();
+    </script>
+}

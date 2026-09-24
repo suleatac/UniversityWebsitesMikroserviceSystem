@@ -101,17 +101,6 @@
 
                                         </div><!--/course-info-->
                                         <div class="content-content">
-                                            <div class="content-dropcap v1">
-                                                @if (!string.IsNullOrWhiteSpace(bilgi.IcerikMetni))
-                                                {
-                                                    @Html.Raw(bilgi.IcerikMetni)
-                                                }
-                                                else
-                                                {
-                                                    <p>Bu bilgi için içerik girilmemiş.</p>
-                                                }
-                                            </div>
-
                                             <div class="content-pad v1">
                                                 <ul class="list-inline social-light">
                                                     <li>
@@ -158,6 +147,18 @@
                                                     </li>
                                                 </ul>
                                             </div>
+                                            <div class="content-dropcap v1">
+                                                @if (!string.IsNullOrWhiteSpace(bilgi.IcerikMetni))
+                                                {
+                                                    @Html.Raw(bilgi.IcerikMetni)
+                                                }
+                                                else
+                                                {
+                                                    <p></p>
+                                                }
+                                            </div>
+
+                                         
 
                                             <div class="content-pad calendar-import">
                                                 <a class="flat-button" href="@Model.BilgiListUrl">

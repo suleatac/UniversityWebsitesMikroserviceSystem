@@ -1,0 +1,374 @@
+﻿@model Microservice.Web.ViewModels.Duyuru.DuyuruDetayPageViewModel
+@{
+    var duyuru = Model.Duyuru;
+
+    ViewData["Title"] = duyuru.SeoTitle ?? duyuru.Baslik ?? "Duyuru";
+
+    if (!string.IsNullOrWhiteSpace(duyuru.SeoDescription))
+    {
+        ViewData["MetaDescription"] = duyuru.SeoDescription;
+    }
+
+    // Paylasim linkleri icin mevcut sayfa adresi
+    var currentPageUrl = $"{Context.Request.Scheme}://{Context.Request.Host}{Context.Request.Path}";
+    var encodedUrl = Uri.EscapeDataString(currentPageUrl);
+    var encodedTitle = Uri.EscapeDataString(duyuru.Baslik ?? "");
+
+    // Detay linki: Link dolu ise dogrudan, bos ise /{dil}/{duyurular-slug}/{seoUrl}
+    string BuildDuyuruHref(Microservice.Web.ViewModels.Duyuru.GetDuyuruVm d)
+    {
+        if (!string.IsNullOrWhiteSpace(d.Link))
+        {
+            var link = d.Link.Trim();
+
+            return link.StartsWith("http", StringComparison.OrdinalIgnoreCase)
+                ? link
+                : "/" + link.Trim('/');
+        }
+
+        if (!string.IsNullOrWhiteSpace(d.SeoUrl) && d.PageType is not null)
+        {
+            return $"/{Model.LanguageCode}/{d.PageType.Slug}/{d.SeoUrl.Trim('/')}";
+        }
+
+        return "#";
+    }
+
+    var siteOzellikleri = Model.Site?.SiteOzellikleri;
+
+    // Dosya turune gore FontAwesome ikon
+    string DosyaIkon(string? tur) => tur?.ToLowerInvariant() switch
+    {
+        "pdf" => "fa-file-pdf-o",
+        "doc" or "docx" => "fa-file-word-o",
+        "xls" or "xlsx" or "csv" => "fa-file-excel-o",
+        "ppt" or "pptx" => "fa-file-powerpoint-o",
+        "zip" or "rar" or "7z" or "tar" or "gz" => "fa-file-archive-o",
+        "jpg" or "jpeg" or "png" or "gif" or "webp" or "bmp" or "svg" => "fa-file-image-o",
+        "mp4" or "avi" or "mkv" or "mov" or "wmv" => "fa-file-video-o",
+        "mp3" or "wav" => "fa-file-audio-o",
+        "txt" => "fa-file-text-o",
+        _ => "fa-file-o"
+    };
+
+    string DosyaBoyutMetni(long bayt)
+    {
+        if (bayt <= 0) return "";
+        if (bayt < 1024) return $"{bayt} B";
+        if (bayt < 1024 * 1024) return $"{bayt / 1024.0:0.#} KB";
+        return $"{bayt / (1024.0 * 1024.0):0.#} MB";
+    }
+}
+
+<div class="page-title full-color">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="page-title-heading">
+                    @if (!string.IsNullOrWhiteSpace(duyuru.Baslik))
+                    {
+                        <h2 class="title">@duyuru.Baslik</h2>
+                    }
+                </div>
+                <div class="breadcrumbs">
+                    <ul>
+                        <li class="home"><a href="/">Ana Sayfa </a></li>
+
+                        <li>\ Duyuru</li>
+
+                    </ul>
+                </div>
+            </div><!-- /.col-md-12 -->
+        </div><!-- /.row -->
+    </div><!-- /.container -->
+</div><!-- /page-title -->
+<section class="main-content course-single">
+    <div class="container">
+        <div class="content-course">
+            <div class="row">
+                <div class="col-md-9">
+                    <article class="post-course">
+                        <div class="row">
+                            <div class="col-md-4 col-sm-5">
+                                <div class="content-pad single-event-meta">
+                                    @if (!string.IsNullOrWhiteSpace(duyuru.ResimUrl))
+                                    {
+                                        <div class="item-thumbnail">
+                                            <img src="@duyuru.ResimUrl" alt="@duyuru.Baslik">
+                                        </div>
+                                    }
+                                    <!--/item-thumbnail-->
+                                    @if (!string.IsNullOrWhiteSpace(duyuru.KisaAciklama))
+                                    {
+                                        <div class="event-description">
+                                            @duyuru.KisaAciklama
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+
+                            <div class="col-md-8">
+                                <div class="content-pad single-course-detail">
+                                    <div class="course-detail">
+                                        @if (duyuru.BaslamaTarihi.HasValue || duyuru.BitisTarihi.HasValue)
+                                        {
+                                            <div class="course-info row content-pad">
+                                                <div class="col-md-6 col-sm-6 v1">
+                                                    @if (duyuru.BaslamaTarihi.HasValue)
+                                                    {
+                                                        <h4 class="text small-text">BAŞLAMA TARİHİ</h4>
+                                                        <p>@duyuru.BaslamaTarihi.Value.ToString("dd.MM.yyyy")</p>
+                                                    }
+                                                </div>
+
+                                                <div class="col-md-6 col-sm-6">
+                                                    @if (duyuru.BitisTarihi.HasValue)
+                                                    {
+                                                        <h4 class="text small-text">BİTİŞ TARİHİ</h4>
+                                                        <p>@duyuru.BitisTarihi.Value.ToString("dd.MM.yyyy")</p>
+                                                    }
+                                                </div>
+
+                                            </div><!--/course-info-->
+                                        }
+
+                                        <div class="course-info row content-pad">
+                                            <div class="col-md-6 col-sm-6 v1">
+                                                <h4 class="text small-text">YAYIN TARİHİ</h4>
+                                                <p>@duyuru.YayimTarihi.ToString("dd MMMM yyyy")</p>
+                                            </div>
+
+                                            <div class="col-md-6 col-sm-6">
+                                                <h4 class="text small-text">KATEGORİ</h4>
+                                                <p>@duyuru.PageType?.PageTypeKind</p>
+                                            </div>
+
+                                        </div><!--/course-info-->
+
+                                        <div class="content-content">
+                                            <div class="content-pad v1">
+                                                <ul class="list-inline social-light">
+                                                    <li>
+                                                        <a class="btn btn-default btn-lighter social-icon"
+                                                           target="_blank" rel="noopener"
+                                                           href="https://www.facebook.com/sharer/sharer.php?u=@encodedUrl"
+                                                           title="Facebook'ta paylaş"><i class="fa fa-facebook"></i></a>
+                                                    </li>
+                                                    <li>
+                                                        <a class="btn btn-default btn-lighter social-icon"
+                                                           target="_blank" rel="noopener"
+                                                           href="https://twitter.com/intent/tweet?url=@encodedUrl&text=@encodedTitle"
+                                                           title="Twitter'da paylaş"><i class="fa fa-twitter"></i></a>
+                                                    </li>
+                                                    @* Instagram'in web paylasim API'si yok; site profil sayfasina yonlendirir *@
+                                                    @if (!string.IsNullOrWhiteSpace(siteOzellikleri?.SiteInstagramAdress))
+                                                    {
+                                                        <li>
+                                                            <a class="btn btn-default btn-lighter social-icon"
+                                                               target="_blank" rel="noopener"
+                                                               href="@siteOzellikleri.SiteInstagramAdress"
+                                                               title="Instagram hesabımız"><i class="fa fa-instagram"></i></a>
+                                                        </li>
+                                                    }
+
+                                                    <li>
+                                                        <a class="btn btn-default btn-lighter social-icon"
+                                                           target="_blank" rel="noopener"
+                                                           href="https://www.linkedin.com/sharing/share-offsite/?url=@encodedUrl"
+                                                           title="LinkedIn'de paylaş"><i class="fa fa-linkedin"></i></a>
+                                                    </li>
+
+                                                    <li>
+                                                        <a class="btn btn-default btn-lighter social-icon"
+                                                           href="mailto:?subject=@encodedTitle&body=@encodedUrl"
+                                                           title="E-posta ile gönder"><i class="fa fa-envelope"></i></a>
+                                                    </li>
+                                                    <li>
+                                                        <a class="btn btn-default btn-lighter social-icon"
+                                                           href="javascript:void(0)"
+                                                           id="copy-link-btn"
+                                                           data-url="@currentPageUrl"
+                                                           title="Bağlantıyı kopyala"><i class="fa fa-link"></i></a>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                            <div class="content-dropcap v1">
+                                                @if (!string.IsNullOrWhiteSpace(duyuru.IcerikMetni))
+                                                {
+                                                    @Html.Raw(duyuru.IcerikMetni)
+                                                }
+                                                else
+                                                {
+                                                    <p>Bu duyuru için içerik girilmemiş.</p>
+                                                }
+                                            </div>
+
+                                            @* Galeri Resimleri Slider (Admin > Duyuru > Galeri Resimleri) *@
+                                            @if (duyuru.Resimler is { Count: > 0 })
+                                            {
+                                                <div class="content-pad icerik-resim-slider">
+                                                    <div class="owl-carousel owl-theme icerik-resim-carousel">
+                                                        @foreach (var resim in duyuru.Resimler.OrderBy(r => r.Sira))
+                                                        {
+                                                            <div class="item">
+                                                                <a href="@resim.ResimUrl" target="_blank" rel="noopener" title="Büyütmek için tıklayın">
+                                                                    <img src="@resim.ResimUrl" alt="@(string.IsNullOrWhiteSpace(resim.Baslik) ? duyuru.Baslik : resim.Baslik)" loading="lazy" />
+                                                                </a>
+                                                                @if (!string.IsNullOrWhiteSpace(resim.Baslik))
+                                                                {
+                                                                    <p class="slider-caption">@resim.Baslik</p>
+                                                                }
+                                                            </div>
+                                                        }
+                                                    </div>
+                                                </div><!-- /icerik-resim-slider -->
+                                            }
+
+                                        
+
+                                            <div class="content-pad calendar-import">
+                                                <a class="flat-button" href="@Model.DuyuruListUrl">
+                                                    <i class="fa fa-angle-left"></i> TÜM DUYURULAR
+                                                </a>
+                                            </div>
+                                        </div><!--/content-content-->
+                                    </div><!--/course-detail-->
+                                </div><!--/single-content-detail-->
+                            </div>
+                        </div>
+                    </article>
+                </div>
+
+                <div class="col-md-3">
+                    <div class="sidebar">
+
+                        <!-- WIDGET SEARCH (duyuru listesi icinde arama) -->
+                        <div class="widget widget-search">
+                            <h2 class="widget-title">Arama Yap</h2>
+                            <form role="search" method="get" id="searchform" class="u-course-search-form" action="@Model.DuyuruListUrl">
+                                <div class="input-group">
+                                    <input type="text" value="" name="q" id="s" placeholder="Arama Yap" class="form-control">
+                                    <span class="input-group-btn">
+                                        <button type="submit" id="searchsubmit" class="btn btn-default u-course-search-submit">
+                                            <i class="fa fa-search"></i>
+                                        </button>
+                                    </span>
+                                </div>
+                            </form>
+                        </div><!-- /widget-search -->
+                        <!-- WIDGET SON EKLENENLER -->
+                        @if (Model.LatestDuyurular.Any())
+                        {
+                            <div class="widget widget-posts">
+                                <div class="blog-box">
+                                    <h2 class="widget-title">Son Eklenenler</h2>
+                                    <ul class="recent-posts clearfix">
+                                        @foreach (var item in Model.LatestDuyurular)
+                                        {
+                                            <li>
+                                                <div class="thumb item-thumbnail">
+                                                    <a href="@BuildDuyuruHref(item)">
+                                                        <img src="@item.ResimUrl" alt="@item.Baslik" loading="lazy">
+                                                        <div class="thumbnail-hoverlay main-color-1-bg"></div>
+                                                        <div class="thumbnail-hoverlay-cross"></div>
+                                                    </a>
+                                                </div>
+                                                <div class="text">
+                                                    <a href="@BuildDuyuruHref(item)">@item.Baslik</a>
+                                                    <p>@item.YayimTarihi.ToString("dd.MM.yyyy")</p>
+                                                </div>
+                                            </li>
+                                        }
+                                    </ul><!-- /recent-posts -->
+                                </div>
+                            </div><!-- /widget-posts -->
+                        }
+
+                       <!-- WIDGET DOSYALAR -->
+                       @if (duyuru.Dosyalar is { Count: > 0 })
+                       {
+                           <div class="widget widget-dosyalar ">
+                               <h2 class="widget-title">Dosyalar</h2>
+                               <ul class="recent-posts clearfix" style="list-style:none; padding-left:0;">
+                                   @foreach (var dosya in duyuru.Dosyalar.OrderBy(d => d.Sira))
+                                   {
+                                       <li style="margin-bottom:12px;">
+                                           <div class="text" style="padding-left:0;">
+                                               <a href="@dosya.DosyaUrl" target="_blank" rel="noopener" download="@dosya.DosyaAdi">
+                                                   <i class="fa @DosyaIkon(dosya.DosyaTuru)" style="margin-right:8px;"></i>@(string.IsNullOrWhiteSpace(dosya.Baslik) ? dosya.DosyaAdi : dosya.Baslik)
+                                               </a>
+                                               <p style="margin-bottom:0;">
+                                                   @dosya.DosyaAdi
+                                                   @if (dosya.DosyaBoyut > 0)
+                                                   {
+                                                       <text> &middot; @DosyaBoyutMetni(dosya.DosyaBoyut)</text>
+                                                   }
+                                               </p>
+                                           </div>
+                                       </li>
+                                   }
+                               </ul>
+                           </div><!-- /widget-dosyalar -->
+                       }
+
+                   </div><!-- sidebar -->
+                </div><!-- /col-md-3 -->
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <script type="text/javascript">
+        // Galeri resimleri slider (owlCarousel)
+        (function () {
+            var $car = $('.icerik-resim-carousel');
+            if (!$car.length || !$.fn.owlCarousel) return;
+
+            $car.owlCarousel({
+                loop: $car.children('.item').length > 1,
+                nav: true,
+                dots: true,
+                margin: 10,
+                items: 1,
+                autoplay: true,
+                autoplayTimeout: 5000,
+                autoplayHoverPause: true,
+                navText: ['', '']
+            });
+        })();
+
+        // Baglanti kopyalama butonu
+        (function () {
+            var btn = document.getElementById('copy-link-btn');
+            if (!btn) return;
+
+            btn.addEventListener('click', function () {
+                var url = btn.getAttribute('data-url');
+
+                function done() {
+                    var icon = btn.querySelector('i');
+                    icon.className = 'fa fa-check';
+                    btn.title = 'Kopyalandı!';
+                    setTimeout(function () {
+                        icon.className = 'fa fa-link';
+                        btn.title = 'Bağlantıyı kopyala';
+                    }, 2000);
+                }
+
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    navigator.clipboard.writeText(url).then(done);
+                } else {
+                    // Eski tarayiciler icin fallback
+                    var input = document.createElement('input');
+                    input.value = url;
+                    document.body.appendChild(input);
+                    input.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(input);
+                    done();
+                }
+            });
+        })();
+    </script>
+}

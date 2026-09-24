@@ -1,0 +1,257 @@
+﻿@model Microservice.Web.ViewModels.GaleriResim.GaleriResimListPageViewModel
+@{
+    ViewData["Title"] = "Galeri Resimleri";
+
+    // Sayfanin kendi adresi: /{dil}/{galeri-resimleri-slug}
+    var listPath = Context.Request.Path.ToString().TrimEnd('/');
+    if (string.IsNullOrWhiteSpace(listPath))
+    {
+        listPath = $"/{Model.LanguageCode}/galeri-resimleri";
+    }
+
+    // Detay linki: Link dolu ise dogrudan, bos ise /{dil}/{liste-slug}/{seoUrl}
+    string BuildResimHref(Microservice.Web.ViewModels.GaleriResim.GetGaleriResimVm resim)
+    {
+        if (!string.IsNullOrWhiteSpace(resim.Link))
+        {
+            var link = resim.Link.Trim();
+
+            return link.StartsWith("http", StringComparison.OrdinalIgnoreCase)
+                ? link
+                : "/" + link.Trim('/');
+        }
+
+        if (!string.IsNullOrWhiteSpace(resim.SeoUrl))
+        {
+            return $"{listPath}/{resim.SeoUrl.Trim('/')}";
+        }
+
+        return "#";
+    }
+
+    // Kategori/filtre/sayfa icin query uretir.
+    string BuildQuery(string? kategori, int? pageNumber, string? search)
+    {
+        var parts = new List<string>();
+
+        if (!string.IsNullOrWhiteSpace(search))
+        {
+            parts.Add($"q={Uri.EscapeDataString(search)}");
+        }
+
+        if (!string.IsNullOrWhiteSpace(kategori))
+        {
+            parts.Add($"kategori={Uri.EscapeDataString(kategori)}");
+        }
+
+        if (pageNumber is > 1)
+        {
+            parts.Add($"page={pageNumber}");
+        }
+
+        return parts.Count == 0 ? "" : "?" + string.Join("&", parts);
+    }
+}
+
+<div class="page-title full-color">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="page-title-heading">
+                    <h2 class="title">Galeri Resimleri</h2>
+                </div>
+                <div class="breadcrumbs">
+                    <ul>
+                        <li class="home"><a href="/@Model.LanguageCode">Ana Sayfa </a></li>
+                        <li>\ Galeri Resimleri</li>
+                    </ul>
+                </div>
+            </div><!-- /.col-md-12 -->
+        </div><!-- /.row -->
+    </div><!-- /.container -->
+</div><!-- /page-title -->
+
+<section class="flat-row padding-small-v1">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="project-listing">
+                    @if (Model.Kategoriler.Any())
+                    {
+                        <ul class="filter-cat v1">
+                            <li class="@(Model.HasKategori ? "" : "active")">
+                                <a href="@listPath@BuildQuery(null, null, Model.Query)" class="flat-button">Tümü</a>
+                            </li>
+                            @foreach (var kategori in Model.Kategoriler)
+                            {
+                                <li class="@(string.Equals(Model.Kategori, kategori, StringComparison.OrdinalIgnoreCase) ? "active" : "")">
+                                    <a href="@listPath@BuildQuery(kategori, null, Model.Query)" class="flat-button">@kategori</a>
+                                </li>
+                            }
+                        </ul>
+                    }
+
+                    <!-- SONUC OZETI / ARAMA -->
+                    <div class="row" style="margin-bottom:20px;">
+                        <div class="col-md-8">
+                            @if (Model.HasQuery || Model.HasKategori)
+                            {
+                                <p class="main-color-1" style="font-weight:600;margin:0;">
+                                    @Model.Results.TotalCount galeri resmi bulundu.
+                                    <a href="@listPath" style="margin-left:10px;text-decoration:underline;">Filtreleri temizle</a>
+                                </p>
+                            }
+                        </div>
+                        <div class="col-md-4">
+                            <form role="search" method="get" action="@listPath" class="u-course-search-form">
+                                @if (Model.HasKategori)
+                                {
+                                    <input type="hidden" name="kategori" value="@Model.Kategori" />
+                                }
+                                <div class="input-group">
+                                    <input type="text" value="@Model.Query" name="q" placeholder="Galeride ara..." class="form-control">
+                                    <span class="input-group-btn">
+                                        <button type="submit" class="btn btn-default u-course-search-submit">
+                                            <i class="fa fa-search"></i>
+                                        </button>
+                                    </span>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <div class="project-portfolio">
+                        @if (Model.Results.Data.Any())
+                        {
+                            @foreach (var resim in Model.Results.Data)
+                            {
+                                var href = BuildResimHref(resim);
+                                var kategoriAdi = string.IsNullOrWhiteSpace(resim.Kategori) ? "Genel" : resim.Kategori;
+
+                                <div class="item">
+                                    <div class="project-item">
+                                        <div class="item-thumbnail">
+                                            <a href="@href"><img src="@resim.ResimUrl" alt="@resim.Baslik" loading="lazy"></a>
+                                            <div class="thumbnail-hoverlay main-color-1-bg"></div>
+                                            <div class="thumbnail-hoverlay-icon">
+                                                <a href="@resim.ResimUrl" class="fancybox" data-type="image" title="@resim.Baslik"><i class="fa fa-search"></i></a>
+                                                <a href="@href" title="@resim.Baslik"><i class="fa fa-link"></i></a>
+                                            </div>
+                                        </div><!-- /item-thumbnail -->
+
+                                        <div class="project-item-content">
+                                            <div class="project-item-title">
+                                                <div class="project-item-title-inner">
+                                                    <h4 class="item-title"><a href="@href">@resim.Baslik</a></h4>
+                                                    <div class="project-item-tax small-text">
+                                                        <a href="@listPath@BuildQuery(resim.Kategori, null, null)" class="cat-link">@kategoriAdi</a>
+                                                    </div>
+                                                </div><!-- /project-item-title-inner -->
+                                            </div><!-- /project-item-title -->
+
+                                            @if (!string.IsNullOrWhiteSpace(resim.KisaAciklama))
+                                            {
+                                                <div class="project-item-excerpt">
+                                                    <div class="exerpt-text">@resim.KisaAciklama</div>
+                                                </div><!-- /project-item-excerpt -->
+                                            }
+                                        </div><!-- /project-item -->
+                                    </div><!-- /project-item -->
+                                </div><!-- /item -->
+                            }
+                        }
+                        else
+                        {
+                            <div class="item">
+                                <div class="project-item">
+                                    <div class="project-item-content">
+                                        <div class="project-item-title">
+                                            <div class="project-item-title-inner">
+                                                <h4 class="item-title">
+                                                    @if (Model.HasQuery || Model.HasKategori)
+                                                    {
+                                                        <text>Aramanızla eşleşen galeri resmi bulunamadı.</text>
+                                                    }
+                                                    else
+                                                    {
+                                                        <text>Henüz galeri resmi bulunmamaktadır.</text>
+                                                    }
+                                                </h4>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+
+                    <!-- SAYFALAMA -->
+                    @if (Model.Results.TotalPages > 1)
+                    {
+                        // Cok sayfali sonuclarda dar aralik goster (mevcut sayfa etrafi)
+                        var startPage = Math.Max(1, Model.Results.Page - 2);
+                        var endPage = Math.Min(Model.Results.TotalPages, Model.Results.Page + 2);
+
+                        <div class="flat-pagination">
+                            <ul class="page-numbers clearfix">
+                                @if (Model.Results.HasPrevious)
+                                {
+                                    <li>
+                                        <a class="prev page-numbers" href="@listPath@BuildQuery(Model.Kategori, Model.Results.Page - 1, Model.Query)">
+                                            <i class="fa fa-angle-left"></i> Önceki
+                                        </a>
+                                    </li>
+                                }
+
+                                @if (startPage > 1)
+                                {
+                                    <li><a class="page-numbers" href="@listPath@BuildQuery(Model.Kategori, 1, Model.Query)">1</a></li>
+
+                                    if (startPage > 2)
+                                    {
+                                        <li><span class="page-numbers">...</span></li>
+                                    }
+                                }
+
+                                @for (var i = startPage; i <= endPage; i++)
+                                {
+                                    if (i == Model.Results.Page)
+                                    {
+                                        <li><span class="page-numbers current">@i</span></li>
+                                    }
+                                    else
+                                    {
+                                        <li><a class="page-numbers" href="@listPath@BuildQuery(Model.Kategori, i, Model.Query)">@i</a></li>
+                                    }
+                                }
+
+                                @if (endPage < Model.Results.TotalPages)
+                                {
+                                    if (endPage < Model.Results.TotalPages - 1)
+                                    {
+                                        <li><span class="page-numbers">...</span></li>
+                                    }
+
+                                    <li>
+                                        <a class="page-numbers" href="@listPath@BuildQuery(Model.Kategori, Model.Results.TotalPages, Model.Query)">
+                                            @Model.Results.TotalPages
+                                        </a>
+                                    </li>
+                                }
+
+                                @if (Model.Results.HasNext)
+                                {
+                                    <li>
+                                        <a class="next page-numbers" href="@listPath@BuildQuery(Model.Kategori, Model.Results.Page + 1, Model.Query)">
+                                            Sonraki <i class="fa fa-angle-right"></i>
+                                        </a>
+                                    </li>
+                                }
+                            </ul>
+                        </div><!--/flat-pagination -->
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
