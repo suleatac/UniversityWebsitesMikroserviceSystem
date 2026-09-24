@@ -103,23 +103,29 @@ namespace Microservice.Admin.Services
         {
             _logger.LogInformation("Template güncelleniyor. Id: {Id}", dto.Id);
 
-            var response = await _templateClientService.UpdateTemplateAsync(dto);
+            var response = await _templateClientService.UpdateTemplateAsync(dto.Id, dto);
 
             if (!response.IsSuccessStatusCode)
             {
-                var problemDetails = response.Error != null
-                  ? JsonSerializer.Deserialize<Microsoft.AspNetCore.Mvc.ProblemDetails>(response.Error.Content!)
-                  : null;
-
-                _logger.LogError(
-                    "API Error -> StatusCode: {StatusCode}, Title: {Title}, Detail: {Detail}",
-                    response.StatusCode,
-                    problemDetails?.Title,
-                    problemDetails?.Detail
-                );
-
-                return ServiceResult<bool>.Error(
-                    problemDetails?.Detail ?? problemDetails?.Title ?? "Template güncellenemedi.");
+                Microsoft.AspNetCore.Mvc.ProblemDetails? problemDetails = null;
+                var errorContent = response.Error?.Content;
+                if (!string.IsNullOrWhiteSpace(errorContent))
+                {
+                    try
+                    {
+                        problemDetails = JsonSerializer.Deserialize<Microsoft.AspNetCore.Mvc.ProblemDetails>(errorContent,
+                            new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                    }
+                    catch (JsonException ex)
+                    {
+                        _logger.LogWarning(ex, "API hata response'u JSON olarak parse edilemedi. StatusCode: {StatusCode}, Content: {Content}",
+                            response.StatusCode, errorContent);
+                    }
+                }
+                _logger.LogError("API Error -> StatusCode: {StatusCode}, Title: {Title}, Detail: {Detail}, Content: {Content}",
+                    response.StatusCode, problemDetails?.Title, problemDetails?.Detail, errorContent);
+                return ServiceResult<bool>
+                    .Error(problemDetails?.Detail ?? problemDetails?.Title ?? $"Template güncellenemedi. HTTP StatusCode: {(int)response.StatusCode}");
             }
 
             _logger.LogInformation("Template güncellendi. Id: {Id}", dto.Id);
