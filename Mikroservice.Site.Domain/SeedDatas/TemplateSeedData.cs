@@ -7,13 +7,19 @@ namespace Mikroservice.Site.Domain.SeedDatas
 
         public static List<Template> Templates => new List<Template>
         {
-            new Template 
-              { 
-                TemplateAdi = "Default", 
+            new Template
+              {
+                TemplateAdi = "Template_1",
                 TemplateTuru = "İdari",
 
-              }
-          
+              },
+               new Template
+              {
+                TemplateAdi = "Template_2",
+                TemplateTuru = "İdari",
+
+              },
+
         };
 
         public static List<Template> GetTemplateSeedDatas()
