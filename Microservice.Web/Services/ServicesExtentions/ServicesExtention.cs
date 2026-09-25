@@ -31,6 +31,7 @@ namespace Microservice.Web.Services.ServicesExtentions
             services.AddScoped<IIletisimService, IletisimService>();
             services.AddScoped<IPopupService, PopupService>();
             services.AddScoped<IOgrenciService, OgrenciService>();
+            services.AddScoped<ISikcaSorulanSoruService, SikcaSorulanSoruService>();
 
             services.AddScoped<IPageDetailResolver, HaberDetayResolver>();
             services.AddScoped<IPageDetailResolver, DuyuruDetayResolver>();

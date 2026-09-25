@@ -1,23 +1,39 @@
-﻿@{
-    ViewBag.Title = "sss";
-    Layout = $"~/Views/Shared/{ViewBag.TemplateName}/_WebMainLayout.cshtml";
+﻿@model Microservice.Web.ViewModels.SSS.SssPageViewModel
+@{
+    ViewData["Title"] = "Sıkça Sorulan Sorular";
+
+    // Agac: kok dugumler (ParentId null) kategori/ust soru, Children ise alt sorular.
+    var kategoriler = (Model.SoruAgaci ?? new List<Microservice.Web.ViewModels.SikcaSorulanSoru.SikcaSorulanSoruVm>())
+        .OrderBy(k => k.Sira)
+        .ToList();
+
+    // Bir dugumun soru listesi: kendisi + alt sorulari.
+    List<Microservice.Web.ViewModels.SikcaSorulanSoru.SikcaSorulanSoruVm> SoruListesi(
+        Microservice.Web.ViewModels.SikcaSorulanSoru.SikcaSorulanSoruVm dugum)
+    {
+        var liste = new List<Microservice.Web.ViewModels.SikcaSorulanSoru.SikcaSorulanSoruVm> { dugum };
+
+        liste.AddRange((dugum.Children ?? new List<Microservice.Web.ViewModels.SikcaSorulanSoru.SikcaSorulanSoruVm>())
+            .OrderBy(s => s.Sira));
+
+        return liste;
+    }
 }
-@using AnaWebsite.Utility
 <!-- START SECTION BREADCRUMB -->
-<section class="page-title-light breadcrumb_section parallax_bg overlay_bg_50" data-parallax-bg-image="@setting.getRandomResimYolu(ViewBag.siteobj)">
+<section class="page-title-light breadcrumb_section parallax_bg overlay_bg_50" data-parallax-bg-image="/template2/images/bg_altsayfa.jpg">
     <div class="container">
         <div class="row align-items-center">
             <div class="col-sm-6">
                 <div class="page-title">
-                    <h1>@(ViewBag.dilObj.id == (int)DilTuru.Ingilizce ? "FAQ" : "Sıkça Sorulan Sorular")</h1>
+                    <h1>Sıkça Sorulan Sorular</h1>
                 </div>
             </div>
             <div class="col-sm-6">
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb justify-content-sm-end">
-                        <li class="breadcrumb-item"><a href="@(ViewBag.dilObj.id == (int)DilTuru.Ingilizce ? "/en" : "/")"> @(ViewBag.dilObj.id == (int)DilTuru.Ingilizce ? "Main Page" : "Anasayfa")</a></li>
+                        <li class="breadcrumb-item"><a href="/">Anasayfa</a></li>
 
-                        <li class="breadcrumb-item active" aria-current="page">@(ViewBag.dilObj.id == (int)DilTuru.Ingilizce ? "FAQ" : "Sıkça Sorulan Sorular")</li>
+                        <li class="breadcrumb-item active" aria-current="page">Sıkça Sorulan Sorular</li>
 
                     </ol>
                 </nav>
@@ -27,19 +43,24 @@
 </section>
 <!-- END SECTION BANNER -->
 <!-- START FAQ-->
-<section>
+<section class="small_pt">
     <div class="container">
         <div class="row">
             <div class="col-lg-3 mt-lg-0 mt-4 pt-3 pt-lg-0">
                 <div class="sidebar">
                     <div class="widget widget_categories">
-                        <h5 class="widget_title"> @(ViewBag.dilObj.id == (int)DilTuru.Ingilizce ? "Categories" : "Soru Kategorileri")</h5>
+                        <h5 class="widget_title">Soru Kategorileri</h5>
                         <ul id="kategoriListesi">
-                            @foreach (SSSKategori kategori in Model)
+                            <li>
+                                <a href="javascript:void(0);" class="kategori-link active" data-id="">
+                                    <span class="categories_name">Tümü</span>
+                                </a>
+                            </li>
+                            @foreach (var kategori in kategoriler)
                             {
                                 <li>
-                                    <a href="#" class="kategori-link" data-id="@kategori.id">
-                                        <span class="categories_name">@kategori.name</span>
+                                    <a href="javascript:void(0);" class="kategori-link" data-id="@kategori.Id">
+                                        <span class="categories_name">@kategori.Soru</span>
                                     </a>
                                 </li>
                             }
@@ -51,55 +72,93 @@
             <div class="col-lg-9 col-md-6">
                 <div id="sssListe">
 
-                    @*@Html.Partial("GetSssByKategori", new List<SikcaSorulanSorular>())*@
+                    @if (kategoriler.Any())
+                    {
+                        foreach (var kategori in kategoriler)
+                        {
+                            var sorular = SoruListesi(kategori);
+
+                            <div class="sss-kategori show" id="sss-kategori-@kategori.Id">
+                                <h5 class="widget_title mb-3">@kategori.Soru</h5>
+
+                                <div id="accordion-@kategori.Id" class="accordion">
+                                    @{ int i = 1; }
+                                    @foreach (var soru in sorular)
+                                    {
+                                        var baslik = i == 1 ? soru.Soru : $"— {soru.Soru}";
+
+                                        <div class="card">
+                                            <div class="card-header" id="heading-@kategori.Id-@i">
+                                                <h6 class="mb-0">
+                                                    <a data-toggle="collapse" href="#collapse-@kategori.Id-@i"
+                                                       aria-expanded="@(i == 1 ? "true" : "false")"
+                                                       aria-controls="collapse-@kategori.Id-@i">@baslik</a>
+                                                </h6>
+                                            </div>
+                                            <div id="collapse-@kategori.Id-@i" class="collapse @(i == 1 ? "show" : "")"
+                                                 aria-labelledby="heading-@kategori.Id-@i">
+                                                <div class="card-body">
+                                                    @if (!string.IsNullOrWhiteSpace(soru.Cevap))
+                                                    {
+                                                        @Html.Raw(soru.Cevap)
+                                                    }
+                                                    else
+                                                    {
+                                                        <p class="text-muted mb-0">Bu soru için cevap girilmemiş.</p>
+                                                    }
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        i++;
+                                    }
+                                </div>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <div class="content_box radius_all_10 box_shadow1 p-4 text-center">
+                            <p class="mb-0">Henüz sıkça sorulan soru bulunmamaktadır.</p>
+                        </div>
+                    }
+
                 </div>
             </div>
         </div>
     </div>
 </section>
 <!-- END FAQ -->
-@section scripts {
+@section Scripts {
+    <script type="text/javascript">
+        // Kategori linkleri: sunucuda render edilen gruplari sayfayi yenilemeden goruntuler.
+        (function ($) {
+            if (!$) return;
 
+            function showGroup(id) {
+                $('.sss-kategori').removeClass('show').hide();
 
-    <script>
-        $(document).ready(function() {
-            var firstKategori = $("#kategoriListesi li:first-child a"); // İlk kategoriyi seç
-            console.log(firstKategori);
+                if (!id) {
+                    // Tumu
+                    $('.sss-kategori').addClass('show').show();
+                    return;
+                }
 
-            if (firstKategori.length > 0) {
-                var firstKategoriId = firstKategori.data("id");
+                var $group = $('#sss-kategori-' + id);
 
-                // İlk kategoriye ait soruları yükle
-                loadSss(firstKategoriId);
-
-                // İlk kategoriyi aktif yap (isteğe bağlı, CSS için)
-                firstKategori.addClass("active");
+                if ($group.length) {
+                    $group.addClass('show').show();
+                }
             }
 
-            $(".kategori-link").click(function(e) {
+            $('.kategori-link').on('click', function (e) {
                 e.preventDefault();
-                var kategoriId = $(this).data("id");
 
-                // AJAX ile kategoriye ait SSS'leri getir
-                loadSss(kategoriId);
+                $('.kategori-link').removeClass('active');
+                $(this).addClass('active');
 
-                // Seçilen kategoriye aktif class ekle (isteğe bağlı)
-                $(".kategori-link").removeClass("active");
-                $(this).addClass("active");
+                showGroup($(this).data('id'));
             });
-            var currentDil = '@ViewBag.dilObj?.dil_kisa_adi ?? "tr"';
-            function loadSss(kategoriId) {
-                $.ajax({
-                    url: '@Url.Action("GetSssByKategori")',
-                    type: 'GET',
-                    data: { kategoriId: kategoriId },
-                    success: function(data) {
-                        $("#sssListe").html(data);
-                    }
-                });
-            }
-        });
+        })(jQuery);
     </script>
 }
-
-

@@ -13,6 +13,7 @@ using Microservice.Web.ViewModels.Icerik;
 using Microservice.Web.ViewModels.Iletisim;
 using Microservice.Web.ViewModels.Menu;
 using Microservice.Web.ViewModels.PageRoute;
+using Microservice.Web.ViewModels.SSS;
 using Microservice.Web.ViewModels.SitePersonel;
 using Microservice.Web.ViewModels.Paged;
 using Microservice.Web.ViewModels.Search;
@@ -43,6 +44,7 @@ namespace Microservice.Web.Controllers
         private readonly IBandLogoService _bandLogoService;
         private readonly IPopupService _popupService;
         private readonly IOgrenciService _ogrenciService;
+        private readonly ISikcaSorulanSoruService _sikcaSorulanSoruService;
         private readonly ILogger<TemplateController> _logger;
         private readonly IWebHostEnvironment _env;
 
@@ -64,6 +66,7 @@ namespace Microservice.Web.Controllers
             IBandLogoService bandLogoService,
             IPopupService popupService,
             IOgrenciService ogrenciService,
+            ISikcaSorulanSoruService sikcaSorulanSoruService,
             ILogger<TemplateController> logger,
             IWebHostEnvironment env)
         {
@@ -85,6 +88,7 @@ namespace Microservice.Web.Controllers
             _bandLogoService = bandLogoService;
             _popupService = popupService;
             _ogrenciService = ogrenciService;
+            _sikcaSorulanSoruService = sikcaSorulanSoruService;
             _logger = logger;
         }
 
@@ -1145,6 +1149,31 @@ namespace Microservice.Web.Controllers
                         ? $"/{route.LanguageCode}/{searchSlug}"
                         : "/",
                     LatestHabers = latestHabers
+                };
+
+                return View(viewPath, model);
+            }
+
+            // SSS sayfasi admin'deki agac yapisiyla (kategori -> sorular) render edilir.
+            if (string.Equals(viewName, "SSS", StringComparison.OrdinalIgnoreCase))
+            {
+                var sssResult = await _sikcaSorulanSoruService
+                    .GetSikcaSorulanSorularAsync(route.Site.Id, route.LanguageId);
+
+                if (sssResult.IsFail)
+                {
+                    _logger.LogWarning(
+                        "SSS verileri alinamadi. SiteId: {SiteId}, DilId: {DilId}",
+                        route.Site.Id,
+                        route.LanguageId);
+                }
+
+                ViewData["Site"] = route.Site;
+
+                var model = new SssPageViewModel {
+                    Site = route.Site,
+                    LanguageCode = route.LanguageCode,
+                    SoruAgaci = sssResult.Data ?? [],
                 };
 
                 return View(viewPath, model);
