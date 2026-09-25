@@ -304,8 +304,8 @@
                                 <label class="media-type-card d-block" id="iconTypeCard">
                                     <input type="radio"
                                            asp-for="CreateShortcutButton.IsIconImage"
-                                           value="true"
-                                           id="isIconTrue" />
+                                           value="false"
+                                           id="iconMediaRadio" />
                                     <div class="type-icon">
                                         <i class="fas fa-icons"></i>
                                     </div>
@@ -318,8 +318,8 @@
                                 <label class="media-type-card d-block" id="imageTypeCard">
                                     <input type="radio"
                                            asp-for="CreateShortcutButton.IsIconImage"
-                                           value="false"
-                                           id="isIconFalse" />
+                                           value="true"
+                                           id="imageMediaRadio" />
                                     <div class="type-icon">
                                         <i class="mdi mdi-image-outline"></i>
                                     </div>
@@ -585,7 +585,7 @@
 
             // Varsayılan seçim: İkon
             if (!$('input[name="CreateShortcutButton.IsIconImage"]:checked').length) {
-                $('#isIconTrue').prop('checked', true);
+                $('#iconMediaRadio').prop('checked', true);
             }
 
             syncMediaSections();
@@ -614,17 +614,19 @@
         }
 
         function syncMediaSections() {
-            var isIcon = $('input[name="CreateShortcutButton.IsIconImage"]:checked').val();
+            // IsIconImage = true  -> Resim Yüklemek İstiyorum
+            // IsIconImage = false -> İkon Eklemek İstiyorum
+            var isIconImage = $('input[name="CreateShortcutButton.IsIconImage"]:checked').val();
 
-            $('#iconTypeCard').toggleClass('active', isIcon === 'true');
-            $('#imageTypeCard').toggleClass('active', isIcon === 'false');
+            $('#iconTypeCard').toggleClass('active', isIconImage === 'false');
+            $('#imageTypeCard').toggleClass('active', isIconImage === 'true');
 
-            if (isIcon === 'true') {
-                $('#iconSection').slideDown(150);
-                $('#imageSection').slideUp(150);
-            } else if (isIcon === 'false') {
+            if (isIconImage === 'true') {
                 $('#iconSection').slideUp(150);
                 $('#imageSection').slideDown(150);
+            } else if (isIconImage === 'false') {
+                $('#iconSection').slideDown(150);
+                $('#imageSection').slideUp(150);
             } else {
                 $('#iconSection').hide();
                 $('#imageSection').hide();

@@ -1,23 +1,42 @@
-﻿@using AnaWebsite.Utility
-<style>
-    #languageButton:hover {
-        background-color: indianred;
-    }
-</style>
+﻿@using Microservice.Web.ViewModels.Menu
+@model Microservice.Web.ViewModels.Menu.MenuGetIndexVm
 @functions {
-    string RenderMenu(List<Menu> menuList)
+    // Link dolu ise dogrudan o link kullanilir.
+    // Link bos ise menu, bagli oldugu sayfa tipine (PageType) yonlendirilir: /{dil}/{slug}[/{seoUrl}]
+    string BuildHref(GetMenuVm menu)
+    {
+        if (!string.IsNullOrWhiteSpace(menu.Link))
+        {
+            var link = menu.Link.Trim();
+
+            return link.StartsWith("http", StringComparison.OrdinalIgnoreCase)
+                ? link
+                : "/" + link.Trim('/');
+        }
+
+        if (menu.PageType is not null && !string.IsNullOrWhiteSpace(menu.PageType.Slug))
+        {
+            return string.IsNullOrWhiteSpace(menu.SeoUrl)
+                ? $"/{Model.LanguageCode}/{menu.PageType.Slug}"
+                : $"/{Model.LanguageCode}/{menu.PageType.Slug}/{menu.SeoUrl.Trim('/')}";
+        }
+
+        return "#";
+    }
+
+    string RenderMenu(List<GetMenuVm> menuList)
     {
         var result = "";
-        var sortedMenuList = menuList.OrderBy(m => m.sira).ToList();
+        var sortedMenuList = menuList.OrderBy(m => m.Sira).ToList();
 
         foreach (var item in sortedMenuList)
         {
-            var altMenuList = item.Menu1.Where(m => m.aktif).OrderBy(m => m.sira).ToList();
+            var altMenuList = item.Children.Where(m => m.IsVisible).OrderBy(m => m.Sira).ToList();
 
-            var isMegaMenu = item.mega_menu; // mega_menu: bool property
+            var isMegaMenu = item.MegaMenu;
 
             result += "<li class=\"" + (altMenuList.Count > 0 ? (isMegaMenu ? "dropdown dropdown-mega-menu" : "dropdown") : "") + "\">";
-            result += $"<a class=\"" + (altMenuList.Count > 0 ? "dropdown-toggle" : "") + " nav-link\" href=\"" + item.getAdresMenu() + "\" data-toggle=\"" + (altMenuList.Count > 0 ? "dropdown" : "") + "\">" + item.adi + "</a>";
+            result += $"<a class=\"" + (altMenuList.Count > 0 ? "dropdown-toggle" : "") + " nav-link\" href=\"" + BuildHref(item) + "\" data-toggle=\"" + (altMenuList.Count > 0 ? "dropdown" : "") + "\">" + item.Ad + "</a>";
 
             if (altMenuList.Count > 0)
             {
@@ -28,14 +47,14 @@
                     // Mega menüde her alt menüyü bir kolon olarak gösteriyoruz
                     foreach (var sub in altMenuList)
                     {
-                        var nestedSubList = sub.Menu1.Where(m => m.aktif).OrderBy(m => m.sira).ToList();
+                        var nestedSubList = sub.Children.Where(m => m.IsVisible).OrderBy(m => m.Sira).ToList();
 
                         result += "<li class=\"mega-menu-col\">";
-                        result += $"<a class=\"dropdown-item nav-link nav_item mega-menu-column-title\" href=\"{sub.getAdresMenu()}\">{sub.adi}</a>";
+                        result += $"<a class=\"dropdown-item nav-link nav_item mega-menu-column-title\" href=\"{BuildHref(sub)}\">{sub.Ad}</a>";
                         result += "<div><ul>";
                         foreach (var nested in nestedSubList)
                         {
-                            result += $"<li><a class=\"dropdown-item nav-link nav_item\" href=\"{nested.getAdresMenu()}\">{nested.adi}</a></li>";
+                            result += $"<li><a class=\"dropdown-item nav-link nav_item\" href=\"{BuildHref(nested)}\">{nested.Ad}</a></li>";
                         }
                         result += "</ul></div></li>";
                     }
@@ -57,21 +76,21 @@
     }
 
 
-    string RenderSubMenu(List<Menu> subMenuList)
+    string RenderSubMenu(List<GetMenuVm> subMenuList)
     {
         var result = "<ul>";
 
         // Alt menü listesini 'sira' özelliğine göre sırala
-        var sortedSubMenuList = subMenuList.OrderBy(m => m.sira).ToList();
+        var sortedSubMenuList = subMenuList.OrderBy(m => m.Sira).ToList();
 
         foreach (var subItem in sortedSubMenuList)
         {
             result += "<li>";
-            result += $"<a class=\"dropdown-item " + (subItem.Menu1.Any(m => m.aktif) ? "menu-link dropdown-toggler" : "nav-link nav_item") + "\" href=\"" + subItem.getAdresMenu() + "\">" + subItem.adi + "</a>";
+            result += $"<a class=\"dropdown-item " + (subItem.Children.Any(m => m.IsVisible) ? "menu-link dropdown-toggler" : "nav-link nav_item") + "\" href=\"" + BuildHref(subItem) + "\">" + subItem.Ad + "</a>";
 
-            if (subItem.Menu1.Any(m => m.aktif))
+            if (subItem.Children.Any(m => m.IsVisible))
             {
-                var nestedSubMenuList = subItem.Menu1.Where(m => m.aktif).OrderBy(m => m.sira).ToList();
+                var nestedSubMenuList = subItem.Children.Where(m => m.IsVisible).OrderBy(m => m.Sira).ToList();
                 result += "<div class=\"dropdown-menu\">";
                 result += RenderSubMenu(nestedSubMenuList);
                 result += "</div>";
@@ -85,6 +104,24 @@
     }
 }
 
+@{
+    var ozellikler = Model.Site?.SiteOzellikleri;
+    var isEnglish = string.Equals(Model.LanguageCode, "en", StringComparison.OrdinalIgnoreCase);
+    var otherLanguageCode = isEnglish ? "tr" : "en";
+    var searchAction = string.IsNullOrWhiteSpace(Model.SearchPageSlug)
+        ? "#"
+        : $"/{Model.LanguageCode}/{Model.SearchPageSlug}";
+    var logoUrl = !string.IsNullOrWhiteSpace(ozellikler?.SiteTopbarLogo)
+        ? ozellikler!.SiteTopbarLogo
+        : Url.Content("~/template2/images/logo_dark.png");
+}
+
+<style>
+    #languageButton:hover {
+        background-color: indianred;
+    }
+</style>
+
 <header class="header_wrap dark_skin">
     <div class="top-header bg_blue_dark2 light_skin">
         <div class="container">
@@ -93,8 +130,14 @@
                 <div class="col-md-6">
 
                     <ul class="contact_detail list_none text-center text-md-left">
-                        <li><a href="https://api.whatsapp.com/send?phone=905399290158"><i class="ti-mobile"></i>Telefon</a></li>
-                        <li><a href="mailto:@ViewBag.siteObj.e_posta"><i class="ti-email"></i> @(ViewBag.dilObj.id == (int)DilTuru.Ingilizce ? "Reach via EMail" : "Mail ile Ulaş") </a></li>
+                        @if (!string.IsNullOrWhiteSpace(ozellikler?.SiteTelNo))
+                        {
+                            <li><a href="tel:@ozellikler.SiteTelNo"><i class="ti-mobile"></i>@ozellikler.SiteTelNo</a></li>
+                        }
+                        @if (!string.IsNullOrWhiteSpace(Model.Site?.SiteEPosta))
+                        {
+                            <li><a href="mailto:@Model.Site.SiteEPosta"><i class="ti-email"></i> @(isEnglish ? "Reach via EMail" : "Mail ile Ulaş") </a></li>
+                        }
                         <li>
 
                             <!-- Burası translate butonları kısmı-->
@@ -108,47 +151,41 @@
                     </ul>
                 </div>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
                 <div class="col-md-6">
                     <div class="d-flex flex-wrap align-items-center justify-content-md-end justify-content-center mt-2 mt-md-0">
                         <ul class="list_none social_icons social_white text-center text-md-right mr-5">
-                            <li><a href="@ViewBag.siteObj.facebook_adress"><i class="ion-social-facebook"></i></a></li>
-                            <li><a href="@ViewBag.siteObj.twitter_adress"><i class="ion-social-twitter"></i></a></li>
-                            <li><a href="@ViewBag.siteObj.watsapp_adress"><i class="ion-social-whatsapp-outline"></i></a></li>
-                            <li><a href="@ViewBag.siteObj.youtube_adress"><i class="ion-social-youtube-outline"></i></a></li>
-                            <li><a href="@ViewBag.siteObj.instagram_adress"><i class="ion-social-instagram-outline"></i></a></li>
+                            @if (!string.IsNullOrWhiteSpace(ozellikler?.SiteFacebookAdress))
+                            {
+                                <li><a href="@ozellikler.SiteFacebookAdress" target="_blank" rel="noopener"><i class="ion-social-facebook"></i></a></li>
+                            }
+                            @if (!string.IsNullOrWhiteSpace(ozellikler?.SiteTwitterAdress))
+                            {
+                                <li><a href="@ozellikler.SiteTwitterAdress" target="_blank" rel="noopener"><i class="ion-social-twitter"></i></a></li>
+                            }
+                            @if (!string.IsNullOrWhiteSpace(ozellikler?.SiteWatsappAdress))
+                            {
+                                <li><a href="https://api.whatsapp.com/send?phone=@ozellikler.SiteWatsappAdress" target="_blank" rel="noopener"><i class="ion-social-whatsapp-outline"></i></a></li>
+                            }
+                            @if (!string.IsNullOrWhiteSpace(ozellikler?.SiteYoutubeAdress))
+                            {
+                                <li><a href="@ozellikler.SiteYoutubeAdress" target="_blank" rel="noopener"><i class="ion-social-youtube-outline"></i></a></li>
+                            }
+                            @if (!string.IsNullOrWhiteSpace(ozellikler?.SiteInstagramAdress))
+                            {
+                                <li><a href="@ozellikler.SiteInstagramAdress" target="_blank" rel="noopener"><i class="ion-social-instagram-outline"></i></a></li>
+                            }
                         </ul>
 
-
-
-                        <a href="@(ViewBag.dilObj.id == (int)DilTuru.Ingilizce ? "/" : "/en")" id="languageButton" style="border:1px solid white; padding:3px; ">
-                            @if (ViewBag.dilObj.id == (int)DilTuru.Ingilizce)
+                        <a href="/@otherLanguageCode" id="languageButton" style="border:1px solid white; padding:3px; ">
+                            @if (isEnglish)
                             {
-                                <img class="" src="~/assets/@ViewBag.TemplateName/images/flags/turkey.jpg" alt="türkçe sayfaya geçiş" height="16"> <span class="text-white">TR</span>
-
+                                <img class="" src="~/template2/images/flags/turkey.jpg" alt="türkçe sayfaya geçiş" height="16"> <span class="text-white">TR</span>
                             }
                             else
                             {
-                                <img class="" src="~/assets/@ViewBag.TemplateName/images/flags/us.jpg" alt="ingilizce sayfaya geçiş" height="16"> <span class="text-white">EN</span>
+                                <img class="" src="~/template2/images/flags/us.jpg" alt="ingilizce sayfaya geçiş" height="16"> <span class="text-white">EN</span>
                             }
                         </a>
-
-
-
 
                     </div>
                 </div>
@@ -157,123 +194,14 @@
     </div>
     <div class="container">
         <nav class="navbar navbar-expand-lg">
-            <a class="navbar-brand" href="@(ViewBag.dilObj.id == (int)DilTuru.Ingilizce ? "/en" : "/")">
-                <img class="logo_light" src="~/assets/@ViewBag.TemplateName/images/logo_white.png" alt="logo" />
-                <img class="logo_dark" src=@(ViewBag.dilObj.id == (int)DilTuru.Ingilizce ? "/assets/" + @ViewBag.TemplateName + "/images/tetra_logo_eng.png" : "/assets/" + @ViewBag.TemplateName + "/images/tetra_logo.png") alt="logo" style="width:70%;" />
-
-                <img class="logo_default" src="~/assets/@ViewBag.TemplateName/images/logo_dark.png" alt="logo" />
+            <a class="navbar-brand" href="/">
+                <img class="logo_dark" src="@logoUrl" alt="logo"  />
             </a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"> <span class="ion-android-menu"></span> </button>
             <div class="collapse navbar-collapse justify-content-end" id="navbarSupportedContent">
                 <ul class="navbar-nav">
-                    <li class="dropdown dropdown-mega-menu">
-                        <a class="dropdown-toggle nav-link active" href="#" data-toggle="dropdown">Mega Menu</a>
-                        <div class="dropdown-menu">
-                            <ul class="mega-menu">
-
-
-                                <li class="mega-menu-col">
-                                    <a class="dropdown-item nav-link nav_item mega-menu-column-title" href="index.html">Home Version 1</a>
-                                    <div class="">
-                                        <ul>
-                                            <li><a class="dropdown-item nav-link nav_item" href="gallery-three-columns.html">Gallery 3 Column Grid</a></li>
-                                            <li><a class="dropdown-item nav-link nav_item" href="gallery-four-columns.html">Gallery 4 Column Grid</a></li>
-                                            <li><a class="dropdown-item nav-link nav_item" href="gallery-masonry-three-columns.html">Gallery 3 Column Masonry</a></li>
-                                            <li><a class="dropdown-item nav-link nav_item" href="gallery-masonry-four-columns.html">Gallery 4 Column Masonry</a></li>
-                                            <li><a class="dropdown-item nav-link nav_item" href="gallery-three-columns.html">Gallery 3 Column Grid</a></li>
-                                            <li><a class="dropdown-item nav-link nav_item" href="gallery-four-columns.html">Gallery 4 Column Grid</a></li>
-                                            <li><a class="dropdown-item nav-link nav_item" href="gallery-masonry-three-columns.html">Gallery 3 Column Masonry</a></li>
-                                            <li><a class="dropdown-item nav-link nav_item" href="gallery-masonry-four-columns.html">Gallery 4 Column Masonry</a></li>
-                                        </ul>
-                                    </div>
-                                </li>
-                                <li class="mega-menu-col">
-                                    <a class="dropdown-item nav-link nav_item mega-menu-column-title" href="index.html">Home Version 1</a>
-                                    <div class="">
-                                        <ul>
-                                            <li><a class="dropdown-item nav-link nav_item" href="gallery-three-columns.html">Gallery 3 Column Grid</a></li>
-                                            <li><a class="dropdown-item nav-link nav_item" href="gallery-four-columns.html">Gallery 4 Column Grid</a></li>
-                                            <li><a class="dropdown-item nav-link nav_item" href="gallery-masonry-three-columns.html">Gallery 3 Column Masonry</a></li>
-                                            <li><a class="dropdown-item nav-link nav_item" href="gallery-masonry-four-columns.html">Gallery 4 Column Masonry</a></li>
-                                        </ul>
-                                    </div>
-                                </li>
-                                <li class="mega-menu-col">
-                                    <a class="dropdown-item nav-link nav_item mega-menu-column-title" href="index.html">Home Version 1</a>
-                                    <div class="">
-                                        <ul>
-                                            <li><a class="dropdown-item nav-link nav_item" href="gallery-three-columns.html">Gallery 3 Column Grid</a></li>
-                                            <li><a class="dropdown-item nav-link nav_item" href="gallery-four-columns.html">Gallery 4 Column Grid</a></li>
-                                            <li><a class="dropdown-item nav-link nav_item" href="gallery-masonry-three-columns.html">Gallery 3 Column Masonry</a></li>
-                                            <li><a class="dropdown-item nav-link nav_item" href="gallery-masonry-four-columns.html">Gallery 4 Column Masonry</a></li>
-                                        </ul>
-                                    </div>
-                                </li>
-                                <li class="mega-menu-col">
-                                    <a class="dropdown-item nav-link nav_item mega-menu-column-title" href="index-2.html">Home Version 2</a>
-                                    <div class="">
-                                        <ul>
-                                            <li><a class="dropdown-item nav-link nav_item" href="gallery-three-columns.html">Gallery 3 Column Grid</a></li>
-                                            <li><a class="dropdown-item nav-link nav_item" href="gallery-four-columns.html">Gallery 4 Column Grid</a></li>
-                                            <li><a class="dropdown-item nav-link nav_item" href="gallery-masonry-three-columns.html">Gallery 3 Column Masonry</a></li>
-                                            <li><a class="dropdown-item nav-link nav_item" href="gallery-masonry-four-columns.html">Gallery 4 Column Masonry</a></li>
-                                        </ul>
-                                    </div>
-                                </li>
-                                <li class="mega-menu-col">
-                                    <a class="dropdown-item nav-link nav_item mega-menu-column-title" href="index-3.html">Home Version 3</a>
-                                    <div class="">
-                                        <ul>
-                                            <li><a class="dropdown-item nav-link nav_item" href="gallery-three-columns.html">Gallery 3 </a></li>
-                                            <li><a class="dropdown-item nav-link nav_item" href="gallery-four-columns.html">Gallery 4 </a></li>
-                                            <li><a class="dropdown-item nav-link nav_item" href="gallery-masonry-three-columns.html">Gallery 3 </a></li>
-                                            <li><a class="dropdown-item nav-link nav_item" href="gallery-masonry-four-columns.html">Gallery 4 </a></li>
-                                        </ul>
-                                    </div>
-
-                                </li>
-                                <li class="mega-menu-col">
-                                    <a class="dropdown-item nav-link nav_item mega-menu-column-title" href="index-4.html">Home Version 4</a>
-                                    <div class="">
-                                        <ul>
-                                            <li><a class="dropdown-item nav-link nav_item" href="gallery-three-columns.html">Gallery 3 </a></li>
-                                            <li><a class="dropdown-item nav-link nav_item" href="gallery-four-columns.html">Gallery 4 </a></li>
-                                            <li><a class="dropdown-item nav-link nav_item" href="gallery-masonry-three-columns.html">Gallery 3 </a></li>
-                                            <li><a class="dropdown-item nav-link nav_item" href="gallery-masonry-four-columns.html">Gallery 4 </a></li>
-                                        </ul>
-                                    </div>
-
-                                </li>
-                                <li class="mega-menu-col">
-                                    <a class="dropdown-item nav-link nav_item mega-menu-column-title" href="index-5.html">Home Version 5</a>
-                                    <div class="">
-                                        <ul>
-                                            <li><a class="dropdown-item nav-link nav_item" href="gallery-three-columns.html">Gallery 3 </a></li>
-                                            <li><a class="dropdown-item nav-link nav_item" href="gallery-four-columns.html">Gallery 4 </a></li>
-                                            <li><a class="dropdown-item nav-link nav_item" href="gallery-masonry-three-columns.html">Gallery 3 </a></li>
-                                            <li><a class="dropdown-item nav-link nav_item" href="gallery-masonry-four-columns.html">Gallery 4 </a></li>
-                                        </ul>
-                                    </div>
-
-                                </li>
-                                <li class="mega-menu-col">
-                                    <a class="dropdown-item nav-link nav_item mega-menu-column-title" href="index-6.html">Home Version 6</a>
-                                    <div class="">
-                                        <ul>
-                                            <li><a class="dropdown-item nav-link nav_item" href="gallery-three-columns.html">Gallery 3 </a></li>
-                                            <li><a class="dropdown-item nav-link nav_item" href="gallery-four-columns.html">Gallery 4 </a></li>
-                                            <li><a class="dropdown-item nav-link nav_item" href="gallery-masonry-three-columns.html">Gallery 3 </a></li>
-                                            <li><a class="dropdown-item nav-link nav_item" href="gallery-masonry-four-columns.html">Gallery 4 </a></li>
-                                        </ul>
-                                    </div>
-                                </li>
-                            </ul>
-                        </div>
-
-
-                    </li>
-
-                    @Html.Raw(RenderMenu((List<Menu>)ViewBag.menuList))
+                    <li><a class="nav-link" href="/@Model.LanguageCode">Anasayfa</a></li>
+                    @Html.Raw(RenderMenu(Model.Menus))
                 </ul>
             </div>
             <ul class="navbar-nav attr-nav align-items-center ml-3">
@@ -281,7 +209,7 @@
                     <a href="javascript:void(0);" class="nav-link search_trigger"><i class="ion-ios-search-strong"></i></a>
                     <div class="search-overlay">
                         <div class="search_wrap">
-                            <form action='@Url.Action("arama", ViewBag.siteobj.Template.tur)' method="get">
+                            <form action='@searchAction' method="get">
                                 <input type="text" placeholder="Ara..." class="form-control" id="search_input" name="q">
                                 <button type="submit" class="search_icon"><i class="ion-ios-search-strong"></i></button>
                             </form>
@@ -291,6 +219,5 @@
             </ul>
         </nav>
     </div>
-    <table id="menuGrid"></table>
 </header>
 <!-- END HEADER -->

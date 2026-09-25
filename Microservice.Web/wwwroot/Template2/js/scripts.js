@@ -14,7 +14,7 @@ PAGE JS
 
 
 
-	$('#Login').modal('show'); // Sayfa yüklendiðinde modalý göster
+	$('#Login').modal('show'); // Sayfa yï¿½klendiï¿½inde modalï¿½ gï¿½ster
 
 
 	/*===================================*
@@ -209,9 +209,13 @@ PAGE JS
             
 	//isotope filter
 	$(document).on( "click", filter_selectors, function() {
+		var dfselector = $(this).data('filter');
+		// data-filter olmayan linkler sunucu tarafi filtre linkidir: varsayilan davranisa (href'e git) birak
+		if (typeof dfselector === 'undefined') {
+			return;
+		}
 		$(filter_selectors).removeClass("current");
 		$(this).addClass("current");
-		var dfselector = $(this).data('filter');
 		if ($grid_selectors.hasClass("masonry")){
 			$grid_selectors.isotope({
 				itemSelector: '.grid_item',

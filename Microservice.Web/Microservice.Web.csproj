@@ -27,4 +27,10 @@
     <PackageReference Include="StackExchange.Redis" Version="3.1.31" />
   </ItemGroup>
 
+  <ItemGroup>
+    <!-- Eski AnaWebsite projesinden kalma, baska tiplere (AnaWebsite.Utility vb.) bagimli
+         ve henuz bu cozume tasinmamiss gorunum; derlemeyi kirmamasi icin haric tutuldu. -->
+    <Content Remove="Views\Templates\Template2\SSS.cshtml" />
+  </ItemGroup>
+
 </Project>

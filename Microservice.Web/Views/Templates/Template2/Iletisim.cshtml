@@ -31,25 +31,31 @@
 
         return "#";
     }
+
+    var trCulture = new System.Globalization.CultureInfo("tr-TR");
 }
 
-<div class="page-title full-color">
+<!-- START SECTION BREADCRUMB -->
+<section class="page-title-light breadcrumb_section parallax_bg overlay_bg_50" data-parallax-bg-image="/template2/images/bg_altsayfa.jpg">
     <div class="container">
-        <div class="row">
-            <div class="col-md-12">
-                <div class="page-title-heading">
-                    <h2 class="title">İletişim</h2>
+        <div class="row align-items-center">
+            <div class="col-sm-6">
+                <div class="page-title">
+                    <h1>İletişim</h1>
                 </div>
-                <div class="breadcrumbs">
-                    <ul>
-                        <li class="home"><a href="/@Model.LanguageCode">Ana Sayfa </a></li>
-                        <li>\ İletişim</li>
-                    </ul>
-                </div>
-            </div><!-- /.col-md-12 -->
-        </div><!-- /.row -->
-    </div><!-- /.container -->
-</div><!-- /page-title -->
+            </div>
+            <div class="col-sm-6">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb justify-content-sm-end">
+                        <li class="breadcrumb-item"><a href="/">Ana Sayfa</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">İletişim</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- END SECTION BREADCRUMB -->
 
 <!-- alert mesajlari -->
 @if (TempData["IletisimBasari"] is string basariMesaji)
@@ -69,192 +75,252 @@
     </div>
 }
 
-<!-- contact posts -->
-<section class="main-content contact-posts">
+<!-- START SECTION CONTACT -->
+<section class="small_pt small_pb">
     <div class="container">
-        <div class="row">
-            <div class="post-contact">
-                <div class="col-md-9">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="contact-form">
-                                <div class="line-box"></div>
-
-                                <form asp-action="Gonder"
-                                      asp-controller="Iletisim"
-                                      asp-route-returnUrl="@returnUrl"
-                                      method="post"
-                                      id="contactform"
-                                      class="comment-form">
-
-                                    @Html.AntiForgeryToken()
-
-                                    <input type="hidden" asp-for="Form.SiteId" />
-
-                                    <fieldset class="style-1 full-name">
-                                        <input asp-for="Form.AdSoyad"
-                                               type="text"
-                                               placeholder="Adınız Soyadınız"
-                                               class="tb-my-input"
-                                               tabindex="1"
-                                               size="32"
-                                               aria-required="true">
-                                        <span asp-validation-for="Form.AdSoyad" class="text-danger small"></span>
-                                    </fieldset>
-
-                                    <fieldset class="style-1 email-address">
-                                        <input asp-for="Form.Eposta"
-                                               type="email"
-                                               placeholder="E-posta Adresiniz"
-                                               class="tb-my-input"
-                                               tabindex="2"
-                                               size="32"
-                                               aria-required="true">
-                                        <span asp-validation-for="Form.Eposta" class="text-danger small"></span>
-                                    </fieldset>
-
-                                    <fieldset class="style-1 subject">
-                                        <input asp-for="Form.Telefon"
-                                               type="text"
-                                               placeholder="Telefon Numaranız (isteğe bağlı)"
-                                               class="tb-my-input"
-                                               tabindex="2"
-                                               size="32">
-                                        <span asp-validation-for="Form.Telefon" class="text-danger small"></span>
-                                    </fieldset>
-
-                                    <fieldset class="style-1 subject">
-                                        <input asp-for="Form.Konu"
-                                               type="text"
-                                               placeholder="Konu"
-                                               class="tb-my-input"
-                                               tabindex="2"
-                                               size="32"
-                                               aria-required="true">
-                                        <span asp-validation-for="Form.Konu" class="text-danger small"></span>
-                                    </fieldset>
-
-                                    <fieldset class="message-form">
-                                        <textarea asp-for="Form.Mesaj"
-                                                  id="comment-message"
-                                                  placeholder="Mesajınız"
-                                                  rows="8"
-                                                  tabindex="4"></textarea>
-                                        <span asp-validation-for="Form.Mesaj" class="text-danger small"></span>
-                                    </fieldset>
-
-                                    <div class="submit-wrap">
-                                        <button type="submit" class="flat-button button-style style-v1">
-                                            Gönder <i class="fa fa-angle-right"></i>
-                                        </button>
-                                    </div>
-                                </form>
-                            </div><!-- contact-form -->
-                        </div><!-- col-md-6 -->
-
-                        <div class="col-md-6">
-                            <div class="container-fluid">
-                                <div class="row">
-                                    @if (haritaVar)
-                                    {
-                                        <div class="col-md-12">
-                                            <iframe src="@haritaUrl"
-                                                    style="width: 100%; height: 500px; border:0;"
-                                                    loading="lazy"
-                                                    referrerpolicy="no-referrer-when-downgrade"
-                                                    title="@site.SiteAdi konumu"></iframe>
-                                        </div>
-                                    }
-                                    else
-                                    {
-                                        <div id="map" style="width: 100%; height: 500px;"></div>
-                                    }
-                                </div>
-
-                                <!-- site iletisim bilgileri -->
-                                <div class="row" style="margin-top:20px;">
-                                    <div class="col-md-12">
-                                        <ul class="list-inline" style="list-style:none;padding-left:0;">
-                                            @if (!string.IsNullOrWhiteSpace(site.SiteEPosta))
-                                            {
-                                                <li style="margin-bottom:8px;">
-                                                    <i class="fa fa-envelope main-color-1"></i>
-                                                    <a href="mailto:@site.SiteEPosta" class="main-color-1-hover">@site.SiteEPosta</a>
-                                                </li>
-                                            }
-                                            @if (!string.IsNullOrWhiteSpace(ozellikler?.SiteTelNo))
-                                            {
-                                                <li style="margin-bottom:8px;">
-                                                    <i class="fa fa-phone main-color-1"></i> @ozellikler.SiteTelNo
-                                                </li>
-                                            }
-                                            @if (!string.IsNullOrWhiteSpace(ozellikler?.SiteFaxNo))
-                                            {
-                                                <li style="margin-bottom:8px;">
-                                                    <i class="fa fa-fax main-color-1"></i> @ozellikler.SiteFaxNo
-                                                </li>
-                                            }
-                                            @if (!string.IsNullOrWhiteSpace(ozellikler?.SiteAdress))
-                                            {
-                                                <li style="margin-bottom:8px;">
-                                                    <i class="fa fa-map-marker main-color-1"></i> @ozellikler.SiteAdress
-                                                </li>
-                                            }
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div><!-- /container-fluid -->
-                        </div>
-                    </div><!-- /row-->
-                </div><!-- /col-md-9 -->
-
-                <div class="col-md-3">
-                    <div class="sidebar">
-
-                        <div class="widget widget-search">
-                            <h2 class="widget-title">ARAMA</h2>
-                            <form role="search" method="get" id="searchform" class="u-course-search-form" action="@Model.SearchUrl">
-                                <div class="input-group">
-                                    <input type="text" value="" name="q" id="s" placeholder="Arama Yap" class="form-control">
-                                    <span class="input-group-btn">
-                                        <button type="submit" id="searchsubmit" class="btn btn-default u-course-search-submit"><i class="fa fa-search"></i></button>
-                                    </span>
-                                </div>
-                            </form>
-                        </div><!-- /widget-search -->
-
-                        @if (Model.LatestHabers.Any())
+        <div class="row justify-content-center">
+            <div class="col-xl-6 col-lg-8">
+                <div class="text-center animation" data-animation="fadeInUp" data-animation-delay="0.01s">
+                    <div class="heading_s1 text-center">
+                        <h2>Bize Ulaşın</h2>
+                    </div>
+                    <p>
+                        @if (!string.IsNullOrWhiteSpace(ozellikler?.SiteBaslangicHakkimizda))
                         {
-                            <div class="widget widget-posts">
-                                <div class="blog-box">
-                                    <h2 class="widget-title">SON EKLENENLER</h2>
-                                    <ul class="recent-posts clearfix">
-                                        @foreach (var haber in Model.LatestHabers)
-                                        {
-                                            var haberHref = BuildHaberHref(haber);
-
-                                            <li>
-                                                <div class="thumb item-thumbnail">
-                                                    <a href="@haberHref">
-                                                        <img src="@(haber.ResimUrl ?? "/template1/images/blog/widget/1.jpg")" alt="@haber.Baslik" loading="lazy">
-                                                        <div class="thumbnail-hoverlay main-color-1-bg"></div>
-                                                        <div class="thumbnail-hoverlay-cross"></div>
-                                                    </a>
-                                                </div>
-                                                <div class="text">
-                                                    <a href="@haberHref">@haber.Baslik</a>
-                                                    <p>@haber.YayimTarihi.ToString("dd.MM.yyyy")</p>
-                                                </div>
-                                            </li>
-                                        }
-                                    </ul><!-- /popular-news clearfix -->
-                                </div>
-                            </div><!-- /widget-posts -->
+                            @ozellikler.SiteBaslangicHakkimizda
                         }
+                        else
+                        {
+                            <text>Sorularınız ve önerileriniz için aşağıdaki formu doldurarak bize ulaşabilirsiniz.</text>
+                        }
+                    </p>
+                    <div class="small_divider"></div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-9">
+                <div class="box_shadow1 radius_all_10">
+                    <div class="row no-gutters">
+                        <div class="col-md-6 animation" data-animation="fadeInLeft" data-animation-delay="0.02s">
+                            <div class="padding_eight_all">
+                                <div class="field_form">
+                                    <form asp-action="Gonder"
+                                          asp-controller="Iletisim"
+                                          asp-route-returnUrl="@returnUrl"
+                                          method="post"
+                                          name="enq"
+                                          id="contactform">
 
-                    </div><!-- /col-md-9 -->
-                </div><!-- /col-md-3 -->
+                                        @Html.AntiForgeryToken()
+
+                                        <input type="hidden" asp-for="Form.SiteId" />
+
+                                        <div class="row">
+                                            <div class="form-group col-12">
+                                                <input asp-for="Form.AdSoyad"
+                                                       required="required"
+                                                       placeholder="Adınız Soyadınız"
+                                                       id="first-name"
+                                                       class="form-control"
+                                                       type="text">
+                                                <span asp-validation-for="Form.AdSoyad" class="text-danger small"></span>
+                                            </div>
+                                            <div class="form-group col-12">
+                                                <input asp-for="Form.Eposta"
+                                                       required="required"
+                                                       placeholder="E-posta Adresiniz"
+                                                       id="email"
+                                                       class="form-control"
+                                                       type="email">
+                                                <span asp-validation-for="Form.Eposta" class="text-danger small"></span>
+                                            </div>
+                                            <div class="form-group col-12">
+                                                <input asp-for="Form.Telefon"
+                                                       placeholder="Telefon Numaranız (isteğe bağlı)"
+                                                       id="phone"
+                                                       class="form-control"
+                                                       type="tel">
+                                                <span asp-validation-for="Form.Telefon" class="text-danger small"></span>
+                                            </div>
+                                            <div class="form-group col-12">
+                                                <input asp-for="Form.Konu"
+                                                       required="required"
+                                                       placeholder="Konu"
+                                                       id="subject"
+                                                       class="form-control"
+                                                       type="text">
+                                                <span asp-validation-for="Form.Konu" class="text-danger small"></span>
+                                            </div>
+                                            <div class="form-group col-lg-12">
+                                                <textarea asp-for="Form.Mesaj"
+                                                          required="required"
+                                                          placeholder="Mesajınız"
+                                                          id="description"
+                                                          class="form-control"
+                                                          rows="3"></textarea>
+                                                <span asp-validation-for="Form.Mesaj" class="text-danger small"></span>
+                                            </div>
+                                            <div class="col-lg-12">
+                                                <button type="submit" title="Mesajınızı Gönderin!" class="btn btn-default" id="submitButton" name="submit" value="Submit">Gönder</button>
+                                            </div>
+                                            <div class="col-lg-12 text-center">
+                                                <div id="alert-msg" class="alert-msg text-center"></div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 animation" data-animation="fadeInRight" data-animation-delay="0.4s">
+                            <div class="contact_map map_radius_rtrb overflow-hidden h-100">
+                                @if (haritaVar)
+                                {
+                                    <iframe src="@haritaUrl"
+                                            allowfullscreen=""
+                                            loading="lazy"
+                                            referrerpolicy="no-referrer-when-downgrade"
+                                            title="@site.SiteAdi konumu"></iframe>
+                                }
+                                else
+                                {
+                                    <div class="p-5 text-center">
+                                        <i class="ion-ios-location-outline display-4 text-muted"></i>
+                                        <p class="text-muted mt-3 mb-0">Harita bilgisi tanımlanmamıştır.</p>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-3 mt-lg-0 mt-4 pt-3 pt-lg-0">
+                <div class="sidebar">
+                    <div class="widget widget_search">
+                        <form class="search_form" role="search" method="get" action="@Model.SearchUrl">
+                            <input class="form-control" placeholder="Arama yap..." name="q" type="text">
+                            <button type="submit" title="Ara" name="submit" value="Submit">
+                                <span class="ti-search"></span>
+                            </button>
+                        </form>
+                    </div>
+
+                    @if (Model.LatestHabers.Any())
+                    {
+                        <div class="widget widget_recent_post">
+                            <h5 class="widget_title">Son Eklenenler</h5>
+                            <ul class="recent_post border_bottom_dash list_none">
+                                @foreach (var haber in Model.LatestHabers)
+                                {
+                                    var haberHref = BuildHaberHref(haber);
+
+                                    <li>
+                                        <div class="post_footer">
+                                            <div class="post_img">
+                                                <a href="@haberHref">
+                                                    @if (!string.IsNullOrWhiteSpace(haber.ResimUrl))
+                                                    {
+                                                        <img src="@haber.ResimUrl" alt="@haber.Baslik" loading="lazy">
+                                                    }
+                                                    else
+                                                    {
+                                                        <img src="/template2/images/letest_post1.jpg" alt="@haber.Baslik" loading="lazy">
+                                                    }
+                                                </a>
+                                            </div>
+                                            <div class="post_content">
+                                                <h6><a href="@haberHref">@haber.Baslik</a></h6>
+                                                <span class="post_date">@haber.YayimTarihi.ToString("dd MMMM yyyy", trCulture)</span>
+                                            </div>
+                                        </div>
+                                    </li>
+                                }
+                            </ul>
+                        </div>
+                    }
+                </div>
             </div>
         </div>
     </div>
 </section>
+<!-- END SECTION CONTACT -->
+
+<!-- START SECTION CONTACT INFO -->
+<section class="small_pt">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-xl-6 col-lg-8">
+                <div class="text-center animation" data-animation="fadeInUp" data-animation-delay="0.01s">
+                    <div class="heading_s1 text-center">
+                        <h2>İletişim Bilgileri</h2>
+                    </div>
+                    <p>@site.SiteAdi</p>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            @if (!string.IsNullOrWhiteSpace(ozellikler?.SiteAdress))
+            {
+                <div class="col-md-4">
+                    <div class="overlay_bg_danger_90 icon_box text-center text_white radius_all_10 background_bg animation" data-img-src="/template2/images/address_img.jpg" data-animation="fadeInUp" data-animation-delay="0.02s">
+                        <div class="box_icon mb-3">
+                            <img src="/template2/images/map_icon.png" alt="map_icon">
+                        </div>
+                        <div class="intro_desc">
+                            <h5>Adres</h5>
+                            <p>@ozellikler.SiteAdress</p>
+                        </div>
+                    </div>
+                </div>
+            }
+            @if (!string.IsNullOrWhiteSpace(ozellikler?.SiteTelNo))
+            {
+                <div class="col-md-4">
+                    <div class="overlay_bg_light_green_90 icon_box text-center text_white radius_all_10 background_bg animation" data-img-src="/template2/images/call_img.jpg" data-animation="fadeInUp" data-animation-delay="0.03s">
+                        <div class="box_icon mb-3">
+                            <img src="/template2/images/phone_icon.png" alt="phone_icon">
+                        </div>
+                        <div class="intro_desc">
+                            <h5>Telefon</h5>
+                            <p>
+                                <a href="tel:@ozellikler.SiteTelNo.Replace(" ", string.Empty)" class="text-white">@ozellikler.SiteTelNo</a>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            }
+            @if (!string.IsNullOrWhiteSpace(site.SiteEPosta))
+            {
+                <div class="col-md-4">
+                    <div class="overlay_bg_default_90 icon_box text-center text_white radius_all_10 background_bg animation" data-img-src="/template2/images/email_img.jpg" data-animation="fadeInUp" data-animation-delay="0.04s">
+                        <div class="box_icon mb-3">
+                            <img src="/template2/images/email_icon.png" alt="email_icon">
+                        </div>
+                        <div class="intro_desc">
+                            <h5>E-posta</h5>
+                            <p>
+                                <a href="mailto:@site.SiteEPosta" class="text-white">@site.SiteEPosta</a>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            }
+            @if (!string.IsNullOrWhiteSpace(ozellikler?.SiteFaxNo))
+            {
+                <div class="col-md-4">
+                    <div class="overlay_bg_danger_90 icon_box text-center text_white radius_all_10 background_bg animation" data-img-src="/template2/images/call_img.jpg" data-animation="fadeInUp" data-animation-delay="0.05s">
+                        <div class="box_icon mb-3">
+                            <img src="/template2/images/phone_icon.png" alt="fax_icon">
+                        </div>
+                        <div class="intro_desc">
+                            <h5>Faks</h5>
+                            <p>@ozellikler.SiteFaxNo</p>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</section>
+<!-- END SECTION CONTACT INFO -->

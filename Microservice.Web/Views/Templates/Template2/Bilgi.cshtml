@@ -37,192 +37,169 @@
     var siteOzellikleri = Model.Site?.SiteOzellikleri;
 }
 
-<div class="page-title full-color">
+@{
+    var trCulture = new System.Globalization.CultureInfo("tr-TR");
+    var yayinGun = bilgi.YayimTarihi.Day;
+    var yayinAy = bilgi.YayimTarihi.ToString("MMMM", trCulture);
+    var yayinYil = bilgi.YayimTarihi.Year;
+}
+<!-- START SECTION BREADCRUMB -->
+<section class="page-title-light breadcrumb_section parallax_bg overlay_bg_50" data-parallax-bg-image="/template2/images/bg_altsayfa.jpg">
     <div class="container">
-        <div class="row">
-            <div class="col-md-12">
-                <div class="page-title-heading">
-                    @if (!string.IsNullOrWhiteSpace(bilgi.Baslik))
-                    {
-                        <h2 class="title">@bilgi.Baslik</h2>
-                    }
+        <div class="row align-items-center">
+            <div class="col-sm-6">
+                <div class="page-title">
+                    <h1>@bilgi.Baslik</h1>
                 </div>
-                <div class="breadcrumbs">
-                    <ul>
-                        <li class="home"><a href="/">Ana Sayfa </a></li>
-
-                        <li>\ Bilgi</li>
-
-                    </ul>
-                </div>
-            </div><!-- /.col-md-12 -->
-        </div><!-- /.row -->
-    </div><!-- /.container -->
-</div><!-- /page-title -->
-
-<section class="main-content course-single">
-    <div class="container">
-        <div class="content-course">
-            <div class="row">
-                <div class="col-md-9">
-                    <article class="post-course">
-                        <div class="row">
-                            <div class="col-md-4 col-sm-5">
-                                <div class="content-pad single-event-meta">
-                                    @if (!string.IsNullOrWhiteSpace(bilgi.ResimUrl))
-                                    {
-                                        <div class="item-thumbnail">
-                                            <img src="@bilgi.ResimUrl" alt="@bilgi.Baslik">
-                                        </div>
-                                    }
-                                    <!--/item-thumbnail-->
-                                    @if (!string.IsNullOrWhiteSpace(bilgi.KisaAciklama))
-                                    {
-                                        <div class="event-description">
-                                            @bilgi.KisaAciklama
-                                        </div>
-                                    }
-                                </div>
-                            </div>
-
-                            <div class="col-md-8">
-                                <div class="content-pad single-course-detail">
-                                    <div class="course-detail">
-                                        <div class="course-info row content-pad">
-                                            <div class="col-md-6 col-sm-6 v1">
-                                                <h4 class="text small-text">YAYIN TARİHİ</h4>
-                                                <p>@bilgi.YayimTarihi.ToString("dd MMMM yyyy")</p>
-                                            </div>
-
-                                            <div class="col-md-6 col-sm-6">
-                                                <h4 class="text small-text">KATEGORİ</h4>
-                                                <p>@bilgi.PageType?.PageTypeKind</p>
-                                            </div>
-
-                                        </div><!--/course-info-->
-                                        <div class="content-content">
-                                            <div class="content-dropcap v1">
-                                                @if (!string.IsNullOrWhiteSpace(bilgi.IcerikMetni))
-                                                {
-                                                    @Html.Raw(bilgi.IcerikMetni)
-                                                }
-                                                else
-                                                {
-                                                    <p>Bu bilgi için içerik girilmemiş.</p>
-                                                }
-                                            </div>
-
-                                            <div class="content-pad v1">
-                                                <ul class="list-inline social-light">
-                                                    <li>
-                                                        <a class="btn btn-default btn-lighter social-icon"
-                                                           target="_blank" rel="noopener"
-                                                           href="https://www.facebook.com/sharer/sharer.php?u=@encodedUrl"
-                                                           title="Facebook'ta paylaş"><i class="fa fa-facebook"></i></a>
-                                                    </li>
-                                                    <li>
-                                                        <a class="btn btn-default btn-lighter social-icon"
-                                                           target="_blank" rel="noopener"
-                                                           href="https://twitter.com/intent/tweet?url=@encodedUrl&text=@encodedTitle"
-                                                           title="Twitter'da paylaş"><i class="fa fa-twitter"></i></a>
-                                                    </li>
-                                                    @* Instagram'in web paylasim API'si yok; site profil sayfasina yonlendirir *@
-                                                    @if (!string.IsNullOrWhiteSpace(siteOzellikleri?.SiteInstagramAdress))
-                                                    {
-                                                        <li>
-                                                            <a class="btn btn-default btn-lighter social-icon"
-                                                               target="_blank" rel="noopener"
-                                                               href="@siteOzellikleri.SiteInstagramAdress"
-                                                               title="Instagram hesabımız"><i class="fa fa-instagram"></i></a>
-                                                        </li>
-                                                    }
-
-                                                    <li>
-                                                        <a class="btn btn-default btn-lighter social-icon"
-                                                           target="_blank" rel="noopener"
-                                                           href="https://www.linkedin.com/sharing/share-offsite/?url=@encodedUrl"
-                                                           title="LinkedIn'de paylaş"><i class="fa fa-linkedin"></i></a>
-                                                    </li>
-
-                                                    <li>
-                                                        <a class="btn btn-default btn-lighter social-icon"
-                                                           href="mailto:?subject=@encodedTitle&body=@encodedUrl"
-                                                           title="E-posta ile gönder"><i class="fa fa-envelope"></i></a>
-                                                    </li>
-                                                    <li>
-                                                        <a class="btn btn-default btn-lighter social-icon"
-                                                           href="javascript:void(0)"
-                                                           id="copy-link-btn"
-                                                           data-url="@currentPageUrl"
-                                                           title="Bağlantıyı kopyala"><i class="fa fa-link"></i></a>
-                                                    </li>
-                                                </ul>
-                                            </div>
-
-                                            <div class="content-pad calendar-import">
-                                                <a class="flat-button" href="@Model.BilgiListUrl">
-                                                    <i class="fa fa-angle-left"></i> TÜM BİLGİLER
-                                                </a>
-                                            </div>
-                                        </div><!--/content-content-->
-                                    </div><!--/course-detail-->
-                                </div><!--/single-content-detail-->
-                            </div>
-                        </div>
-                    </article>
-                </div>
-
-                <div class="col-md-3">
-                    <div class="sidebar">
-
-                        <!-- WIDGET SEARCH (bilgi listesi icinde arama) -->
-                        <div class="widget widget-search">
-                            <h2 class="widget-title">Arama Yap</h2>
-                            <form role="search" method="get" id="searchform" class="u-course-search-form" action="@Model.BilgiListUrl">
-                                <div class="input-group">
-                                    <input type="text" value="" name="q" id="s" placeholder="Arama Yap" class="form-control">
-                                    <span class="input-group-btn">
-                                        <button type="submit" id="searchsubmit" class="btn btn-default u-course-search-submit">
-                                            <i class="fa fa-search"></i>
-                                        </button>
-                                    </span>
-                                </div>
-                            </form>
-                        </div><!-- /widget-search -->
-                        <!-- WIDGET SON EKLENENLER -->
-                        @if (Model.LatestBilgiler.Any())
-                        {
-                            <div class="widget widget-posts">
-                                <div class="blog-box">
-                                    <h2 class="widget-title">Son Eklenenler</h2>
-                                    <ul class="recent-posts clearfix">
-                                        @foreach (var item in Model.LatestBilgiler)
-                                        {
-                                            <li>
-                                                <div class="thumb item-thumbnail">
-                                                    <a href="@BuildBilgiHref(item)">
-                                                        <img src="@item.ResimUrl" alt="@item.Baslik" loading="lazy">
-                                                        <div class="thumbnail-hoverlay main-color-1-bg"></div>
-                                                        <div class="thumbnail-hoverlay-cross"></div>
-                                                    </a>
-                                                </div>
-                                                <div class="text">
-                                                    <a href="@BuildBilgiHref(item)">@item.Baslik</a>
-                                                    <p>@item.YayimTarihi.ToString("dd.MM.yyyy")</p>
-                                                </div>
-                                            </li>
-                                        }
-                                    </ul><!-- /recent-posts -->
-                                </div>
-                            </div><!-- /widget-posts -->
-                        }
-
-                    </div><!-- sidebar -->
-                </div><!-- /col-md-3 -->
+            </div>
+            <div class="col-sm-6">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb justify-content-sm-end">
+                        <li class="breadcrumb-item"><a href="/">Ana Sayfa</a></li>
+                        <li class="breadcrumb-item"><a href="@Model.BilgiListUrl">Bilgiler</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">@bilgi.Baslik</li>
+                    </ol>
+                </nav>
             </div>
         </div>
     </div>
 </section>
+<!-- END SECTION BANNER -->
+
+<!-- START SECTION NEW DETAIL -->
+<section>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-9">
+                <div class="single_event">
+                    <div class="content_img">
+                        @if (!string.IsNullOrWhiteSpace(bilgi.ResimUrl))
+                        {
+                            <a href="@bilgi.ResimUrl" target="_blank" rel="noopener">
+                                <img src="@bilgi.ResimUrl" alt="@bilgi.Baslik">
+                            </a>
+                        }
+                        else
+                        {
+                            <img src="/template2/images/course_img_big.jpg" alt="@bilgi.Baslik">
+                        }
+                        <div class="event_date radius_all_5">
+                            <h5><span>@yayinGun</span> @yayinAy</h5>
+                            <span class="event_time radius_lbrb_5 bg_default">@yayinYil</span>
+                        </div>
+                    </div>
+                    <div class="event_title">
+                        <div class="row align-items-end">
+                            <div class="col-md-8">
+                                <h2>@bilgi.Baslik</h2>
+                                <ul class="list_none content_meta mt-2">
+                                    <li><i class="ti-calendar"></i> <span class="text_default">@bilgi.YayimTarihi.ToString("dd MMMM yyyy", trCulture)</span></li>
+                                    @if (bilgi.PageType is not null)
+                                    {
+                                        <li><i class="ti-tag"></i><span class="text_default">@bilgi.PageType.PageTypeKind</span></li>
+                                    }
+                                    <li><i class="ti-eye"></i><span class="text_default">@bilgi.GosterimSayisi görüntülenme</span></li>
+                                </ul>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="text-md-right">
+                                    <ul class="list_none social_icons">
+                                        <li>
+                                            <a target="_blank" rel="noopener"
+                                               href="https://www.facebook.com/sharer/sharer.php?u=@encodedUrl"
+                                               title="Facebook'ta paylaş"><i class="ion-social-facebook"></i></a>
+                                        </li>
+                                        <li>
+                                            <a target="_blank" rel="noopener"
+                                               href="https://twitter.com/intent/tweet?url=@encodedUrl&text=@encodedTitle"
+                                               title="Twitter'da paylaş"><i class="ion-social-twitter"></i></a>
+                                        </li>
+                                        <li>
+                                            <a target="_blank" rel="noopener"
+                                               href="https://www.linkedin.com/sharing/share-offsite/?url=@encodedUrl"
+                                               title="LinkedIn'de paylaş"><i class="ion-social-linkedin"></i></a>
+                                        </li>
+                                        <li>
+                                            <a href="mailto:?subject=@encodedTitle&body=@encodedUrl"
+                                               title="E-posta ile gönder"><i class="ion-email"></i></a>
+                                        </li>
+                                        <li>
+                                            <a href="javascript:void(0)"
+                                               id="copy-link-btn"
+                                               data-url="@currentPageUrl"
+                                               title="Bağlantıyı kopyala"><i class="ion-link"></i></a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="entry_content">
+                        @if (!string.IsNullOrWhiteSpace(bilgi.IcerikMetni))
+                        {
+                            @Html.Raw(bilgi.IcerikMetni)
+                        }
+                        else
+                        {
+                            <p>Bu bilgi için içerik girilmemiş.</p>
+                        }
+                    </div>
+
+                    <div class="mt-4">
+                        <a class="btn btn-default" href="@Model.BilgiListUrl">
+                            <i class="fa fa-angle-left"></i> TÜM BİLGİLER
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 mt-lg-0 mt-4 pt-3 pt-lg-0">
+                <div class="sidebar">
+                    <div class="widget widget_search">
+                        <form class="search_form" role="search" method="get" action="@Model.BilgiListUrl">
+                            <input required="" class="form-control" placeholder="Bilgilerde ara..." name="q" type="text">
+                            <button type="submit" title="Ara" name="submit" value="Submit">
+                                <span class="ti-search"></span>
+                            </button>
+                        </form>
+                    </div>
+
+                    @if (Model.LatestBilgiler.Any())
+                    {
+                        <div class="widget widget_recent_post">
+                            <h5 class="widget_title">Son Eklenenler</h5>
+                            <ul class="recent_post border_bottom_dash list_none">
+                                @foreach (var item in Model.LatestBilgiler)
+                                {
+                                    <li>
+                                        <div class="post_footer">
+                                            <div class="post_img">
+                                                <a href="@BuildBilgiHref(item)">
+                                                    @if (!string.IsNullOrWhiteSpace(item.ResimUrl))
+                                                    {
+                                                        <img src="@item.ResimUrl" alt="@item.Baslik" loading="lazy">
+                                                    }
+                                                    else
+                                                    {
+                                                        <img src="/template2/images/letest_post1.jpg" alt="@item.Baslik" loading="lazy">
+                                                    }
+                                                </a>
+                                            </div>
+                                            <div class="post_content">
+                                                <h6><a href="@BuildBilgiHref(item)">@item.Baslik</a></h6>
+                                                <span class="post_date">@item.YayimTarihi.ToString("dd MMMM yyyy", trCulture)</span>
+                                            </div>
+                                        </div>
+                                    </li>
+                                }
+                            </ul>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- END SECTION NEW DETAIL -->
 
 @section Scripts {
     <script type="text/javascript">
@@ -233,13 +210,14 @@
 
             btn.addEventListener('click', function () {
                 var url = btn.getAttribute('data-url');
+                var icon = btn.querySelector('i');
+                var originalClass = icon ? icon.className : '';
 
                 function done() {
-                    var icon = btn.querySelector('i');
-                    icon.className = 'fa fa-check';
+                    if (icon) icon.className = 'ion-checkmark-round';
                     btn.title = 'Kopyalandı!';
                     setTimeout(function () {
-                        icon.className = 'fa fa-link';
+                        if (icon) icon.className = originalClass;
                         btn.title = 'Bağlantıyı kopyala';
                     }, 2000);
                 }
@@ -247,7 +225,7 @@
                 if (navigator.clipboard && navigator.clipboard.writeText) {
                     navigator.clipboard.writeText(url).then(done);
                 } else {
-                    // Eski tarayiciler icin fallback
+                    // Eski tarayicilar icin fallback
                     var input = document.createElement('input');
                     input.value = url;
                     document.body.appendChild(input);

@@ -39,7 +39,7 @@ namespace Mikroservice.Site.Application.Features.VideoFeatures.UpdateVideo
 
             await unitOfWork.SaveChangesAsync(cancellationToken);
 
-            var key = $"videos:list:{request.SiteId}:*";
+            var key = $"video:list:{request.SiteId}:*";
             await redisCache.RemoveByPatternAsync(key, cancellationToken);
 
             return ServiceResult.Success();

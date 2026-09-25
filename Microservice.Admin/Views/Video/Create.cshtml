@@ -123,7 +123,21 @@
 
                         <div class="mb-3">
                             <label class="form-label">Video URL</label>
-                            <input asp-for="CreateVideo.VideoUrl" class="form-control" />
+                            <div class="input-group">
+                                <input asp-for="CreateVideo.VideoUrl"
+                                       id="VideoUrlInput"
+                                       class="form-control" />
+
+                                <button type="button"
+                                        class="btn btn-outline-primary"
+                                        id="openVideoFileManagerBtn"
+                                        title="Dosya Yöneticisinden Video Seç">
+                                    <i class="mdi mdi-folder-open-outline"></i>
+                                </button>
+                            </div>
+                            <p class="text-muted small mt-2">
+                                Videoyu dosya yöneticisinden seçebilir veya URL girabilirsiniz.
+                            </p>
                         </div>
 
                         <div class="mb-3">
@@ -260,14 +274,27 @@
         });
 
         // FILE MANAGER
+        let fileManagerTarget = null; // 'image' | 'video'
+
         $('#openFileManagerBtn').click(function () {
+        fileManagerTarget = 'image';
         $('#fileManagerFrame').attr('src', '/File?mode=picker&type=image');
+        $('#fileManagerModal').modal('show');
+        });
+
+        $('#openVideoFileManagerBtn').click(function () {
+        fileManagerTarget = 'video';
+        $('#fileManagerFrame').attr('src', '/File?mode=picker&type=video');
         $('#fileManagerModal').modal('show');
         });
 
         window.addEventListener('message', function (event) {
         if (event.data.type === 'file-selected') {
+        if (fileManagerTarget === 'video') {
+        $('#VideoUrlInput').val(event.data.url);
+        } else {
         $('#ResimUrlInput').val(event.data.url).trigger('input');
+        }
         $('#fileManagerModal').modal('hide');
         }
         });

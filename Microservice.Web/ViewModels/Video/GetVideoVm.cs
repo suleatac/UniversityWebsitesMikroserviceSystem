@@ -13,6 +13,10 @@ namespace Microservice.Web.ViewModels.Video
         public string KisaAciklama { get; set; } = default!;
         public string? ResimUrl { get; set; }
         public string? VideoUrl { get; set; }
+
+        // Detay linki uretimi icin (API VideoDto karsiligi)
+        public string? Link { get; set; }
+        public string SeoUrl { get; set; } = default!;
         public DateTime YayimTarihi { get; set; }
         public DateTime? BaslamaTarihi { get; set; }
         public DateTime? BitisTarihi { get; set; }

@@ -52,7 +52,7 @@
         return "#";
     }
 
-    // Filtre butonlari + sidebar dropdown icin ortak tip listesi
+    // Filtre butonlari + sidebar secim kutusu icin ortak tip listesi
     var types = new[] {
         new { Value = (int?)null, Label = "Hepsi" },
         new { Value = (int?)1, Label = "Haberler" },
@@ -63,106 +63,105 @@
     };
 
     var latestPosts = Model.Results.Data.Take(3).ToList();
+    var trCulture = new System.Globalization.CultureInfo("tr-TR");
 }
-<div class="page-title full-color">
-    <div class="container">
-        <div class="row">
-            <div class="col-md-12">
-                <div class="page-title-heading">
-                    <h2 class="title">Arama Yap</h2>
-                </div>
-                <div class="breadcrumbs">
-                    <ul>
-                        <li class="home"><a href="/">Ana Sayfa </a></li>
-                        <li>\ Arama Yap</li>
-                    </ul>
-                </div>
-            </div><!-- /.col-md-12 -->
-        </div><!-- /.row -->
-    </div><!-- /.container -->
-</div><!-- /page-title -->
-<section class="flat-row padding-v1">
-    <div class="container">
-        <div class="row">
-            <div id="content" class="col-md-9">
 
-                <!-- FILTER CAT -->
-                <div class="project-listing">
-                    <div class="filter-cat">
+<!-- START SECTION BREADCRUMB -->
+<section class="page-title-light breadcrumb_section parallax_bg overlay_bg_50" data-parallax-bg-image="/template2/images/bg_altsayfa.jpg">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-sm-6">
+                <div class="page-title">
+                    <h1>Arama Sonuçları</h1>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb justify-content-sm-end">
+                        <li class="breadcrumb-item"><a href="/">Ana Sayfa</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Arama</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- END SECTION BREADCRUMB -->
+
+<!-- START SECTION EVENT -->
+<section class="small_pt">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-9">
+
+                <div id="searchResults">
+
+                <!-- KATEGORI/TIP FILTRESI -->
+                <div class="text-center mb-4">
+                    <ul class="list_none grid_filter">
                         @foreach (var type in types)
                         {
                             var isActive = Model.Tip == type.Value;
 
-                            <a href="@searchPath@BuildQuery(1, type.Value)"
-                               class="flat-button @(isActive ? "active main-color-1-bg" : "")">
-                                @type.Label
-                            </a>
+                            <li>
+                                <a href="@searchPath@BuildQuery(1, type.Value)" data-ajax="true" class="@(isActive ? "current" : "")">@type.Label</a>
+                            </li>
                         }
-                    </div>
+                    </ul>
                 </div>
 
                 <!-- SONUC OZETI -->
                 @if (Model.HasQuery)
                 {
-                    <div class="item-content" style="margin-bottom:20px;">
-                        <p class="main-color-1" style="font-weight:600;margin:0;">
-                            "@Model.Query" için @Model.Results.TotalCount sonuç bulundu.
+                    <div class="mb-4">
+                        <p class="text-default mb-0">
+                            <strong>"@Model.Query"</strong> için @Model.Results.TotalCount sonuç bulundu.
+                            <a href="@searchPath" data-ajax="true" class="text_default" style="margin-left:10px;text-decoration:underline;">Aramayı temizle</a>
                         </p>
                     </div>
                 }
 
-                <!-- SONUCLAR -->
                 @if (Model.Results.Data.Any())
                 {
-                    @foreach (var icerik in Model.Results.Data)
-                    {
-                        var hasImage = !string.IsNullOrWhiteSpace(icerik.ResimUrl);
-
-                        <div class="event-listing event-listing-classic">
-                            <article class="post-item row event-classic-item">
-                                @if (hasImage)
-                                {
-                                    <div class="col-md-4 col-sm-5">
-                                        <div class="content-pad">
-                                            <div class="item-thumbnail">
-                                                <a href="@BuildContentHref(icerik)">
-                                                    <img src="@icerik.ResimUrl" alt="@icerik.Baslik" loading="lazy">
-                                                    <div class="date-block">
-                                                        <div class="month">@icerik.YayimTarihi.ToString("MMM")</div>
-                                                        <div class="day">@icerik.YayimTarihi.ToString("dd")</div>
-                                                    </div>
-                                                </a>
-                                            </div>
+                    <div class="row justify-content-center">
+                        @foreach (var icerik in Model.Results.Data)
+                        {
+                            <div class="col-lg-6 col-sm-6 mb-4">
+                                <div class="content_box event_box radius_all_10 box_shadow1">
+                                    <div class="content_img radius_ltrt_10">
+                                        <a href="@BuildContentHref(icerik)">
+                                            @if (!string.IsNullOrWhiteSpace(icerik.ResimUrl))
+                                            {
+                                                <img src="@icerik.ResimUrl" alt="@icerik.Baslik" loading="lazy" />
+                                            }
+                                            else
+                                            {
+                                                <img src="/template2/images/event_img1.jpg" alt="@icerik.Baslik" loading="lazy" />
+                                            }
+                                        </a>
+                                        <div class="event_date radius_all_5">
+                                            <h5><span>@icerik.YayimTarihi.Day</span> @icerik.YayimTarihi.ToString("MMM", trCulture)</h5>
+                                            <span class="event_time radius_lbrb_5 bg_default">@Model.TypeLabel(icerik.Tip)</span>
                                         </div>
                                     </div>
-                                }
-
-                                <div class="@(hasImage ? "col-md-8" : "col-md-12") col-sm-7">
-                                    <div class="content-pad">
-                                        <div class="item-content">
-                                            <h3 class="item-title">
-                                                <a href="@BuildContentHref(icerik)" class="main-color-1-hover">@icerik.Baslik</a>
-                                            </h3>
-
-                                            <div class="price main-color-1">@Model.TypeLabel(icerik.Tip)</div>
-
-                                            @if (!string.IsNullOrWhiteSpace(icerik.KisaAciklama))
-                                            {
-                                                <p>@icerik.KisaAciklama</p>
-                                            }
-
-                                            <div class="event-time">@icerik.YayimTarihi.ToString("dd.MM.yyyy")</div>
-                                        </div>
-                                        <div class="item-meta">
-                                            <a class="flat-button" href="@BuildContentHref(icerik)">
-                                                DETAYLAR <i class="fa fa-angle-right"></i>
-                                            </a>
-                                        </div>
+                                    <div class="content_desc">
+                                        <h4 class="content_title"><a href="@BuildContentHref(icerik)">@icerik.Baslik</a></h4>
+                                        <ul class="list_none content_meta">
+                                            <li><i class="ti-calendar"></i> <span class="text_default">@icerik.YayimTarihi.ToString("dd.MM.yyyy", trCulture)</span></li>
+                                            <li><i class="ti-tag"></i><span class="text_default">@Model.TypeLabel(icerik.Tip)</span></li>
+                                        </ul>
+                                        @if (!string.IsNullOrWhiteSpace(icerik.KisaAciklama))
+                                        {
+                                            <p>@icerik.KisaAciklama</p>
+                                        }
+                                        <a href="@BuildContentHref(icerik)" class="btn btn-default mt-2">
+                                            DETAYLAR <i class="fa fa-angle-right"></i>
+                                        </a>
                                     </div>
                                 </div>
-                            </article>
-                        </div><!--/event-listing-->
-                    }
+                            </div>
+                        }
+                    </div>
 
                     <!-- SAYFALAMA -->
                     @if (Model.Results.TotalPages > 1)
@@ -171,177 +170,222 @@
                         var startPage = Math.Max(1, Model.Results.Page - 2);
                         var endPage = Math.Min(Model.Results.TotalPages, Model.Results.Page + 2);
 
-                        <div class="flat-pagination">
-                            <ul class="page-numbers clearfix">
-                                @if (Model.Results.HasPrevious)
-                                {
-                                    <li>
-                                        <a class="prev page-numbers" href="@searchPath@BuildQuery(Model.Results.Page - 1, Model.Tip)">
-                                            <i class="fa fa-angle-left"></i> Önceki
-                                        </a>
-                                    </li>
-                                }
-
-                                @if (startPage > 1)
-                                {
-                                    <li><a class="page-numbers" href="@searchPath@BuildQuery(1, Model.Tip)">1</a></li>
-
-                                    if (startPage > 2)
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="medium_divider"></div>
+                                <ul class="pagination justify-content-center">
+                                    @if (Model.Results.HasPrevious)
                                     {
-                                        <li><span class="page-numbers">...</span></li>
-                                    }
-                                }
-
-                                @for (var i = startPage; i <= endPage; i++)
-                                {
-                                    if (i == Model.Results.Page)
-                                    {
-                                        <li><span class="page-numbers current">@i</span></li>
+                                        <li class="page-item">
+                                            <a class="page-link" href="@searchPath@BuildQuery(Model.Results.Page - 1, Model.Tip)" data-ajax="true" rel="prev">
+                                                <i class="ion-ios-arrow-thin-left"></i>
+                                            </a>
+                                        </li>
                                     }
                                     else
                                     {
-                                        <li><a class="page-numbers" href="@searchPath@BuildQuery(i, Model.Tip)">@i</a></li>
+                                        <li class="page-item disabled"><span class="page-link"><i class="ion-ios-arrow-thin-left"></i></span></li>
                                     }
-                                }
 
-                                @if (endPage < Model.Results.TotalPages)
-                                {
-                                    if (endPage < Model.Results.TotalPages - 1)
+                                    @if (startPage > 1)
                                     {
-                                        <li><span class="page-numbers">...</span></li>
+                                        <li class="page-item"><a class="page-link" href="@searchPath@BuildQuery(1, Model.Tip)" data-ajax="true">1</a></li>
+
+                                        if (startPage > 2)
+                                        {
+                                            <li class="page-item disabled"><span class="page-link">...</span></li>
+                                        }
                                     }
 
-                                    <li>
-                                        <a class="page-numbers" href="@searchPath@BuildQuery(Model.Results.TotalPages, Model.Tip)">
-                                            @Model.Results.TotalPages
-                                        </a>
-                                    </li>
-                                }
+                                    @for (var i = startPage; i <= endPage; i++)
+                                    {
+                                        if (i == Model.Results.Page)
+                                        {
+                                            <li class="page-item active"><span class="page-link">@i</span></li>
+                                        }
+                                        else
+                                        {
+                                            <li class="page-item"><a class="page-link" href="@searchPath@BuildQuery(i, Model.Tip)" data-ajax="true">@i</a></li>
+                                        }
+                                    }
 
-                                @if (Model.Results.HasNext)
-                                {
-                                    <li>
-                                        <a class="next page-numbers" href="@searchPath@BuildQuery(Model.Results.Page + 1, Model.Tip)">
-                                            Sonraki <i class="fa fa-angle-right"></i>
-                                        </a>
-                                    </li>
-                                }
-                            </ul>
-                        </div><!--/flat-pagination -->
+                                    @if (endPage < Model.Results.TotalPages)
+                                    {
+                                        if (endPage < Model.Results.TotalPages - 1)
+                                        {
+                                            <li class="page-item disabled"><span class="page-link">...</span></li>
+                                        }
+
+                                        <li class="page-item">
+                                            <a class="page-link" href="@searchPath@BuildQuery(Model.Results.TotalPages, Model.Tip)" data-ajax="true">
+                                                @Model.Results.TotalPages
+                                            </a>
+                                        </li>
+                                    }
+
+                                    @if (Model.Results.HasNext)
+                                    {
+                                        <li class="page-item">
+                                            <a class="page-link" href="@searchPath@BuildQuery(Model.Results.Page + 1, Model.Tip)" data-ajax="true" rel="next">
+                                                <i class="ion-ios-arrow-thin-right"></i>
+                                            </a>
+                                        </li>
+                                    }
+                                    else
+                                    {
+                                        <li class="page-item disabled"><span class="page-link"><i class="ion-ios-arrow-thin-right"></i></span></li>
+                                    }
+                                </ul>
+                            </div>
+                        </div>
                     }
                 }
                 else
                 {
-                    <div class="event-listing event-listing-classic">
-                        <article class="post-item row event-classic-item">
-                            <div class="col-md-12 col-sm-12">
-                                <div class="content-pad">
-                                    <div class="item-content">
-                                        <h3 class="item-title">
-                                            @if (Model.HasQuery)
-                                            {
-                                                <text>Aramanızla eşleşen sonuç bulunamadı.</text>
-                                            }
-                                            else
-                                            {
-                                                <text>Arama yapmak için bir kelime girin.</text>
-                                            }
-                                        </h3>
-                                        <p>
-                                            Farklı bir kelime deneyebilir veya yukarıdaki kategori filtrelerinden birini seçerek o türde arama yapabilirsiniz.
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                        </article>
-                    </div><!--/event-listing-->
+                    <div class="content_box radius_all_10 box_shadow1 p-4 text-center">
+                        <h5 class="mb-2">
+                            @if (Model.HasQuery)
+                            {
+                                <text>Aramanızla eşleşen sonuç bulunamadı.</text>
+                            }
+                            else
+                            {
+                                <text>Arama yapmak için bir kelime girin.</text>
+                            }
+                        </h5>
+                        <p class="mb-0">
+                            Farklı bir kelime deneyebilir veya yukarıdaki kategori filtrelerinden birini seçerek o türde arama yapabilirsiniz.
+                        </p>
+                    </div>
                 }
-            </div><!-- /col-md-9 -->
 
-            <div class="col-md-3">
+                </div><!-- /searchResults -->
+            </div>
+
+            <div class="col-lg-3 mt-lg-0 mt-4 pt-3 pt-lg-0">
                 <div class="sidebar">
-
-                    <!-- WIDGET SEARCH -->
-                    <div class="widget widget-search">
-                        <h2 class="widget-title">SEARCH</h2>
-                        <form role="search" method="get" id="searchform" class="u-course-search-form" action="@searchPath">
-                            <div class="input-group">
-                                <div class="input-group-btn u-course-search-dropdown">
-                                    <button type="button"
-                                            class="btn btn-default dropdown-toggle u-course-search-dropdown-button"
-                                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                        <span class="button-label">@(types.FirstOrDefault(t => t.Value == Model.Tip)?.Label ?? "Hepsi")</span>
-                                        <span class="fa fa-angle-down"></span>
-                                    </button>
-                                    <ul class="dropdown-menu">
-                                        @foreach (var type in types)
-                                        {
-                                            <li>
-                                                <a href="#" data-value="@type.Value?.ToString()">@type.Label</a>
-                                            </li>
-                                        }
-                                    </ul>
-                                </div><!-- /btn-group -->
-
-                                <input type="text" value="@Model.Query" name="q" id="s" placeholder="SEARCH" class="form-control">
-                                <input type="hidden" name="tip" class="u-course-search-cat" value="@Model.Tip">
-                                <span class="input-group-btn">
-                                    <button type="submit" id="searchsubmit" class="btn btn-default u-course-search-submit">
-                                        <i class="fa fa-search"></i>
-                                    </button>
-                                </span>
-                            </div>
+                    <!-- WIDGET SEARCH (tip/kategori secmeli) -->
+                    <div class="widget widget_search">
+                        <h5 class="widget_title">Arama</h5>
+                        <form class="search_form" id="searchForm" role="search" method="get" action="@searchPath">
+                            <select class="form-select mb-2" id="searchTipSelect" name="tip" aria-label="Kategori seçin">
+                                @foreach (var type in types)
+                                {
+                                    <option value="@type.Value" selected="@(Model.Tip == type.Value)">@type.Label</option>
+                                }
+                            </select>
+                            <input class="form-control" id="searchQInput" placeholder="Kelime arayın..." name="q" value="@Model.Query" type="text">
+                            <button type="submit" title="Ara" name="submit" value="Submit">
+                                <span class="ti-search"></span>
+                            </button>
                         </form>
-                    </div><!-- /widget-search -->
+                    </div>
 
                     <!-- WIDGET LATEST POST (mevcut arama sonuclarindan en yeni 3 kayit) -->
                     @if (latestPosts.Any())
                     {
-                        <div class="widget widget-posts">
-                            <div class="blog-box">
-                                <h2 class="widget-title">LATEST POST</h2>
-                                <ul class="recent-posts clearfix">
-                                    @foreach (var icerik in latestPosts)
-                                    {
-                                        <li>
-                                            <div class="thumb item-thumbnail">
+                        <div class="widget widget_recent_post">
+                            <h5 class="widget_title">En Son Sonuçlar</h5>
+                            <ul class="recent_post border_bottom_dash list_none">
+                                @foreach (var icerik in latestPosts)
+                                {
+                                    <li>
+                                        <div class="post_footer">
+                                            <div class="post_img">
                                                 <a href="@BuildContentHref(icerik)">
-                                                    <img src="@icerik.ResimUrl" alt="@icerik.Baslik" loading="lazy">
-                                                    <div class="thumbnail-hoverlay main-color-1-bg"></div>
-                                                    <div class="thumbnail-hoverlay-cross"></div>
+                                                    @if (!string.IsNullOrWhiteSpace(icerik.ResimUrl))
+                                                    {
+                                                        <img src="@icerik.ResimUrl" alt="@icerik.Baslik" loading="lazy">
+                                                    }
+                                                    else
+                                                    {
+                                                        <img src="/template2/images/letest_post1.jpg" alt="@icerik.Baslik" loading="lazy">
+                                                    }
                                                 </a>
                                             </div>
-                                            <div class="text">
-                                                <a href="@BuildContentHref(icerik)">@icerik.Baslik</a>
-                                                <p>@icerik.YayimTarihi.ToString("dd.MM.yyyy")</p>
+                                            <div class="post_content">
+                                                <h6><a href="@BuildContentHref(icerik)">@icerik.Baslik</a></h6>
+                                                <span class="post_date">@Model.TypeLabel(icerik.Tip) &middot; @icerik.YayimTarihi.ToString("dd MMMM yyyy", trCulture)</span>
                                             </div>
-                                        </li>
-                                    }
-                                </ul><!-- /recent-posts -->
-                            </div>
-                        </div><!-- /widget-posts -->
+                                        </div>
+                                    </li>
+                                }
+                            </ul>
+                        </div>
                     }
-
-                </div><!-- /sidebar -->
-            </div><!-- /col-md-3 -->
-        </div><!-- /row -->
-    </div><!-- /container -->
-</section><!-- /flat-row -->
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- END SECTION EVENT -->
 
 @section Scripts {
     <script type="text/javascript">
-        // Sidebar arama widget'indaki tip dropdown'u gizli "tip" alanina baglar.
+        // Kategori butonlari / sayfalama / arama: sayfayi yenilemeden AJAX ile guncellenir.
         (function ($) {
             if (!$) return;
 
-            $('#searchform .u-course-search-dropdown .dropdown-menu a').on('click', function (e) {
+            var $container = $('#searchResults');
+            if (!$container.length) return;
+
+            function syncForm(url) {
+                try {
+                    var u = new URL(url, window.location.origin);
+                    $('#searchTipSelect').val(u.searchParams.get('tip') || '');
+                    $('#searchQInput').val(u.searchParams.get('q') || '');
+                } catch (e) { }
+            }
+
+            function loadUrl(url, pushState) {
+                $container.css('opacity', 0.45);
+
+                $.get(url)
+                    .done(function (html) {
+                        var doc = new DOMParser().parseFromString(html, 'text/html');
+                        var fresh = doc.querySelector('#searchResults');
+
+                        if (!fresh) {
+                            // Kapsayici bulunamazsa normal yonlendirme
+                            window.location.href = url;
+                            return;
+                        }
+
+                        $container.html($(fresh).html()).css('opacity', 1);
+                        syncForm(url);
+
+                        if (pushState) {
+                            history.pushState({ url: url }, '', url);
+                        }
+                    })
+                    .fail(function () {
+                        // Istek hata verirse normal yonlendirme (graceful fallback)
+                        window.location.href = url;
+                    });
+            }
+
+            // data-ajax="true" linkleri: kategori butonlari + sayfalama + aramayi temizle
+            $(document).on('click', '#searchResults a[data-ajax]', function (e) {
+                var href = $(this).attr('href');
+                if (!href || href === '#') return;
+
+                e.preventDefault();
+                loadUrl(href, true);
+            });
+
+            // Sidebar arama formu
+            $('#searchForm').on('submit', function (e) {
                 e.preventDefault();
 
-                var value = $(this).data('value');
-                var label = $.trim($(this).text());
+                loadUrl($(this).attr('action') + '?' + $(this).serialize(), true);
+            });
 
-                $('#searchform .u-course-search-cat').val(value === '' || value === undefined ? '' : value);
-                $('#searchform .button-label').text(label);
+            // Tarayici geri/ileri
+            $(window).on('popstate', function (ev) {
+                var state = ev.originalEvent && ev.originalEvent.state;
+                if (state && state.url) {
+                    loadUrl(state.url, false);
+                }
             });
         })(jQuery);
     </script>

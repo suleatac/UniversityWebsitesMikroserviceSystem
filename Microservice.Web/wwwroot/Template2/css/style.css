@@ -2791,6 +2791,7 @@ marquee {
 }
 
 .single_categories a {
+    background-color: #82c4e9;
     height: 135px;
     border-radius: 5px;
     display: block;
@@ -4121,7 +4122,7 @@ footer .widget_title {
     }
 
 .event_date {
-    /*    position: absolute;*/
+    position: absolute;
     top: 10px;
     left: 10px;
     max-width: 75px;

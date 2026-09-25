@@ -34,5 +34,28 @@ namespace Microservice.Web.Services
 
             return ServiceResult<VideoDetailVm>.Success(response.Content!);
         }
+
+        public async Task<ServiceResult<List<GetVideoVm>>> GetVideolarAsync(int siteId, int dilId)
+        {
+            var response = await _videoClient.GetVideolarAsync(siteId, dilId);
+
+            if (!response.IsSuccessStatusCode || response.Content is null)
+            {
+                var problemDetails = response.Error?.Content is { } content
+                    ? JsonSerializer.Deserialize<Microsoft.AspNetCore.Mvc.ProblemDetails>(content)
+                    : null;
+
+                _logger.LogWarning(
+                    "Video listesi alinamadi. SiteId: {SiteId}, DilId: {DilId}, StatusCode: {StatusCode}",
+                    siteId,
+                    dilId,
+                    response.StatusCode);
+
+                return ServiceResult<List<GetVideoVm>>.Error(
+                    problemDetails?.Detail ?? problemDetails?.Title ?? "Video listesi alınamadı");
+            }
+
+            return ServiceResult<List<GetVideoVm>>.Success(response.Content);
+        }
     }
 }

@@ -12,8 +12,6 @@
     // Detay linki: /{dil}/{personel-liste-slug}/{seoUrl}
     string BuildPersonelHref(Microservice.Web.ViewModels.SitePersonel.GetPersonelVm d)
     {
-    
-
         if (!string.IsNullOrWhiteSpace(d.SeoUrl) && d.PageType is not null)
         {
             return $"/{Model.LanguageCode}/{d.PageType.Slug}/{d.SeoUrl.Trim('/')}";
@@ -21,11 +19,6 @@
 
         return "#";
     }
-
-
-
-
-
 
     // T.C. harflerini karsiliksiz bas harfe cevir (isotope class'i icin: .a, .b, ...)
     static string FirstLetterClass(string? value)
@@ -60,167 +53,221 @@
     var latestPersoneller = Model.Personeller.Take(3).ToList();
 }
 
-<div class="page-title full-color">
+<!-- START SECTION BREADCRUMB -->
+<section class="page-title-light breadcrumb_section parallax_bg overlay_bg_50" data-parallax-bg-image="/template2/images/bg_altsayfa.jpg">
     <div class="container">
-        <div class="row">
-            <div class="col-md-12">
-                <div class="page-title-heading">
-                    <h2 class="title">Akademik Kadro</h2>
+        <div class="row align-items-center">
+            <div class="col-sm-6">
+                <div class="page-title">
+                    <h1>Akademik Kadro</h1>
                 </div>
-                <div class="breadcrumbs">
-                    <ul>
-                        <li class="home"><a href="/">Anasayfa</a></li>
-                        <li> \ Kadro</li>
-                    </ul>
-                </div>
-            </div><!-- /.col-md-12 -->
-        </div><!-- /.row -->
-    </div><!-- /.container -->
-</div><!-- /page-title -->
-
-<section class="flat-row padding-small-v1">
+            </div>
+            <div class="col-sm-6">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb justify-content-sm-end">
+                        <li class="breadcrumb-item"><a href="/">Ana Sayfa</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Kadro</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- END SECTION BREADCRUMB -->
+<!-- START SECTION TEACHER -->
+<section class="small_pt">
     <div class="container">
+
+        <!-- A-Z HARF FILTRELERI + SAYFA ICI ARAMA -->
         <div class="row">
-            <div class="col-md-9">
-                <div class="project-listing">
+            <div class="col-lg-7 text-center text-lg-left">
+                <ul class="list_none grid_filter mb-2">
+                    <li><a href="javascript:void(0)" data-letter="*" class="current">Tümü</a></li>
+                    @foreach (var letter in letters)
+                    {
+                        <li><a href="javascript:void(0)" data-letter=".@letter">@letter.ToUpper()</a></li>
+                    }
+                    @if (Model.Personeller.Any(p => FirstLetterClass(p.Soyadi ?? p.Adi) == "diger"))
+                    {
+                        <li><a href="javascript:void(0)" data-letter=".diger">#</a></li>
+                    }
+                </ul>
+            </div>
+            <div class="col-lg-5">
+                <form class="search_form" role="search" method="get" action="@listPath" id="searchform">
+                    <input class="form-control" placeholder="Ad veya soyad..." name="q" value="@Model.Query" type="text">
+                    <button type="submit" title="Ara" name="submit" value="Submit">
+                        <span class="ti-search"></span>
+                    </button>
+                </form>
+            </div>
+        </div>
 
-                    <!-- A-Z HARF FILTRELERI (tema isotope) -->
-                    <ul class="filter-cat v2">
-                        <li class="active"><a data-filter="*" href="#">All</a></li>
-                        @foreach (var letter in letters)
-                        {
-                            <li><a data-filter=".@letter" href="#">@letter.ToUpper()</a></li>
-                        }
-                        @if (Model.Personeller.Any(p => FirstLetterClass(p.Soyadi ?? p.Adi) == "diger"))
-                        {
-                            <li><a data-filter=".diger" href="#">#</a></li>
-                        }
-                    </ul>
+        <div class="row">
+            <div class="col-lg-9">
+                @if (Model.Personeller.Any())
+                {
+          
 
-                    <div class="project-portfolio v1">
+
+                    <div class="row justify-content-center" id="kadroGrid">
+                        @{ var kartNo = 1; }
                         @foreach (var personel in Model.Personeller)
                         {
                             var harf = FirstLetterClass(personel.Soyadi ?? personel.Adi);
                             var adSoyad = $"{personel.Adi} {personel.Soyadi}".Trim();
+                            var href = BuildPersonelHref(personel);
 
-                            <div class="item @harf arama-es"
+                            <div class="col-lg-4 col-sm-6 kadro-kart @harf"
+                                 data-harf="@harf"
                                  data-name="@adSoyad.ToLowerInvariant()">
-                                <div class="thumb-item">
-                                    <div class="item-thumbnail">
-                                        <a href="@BuildPersonelHref(personel)">
-                                            <img person-src="@personel.ResimUrl" person-name="@adSoyad" loading="lazy" />
+                                <div class="team_box team_style1 box_shadow1 animation" data-animation="fadeInUp" data-animation-delay="@($"{0.01 * kartNo:0.00}s")">
+                                    <div class="team_img">
+                                        <a href="@href">
+                                            <img person-src="@personel.ResimUrl" person-name="@adSoyad" alt="@adSoyad" loading="lazy" />
                                         </a>
-                                    </div><!-- /item-thumbnail -->
+                                        <ul class="list_none social_icons social_white">
+                                            <li>
+                                                <a href="@href" title="@adSoyad profilini görüntüle"><i class="ion-android-contact"></i></a>
+                                            </li>
+                                            @if (!string.IsNullOrWhiteSpace(personel.UnvanAd))
+                                            {
+                                                <li>
+                                                    <a href="@($"{listPath}?q={Uri.EscapeDataString(personel.UnvanAd)}")" title="@personel.UnvanAd kadrosunda ara"><i class="ion-ios-filing-outline"></i></a>
+                                                </li>
+                                            }
+                                        </ul>
+                                    </div>
+                                    <div class="team_title radius_lbrb_10 text-center">
+                                        <h5><a href="@href">@adSoyad</a></h5>
+                                        <span>@personel.UnvanAd@(string.IsNullOrWhiteSpace(personel.PersonelTipAd) ? "" : $" - {personel.PersonelTipAd}")</span>
+                                    </div>
+                                </div>
+                            </div>
 
-                                    <div class="item-content">
-                                        <h3 class="item-title">
-                                            <a href="@BuildPersonelHref(personel)">@adSoyad</a>
-                                        </h3>
-                                        <h4 class="small-text">
-                                            @personel.UnvanAd@(string.IsNullOrWhiteSpace(personel.PersonelTipAd) ? "" : $" - {personel.PersonelTipAd}")
-                                        </h4>
-                                        @if (!string.IsNullOrWhiteSpace(personel.Hakkinda))
-                                        {
-                                            <p>@personel.Hakkinda</p>
-                                        }
-                                    </div><!-- /item-content -->
-                                </div><!-- /thumb-item -->
-                            </div><!-- /item -->
+                            kartNo++;
                         }
                     </div>
 
-                    <!-- ARAMA SONUCU YOK -->
-                    @if (!Model.Personeller.Any())
-                    {
-                        <p style="padding:20px 0;">Bu sitede görüntülenecek personel bulunmamaktadır.</p>
-                    }
-                </div>
-            </div><!-- /col-md-9 -->
+                    <p class="text-muted text-center" id="kadroSonucSayisi" style="display:none;"></p>
 
-            <div class="col-md-3">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                }
+                else
+                {
+                    <div class="content_box radius_all_10 box_shadow1 p-4 text-center">
+                        <p class="mb-0">Bu sitede görüntülenecek personel bulunmamaktadır.</p>
+                    </div>
+                }
+            </div>
+
+            <div class="col-lg-3 mt-lg-0 mt-4 pt-3 pt-lg-0">
                 <div class="sidebar">
-
-                    <!-- WIDGET SEARCH (sayfa ici, client-side filtreleme) -->
-                    <div class="widget widget-search">
-                        <h2 class="widget-title">Kadro Arama</h2>
-                        <form role="search" method="get" id="searchform" class="u-course-search-form" action="@listPath">
-                            <div class="input-group">
-                                <input type="text" value="@Model.Query" name="q" id="s" placeholder="Ad veya soyad..." class="form-control">
-                                <span class="input-group-btn">
-                                    <button type="submit" id="searchsubmit" class="btn btn-default u-course-search-submit">
-                                        <i class="fa fa-search"></i>
-                                    </button>
-                                </span>
-                            </div>
-                        </form>
-                    </div><!-- /widget-search -->
-
-                    <!-- WIDGET SON EKLENENLER -->
                     @if (latestPersoneller.Any())
                     {
-                        <div class="widget widget-posts">
-                            <div class="blog-box">
-                                <h2 class="widget-title">SON EKLENENLER</h2>
-                                <ul class="recent-posts clearfix">
-                                    @foreach (var personel in latestPersoneller)
-                                    {
-                                        var adSoyad = $"{personel.Adi} {personel.Soyadi}".Trim();
+                        <div class="widget widget_recent_post">
+                            <h5 class="widget_title">Son Eklenenler</h5>
+                            <ul class="recent_post border_bottom_dash list_none">
+                                @foreach (var personel in latestPersoneller)
+                                {
+                                    var adSoyad = $"{personel.Adi} {personel.Soyadi}".Trim();
 
-                                        <li>
-                                            <div class="thumb item-thumbnail">
+                                    <li>
+                                        <div class="post_footer">
+                                            <div class="post_img">
                                                 <a href="@BuildPersonelHref(personel)">
-                                                    <img person-src="@personel.ResimUrl" person-name="@adSoyad" loading="lazy" />
-                                                    <div class="thumbnail-hoverlay main-color-1-bg"></div>
-                                                    <div class="thumbnail-hoverlay-cross"></div>
+                                                    <img person-src="@personel.ResimUrl" person-name="@adSoyad" alt="@adSoyad" loading="lazy" />
                                                 </a>
                                             </div>
-                                            <div class="text">
-                                                <a href="@BuildPersonelHref(personel)">@adSoyad</a>
-                                                <p>@personel.UnvanAd</p>
+                                            <div class="post_content">
+                                                <h6><a href="@BuildPersonelHref(personel)">@adSoyad</a></h6>
+                                                <span class="post_date">@personel.UnvanAd</span>
                                             </div>
-                                        </li>
-                                    }
-                                </ul><!-- /recent-posts -->
-                            </div>
-                        </div><!-- /widget-posts -->
+                                        </div>
+                                    </li>
+                                }
+                            </ul>
+                        </div>
                     }
-
-                </div><!-- sidebar -->
-            </div><!-- /col-md-3 -->
+                </div>
+            </div>
         </div>
     </div>
 </section>
-
+<!-- END SECTION TEACHER -->
 @section Scripts {
     <script type="text/javascript">
-        // Sayfa ici arama: ?q=... gelirse veya kutuya yazilirken kartlari isimle filtreler.
-        (function ($) {
+        // A-Z harf filtresi + ad/soyad aramasi: Bootstrap kartlarini sayfayi yenilemeden filtreler.
+        (function($) {
             if (!$) return;
 
-            var $items = $('.project-portfolio .item');
+            var $items = $('#kadroGrid .kadro-kart');
+            if (!$items.length) return;
 
-            function applyFilter(term) {
-                term = (term || '').trim().toLocaleLowerCase('tr-TR');
+            var letterFilter = '*';
 
-                $items.each(function () {
-                    var name = $(this).data('name') || '';
-                    $(this).toggle(term === '' || name.indexOf(term) > -1);
-                });
+            // Filtre sonrasi gosterilen kayit sayisi ozeti
+            function updateCount(visible) {
+                var $counter = $('#kadroSonucSayisi');
+                if (!$counter.length) return;
 
-                // Isotope varsa yeniden duzenle
-                var $container = $('.project-portfolio');
-                if ($container.data('isotope')) {
-                    $container.isotope();
+                if (visible < $items.length) {
+                    $counter.text(visible + ' kişi listeleniyor.').show();
+                } else {
+                    $counter.hide();
                 }
             }
 
-            // Baslangic filtresi (sunucudan gelen q)
-            applyFilter($('#searchform input[name="q"]').val());
+            function applyFilters() {
+                var term = ($('#searchform input[name="q"]').val() || '').trim().toLocaleLowerCase('tr-TR');
+                var letterClass = letterFilter === '*' ? null : letterFilter.replace('.', '');
 
-            // Yazarken anlik filtreleme
-            $('#searchform input[name="q"]').on('input', function () {
-                applyFilter($(this).val());
+                var visible = 0;
+                $items.each(function() {
+                    var $this = $(this);
+
+                    var matchesLetter = letterClass === null || $this.hasClass(letterClass);
+                    var name = ($this.attr('data-name') || '').toLocaleLowerCase('tr-TR');
+                    var matchesName = term === '' || name.indexOf(term) > -1;
+
+                    var show = matchesLetter && matchesName;
+                    $this.toggleClass('d-none', !show);
+                    if (show) visible++;
+                });
+
+                updateCount(visible);
+            }
+
+            // Harf butonlari
+            $(document).on('click', '.grid_filter a[data-letter]', function(e) {
+                e.preventDefault();
+
+                $('.grid_filter a[data-letter]').removeClass('current');
+                $(this).addClass('current');
+
+                letterFilter = $(this).data('letter') || '*';
+                applyFilters();
             });
+
+            // Yazarken anlik ad/soyad filtresi
+            $('#searchform input[name="q"]').on('input', applyFilters);
+
+            // Baslangic filtresi: sunucudan gelen ?q= degeriyle
+            applyFilters();
         })(jQuery);
     </script>
 }

@@ -44,9 +44,39 @@ namespace Mikroservice.Site.Persistence.Services
 
         public async Task<bool> IsDatabaseSeededAsync(CancellationToken cancellationToken = default)
         {
-            var pageTypeVarMı = await _pageTypeRepository.GetAll().AnyAsync(cancellationToken);
-            _logger.LogDebug("Database'de seed edilen PageType var mı?: {HasPageType}", pageTypeVarMı);
-            return pageTypeVarMı;
+            // "DB'de en az bir PageType var mi" kontrolü yeterli degil: seed'den SONRA admin
+            // panelinden yeni Template eklenirse bu servis hic calismaz ve yeni template'in
+            // sayfari olusmaz. Bu yuzden eksik bazli kontrol yapilir; aktif butun
+            // Template x Dil x Definition kombinasyonlari mevcut ise seed tamamlanmistir.
+            var templateIds = await _templateRepository.GetAll()
+                .Where(t => !t.IsDeleted)
+                .Select(t => t.Id)
+                .ToListAsync(cancellationToken);
+
+            var dilIds = await _dilRepository.GetAll()
+                .Select(d => d.Id)
+                .ToListAsync(cancellationToken);
+
+            // Bagimliliklar (Template/Dil) henuz yoksa "seed edilmis" deyip atlamak yanlis olur;
+            // SeedInitialDataAsync icindeki uyari/rollback yolu devreye girsin diye false donulur.
+            if (templateIds.Count == 0 || dilIds.Count == 0)
+            {
+                return false;
+            }
+
+            var definitionCount = PageTypeSeedData.GetPageTypeSeedDefinitions().Count;
+            var expected = templateIds.Count * dilIds.Count * definitionCount;
+
+            var actual = await _pageTypeRepository.GetAll()
+                .CountAsync(p => templateIds.Contains(p.TemplateId) && dilIds.Contains(p.DilId),
+                    cancellationToken);
+
+            var eksiksiz = actual >= expected;
+            _logger.LogDebug(
+                "PageType seed kontrolu. Expected: {Expected}, Actual: {Actual}, Eksiksiz mi: {Tamamlanmis}",
+                expected, actual, eksiksiz);
+
+            return eksiksiz;
         }
 
         public async Task SeedInitialDataAsync(CancellationToken cancellationToken = default)
@@ -103,6 +133,17 @@ namespace Mikroservice.Site.Persistence.Services
             List<PageTypeSeedData.PageTypeSeedDefinition> definitions,
             CancellationToken cancellationToken)
         {
+            // Eksik bazli seed: mevcut (TemplateId, DilId, Kind) kombinasyonlari tekrar eklenmez;
+            // boylece sonradan eklenen yeni template'lerin sayfarlari eklenirken
+            // mevcut template'ler icin mukerrer kayit olusmaz.
+            var existingKeys = (await _pageTypeRepository.GetAll()
+                    .Select(p => new { p.TemplateId, p.DilId, p.PageTypeKind })
+                    .ToListAsync(cancellationToken))
+                .Select(p => (p.TemplateId, p.DilId, p.PageTypeKind))
+                .ToHashSet();
+
+            var addedCount = 0;
+
             foreach (var template in templates)
             {
                 foreach (var dil in diller)
@@ -110,6 +151,12 @@ namespace Mikroservice.Site.Persistence.Services
                     foreach (var definition in definitions)
                     {
                         cancellationToken.ThrowIfCancellationRequested();
+
+                        if (!existingKeys.Add((template.Id, dil.Id, definition.Kind)))
+                        {
+                            // Bu kombinasyon zaten mevcut; gec.
+                            continue;
+                        }
 
                         var slug = string.Equals(dil.Kod, "TR", StringComparison.OrdinalIgnoreCase)
                             ? definition.SlugTR
@@ -121,14 +168,20 @@ namespace Mikroservice.Site.Persistence.Services
                             Slug = slug,
                             TemplateId = template.Id,
                             DilId = dil.Id,
-                            // Template1/Index.cshtml ana sayfa gorunumu oldugu icin Home tipi ana sayfa isaretlenir.
+                            // Her template'in kendi ana sayfa gorunumu Home tipidir.
                             IsHomePage = definition.Kind == PageTypeKind.Home,
                         });
+
+                        addedCount++;
                     }
                 }
             }
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+            _logger.LogInformation(
+                "PageType eksik bazli seed tamamlandi. Eklenen kayit: {AddedCount}",
+                addedCount);
         }
     }
 }

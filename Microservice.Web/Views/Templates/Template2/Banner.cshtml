@@ -1,58 +1,45 @@
-﻿@model Microservice.Web.ViewModels.Etkinlik.EtkinlikDetayPageViewModel
+﻿@model Microservice.Web.ViewModels.Banner.BannerDetayPageViewModel
 @{
-    var etkinlik = Model.Etkinlik;
+    var banner = Model.Banner;
 
-    ViewData["Title"] = etkinlik.SeoTitle ?? etkinlik.Baslik ?? "Etkinlik";
+    ViewData["Title"] = banner.SeoTitle ?? banner.Baslik ?? "Banner";
 
-    if (!string.IsNullOrWhiteSpace(etkinlik.SeoDescription))
+    if (!string.IsNullOrWhiteSpace(banner.SeoDescription))
     {
-        ViewData["MetaDescription"] = etkinlik.SeoDescription;
+        ViewData["MetaDescription"] = banner.SeoDescription;
     }
 
     // Paylasim linkleri icin mevcut sayfa adresi
     var currentPageUrl = $"{Context.Request.Scheme}://{Context.Request.Host}{Context.Request.Path}";
     var encodedUrl = Uri.EscapeDataString(currentPageUrl);
-    var encodedTitle = Uri.EscapeDataString(etkinlik.Baslik ?? "");
+    var encodedTitle = Uri.EscapeDataString(banner.Baslik ?? "");
 
-    // Google Calendar "takvime ekle" linki (baslama/bitis varsa)
-    string? googleCalendarUrl = null;
-    if (etkinlik.BaslamaTarihi.HasValue)
+    // Banner detay linki: Link dolu ise dogrudan, bos ise /{dil}/{banner-slug}/{seoUrl}
+    string BuildBannerHref(Microservice.Web.ViewModels.Banner.GetBannerVm b)
     {
-        var start = etkinlik.BaslamaTarihi.Value.ToString("yyyyMMddTHHmmss");
-        var end = (etkinlik.BitisTarihi ?? etkinlik.BaslamaTarihi.Value.AddHours(2)).ToString("yyyyMMddTHHmmss");
-
-        googleCalendarUrl = $"https://calendar.google.com/calendar/render?action=TEMPLATE" +
-                            $"&text={encodedTitle}&dates={start}/{end}&details={encodedUrl}";
-    }
-
-    // Detay linki: Link dolu ise dogrudan, bos ise /{dil}/{etkinlik-slug}/{seoUrl}
-    string BuildEtkinlikHref(Microservice.Web.ViewModels.Etkinlik.GetEtkinlikVm e)
-    {
-        if (!string.IsNullOrWhiteSpace(e.Link))
+        if (!string.IsNullOrWhiteSpace(b.Link))
         {
-            var link = e.Link.Trim();
+            var link = b.Link.Trim();
 
             return link.StartsWith("http", StringComparison.OrdinalIgnoreCase)
                 ? link
                 : "/" + link.Trim('/');
         }
 
-        if (!string.IsNullOrWhiteSpace(e.SeoUrl))
+        if (!string.IsNullOrWhiteSpace(b.SeoUrl) && b.PageType is not null)
         {
-            return $"{Model.EtkinlikListUrl}/{e.SeoUrl.Trim('/')}";
+            return $"/{Model.LanguageCode}/{b.PageType.Slug}/{b.SeoUrl.Trim('/')}";
         }
 
         return "#";
     }
-
-    var siteOzellikleri = Model.Site?.SiteOzellikleri;
 }
 
 @{
     var trCulture = new System.Globalization.CultureInfo("tr-TR");
-    var yayinGun = etkinlik.YayimTarihi.Day;
-    var yayinAy = etkinlik.YayimTarihi.ToString("MMMM", trCulture);
-    var yayinYil = etkinlik.YayimTarihi.Year;
+    var yayinGun = banner.YayimTarihi.Day;
+    var yayinAy = banner.YayimTarihi.ToString("MMMM", trCulture);
+    var yayinYil = banner.YayimTarihi.Year;
 }
 <!-- START SECTION BREADCRUMB -->
 <section class="page-title-light breadcrumb_section parallax_bg overlay_bg_50" data-parallax-bg-image="/template2/images/bg_altsayfa.jpg">
@@ -60,15 +47,14 @@
         <div class="row align-items-center">
             <div class="col-sm-6">
                 <div class="page-title">
-                    <h1>@etkinlik.Baslik</h1>
+                    <h1>@banner.Baslik</h1>
                 </div>
             </div>
             <div class="col-sm-6">
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb justify-content-sm-end">
                         <li class="breadcrumb-item"><a href="/">Ana Sayfa</a></li>
-                        <li class="breadcrumb-item"><a href="@Model.EtkinlikListUrl">Etkinlikler</a></li>
-                        <li class="breadcrumb-item active" aria-current="page">@etkinlik.Baslik</li>
+                        <li class="breadcrumb-item active" aria-current="page">@banner.Baslik</li>
                     </ol>
                 </nav>
             </div>
@@ -84,39 +70,32 @@
             <div class="col-lg-9">
                 <div class="single_event">
                     <div class="content_img">
-                        @if (!string.IsNullOrWhiteSpace(etkinlik.ResimUrl))
+                        @if (!string.IsNullOrWhiteSpace(banner.ResimUrl))
                         {
-                            <a href="@etkinlik.ResimUrl" target="_blank" rel="noopener">
-                                <img src="@etkinlik.ResimUrl" alt="@etkinlik.Baslik">
+                            <a href="@banner.ResimUrl" target="_blank" rel="noopener">
+                                <img src="@banner.ResimUrl" alt="@banner.Baslik">
                             </a>
                         }
                         else
                         {
-                            <img src="/template2/images/course_img_big.jpg" alt="@etkinlik.Baslik">
+                            <img src="/template2/images/banner1.jpg" alt="@banner.Baslik">
                         }
                         <div class="event_date radius_all_5">
                             <h5><span>@yayinGun</span> @yayinAy</h5>
-                            @if (etkinlik.BaslamaTarihi.HasValue && etkinlik.BitisTarihi.HasValue)
-                            {
-                                <span class="event_time radius_lbrb_5 bg_default">@etkinlik.BaslamaTarihi.Value.ToString("HH:mm") - @etkinlik.BitisTarihi.Value.ToString("HH:mm")</span>
-                            }
-                            else
-                            {
-                                <span class="event_time radius_lbrb_5 bg_default">@yayinYil</span>
-                            }
+                            <span class="event_time radius_lbrb_5 bg_default">@yayinYil</span>
                         </div>
                     </div>
                     <div class="event_title">
                         <div class="row align-items-end">
                             <div class="col-md-8">
-                                <h2>@etkinlik.Baslik</h2>
+                                <h2>@banner.Baslik</h2>
                                 <ul class="list_none content_meta mt-2">
-                                    <li><i class="ti-calendar"></i> <span class="text_default">@etkinlik.YayimTarihi.ToString("dd MMMM yyyy", trCulture)</span></li>
-                                    @if (etkinlik.PageType is not null)
+                                    <li><i class="ti-calendar"></i> <span class="text_default">@banner.YayimTarihi.ToString("dd MMMM yyyy", trCulture)</span></li>
+                                    @if (banner.PageType is not null)
                                     {
-                                        <li><i class="ti-tag"></i><span class="text_default">@etkinlik.PageType.PageTypeKind</span></li>
+                                        <li><i class="ti-tag"></i><span class="text_default">@banner.PageType.PageTypeKind</span></li>
                                     }
-                                    <li><i class="ti-eye"></i><span class="text_default">@etkinlik.GosterimSayisi görüntülenme</span></li>
+                                    <li><i class="ti-eye"></i><span class="text_default">@banner.GosterimSayisi görüntülenme</span></li>
                                 </ul>
                             </div>
                             <div class="col-md-4">
@@ -153,45 +132,30 @@
                         </div>
                     </div>
                     <div class="entry_content">
-                        @if (etkinlik.BaslamaTarihi.HasValue || etkinlik.BitisTarihi.HasValue)
+                        @if (!string.IsNullOrWhiteSpace(banner.IcerikMetni))
                         {
-                            <div class="row mb-3">
-                                @if (etkinlik.BaslamaTarihi.HasValue)
-                                {
-                                    <div class="col-md-6">
-                                        <strong>BAŞLAMA TARİHİ</strong><br />
-                                        @etkinlik.BaslamaTarihi.Value.ToString("dd.MM.yyyy HH:mm")
-                                    </div>
-                                }
-                                @if (etkinlik.BitisTarihi.HasValue)
-                                {
-                                    <div class="col-md-6">
-                                        <strong>BİTİŞ TARİHİ</strong><br />
-                                        @etkinlik.BitisTarihi.Value.ToString("dd.MM.yyyy HH:mm")
-                                    </div>
-                                }
-                            </div>
+                            @Html.Raw(banner.IcerikMetni)
                         }
-
-                        @if (!string.IsNullOrWhiteSpace(etkinlik.IcerikMetni))
+                        else if (!string.IsNullOrWhiteSpace(banner.KisaAciklama))
                         {
-                            @Html.Raw(etkinlik.IcerikMetni)
+                            <p>@banner.KisaAciklama</p>
                         }
                         else
                         {
-                            <p>Bu etkinlik için içerik girilmemiş.</p>
+                            <p>Bu banner için içerik girilmemiş.</p>
                         }
-                    </div>
 
-                    <div class="d-flex justify-content-between align-items-center mt-4 flex-wrap gap-2">
-                        <a class="btn btn-default" href="@Model.EtkinlikListUrl">
-                            <i class="fa fa-angle-left"></i> TÜM ETKİNLİKLER
-                        </a>
-                        @if (googleCalendarUrl is not null)
+                        @if (!string.IsNullOrWhiteSpace(banner.Link))
                         {
-                            <a class="btn btn-primary" href="@googleCalendarUrl" target="_blank" rel="noopener">
-                                <i class="fa fa-calendar-plus-o"></i> GOOGLE TAKVİME EKLE
-                            </a>
+                            var bannerHref = banner.Link.Trim();
+
+                            <p class="mt-3">
+                                <a class="btn btn-default"
+                                   href="@(bannerHref.StartsWith("http", StringComparison.OrdinalIgnoreCase) ? bannerHref : "/" + bannerHref.Trim('/'))"
+                                   target="_blank" rel="noopener">
+                                    <i class="ti-link"></i> Bağlantıya Git
+                                </a>
+                            </p>
                         }
                     </div>
                 </div>
@@ -199,25 +163,25 @@
             <div class="col-lg-3 mt-lg-0 mt-4 pt-3 pt-lg-0">
                 <div class="sidebar">
                     <div class="widget widget_search">
-                        <form class="search_form" role="search" method="get" action="@Model.EtkinlikListUrl">
-                            <input required="" class="form-control" placeholder="Etkinliklerde ara..." name="q" type="text">
+                        <form class="search_form" role="search" method="get" action="@Model.SearchUrl">
+                            <input class="form-control" placeholder="Arama yap..." name="q" type="text">
                             <button type="submit" title="Ara" name="submit" value="Submit">
                                 <span class="ti-search"></span>
                             </button>
                         </form>
                     </div>
 
-                    @if (Model.LatestEtkinlikler.Any())
+                    @if (Model.OtherBanners.Any())
                     {
                         <div class="widget widget_recent_post">
-                            <h5 class="widget_title">Son Eklenenler</h5>
+                            <h5 class="widget_title">Diğer Bannerlar</h5>
                             <ul class="recent_post border_bottom_dash list_none">
-                                @foreach (var item in Model.LatestEtkinlikler)
+                                @foreach (var item in Model.OtherBanners)
                                 {
                                     <li>
                                         <div class="post_footer">
                                             <div class="post_img">
-                                                <a href="@BuildEtkinlikHref(item)">
+                                                <a href="@BuildBannerHref(item)">
                                                     @if (!string.IsNullOrWhiteSpace(item.ResimUrl))
                                                     {
                                                         <img src="@item.ResimUrl" alt="@item.Baslik" loading="lazy">
@@ -229,7 +193,7 @@
                                                 </a>
                                             </div>
                                             <div class="post_content">
-                                                <h6><a href="@BuildEtkinlikHref(item)">@item.Baslik</a></h6>
+                                                <h6><a href="@BuildBannerHref(item)">@item.Baslik</a></h6>
                                                 <span class="post_date">@item.YayimTarihi.ToString("dd MMMM yyyy", trCulture)</span>
                                             </div>
                                         </div>
@@ -238,7 +202,6 @@
                             </ul>
                         </div>
                     }
-
                 </div>
             </div>
         </div>

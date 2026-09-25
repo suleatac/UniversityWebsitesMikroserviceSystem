@@ -66,7 +66,7 @@ namespace Microservice.Admin.Controllers
                 {
                     SiteId = currentSiteId,
                     DilId = currentDilId,
-                    IsIconImage = true
+                    IsIconImage = false
                 },
                 Diller = dillerResult.IsSuccess ? dillerResult.Data! : new List<ViewModels.Dil.GetDilVm>(),
                 Hedefler = hedeflerResult.IsSuccess ? hedeflerResult.Data! : new List<ViewModels.Hedef.GetHedefVm>()
