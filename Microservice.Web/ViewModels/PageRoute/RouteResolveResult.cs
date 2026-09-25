@@ -1,4 +1,5 @@
-﻿using Microservice.Web.ViewModels.Bilgi;
+﻿using Microservice.Web.ViewModels.Banner;
+using Microservice.Web.ViewModels.Bilgi;
 using Microservice.Web.ViewModels.Duyuru;
 using Microservice.Web.ViewModels.GaleriResim;
 using Microservice.Web.ViewModels.Etkinlik;
@@ -33,6 +34,7 @@ namespace Microservice.Web.ViewModels.PageRoute
         public VideoDetailVm? VideoDetay { get; set; }
         public PersonelDetailVm? PersonelDetay { get; set; }
         public GaleriResimDetailVm? GaleriResimDetay { get; set; }
+        public BannerDetailVm? BannerDetay { get; set; }
 
     }
 }

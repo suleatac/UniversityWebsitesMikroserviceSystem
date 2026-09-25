@@ -1,11 +1,15 @@
+using Microservice.Web.ViewModels.BandLogo;
 using Microservice.Web.ViewModels.Banner;
 using Microservice.Web.ViewModels.Bilgi;
 using Microservice.Web.ViewModels.Duyuru;
 using Microservice.Web.ViewModels.Etkinlik;
+using Microservice.Web.ViewModels.GaleriResim;
 using Microservice.Web.ViewModels.Haber;
 using Microservice.Web.ViewModels.Menu;
+using Microservice.Web.ViewModels.Popup;
 using Microservice.Web.ViewModels.ShortcutButton;
 using Microservice.Web.ViewModels.Site;
+using Microservice.Web.ViewModels.Video;
 
 namespace Microservice.Web.ViewModels.Template
 {
@@ -30,5 +34,19 @@ namespace Microservice.Web.ViewModels.Template
         public List<GetShortcutButtonVm> ShortcutButtons { get; set; } = new();
         public string HaberListUrl { get; set; } = "/";
         public string DuyuruListUrl { get; set; } = "/";
+
+        // Template2 ana sayfasi icin ek icerikler
+        public GetPopupVm? Popup { get; set; }
+        public List<GetVideoVm> Videolar { get; set; } = new();
+        public string VideoListUrl { get; set; } = "/";
+        public List<GetGaleriResimVm> GaleriResimler { get; set; } = new();
+        public string GaleriListUrl { get; set; } = "/";
+        public List<GetBandLogoVm> BandLogolar { get; set; } = new();
+
+        // Ana sayfa sayaclari (Template2)
+        public int OgrenciSayisi { get; set; }
+        public int MezunOgrenciSayisi { get; set; }
+        public int IdariPersonelSayisi { get; set; }
+        public int AkademikPersonelSayisi { get; set; }
     }
 }

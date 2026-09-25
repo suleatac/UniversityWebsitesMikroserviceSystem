@@ -37,197 +37,233 @@
     var kategoriAdi = string.IsNullOrWhiteSpace(resim.Kategori) ? "Genel" : resim.Kategori;
 }
 
-<div class="page-title full-color">
+@{
+    var trCulture = new System.Globalization.CultureInfo("tr-TR");
+    var yayinGun = resim.YayimTarihi.Day;
+    var yayinAy = resim.YayimTarihi.ToString("MMMM", trCulture);
+    var yayinYil = resim.YayimTarihi.Year;
+}
+<!-- START SECTION BREADCRUMB -->
+<section class="page-title-light breadcrumb_section parallax_bg overlay_bg_50" data-parallax-bg-image="/template2/images/bg_altsayfa.jpg">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-sm-6">
+                <div class="page-title">
+                    <h1>@resim.Baslik</h1>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb justify-content-sm-end">
+                        <li class="breadcrumb-item"><a href="/">Ana Sayfa</a></li>
+                        <li class="breadcrumb-item"><a href="@Model.GaleriResimListUrl">Galeri Resimleri</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">@resim.Baslik</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- END SECTION BANNER -->
+
+<!-- START SECTION NEW DETAIL -->
+<section>
     <div class="container">
         <div class="row">
-            <div class="col-md-12">
-                <div class="page-title-heading">
-                    <h2 class="title">@resim.Baslik</h2>
-                </div>
-                <div class="breadcrumbs">
-                    <ul>
-                        <li class="home"><a href="/">Ana Sayfa </a></li>
-                        <li><a href="@Model.GaleriResimListUrl">Galeri Resimleri</a></li>
-                        <li>\ @resim.Baslik</li>
-                    </ul>
-                </div>
-            </div><!-- /.col-md-12 -->
-        </div><!-- /.row -->
-    </div><!-- /.container -->
-</div><!-- /page-title -->
-
-<section class="flat-row padding-small-v1">
-    <div class="container">
-        <div class="flat-corporate">
-            <div class="row">
-                <div class="col-md-8">
-                    <div class="post">
-                        <div class="thumb-post">
-                            @if (!string.IsNullOrWhiteSpace(resim.ResimUrl))
-                            {
-                                <a href="@resim.ResimUrl" class="fancybox" data-type="image" title="@resim.Baslik">
-                                    <img src="@resim.ResimUrl" alt="@resim.Baslik">
-                                </a>
-                            }
+            <div class="col-lg-9">
+                <div class="single_event">
+                    <div class="content_img">
+                        @if (!string.IsNullOrWhiteSpace(resim.ResimUrl))
+                        {
+                            <a href="@resim.ResimUrl" target="_blank" rel="noopener" title="Büyütmek için tıklayın">
+                                <img src="@resim.ResimUrl" alt="@resim.Baslik">
+                            </a>
+                        }
+                        else
+                        {
+                            <img src="/template2/images/course_img_big.jpg" alt="@resim.Baslik">
+                        }
+                        <div class="event_date radius_all_5">
+                            <h5><span>@yayinGun</span> @yayinAy</h5>
+                            <span class="event_time radius_lbrb_5 bg_default">@yayinYil</span>
                         </div>
-                        <div class="text-post">
-                            @if (!string.IsNullOrWhiteSpace(resim.IcerikMetni))
+                    </div>
+                    <div class="event_title">
+                        <div class="row align-items-end">
+                            <div class="col-md-8">
+                                <h2>@resim.Baslik</h2>
+                                <ul class="list_none content_meta mt-2">
+                                    <li><i class="ti-calendar"></i> <span class="text_default">@resim.YayimTarihi.ToString("dd MMMM yyyy", trCulture)</span></li>
+                                    <li><i class="ti-tag"></i><span class="text_default">@kategoriAdi</span></li>
+                                    <li><i class="ti-eye"></i><span class="text_default">@resim.GosterimSayisi görüntülenme</span></li>
+                                </ul>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="text-md-right">
+                                    <ul class="list_none social_icons">
+                                        <li>
+                                            <a target="_blank" rel="noopener"
+                                               href="https://www.facebook.com/sharer/sharer.php?u=@encodedUrl"
+                                               title="Facebook'ta paylaş"><i class="ion-social-facebook"></i></a>
+                                        </li>
+                                        <li>
+                                            <a target="_blank" rel="noopener"
+                                               href="https://twitter.com/intent/tweet?url=@encodedUrl&text=@encodedTitle"
+                                               title="Twitter'da paylaş"><i class="ion-social-twitter"></i></a>
+                                        </li>
+                                        <li>
+                                            <a target="_blank" rel="noopener"
+                                               href="https://www.linkedin.com/sharing/share-offsite/?url=@encodedUrl"
+                                               title="LinkedIn'de paylaş"><i class="ion-social-linkedin"></i></a>
+                                        </li>
+                                        <li>
+                                            <a href="mailto:?subject=@encodedTitle&body=@encodedUrl"
+                                               title="E-posta ile gönder"><i class="ion-email"></i></a>
+                                        </li>
+                                        <li>
+                                            <a href="javascript:void(0)"
+                                               id="copy-link-btn"
+                                               data-url="@currentPageUrl"
+                                               title="Bağlantıyı kopyala"><i class="ion-link"></i></a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="entry_content">
+                        @if (!string.IsNullOrWhiteSpace(resim.IcerikMetni))
+                        {
+                            @Html.Raw(resim.IcerikMetni)
+                        }
+                        else if (!string.IsNullOrWhiteSpace(resim.KisaAciklama))
+                        {
+                            <p>@resim.KisaAciklama</p>
+                        }
+                        else
+                        {
+                            <p>Bu galeri resmi için açıklama girilmemiş.</p>
+                        }
+                    </div>
+
+                    @* Onceki / Sonraki gezinme *@
+                    <div class="row mt-4">
+                        <div class="col-6">
+                            @if (Model.OncekiResim is not null)
                             {
-                                @Html.Raw(resim.IcerikMetni)
-                            }
-                            else if (!string.IsNullOrWhiteSpace(resim.KisaAciklama))
-                            {
-                                <p>@resim.KisaAciklama</p>
+                                <a class="btn btn-default" href="@BuildResimHref(Model.OncekiResim)" rel="prev" title="@Model.OncekiResim.Baslik">
+                                    <i class="fa fa-angle-left"></i> Önceki
+                                </a>
                             }
                             else
                             {
-                                <p>Bu galeri resmi için açıklama girilmemiş.</p>
+                                <span class="btn btn-default disabled"><i class="fa fa-angle-left"></i> Önceki</span>
+                            }
+                        </div>
+                        <div class="col-6 text-right">
+                            @if (Model.SonrakiResim is not null)
+                            {
+                                <a class="btn btn-default" href="@BuildResimHref(Model.SonrakiResim)" rel="next" title="@Model.SonrakiResim.Baslik">
+                                    Sonraki <i class="fa fa-angle-right"></i>
+                                </a>
+                            }
+                            else
+                            {
+                                <span class="btn btn-default disabled">Sonraki <i class="fa fa-angle-right"></i></span>
                             }
                         </div>
                     </div>
-                </div>
 
-                <div class="flat-project-post">
-                    <div class="col-md-4">
-                        <div class="simple-navigation project-navigation">
-                            <div class="row">
-                                <div class="simple-navigation-item col-md-6 col-sm-6 col-xs-6">
-                                    @if (Model.OncekiResim is not null)
-                                    {
-                                        <a href="@BuildResimHref(Model.OncekiResim)" rel="prev" title="@Model.OncekiResim.Baslik"><i class="fa fa-angle-left"></i>Önceki</a>
-                                    }
-                                    else
-                                    {
-                                        <span><i class="fa fa-angle-left"></i>Önceki</span>
-                                    }
-                                </div>
-
-                                <div class="simple-navigation-item col-md-6 col-sm-6 col-xs-6 text-right">
-                                    @if (Model.SonrakiResim is not null)
-                                    {
-                                        <a href="@BuildResimHref(Model.SonrakiResim)" rel="next" title="@Model.SonrakiResim.Baslik"><i class="fa fa-angle-right pull-right"></i>Sonraki</a>
-                                    }
-                                    else
-                                    {
-                                        <span><i class="fa fa-angle-right pull-right"></i>Sonraki</span>
-                                    }
-                                </div>
-                            </div>
-                        </div>
-
-                        <h2 class="project-title">@resim.Baslik</h2>
-                        @if (!string.IsNullOrWhiteSpace(resim.KisaAciklama))
-                        {
-                            <div class="project-content-text">
-                                <p>@resim.KisaAciklama</p>
-                            </div>
-                        }
-
-                        <div class="project-meta">
-                            <div class="project-meta-item">
-                                <div class="small-text">Kategori:</div>
-                                <div class="item-meta-value">@kategoriAdi</div>
-                            </div>
-                            <div class="project-meta-item">
-                                <div class="small-text">Yayım Tarihi:</div>
-                                <div class="item-meta-value">@resim.YayimTarihi.ToString("dd.MM.yyyy")</div>
-                            </div>
-                            <div class="project-meta-item">
-                                <div class="small-text">Görüntülenme:</div>
-                                <div class="item-meta-value">@resim.GosterimSayisi</div>
-                            </div>
-                        </div>
-
-                        <div class="project-tax small-text">
-                            <a href="@Model.GaleriResimListUrl" class="cat-link">@kategoriAdi</a>
-                        </div>
-
-                        <ul class="social-list">
-                            <li>
-                                <a href="https://www.facebook.com/sharer/sharer.php?u=@encodedUrl" target="_blank" rel="noopener" class="social-icon" title="Facebook'ta paylaş">
-                                    <i class="fa fa-facebook"></i>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="https://twitter.com/intent/tweet?url=@encodedUrl&text=@encodedTitle" target="_blank" rel="noopener" class="social-icon" title="Twitter'da paylaş">
-                                    <i class="fa fa-twitter"></i>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="https://www.linkedin.com/sharing/share-offsite/?url=@encodedUrl" target="_blank" rel="noopener" class="social-icon" title="LinkedIn'de paylaş">
-                                    <i class="fa fa-linkedin"></i>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="https://www.pinterest.com/pin/create/button/?url=@encodedUrl&media=@Uri.EscapeDataString(resim.ResimUrl ?? "")&description=@encodedTitle" target="_blank" rel="noopener" class="social-icon" title="Pinterest'te paylaş">
-                                    <i class="fa fa-pinterest"></i>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="mailto:?subject=@encodedTitle&body=@encodedUrl" class="btn btn-default social-icon" title="E-posta ile gönder">
-                                    <i class="fa fa-envelope"></i>
-                                </a>
-                            </li>
-                        </ul>
-
-                        <div class="content-pad calendar-import" style="margin-top:20px;">
-                            <a class="flat-button" href="@Model.GaleriResimListUrl">
-                                <i class="fa fa-angle-left"></i> TÜM GALERİ RESİMLERİ
-                            </a>
-                        </div>
-                    </div><!-- /col-md-4 -->
-                </div><!-- /flat-project-post -->
-
-                @if (Model.IliskiliResimler.Any())
-                {
-                    <div class="col-md-12">
-                        <div class="related-projects">
-                            <div class="related-projects-inner">
-                                <h4 class="title">İlişkili Resimler</h4>
-                                <div class="project-listing">
-                                    <div class="project-portfolio">
-                                        @foreach (var ilgili in Model.IliskiliResimler)
-                                        {
-                                            var ilgiliHref = BuildResimHref(ilgili);
-
-                                            <div class="item">
-                                                <div class="project-item">
-                                                    <div class="item-thumbnail">
-                                                        <a href="@ilgiliHref"><img src="@ilgili.ResimUrl" alt="@ilgili.Baslik" loading="lazy"></a>
-                                                        <div class="thumbnail-hoverlay main-color-1-bg"></div>
-                                                        <div class="thumbnail-hoverlay-icon">
-                                                            <a href="@ilgili.ResimUrl" class="fancybox" data-type="image" title="@ilgili.Baslik"><i class="fa fa-search"></i></a>
-                                                            <a href="@ilgiliHref" title="@ilgili.Baslik"><i class="fa fa-link"></i></a>
-                                                        </div>
-                                                    </div><!-- /item-thumbnail -->
-
-                                                    <div class="project-item-content">
-                                                        <div class="project-item-title">
-                                                            <div class="project-item-title-inner">
-                                                                <h4 class="item-title"><a href="@ilgiliHref">@ilgili.Baslik</a></h4>
-                                                                <div class="project-item-tax small-text">
-                                                                    <a href="@ilgiliHref" class="cat-link">@(string.IsNullOrWhiteSpace(ilgili.Kategori) ? "Genel" : ilgili.Kategori)</a>
-                                                                </div>
-                                                            </div><!-- /project-item-title-inner -->
-                                                        </div><!-- /project-item-title -->
-
-                                                        @if (!string.IsNullOrWhiteSpace(ilgili.KisaAciklama))
-                                                        {
-                                                            <div class="project-item-excerpt">
-                                                                <div class="exerpt-text">@ilgili.KisaAciklama</div>
-                                                            </div><!-- /project-item-excerpt -->
-                                                        }
-                                                    </div><!-- /project-item -->
-                                                </div><!-- /project-item -->
-                                            </div><!-- /item -->
-                                        }
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                    <div class="mt-4">
+                        <a class="btn btn-default" href="@Model.GaleriResimListUrl">
+                            <i class="fa fa-angle-left"></i> TÜM GALERİ RESİMLERİ
+                        </a>
                     </div>
+                </div>
+            </div>
+            <div class="col-lg-3 mt-lg-0 mt-4 pt-3 pt-lg-0">
+                <div class="sidebar">
+                    <div class="widget widget_search">
+                        <form class="search_form" role="search" method="get" action="@Model.GaleriResimListUrl">
+                            <input required="" class="form-control" placeholder="Galeride ara..." name="q" type="text">
+                            <button type="submit" title="Ara" name="submit" value="Submit">
+                                <span class="ti-search"></span>
+                            </button>
+                        </form>
+                    </div>
+
+                    @if (Model.IliskiliResimler.Any())
+                    {
+                        <div class="widget widget_recent_post">
+                            <h5 class="widget_title">İlişkili Resimler</h5>
+                            <ul class="recent_post border_bottom_dash list_none">
+                                @foreach (var ilgili in Model.IliskiliResimler)
+                                {
+                                    <li>
+                                        <div class="post_footer">
+                                            <div class="post_img">
+                                                <a href="@BuildResimHref(ilgili)">
+                                                    @if (!string.IsNullOrWhiteSpace(ilgili.ResimUrl))
+                                                    {
+                                                        <img src="@ilgili.ResimUrl" alt="@ilgili.Baslik" loading="lazy">
+                                                    }
+                                                    else
+                                                    {
+                                                        <img src="/template2/images/letest_post1.jpg" alt="@ilgili.Baslik" loading="lazy">
+                                                    }
+                                                </a>
+                                            </div>
+                                            <div class="post_content">
+                                                <h6><a href="@BuildResimHref(ilgili)">@ilgili.Baslik</a></h6>
+                                                <span class="post_date">@(string.IsNullOrWhiteSpace(ilgili.Kategori) ? "Genel" : ilgili.Kategori)</span>
+                                            </div>
+                                        </div>
+                                    </li>
+                                }
+                            </ul>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- END SECTION NEW DETAIL -->
+
+@section Scripts {
+    <script type="text/javascript">
+        // Baglanti kopyalama butonu
+        (function () {
+            var btn = document.getElementById('copy-link-btn');
+            if (!btn) return;
+
+            btn.addEventListener('click', function () {
+                var url = btn.getAttribute('data-url');
+                var icon = btn.querySelector('i');
+                var originalClass = icon ? icon.className : '';
+
+                function done() {
+                    if (icon) icon.className = 'ion-checkmark-round';
+                    btn.title = 'Kopyalandı!';
+                    setTimeout(function () {
+                        if (icon) icon.className = originalClass;
+                        btn.title = 'Bağlantıyı kopyala';
+                    }, 2000);
                 }
-            </div><!-- /row -->
-        </div><!-- /flat-corporate -->
-    </div><!-- /container -->
-</section><!-- /flat-row -->
+
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    navigator.clipboard.writeText(url).then(done);
+                } else {
+                    // Eski tarayicilar icin fallback
+                    var input = document.createElement('input');
+                    input.value = url;
+                    document.body.appendChild(input);
+                    input.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(input);
+                    done();
+                }
+            });
+        })();
+    </script>
+}

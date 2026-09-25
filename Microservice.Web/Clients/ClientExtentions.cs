@@ -9,7 +9,9 @@ using Microservice.Web.Clients.HaberClients;
 using Microservice.Web.Clients.IcerikClients;
 using Microservice.Web.Clients.IletisimClients;
 using Microservice.Web.Clients.MenuClients;
+using Microservice.Web.Clients.OgrenciClients;
 using Microservice.Web.Clients.PageTypeClients;
+using Microservice.Web.Clients.PopupClients;
 using Microservice.Web.Clients.ShortcutButtonClients;
 using Microservice.Web.Clients.SiteClients;
 using Microservice.Web.Clients.SitePersonelClients;
@@ -122,7 +124,15 @@ namespace Microservice.Web.Clients
                 .ConfigureHttpClient(c => c.BaseAddress = GetSiteBaseAddress(configuration))
                 .AddHttpMessageHandler<ClientAuthenticatedHttpClientHandler>();
 
+            //Popup Clients (Site API)
+            services.AddRefitClient<IPopupClientServices>()
+                .ConfigureHttpClient(c => c.BaseAddress = GetSiteBaseAddress(configuration))
+                .AddHttpMessageHandler<ClientAuthenticatedHttpClientHandler>();
 
+            //Ogrenci Clients (Ogrenci API; sadece sayaclar icin kullanilir)
+            services.AddRefitClient<IOgrenciClientServices>()
+                .ConfigureHttpClient(c => c.BaseAddress = GetOgrenciBaseAddress(configuration))
+                .AddHttpMessageHandler<ClientAuthenticatedHttpClientHandler>();
 
 
 
@@ -135,6 +145,14 @@ namespace Microservice.Web.Clients
                 .Get<MicroservicesSetting>();
 
             return new Uri(options!.Site.BaseUrl);
+        }
+
+        private static Uri GetOgrenciBaseAddress(IConfiguration configuration)
+        {
+            var options = configuration.GetSection(MicroservicesSetting.SectionName)
+                .Get<MicroservicesSetting>();
+
+            return new Uri(options!.Ogrenci.BaseUrl);
         }
 
     }

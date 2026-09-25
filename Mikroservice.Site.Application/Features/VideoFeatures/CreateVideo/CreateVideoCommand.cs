@@ -22,7 +22,7 @@ namespace Mikroservice.Site.Application.Features.VideoFeatures.CreateVideo
         public DateTime? BaslamaTarihi { get; init; }
         public DateTime? BitisTarihi { get; init; }
 
-        public string? SeoUrl { get; init; }
+        public string SeoUrl { get; init; } = default!;
         public string? SeoTitle { get; init; }
         public string? SeoDescription { get; init; }
 

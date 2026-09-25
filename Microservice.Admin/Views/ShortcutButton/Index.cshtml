@@ -105,7 +105,7 @@
                             <tr>
                                 <td>@item.Id</td>
                                 <td class="text-center">
-                                    @if (item.IsIconImage == true && !string.IsNullOrWhiteSpace(item.IconUrl))
+                                    @if (item.IsIconImage == false && !string.IsNullOrWhiteSpace(item.IconUrl))
                                     {
                                         <i class="@item.IconUrl shortcut-preview-icon" title="@item.IconUrl"></i>
                                     }

@@ -1,72 +1,130 @@
-﻿<!-- START FOOTER -->
-@using AnaWebsite.Utility
+﻿@using Microservice.Web.ViewModels.Menu
+@model Microservice.Web.ViewModels.Footer.FooterTemplate1Vm
+@functions {
+    // Link dolu ise dogrudan o link kullanilir.
+    // Link bos ise menu, bagli oldugu sayfa tipine (PageType) yonlendirilir: /{dil}/{slug}[/{seoUrl}]
+    string BuildHref(GetMenuVm menu)
+    {
+        if (!string.IsNullOrWhiteSpace(menu.Link))
+        {
+            var link = menu.Link.Trim();
+
+            return link.StartsWith("http", StringComparison.OrdinalIgnoreCase)
+                ? link
+                : "/" + link.Trim('/');
+        }
+
+        if (menu.PageType is not null && !string.IsNullOrWhiteSpace(menu.PageType.Slug))
+        {
+            return string.IsNullOrWhiteSpace(menu.SeoUrl)
+                ? $"/{Model.LanguageCode}/{menu.PageType.Slug}"
+                : $"/{Model.LanguageCode}/{menu.PageType.Slug}/{menu.SeoUrl.Trim('/')}";
+        }
+
+        return "#";
+    }
+}
+
+@{
+    var ozellikler = Model.Site?.SiteOzellikleri;
+    var isEnglish = string.Equals(Model.LanguageCode, "en", StringComparison.OrdinalIgnoreCase);
+    var footerAddress = isEnglish ? ozellikler?.SiteAdressEng : ozellikler?.SiteAdress;
+    var siteAdi = isEnglish ? Model.Site?.SiteAdiEng : Model.Site?.SiteAdi;
+    var biziTakipBasligi = isEnglish ? "Follow Us" : "Bizi Takip Edin";
+    var footerLogo = !string.IsNullOrWhiteSpace(ozellikler?.SiteFooterLogo)
+        ? ozellikler!.SiteFooterLogo
+        : Url.Content("~/template2/images/footer_logo.png");
+}
+
+<!-- START FOOTER -->
 <footer class="bg_blue_dark footer_dark">
     <div class="top_footer">
         <div class="container">
             <div class="row">
                 <div class="col-lg-3 col-sm-8 mb-4 mb-lg-0">
                     <div class="footer_logo">
-                        <img alt="logo" src=@(ViewBag.dilObj.id == (int)DilTuru.Ingilizce ? "/assets/" + @ViewBag.TemplateName + "/images/tetra_footer_logo_eng.png" : "/assets" + @ViewBag.TemplateName + "/images/tetra_footer.png")>
+                        <img alt="logo" src="@footerLogo">
                     </div>
 
                     <ul class="contact_info contact_info_light list_none">
-                        <li>
-
-                            <i class="fa fa-map-marker-alt "></i>
-                            <address>@(ViewBag.dilObj.id == (int)DilTuru.Ingilizce ? @ViewBag.siteObj.adress_eng : ViewBag.siteObj.adress)</address>
-
-                        
-                        </li>
-                        <li>
-                            <i class="fa fa-envelope"></i>
-                            <a href="mailto:@ViewBag.siteObj.e_posta">@ViewBag.siteObj.e_posta</a>
-                        </li>
-                        <li>
-                            <i class="fa fa-mobile-alt"></i>
-                            <p>@ViewBag.siteObj.tel_no</p>
-                        </li>
-                        <li>
-                            <i class="fa fa-fax"></i>
-                            <p>@ViewBag.siteObj.fax_no</p>
-                        </li>
+                        @if (!string.IsNullOrWhiteSpace(footerAddress))
+                        {
+                            <li>
+                                <i class="fa fa-map-marker-alt "></i>
+                                <address>@footerAddress</address>
+                            </li>
+                        }
+                        @if (!string.IsNullOrWhiteSpace(Model.Site?.SiteEPosta))
+                        {
+                            <li>
+                                <i class="fa fa-envelope"></i>
+                                <a href="mailto:@Model.Site.SiteEPosta">@Model.Site.SiteEPosta</a>
+                            </li>
+                        }
+                        @if (!string.IsNullOrWhiteSpace(ozellikler?.SiteTelNo))
+                        {
+                            <li>
+                                <i class="fa fa-mobile-alt"></i>
+                                <p>@ozellikler.SiteTelNo</p>
+                            </li>
+                        }
+                        @if (!string.IsNullOrWhiteSpace(ozellikler?.SiteFaxNo))
+                        {
+                            <li>
+                                <i class="fa fa-fax"></i>
+                                <p>@ozellikler.SiteFaxNo</p>
+                            </li>
+                        }
                     </ul>
 
-                    <h6 class="widget_title mt-3">Bizi Takip Edin</h6>
+                    <h6 class="widget_title mt-3">@biziTakipBasligi</h6>
                     <ul class="list_none social_icons social_white social_style1">
-                        <li><a href="@ViewBag.siteObj.facebook_adress"><i class="ion-social-facebook"></i></a></li>
-                        <li><a href="@ViewBag.siteObj.twitter_adress"><i class="ion-social-twitter"></i></a></li>
-                        <li><a href="@ViewBag.siteObj.watsapp_adress"><i class="ion-social-whatsapp"></i></a></li>
-                        <li><a href="@ViewBag.siteObj.youtube_adress"><i class="ion-social-youtube-outline"></i></a></li>
-                        <li><a href="@ViewBag.siteObj.instagram_adress"><i class="ion-social-instagram-outline"></i></a></li>
-                        @*<li><a href="@ViewBag.siteObj.linkedin_adress"><i class="ion-social-instagram-outline"></i></a></li>*@
+                        @if (!string.IsNullOrWhiteSpace(ozellikler?.SiteFacebookAdress))
+                        {
+                            <li><a href="@ozellikler.SiteFacebookAdress" target="_blank" rel="noopener"><i class="ion-social-facebook"></i></a></li>
+                        }
+                        @if (!string.IsNullOrWhiteSpace(ozellikler?.SiteTwitterAdress))
+                        {
+                            <li><a href="@ozellikler.SiteTwitterAdress" target="_blank" rel="noopener"><i class="ion-social-twitter"></i></a></li>
+                        }
+                        @if (!string.IsNullOrWhiteSpace(ozellikler?.SiteWatsappAdress))
+                        {
+                            <li><a href="https://api.whatsapp.com/send?phone=@ozellikler.SiteWatsappAdress" target="_blank" rel="noopener"><i class="ion-social-whatsapp"></i></a></li>
+                        }
+                        @if (!string.IsNullOrWhiteSpace(ozellikler?.SiteYoutubeAdress))
+                        {
+                            <li><a href="@ozellikler.SiteYoutubeAdress" target="_blank" rel="noopener"><i class="ion-social-youtube-outline"></i></a></li>
+                        }
+                        @if (!string.IsNullOrWhiteSpace(ozellikler?.SiteInstagramAdress))
+                        {
+                            <li><a href="@ozellikler.SiteInstagramAdress" target="_blank" rel="noopener"><i class="ion-social-instagram-outline"></i></a></li>
+                        }
+                        @if (!string.IsNullOrWhiteSpace(ozellikler?.SiteLinkedinAdress))
+                        {
+                            <li><a href="@ozellikler.SiteLinkedinAdress" target="_blank" rel="noopener"><i class="ion-social-linkedin"></i></a></li>
+                        }
                     </ul>
                 </div>
 
-
-
-                @if (ViewBag.footerColumnListesi != null && ViewBag.siteobj != null)
+                @foreach (var column in Model.FooterColumns)
                 {
-                    foreach (FooterColumn item in ViewBag.footerColumnListesi)
-                    {
-                        <div class="col-lg-3 col-sm-4 mb-4 mb-lg-0">
-                            <h6 class="widget_title">@item.name</h6>
-                            <ul class="list_none widget_links links_style2">
-                                @if (item.FooterLink != null)
-                                {
-                                    foreach (FooterLink linkitem in item.FooterLink.Where(s => s.site_id == ViewBag.siteobj.id))
-                                    {
-                                        <li><a href="@linkitem.link">@linkitem.link_gorunen_yazi</a></li>
-                                    }
-                                }
-                            </ul>
-                        </div>
-                    }
+                    <div class="col-lg-3 col-sm-4 mb-4 mb-lg-0">
+                        <h6 class="widget_title">@column.Baslik</h6>
+                        <ul class="list_none widget_links links_style2">
+                            @foreach (var linkitem in column.Children)
+                            {
+                                <li><a href="@BuildHref(linkitem)">@linkitem.Baslik</a></li>
+                            }
+                        </ul>
+                    </div>
                 }
 
-                <div class="mb-1 col-lg-12 col-md-12 col-12 mt-4">
-                    <iframe src="@ViewBag.siteObj.harita_adress" style="border: 0; width: 100%;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
-                    @*<iframe style="width:100%;" src="https://maps.google.com/maps?q=Sivas%20bilim%20ve%20teknoloji%20%C3%9Cniversitesi&t=&z=13&ie=UTF8&iwloc=&hl=tr&output=embed" allowfullscreen=""></iframe>*@
-                </div>
+                @if (!string.IsNullOrWhiteSpace(ozellikler?.SiteHaritaAdress))
+                {
+                    <div class="mb-1 col-lg-12 col-md-12 col-12 mt-4">
+                        <iframe src="@ozellikler.SiteHaritaAdress" style="border: 0; width: 100%;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                    </div>
+                }
             </div>
         </div>
     </div>
@@ -74,18 +132,10 @@
         <div class="container">
             <div class="row align-items-center">
                 <div class="col-md-6">
-                    <p class="copyright m-md-0 text-center text-md-left">© 2023 Tüm hakları Sivas Bilim ve Teknoloji ünivesitesi tarafından saklıdır.</p>
+                    <p class="copyright m-md-0 text-center text-md-left">© @DateTime.Now.Year @(isEnglish ? "All rights reserved" : "Tüm hakları saklıdır") @(string.IsNullOrWhiteSpace(siteAdi) ? "" : $"- {siteAdi}").</p>
                 </div>
-                @*<div class="col-md-6">
-                        <ul class="list_none footer_link text-center text-md-right">
-                            <li><a href="#">Privacy Policy</a></li>
-                            <li><a href="#">Terms &amp; Conditions</a></li>
-                        </ul>
-                    </div>*@
             </div>
         </div>
     </div>
 </footer>
 <!-- END FOOTER -->
-
-<a href="#" class="scrollup" style="display: none;"><i class="ion-ios-arrow-up"></i></a> 

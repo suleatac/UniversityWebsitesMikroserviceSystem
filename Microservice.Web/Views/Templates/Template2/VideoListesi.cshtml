@@ -1,12 +1,12 @@
-﻿@model Microservice.Web.ViewModels.Template.ContentListPageViewModel<Microservice.Web.ViewModels.Haber.GetHaberVm>
+@model Microservice.Web.ViewModels.Template.ContentListPageViewModel<Microservice.Web.ViewModels.Video.GetVideoVm>
 @{
-    ViewData["Title"] = "Haberler";
+    ViewData["Title"] = "Videolar";
 
-    // Sayfanin kendi adresi: /{dil}/{haberler-slug}
+    // Sayfanin kendi adresi: /{dil}/{videolar-slug}
     var listPath = Context.Request.Path.ToString().TrimEnd('/');
     if (string.IsNullOrWhiteSpace(listPath))
     {
-        listPath = $"/{Model.LanguageCode}/haberler";
+        listPath = $"/{Model.LanguageCode}/videolar";
     }
 
     // Sayfalama/arama icin query uretir.
@@ -27,27 +27,27 @@
         return parts.Count == 0 ? "" : "?" + string.Join("&", parts);
     }
 
-    // Detay linki: Link dolu ise dogrudan, bos ise /{dil}/{pageTypeSlug}/{seoUrl}
-    string BuildContentHref(Microservice.Web.ViewModels.Haber.GetHaberVm haber)
+    // Detay linki: Link dolu ise dogrudan, bos ise /{dil}/{video-detay-slug}/{seoUrl}
+    string BuildContentHref(Microservice.Web.ViewModels.Video.GetVideoVm video)
     {
-        if (!string.IsNullOrWhiteSpace(haber.Link))
+        if (!string.IsNullOrWhiteSpace(video.Link))
         {
-            var link = haber.Link.Trim();
+            var link = video.Link.Trim();
 
             return link.StartsWith("http", StringComparison.OrdinalIgnoreCase)
                 ? link
                 : "/" + link.Trim('/');
         }
 
-        if (!string.IsNullOrWhiteSpace(haber.SeoUrl) && haber.PageType is not null)
+        if (!string.IsNullOrWhiteSpace(video.SeoUrl) && video.PageType is not null)
         {
-            return $"/{Model.LanguageCode}/{haber.PageType.Slug}/{haber.SeoUrl.Trim('/')}";
+            return $"/{Model.LanguageCode}/{video.PageType.Slug}/{video.SeoUrl.Trim('/')}";
         }
 
         return "#";
     }
 
-    var latestPosts = Model.Results.Data.Take(3).ToList();
+    var latestVideos = Model.Results.Data.Take(3).ToList();
     var trCulture = new System.Globalization.CultureInfo("tr-TR");
 }
 
@@ -57,14 +57,14 @@
         <div class="row align-items-center">
             <div class="col-sm-6">
                 <div class="page-title">
-                    <h1>Haberler</h1>
+                    <h1>Videolar</h1>
                 </div>
             </div>
             <div class="col-sm-6">
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb justify-content-sm-end">
                         <li class="breadcrumb-item"><a href="/">Ana Sayfa</a></li>
-                        <li class="breadcrumb-item active" aria-current="page">Haberler</li>
+                        <li class="breadcrumb-item active" aria-current="page">Videolar</li>
                     </ol>
                 </nav>
             </div>
@@ -73,7 +73,7 @@
 </section>
 <!-- END SECTION BREADCRUMB -->
 
-<!-- START SECTION EVENT -->
+<!-- START SECTION VIDEO LIST -->
 <section class="small_pt">
     <div class="container">
         <div class="row">
@@ -84,7 +84,7 @@
                 {
                     <div class="mb-4">
                         <p class="text-default mb-0">
-                            <strong>"@Model.Query"</strong> için @Model.Results.TotalCount haber bulundu.
+                            <strong>"@Model.Query"</strong> için @Model.Results.TotalCount video bulundu.
                             <a href="@listPath" class="text_default" style="margin-left:10px;text-decoration:underline;">Tümünü göster</a>
                         </p>
                     </div>
@@ -93,41 +93,47 @@
                 @if (Model.Results.Data.Any())
                 {
                     <div class="row justify-content-center">
-                        @foreach (var haber in Model.Results.Data)
+                        @foreach (var video in Model.Results.Data)
                         {
                             <div class="col-lg-6 col-sm-6 mb-4">
                                 <div class="content_box event_box radius_all_10 box_shadow1">
                                     <div class="content_img radius_ltrt_10">
-                                        <a href="@BuildContentHref(haber)">
-                                            @if (!string.IsNullOrWhiteSpace(haber.ResimUrl))
+                                        <a href="@BuildContentHref(video)">
+                                            @if (!string.IsNullOrWhiteSpace(video.ResimUrl))
                                             {
-                                                <img src="@haber.ResimUrl" alt="@haber.Baslik" loading="lazy" />
+                                                <img src="@video.ResimUrl" alt="@video.Baslik" loading="lazy" />
                                             }
                                             else
                                             {
-                                                <img src="/template2/images/event_img1.jpg" alt="@haber.Baslik" loading="lazy" />
+                                                <img src="/template2/images/video_bg.jpg" alt="@video.Baslik" loading="lazy" />
                                             }
                                         </a>
+                                        @if (!string.IsNullOrWhiteSpace(video.VideoUrl))
+                                        {
+                                            <a href="@BuildContentHref(video)" class="video_play" title="Videoyu izle">
+                                                <span class="ripple"><i class="ion-play"></i></span>
+                                            </a>
+                                        }
                                         <div class="event_date radius_all_5">
-                                            <h5><span>@haber.YayimTarihi.Day</span> @haber.YayimTarihi.ToString("MMM", trCulture)</h5>
-                                            <span class="event_time radius_lbrb_5 bg_default">@haber.YayimTarihi.Year</span>
+                                            <h5><span>@video.YayimTarihi.Day</span> @video.YayimTarihi.ToString("MMM", trCulture)</h5>
+                                            <span class="event_time radius_lbrb_5 bg_default">@video.YayimTarihi.Year</span>
                                         </div>
                                     </div>
                                     <div class="content_desc">
-                                        <h4 class="content_title"><a href="@BuildContentHref(haber)">@haber.Baslik</a></h4>
+                                        <h4 class="content_title"><a href="@BuildContentHref(video)">@video.Baslik</a></h4>
                                         <ul class="list_none content_meta">
-                                            <li><i class="ti-calendar"></i> <span class="text_default">@haber.YayimTarihi.ToString("dd.MM.yyyy", trCulture)</span></li>
-                                            @if (haber.PageType is not null)
+                                            <li><i class="ti-calendar"></i> <span class="text_default">@video.YayimTarihi.ToString("dd.MM.yyyy", trCulture)</span></li>
+                                            @if (video.PageType is not null)
                                             {
-                                                <li><i class="ti-tag"></i><span class="text_default">@haber.PageType.PageTypeKind</span></li>
+                                                <li><i class="ti-tag"></i><span class="text_default">@video.PageType.PageTypeKind</span></li>
                                             }
                                         </ul>
-                                        @if (!string.IsNullOrWhiteSpace(haber.KisaAciklama))
+                                        @if (!string.IsNullOrWhiteSpace(video.KisaAciklama))
                                         {
-                                            <p>@haber.KisaAciklama</p>
+                                            <p>@video.KisaAciklama</p>
                                         }
-                                        <a href="@BuildContentHref(haber)" class="btn btn-default mt-2">
-                                            DETAYLAR <i class="fa fa-angle-right"></i>
+                                        <a href="@BuildContentHref(video)" class="btn btn-default mt-2">
+                                            İZLE <i class="fa fa-angle-right"></i>
                                         </a>
                                     </div>
                                 </div>
@@ -218,11 +224,11 @@
                         <p class="mb-0">
                             @if (Model.HasQuery)
                             {
-                                <text>Aramanızla eşleşen haber bulunamadı.</text>
+                                <text>Aramanızla eşleşen video bulunamadı.</text>
                             }
                             else
                             {
-                                <text>Henüz haber bulunmamaktadır.</text>
+                                <text>Henüz video bulunmamaktadır.</text>
                             }
                         </p>
                     </div>
@@ -233,37 +239,37 @@
                 <div class="sidebar">
                     <div class="widget widget_search">
                         <form class="search_form" role="search" method="get" action="@listPath">
-                            <input class="form-control" placeholder="Haberlerde ara..." name="q" value="@Model.Query" type="text">
+                            <input class="form-control" placeholder="Videolarda ara..." name="q" value="@Model.Query" type="text">
                             <button type="submit" title="Ara" name="submit" value="Submit">
                                 <span class="ti-search"></span>
                             </button>
                         </form>
                     </div>
 
-                    @if (latestPosts.Any())
+                    @if (latestVideos.Any())
                     {
                         <div class="widget widget_recent_post">
-                            <h5 class="widget_title">En Son Haberler</h5>
+                            <h5 class="widget_title">En Son Videolar</h5>
                             <ul class="recent_post border_bottom_dash list_none">
-                                @foreach (var haber in latestPosts)
+                                @foreach (var video in latestVideos)
                                 {
                                     <li>
                                         <div class="post_footer">
                                             <div class="post_img">
-                                                <a href="@BuildContentHref(haber)">
-                                                    @if (!string.IsNullOrWhiteSpace(haber.ResimUrl))
+                                                <a href="@BuildContentHref(video)">
+                                                    @if (!string.IsNullOrWhiteSpace(video.ResimUrl))
                                                     {
-                                                        <img src="@haber.ResimUrl" alt="@haber.Baslik" loading="lazy">
+                                                        <img src="@video.ResimUrl" alt="@video.Baslik" loading="lazy">
                                                     }
                                                     else
                                                     {
-                                                        <img src="/template2/images/letest_post1.jpg" alt="@haber.Baslik" loading="lazy">
+                                                        <img src="/template2/images/letest_post1.jpg" alt="@video.Baslik" loading="lazy">
                                                     }
                                                 </a>
                                             </div>
                                             <div class="post_content">
-                                                <h6><a href="@BuildContentHref(haber)">@haber.Baslik</a></h6>
-                                                <span class="post_date">@haber.YayimTarihi.ToString("dd MMMM yyyy", trCulture)</span>
+                                                <h6><a href="@BuildContentHref(video)">@video.Baslik</a></h6>
+                                                <span class="post_date">@video.YayimTarihi.ToString("dd MMMM yyyy", trCulture)</span>
                                             </div>
                                         </div>
                                     </li>
@@ -276,4 +282,4 @@
         </div>
     </div>
 </section>
-<!-- END SECTION EVENT -->
+<!-- END SECTION VIDEO LIST -->

@@ -7,8 +7,6 @@
     // Duyuru / Haber / Etkinlik icerikleri icin href uretimi:
     // - Link dolu ise dogrudan o link kullanilir.
     // - Link bos ise bagli oldugu sayfa tipine (PageType) yonlendirilir: /{dil}/{slug}/{seoUrl}
-
-
     string BuildContentHref(string? link, string? seoUrl, string? pageTypeSlug)
     {
         if (!string.IsNullOrWhiteSpace(link))
@@ -27,10 +25,6 @@
 
         return "#";
     }
-
-
-
-
 }
 
 
@@ -221,8 +215,8 @@
     </div>
     <!-- END DUYURULAR -->
 </section>
-
 <!-- END SECTION BANNER AND DUYURULAR -->
+
 @if (Model.ShortcutButtons != null && Model.ShortcutButtons.Any())
 {
     <!-- START SECTION SHORTCUT BUTTONS -->

@@ -23,6 +23,15 @@ namespace Mikroservice.Site.Application.Features.VideoFeatures.UpdateVideo
                 .NotEmpty()
                 .Must(x => string.IsNullOrEmpty(x) || Uri.IsWellFormedUriString(x, UriKind.Absolute))
                 .WithMessage("Geçerli video URL giriniz.");
+
+            RuleFor(x => x.SeoUrl).NotEmpty()
+                .MaximumLength(200);
+
+            RuleFor(x => x.SeoTitle)
+                .MaximumLength(200);
+
+            RuleFor(x => x.SeoDescription)
+                .MaximumLength(500);
         }
     }
 }

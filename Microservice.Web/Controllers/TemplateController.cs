@@ -1,4 +1,6 @@
 using Microservice.Web.Models;
+using Microservice.Web.ViewModels.Banner;
+using Microservice.Web.ViewModels.Video;
 using Microservice.Web.Services.Interfaces;
 using Microservice.Web.Services.ServiceResults;
 using Microservice.Web.Settings;
@@ -37,7 +39,12 @@ namespace Microservice.Web.Controllers
         private readonly IPageTypeService _pageTypeService;
         private readonly ISitePersonelService _sitePersonelService;
         private readonly IGaleriResimService _galeriResimService;
+        private readonly IVideoService _videoService;
+        private readonly IBandLogoService _bandLogoService;
+        private readonly IPopupService _popupService;
+        private readonly IOgrenciService _ogrenciService;
         private readonly ILogger<TemplateController> _logger;
+        private readonly IWebHostEnvironment _env;
 
         public TemplateController(
             IRouteService routeService,
@@ -53,8 +60,14 @@ namespace Microservice.Web.Controllers
             IPageTypeService pageTypeService,
             ISitePersonelService sitePersonelService,
             IGaleriResimService galeriResimService,
-            ILogger<TemplateController> logger)
+            IVideoService videoService,
+            IBandLogoService bandLogoService,
+            IPopupService popupService,
+            IOgrenciService ogrenciService,
+            ILogger<TemplateController> logger,
+            IWebHostEnvironment env)
         {
+            _env = env;
             _etkinlikService = etkinlikService;
             _routeService = routeService;
             _bilgiService = bilgiService;
@@ -68,6 +81,10 @@ namespace Microservice.Web.Controllers
             _pageTypeService = pageTypeService;
             _sitePersonelService = sitePersonelService;
             _galeriResimService = galeriResimService;
+            _videoService = videoService;
+            _bandLogoService = bandLogoService;
+            _popupService = popupService;
+            _ogrenciService = ogrenciService;
             _logger = logger;
         }
 
@@ -185,6 +202,8 @@ namespace Microservice.Web.Controllers
                 PageTypeKindEnum.VideoDetay when route.VideoDetay is not null =>
                      await RenderVideoDetayAsync(route),
 
+                PageTypeKindEnum.Banner when route.BannerDetay is not null =>
+                     await RenderBannerDetayAsync(route),
 
                 PageTypeKindEnum.PersonelListesi when route.DetailSlug is null =>
                      await RenderPersonelListesiAsync(route),
@@ -224,7 +243,14 @@ namespace Microservice.Web.Controllers
             var shortcutButtonsTask = _shortcutButtonService.GetShortcutButtonsAsync(siteId, languageId);
             var bilgiTask = _bilgiService.GetBilgisAsync(siteId, languageId);
             var etkinliklerTask = _etkinlikService.GetEtkinliklerAsync(siteId, languageId);
-            // Sidebar arama widget'i genel arama sayfasina yonlendirir.
+            // Template2 ana sayfasi ek icerikleri
+            var popupTask = _popupService.GetPopupAsync(siteId);
+            var videolarTask = _videoService.GetVideolarAsync(siteId, languageId);
+            var galeriTask = _galeriResimService.GetGaleriResimlerAsync(siteId, languageId);
+            var bandLogolarTask = _bandLogoService.GetBandLogosAsync(siteId, languageId);
+            var personelTask = _sitePersonelService.GetPersonelListAsync(siteId);
+            var ogrenciSayilariTask = _ogrenciService.GetOgrenciSayilariAsync();
+            // Liste sayfa adresleri (Tümünü Gör linkleri).
             var duyurularPageTypeTask = _pageTypeService.GetPageTypeByKindAsync(
                 route.Site.TemplateId,
                 route.LanguageId,
@@ -233,17 +259,33 @@ namespace Microservice.Web.Controllers
                 route.Site.TemplateId,
                 route.LanguageId,
                 (int)PageTypeKindEnum.HaberListesi);
+            var videolarPageTypeTask = _pageTypeService.GetPageTypeByKindAsync(
+                route.Site.TemplateId,
+                route.LanguageId,
+                (int)PageTypeKindEnum.VideoListesi);
+            var galeriPageTypeTask = _pageTypeService.GetPageTypeByKindAsync(
+                route.Site.TemplateId,
+                route.LanguageId,
+                (int)PageTypeKindEnum.GaleriResimListesi);
             await Task.WhenAll(
-                siteTask, 
-                menusTask, 
-                bannersTask, 
-                haberlerTask, 
-                duyurularTask, 
-                shortcutButtonsTask, 
-                bilgiTask, 
+                siteTask,
+                menusTask,
+                bannersTask,
+                haberlerTask,
+                duyurularTask,
+                shortcutButtonsTask,
+                bilgiTask,
                 etkinliklerTask,
+                popupTask,
+                videolarTask,
+                galeriTask,
+                bandLogolarTask,
+                personelTask,
+                ogrenciSayilariTask,
                 duyurularPageTypeTask,
-                haberlerPageTypeTask
+                haberlerPageTypeTask,
+                videolarPageTypeTask,
+                galeriPageTypeTask
                 );
 
             var siteResult = await siteTask;
@@ -261,26 +303,46 @@ namespace Microservice.Web.Controllers
             var duyurularResult = await duyurularTask;
             var shortcutButtonsResult = await shortcutButtonsTask;
             var etkinliklerResult = await etkinliklerTask;
+            var popupResult = await popupTask;
+            var videolarResult = await videolarTask;
+            var galeriResult = await galeriTask;
+            var bandLogolarResult = await bandLogolarTask;
+            var personelResult = await personelTask;
+            var (aktifOgrenci, mezunOgrenci) = await ogrenciSayilariTask;
             var duyurularPageTypeResult = await duyurularPageTypeTask;
             var haberlerPageTypeResult = await haberlerPageTypeTask;
+            var videolarPageTypeResult = await videolarPageTypeTask;
+            var galeriPageTypeResult = await galeriPageTypeTask;
+
+            // Ana sayfa sayaclari: PersonelTipAd degerine gore idari/akademik ayrimi.
+            // Seed degeri "İdari" (U+0130) iceriyor; OrdinalIgnoreCase bunu kucuk "i" ile eslestirmez,
+            // bu yuzden nokta/unceli Turkce harfler normalize edilerek karsilastirilir.
+            var personeller = personelResult.Data ?? [];
+            var idariPersonelSayisi = personeller.Count(p =>
+                NormalizeTip(p.PersonelTipAd) == "idari");
+            var akademikPersonelSayisi = personeller.Count(p =>
+                NormalizeTip(p.PersonelTipAd) == "akademik");
 
             var model = new TemplatePageViewModel {
                 Site = siteResult.Data,
                 HaberListUrl= $"/{route.LanguageCode}/{haberlerPageTypeResult.Data.Slug}",
                 DuyuruListUrl= $"/{route.LanguageCode}/{duyurularPageTypeResult.Data.Slug}",
+                VideoListUrl = videolarPageTypeResult.Data is null
+                    ? "/"
+                    : $"/{route.LanguageCode}/{videolarPageTypeResult.Data.Slug}",
+                GaleriListUrl = galeriPageTypeResult.Data is null
+                    ? "/"
+                    : $"/{route.LanguageCode}/{galeriPageTypeResult.Data.Slug}",
                 // Link'i bos olan icerikler /{LanguageCode}/{PageTypeSlug}/{SeoUrl} adresine yonlendirilir.
                 LanguageCode = route.LanguageCode,
                 Menus = menusResult.Data ?? [],
                 Banners = (bannersResult.Data ?? [])
-                    .OrderByDescending(b => b.YayimTarihi)
                     .Take(HomeLatestContentCount)
                     .ToList(),
                 Haberler = (haberlerResult.Data ?? [])
-                    .OrderByDescending(h => h.YayimTarihi)
                     .Take(HomeLatestContentCount)
                     .ToList(),
                 Bilgiler = (bilgiResult.Data ?? [])
-                    .OrderByDescending(b => b.YayimTarihi)
                     .Take(HomeLatestContentCount)
                     .ToList(),
                 ShortcutButtons= (shortcutButtonsResult.Data ?? [])
@@ -288,13 +350,23 @@ namespace Microservice.Web.Controllers
                     .Take(HomeLatestContentCount)
                     .ToList(),
                 Duyurular = (duyurularResult.Data ?? [])
-                    .OrderByDescending(d => d.YayimTarihi)
                     .Take(HomeLatestContentCount)
                     .ToList(),
                 Etkinlikler = (etkinliklerResult.Data ?? [])
-                    .OrderByDescending(e => e.YayimTarihi)
                     .Take(HomeLatestContentCount)
-                    .ToList()
+                    .ToList(),
+                Popup = popupResult.Data,
+                Videolar = (videolarResult.Data ?? [])
+                    .Take(HomeLatestContentCount)
+                    .ToList(),
+                GaleriResimler = (galeriResult.Data ?? [])
+                    .Take(HomeLatestContentCount)
+                    .ToList(),
+                BandLogolar = bandLogolarResult.Data ?? [],
+                OgrenciSayisi = aktifOgrenci,
+                MezunOgrenciSayisi = mezunOgrenci,
+                IdariPersonelSayisi = idariPersonelSayisi,
+                AkademikPersonelSayisi = akademikPersonelSayisi
             };
 
             // Navbar component'inin menüleri tekrar servisten çekmesini önlemek için burada paylaşılıyor.
@@ -604,18 +676,66 @@ namespace Microservice.Web.Controllers
         // ============================================================
 
         /// <summary>
-        /// /videolar
+        /// /videolar?q=kelime&page=1
+        /// Site API'de videolar icin sunucu tarafi sayfalama ucu olmadigindan
+        /// tum liste cekilir; arama/sayfalama burada uygulanir.
         /// </summary>
         private async Task<IActionResult> RenderVideoListesiAsync(RouteResolveResult route)
         {
-            if (route.DuyuruListesi is null)
+            var query = Request.Query["q"].ToString();
+
+            int.TryParse(Request.Query["page"], out var pageParam);
+
+            var page = pageParam < 1 ? 1 : pageParam;
+
+            const int pageSize = 12;
+
+            var listResult = await _videoService.GetVideolarAsync(route.Site.Id, route.LanguageId);
+
+            var all = (listResult.Data ?? [])
+                .OrderByDescending(v => v.YayimTarihi)
+                .ToList();
+
+            if (!string.IsNullOrWhiteSpace(query))
             {
-                return RenderNotFound("Duyurular bulunamadı.");
+                all = all
+                    .Where(v => (v.Baslik ?? string.Empty).Contains(query, StringComparison.OrdinalIgnoreCase)
+                             || (v.KisaAciklama ?? string.Empty).Contains(query, StringComparison.OrdinalIgnoreCase))
+                    .ToList();
             }
 
-            var viewPath = GetTemplateViewPath(route.Page.TemplateId, "DuyuruListesi");
+            var totalCount = all.Count;
+            var totalPages = (int)Math.Ceiling(totalCount / (double)pageSize);
 
-            return View(viewPath, route.DuyuruListesi);
+            var paged = new PagedResultVm<GetVideoVm> {
+                Data = all.Skip((page - 1) * pageSize).Take(pageSize).ToList(),
+                TotalCount = totalCount,
+                Page = page,
+                PageSize = pageSize,
+                TotalPages = totalPages,
+                HasPrevious = page > 1,
+                HasNext = page < totalPages
+            };
+
+            // Navbar component'inin site bilgisini tekrar cekmesini engellemek icin paylasilir.
+            ViewData["Site"] = route.Site;
+
+            var model = new ContentListPageViewModel<GetVideoVm> {
+                Site = route.Site,
+                LanguageCode = route.LanguageCode,
+                Query = query,
+                Page = page,
+                Results = paged
+            };
+
+            var viewPath = GetExistingTemplateViewPath(route.Page.TemplateId, "VideoListesi");
+
+            if (viewPath is null)
+            {
+                return RenderNotFound("Bu template için video listesi görünümü tanımlı değil.");
+            }
+
+            return View(viewPath, model);
         }
 
         /// <summary>
@@ -628,11 +748,89 @@ namespace Microservice.Web.Controllers
                 return RenderNotFound("Video bulunamadı.");
             }
 
-            var model = route.VideoDetay;
+            var video = route.VideoDetay;
 
+            // Sidebar "Son Eklenenler" widget'i icin en yeni videolar (mevcut video haric).
+            var videolarResult = await _videoService.GetVideolarAsync(route.Site.Id, route.LanguageId);
 
+            // Liste sayfasi adresi: route.Page VideoDetay sayfa tipidir; liste icin VideoListesi cozulmeli.
+            var videoListePageType = await _pageTypeService.GetPageTypeByKindAsync(
+                route.Site.TemplateId,
+                route.LanguageId,
+                (int)PageTypeKindEnum.VideoListesi);
 
-            var viewPath = GetTemplateViewPath(route.Page.TemplateId, model.PageType.ViewName);
+            var latestVideolar = (videolarResult.Data ?? [])
+                .Where(v => v.Id != video.Id)
+                .OrderByDescending(v => v.YayimTarihi)
+                .Take(3)
+                .ToList();
+
+            var model = new VideoDetayPageViewModel {
+                Video = video,
+                Site = route.Site,
+                LanguageCode = route.LanguageCode,
+                VideoListUrl = videoListePageType.Data is null
+                    ? "/"
+                    : $"/{route.LanguageCode}/{videoListePageType.Data.Slug}",
+                SearchUrl = ViewData["SearchPageSlug"] is string searchSlug && !string.IsNullOrWhiteSpace(searchSlug)
+                    ? $"/{route.LanguageCode}/{searchSlug}"
+                    : "/",
+                LatestVideolar = latestVideolar
+            };
+
+            // Navbar component'inin site bilgisini tekrar cekmesini engellemek icin paylasilir.
+            ViewData["Site"] = route.Site;
+
+            var viewPath = GetExistingTemplateViewPath(route.Page.TemplateId, "Video");
+
+            if (viewPath is null)
+            {
+                return RenderNotFound("Bu template için video görünümü tanımlı değil.");
+            }
+
+            return View(viewPath, model);
+        }
+
+        /// <summary>
+        /// /banner/banner-slug
+        /// </summary>
+        private async Task<IActionResult> RenderBannerDetayAsync(RouteResolveResult route)
+        {
+            if (route.BannerDetay is null)
+            {
+                return RenderNotFound("Banner bulunamadı.");
+            }
+
+            var banner = route.BannerDetay;
+
+            // Sidebar "Diger Bannerlar" widget'i icin site+dyil banner listesi (mevcut banner haric).
+            var bannersResult = await _bannerService.GetBannersAsync(route.Site.Id, route.LanguageId);
+
+            var otherBanners = (bannersResult.Data ?? [])
+                .Where(b => b.Id != banner.Id)
+                .OrderBy(b => b.Sira)
+                .Take(5)
+                .ToList();
+
+            var model = new BannerDetayPageViewModel {
+                Banner = banner,
+                Site = route.Site,
+                LanguageCode = route.LanguageCode,
+                SearchUrl = ViewData["SearchPageSlug"] is string searchSlug && !string.IsNullOrWhiteSpace(searchSlug)
+                    ? $"/{route.LanguageCode}/{searchSlug}"
+                    : "/",
+                OtherBanners = otherBanners
+            };
+
+            // Navbar component'inin site bilgisini tekrar cekmesini engellemek icin paylasilir.
+            ViewData["Site"] = route.Site;
+
+            var viewPath = GetExistingTemplateViewPath(route.Page.TemplateId, "Banner");
+
+            if (viewPath is null)
+            {
+                return RenderNotFound("Bu template için banner görünümü tanımlı değil.");
+            }
 
             return View(viewPath, model);
         }
@@ -1002,6 +1200,21 @@ namespace Microservice.Web.Controllers
         // TEMPLATE VIEW PATH
         // ============================================================
 
+        // "İ" -> "i", "ı" -> "i" gibi varyasyonlari tek duz ASCII formuine indirger.
+        private static string NormalizeTip(string? tip)
+        {
+            if (string.IsNullOrWhiteSpace(tip))
+            {
+                return "";
+            }
+
+            return tip.Trim()
+                .Replace("İ", "i", StringComparison.Ordinal)
+                .Replace("I", "i", StringComparison.Ordinal)
+                .Replace("ı", "i", StringComparison.Ordinal)
+                .ToLowerInvariant();
+        }
+
         private static string GetTemplateViewPath(int templateId, string viewName)
         {
             if (templateId <= 0)
@@ -1010,6 +1223,36 @@ namespace Microservice.Web.Controllers
             }
 
             return $"~/Views/Templates/Template{templateId}/{viewName}.cshtml";
+        }
+
+        /// <summary>
+        /// Template'e ait gorunum dosyasi gercekten varsa yolunu dondurur; yoksa null.
+        /// Ornek: Video / Banner view'lari simdilik yalnizca Template2'de tanimli.
+        /// Dusen yonlendirme icin templateId 2'e gore de kontrol eder.
+        /// </summary>
+        private string? GetExistingTemplateViewPath(int templateId, string viewName)
+        {
+            if (templateId <= 0)
+            {
+                templateId = 1;
+            }
+
+            var candidateIds = templateId == 2
+                ? new[] { 2 }
+                : new[] { templateId, 2 };
+
+            foreach (var id in candidateIds)
+            {
+                var relative = Path.Combine("Views", "Templates", $"Template{id}", $"{viewName}.cshtml");
+                var full = Path.Combine(_env.ContentRootPath, relative);
+
+                if (System.IO.File.Exists(full))
+                {
+                    return $"~/{relative.Replace('\\', '/')}";
+                }
+            }
+
+            return null;
         }
     }
 }

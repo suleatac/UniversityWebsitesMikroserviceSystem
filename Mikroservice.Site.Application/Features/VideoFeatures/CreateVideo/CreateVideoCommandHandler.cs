@@ -49,7 +49,7 @@ namespace Mikroservice.Site.Application.Features.VideoFeatures.CreateVideo
 
    
 
-            var key = $"videos:list:{request.SiteId}:*";
+            var key = $"video:list:{request.SiteId}:*";
             await redisCache.RemoveByPatternAsync(key, cancellationToken);
 
             var response = new CreateVideoResponse(entity.Id);
