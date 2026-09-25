@@ -13,6 +13,7 @@ using Microservice.Web.Clients.OgrenciClients;
 using Microservice.Web.Clients.PageTypeClients;
 using Microservice.Web.Clients.PopupClients;
 using Microservice.Web.Clients.ShortcutButtonClients;
+using Microservice.Web.Clients.SikcaSorulanSoruClients;
 using Microservice.Web.Clients.SiteClients;
 using Microservice.Web.Clients.SitePersonelClients;
 using Microservice.Web.Clients.VideoClients;
@@ -132,6 +133,11 @@ namespace Microservice.Web.Clients
             //Ogrenci Clients (Ogrenci API; sadece sayaclar icin kullanilir)
             services.AddRefitClient<IOgrenciClientServices>()
                 .ConfigureHttpClient(c => c.BaseAddress = GetOgrenciBaseAddress(configuration))
+                .AddHttpMessageHandler<ClientAuthenticatedHttpClientHandler>();
+
+            //SikcaSorulanSoru Clients (Site API; SSS sayfasi icin)
+            services.AddRefitClient<ISikcaSorulanSoruClientServices>()
+                .ConfigureHttpClient(c => c.BaseAddress = GetSiteBaseAddress(configuration))
                 .AddHttpMessageHandler<ClientAuthenticatedHttpClientHandler>();
 
 

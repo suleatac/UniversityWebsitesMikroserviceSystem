@@ -26,11 +26,10 @@
     <PackageReference Include="Serilog.Sinks.Elasticsearch" Version="10.0.0" />
     <PackageReference Include="StackExchange.Redis" Version="3.1.31" />
   </ItemGroup>
+<ItemGroup>
+  <!-- SSS sayfasi bu cozume tasinildi ve dinamik hale getirildi;
+       eski AnaWebsite bagimliliklari kaldirildigi icin artik derlemeye dahildir. -->
+</ItemGroup>
 
-  <ItemGroup>
-    <!-- Eski AnaWebsite projesinden kalma, baska tiplere (AnaWebsite.Utility vb.) bagimli
-         ve henuz bu cozume tasinmamiss gorunum; derlemeyi kirmamasi icin haric tutuldu. -->
-    <Content Remove="Views\Templates\Template2\SSS.cshtml" />
-  </ItemGroup>
 
 </Project>
