@@ -40,6 +40,8 @@ namespace Mikroservice.Site.Domain.SeedDatas
             new() { Kind = PageTypeKind.Banner,             ViewName = "Banner",             SlugTR = "banner",      SlugEN = "banner" },
             new() { Kind = PageTypeKind.VideoListesi,       ViewName = "VideoListesi",       SlugTR = "videolar",    SlugEN = "videos" },
             new() { Kind = PageTypeKind.VideoDetay,         ViewName = "Video",              SlugTR = "video",       SlugEN = "video" },
+            new() { Kind = PageTypeKind.SSS,                ViewName = "SSS",                SlugTR = "sss",         SlugEN = "faq" },
+            new() { Kind = PageTypeKind.EtkinlikListesi,    ViewName = "EtkinlikListesi",    SlugTR = "etkinlikler", SlugEN = "events" },
         };
 
         public static List<PageTypeSeedDefinition> GetPageTypeSeedDefinitions()

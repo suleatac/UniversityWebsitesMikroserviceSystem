@@ -1,0 +1,143 @@
+@model Microservice.Admin.ViewModels.PageBuilder.GetPageSectionVm
+
+@{
+    ViewBag.pTitle = "Sayfa Bölüm Yönetimi";
+    var bolum = Model;
+    ViewData["SectionId"] = bolum.Id;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section styles {
+    <style>
+        .page-header-card {
+            background: linear-gradient(135deg, #6f42c1 0%, #9b7de0 100%);
+            border-radius: 12px; padding: 1.5rem; color: white; margin-bottom: 1.5rem;
+        }
+        .block-card {
+            border: 1px solid #eef0f4; border-radius: 10px; padding: 0.75rem 1rem;
+            margin-bottom: 0.6rem; background: #fff;
+            display: flex; justify-content: space-between; align-items: center; gap: 1rem;
+        }
+        .block-card:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .block-tree-children { margin-left: 1.75rem; border-left: 2px dashed #dee2e6; padding-left: 1rem; }
+        .content-type-badge { min-width: 76px; text-align: center; }
+        .block-thumb { width: 46px; height: 46px; object-fit: cover; border-radius: 6px; background: #f1f1f1; }
+    </style>
+}
+
+<div class="page-header-card">
+    <div class="d-flex justify-content-between align-items-center">
+        <div>
+            <h4 class="mb-1"><i class="mdi mdi-cursor-default-click-outline me-2"></i>@bolum.Baslik — Container Yönetimi</h4>
+            <p class="mb-0 opacity-75">
+                Bu bölümün ana sayfadaki satır ve kolonlarını (container) yönetin.
+                Bir container'ın altına "Alt Satır" ekleyerek iç içe satırlar oluşturabilirsiniz.
+            </p>
+        </div>
+        <div class="d-flex gap-2">
+            <a asp-action="CreateBlock" asp-route-sectionId="@bolum.Id" class="btn btn-light">
+                <i class="mdi mdi-plus me-1"></i> Yeni Container
+            </a>
+            <a asp-action="Edit" asp-route-id="@bolum.Id" class="btn btn-outline-light">
+                <i class="mdi mdi-cog me-1"></i> Bölüm Ayarları
+            </a>
+            <a asp-action="Index" class="btn btn-outline-light">
+                <i class="mdi mdi-arrow-left"></i>
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-white">
+                <h6 class="mb-0"><i class="mdi mdi-file-tree me-2"></i>Container Ağacı</h6>
+            </div>
+            <div class="card-body">
+                @if (bolum.Blocks.Count == 0)
+                {
+                    <div class="text-center py-4 text-muted">
+                        <i class="mdi mdi-shape-plus display-4"></i>
+                        <p class="mt-2">Bu bölümde henüz container yok.</p>
+                        <a asp-action="CreateBlock" asp-route-sectionId="@bolum.Id" class="btn btn-primary btn-sm">
+                            <i class="mdi mdi-plus me-1"></i> İlk Container'ı Ekle
+                        </a>
+                    </div>
+                }
+                else
+                {
+                    <partial name="_BlockTreePartial" model="bolum.Blocks" />
+                }
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <div class="card shadow-sm border-0 mb-3">
+            <div class="card-header bg-white"><h6 class="mb-0"><i class="mdi mdi-palette me-2"></i>Bölüm Bilgisi</h6></div>
+            <div class="card-body">
+                <p class="mb-1"><strong>Başlık:</strong> @bolum.Baslik</p>
+                <p class="mb-1">
+                    <strong>Arka plan rengi:</strong>
+                    <span class="d-inline-block" style="width:14px;height:14px;border-radius:3px;border:1px solid #dee2e6;background:@(string.IsNullOrWhiteSpace(bolum.BackgroundColor) ? "#ffffff" : bolum.BackgroundColor)"></span>
+                    @(string.IsNullOrWhiteSpace(bolum.BackgroundColor) ? "yok" : bolum.BackgroundColor)
+                </p>
+                <p class="mb-1">
+                    <strong>Arka plan görseli:</strong>
+                    @if (string.IsNullOrWhiteSpace(bolum.BackgroundImageUrl))
+                    {
+                        <span class="text-muted">yok</span>
+                    }
+                    else
+                    {
+                        <a href="@bolum.BackgroundImageUrl" target="_blank" class="text-truncate d-inline-block align-bottom" style="max-width:180px;">@bolum.BackgroundImageUrl</a>
+                    }
+                </p>
+                <p class="mb-0">
+                    <strong>Durum:</strong>
+                    @if (bolum.Yayinda)
+                    {
+                        <span class="badge bg-success">Yayında</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-secondary">Taslak</span>
+                    }
+                </p>
+            </div>
+        </div>
+
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-white"><h6 class="mb-0"><i class="mdi mdi-information-outline me-2"></i>Nasıl Çalışır?</h6></div>
+            <div class="card-body small text-muted">
+                <ul class="mb-0 ps-3">
+                    <li><strong>Kolon genişliği</strong>, Bootstrap 12 kolon sisteminde container'ın satır içindeki kapladığı alandır (col-lg-*).</li>
+                    <li><strong>Alt satır</strong> eklenen container, ana container'ın altında yeni bir satır olarak render edilir.</li>
+                    <li><strong>İçerik tipi Video</strong> ise video URL + tipi (YouTube/Local) girilir ve Play butonuyla gösterilir.</li>
+                    <li><strong>İçerik tipi Metin</strong> ise HTML editörden zengin metin girilir.</li>
+                    <li><strong>Carousel</strong> tipinde birden çok resim slayt olarak eklenir.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+@* Silme islemi icin tek gizli form; JS blockId/sectionId doldurup submit eder. *@
+<form id="deleteBlockForm" asp-action="DeleteBlock" method="post" class="d-none">
+    @Html.AntiForgeryToken()
+    <input type="hidden" name="blockId" id="deleteBlockId" />
+    <input type="hidden" name="sectionId" id="deleteSectionId" />
+</form>
+
+@section scripts {
+    <script src="~/assets/js/app.js"></script>
+    <script>
+        function confirmDeleteBlock(blockId, sectionId) {
+            if (!confirm('Bu container ve alt satırları silinecek. Onaylıyor musunuz?')) return;
+            document.getElementById('deleteBlockId').value = blockId;
+            document.getElementById('deleteSectionId').value = sectionId;
+            document.getElementById('deleteBlockForm').submit();
+        }
+    </script>
+}

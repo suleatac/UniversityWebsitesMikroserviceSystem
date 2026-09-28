@@ -11,6 +11,7 @@ using Microservice.Admin.Clients.HaberClients;
 using Microservice.Admin.Clients.HedefClients;
 using Microservice.Admin.Clients.MenuClients;
 using Microservice.Admin.Clients.PersonelTipClients;
+using Microservice.Admin.Clients.PageSectionClients;
 using Microservice.Admin.Clients.PopupClients;
 using Microservice.Admin.Clients.ShortcutButtonClients;
 using Microservice.Admin.Clients.SikcaSorulanSoruClients;
@@ -234,6 +235,16 @@ namespace Microservice.Admin.Clients
 
           //Bilgi Clients
           services.AddRefitClient<IBilgiClientServices>()
+         .ConfigureHttpClient(c => {
+
+             var microserviceOption = configuration.GetSection(MicroservicesSetting.SectionName).Get<MicroservicesSetting>();
+             c.BaseAddress = new Uri(microserviceOption!.Site.BaseUrl);
+         })
+         .AddHttpMessageHandler<AuthenticatedHttpClientHandler>()//bu usertoken için istek atarken kullanmak için
+         .AddHttpMessageHandler<ClientAuthenticatedHttpClientHandler>();//bu clientcredential için token alıp istek göndermek için
+
+          //PageSection Clients
+          services.AddRefitClient<IPageSectionClientServices>()
          .ConfigureHttpClient(c => {
 
              var microserviceOption = configuration.GetSection(MicroservicesSetting.SectionName).Get<MicroservicesSetting>();

@@ -1,0 +1,75 @@
+@model List<Microservice.Admin.ViewModels.PageBuilder.GetPageBlockVm>
+@{
+    var sectionId = (int)(ViewData["SectionId"] ?? 0);
+}
+
+@functions {
+    static string TipBadge(string? contentType) => contentType?.ToLowerInvariant() switch {
+        "text" => "bg-primary",
+        "video" => "bg-danger",
+        "image" => "bg-success",
+        "carousel" => "bg-info text-dark",
+        _ => "bg-secondary"
+    };
+
+    static string TipAdi(string? contentType) => contentType?.ToLowerInvariant() switch {
+        "text" => "Metin",
+        "video" => "Video",
+        "image" => "Görsel",
+        "carousel" => "Carousel",
+        _ => contentType ?? "?"
+    };
+
+    static string Ozet(Microservice.Admin.ViewModels.PageBuilder.GetPageBlockVm block)
+    {
+        return (block.ContentType ?? string.Empty).ToLowerInvariant() switch {
+            "video" => block.VideoUrl ?? "-",
+            "image" => block.BackgroundImageUrl ?? "-",
+            "carousel" => $"{block.Medias.Count} slayt",
+            _ => System.Text.RegularExpressions.Regex.Replace(block.Content ?? "", "<.*?>", " ").Trim()
+        };
+    }
+}
+
+@foreach (var block in (Model ?? []).OrderBy(b => b.RowNumber))
+{
+    <div class="block-card">
+        <div class="d-flex align-items-center gap-2 flex-grow-1" style="min-width:0;">
+            @if (block.ContentType?.ToLowerInvariant() == "image" && !string.IsNullOrWhiteSpace(block.BackgroundImageUrl))
+            {
+                <img class="block-thumb" src="@block.BackgroundImageUrl" alt="" />
+            }
+            else if (block.ContentType?.ToLowerInvariant() == "carousel" && block.Medias.Count > 0)
+            {
+                <img class="block-thumb" src="@block.Medias.OrderBy(m => m.Sira).First().ResimUrl" alt="" />
+            }
+
+            <div class="text-truncate">
+                <span class="badge content-type-badge @TipBadge(block.ContentType) me-2">@TipAdi(block.ContentType)</span>
+                <span class="text-muted small d-block text-truncate" title="@Ozet(block)">@Ozet(block)</span>
+                <span class="text-muted small">col-lg-@block.ColumnSize | satır @block.RowNumber</span>
+            </div>
+        </div>
+        <div class="d-flex gap-1 flex-shrink-0">
+            <a asp-action="CreateBlock" asp-route-sectionId="@sectionId" asp-route-parentId="@block.Id"
+               class="btn btn-sm btn-outline-primary" title="Bu container'ın altına alt satır ekle">
+                <i class="mdi mdi-call-split"></i>
+            </a>
+            <a asp-action="CreateBlock" asp-route-sectionId="@sectionId" asp-route-editBlockId="@block.Id"
+               class="btn btn-sm btn-outline-warning" title="Düzenle">
+                <i class="mdi mdi-pencil-outline"></i>
+            </a>
+            <button type="button" class="btn btn-sm btn-outline-danger" title="Sil"
+                    onclick="confirmDeleteBlock(@block.Id, @sectionId)">
+                <i class="mdi mdi-trash-can-outline"></i>
+            </button>
+        </div>
+    </div>
+
+    @if (block.Children.Count > 0)
+    {
+        <div class="block-tree-children">
+            <partial name="_BlockTreePartial" model="block.Children" />
+        </div>
+    }
+}

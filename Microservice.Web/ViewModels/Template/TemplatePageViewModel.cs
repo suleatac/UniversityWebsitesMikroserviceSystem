@@ -6,6 +6,7 @@ using Microservice.Web.ViewModels.Etkinlik;
 using Microservice.Web.ViewModels.GaleriResim;
 using Microservice.Web.ViewModels.Haber;
 using Microservice.Web.ViewModels.Menu;
+using Microservice.Web.ViewModels.PageSection;
 using Microservice.Web.ViewModels.Popup;
 using Microservice.Web.ViewModels.ShortcutButton;
 using Microservice.Web.ViewModels.Site;
@@ -42,6 +43,9 @@ namespace Microservice.Web.ViewModels.Template
         public List<GetGaleriResimVm> GaleriResimler { get; set; } = new();
         public string GaleriListUrl { get; set; } = "/";
         public List<GetBandLogoVm> BandLogolar { get; set; } = new();
+
+        // Template3 ana sayfasi dinamik bolumleri (admin panelindeki Sayfa Bolum Yoneticisi'nden gelir).
+        public List<GetPageSectionVm> Sections { get; set; } = new();
 
         // Ana sayfa sayaclari (Template2)
         public int OgrenciSayisi { get; set; }

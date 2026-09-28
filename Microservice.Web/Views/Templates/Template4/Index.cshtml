@@ -1,0 +1,581 @@
+@model Microservice.Web.ViewModels.Template.TemplatePageViewModel
+@{
+    ViewData["Title"] = Model.Site.SiteAdi;
+
+    var isEnglish = string.Equals(Model.LanguageCode, "en", StringComparison.OrdinalIgnoreCase);
+    string T(string tr, string en) => isEnglish ? en : tr;
+
+    // Site icerik ozellikleri (Hakkimizda, tanitim görseli).
+    var ozellikler = Model.Site?.SiteOzellikleri;
+
+    // Galeri kategori filtrelari icin benzersiz kategoriler.
+    var galeriKategoriler = Model.GaleriResimler
+        .Where(g => !string.IsNullOrWhiteSpace(g.Kategori))
+        .Select(g => g.Kategori!)
+        .Distinct(StringComparer.OrdinalIgnoreCase)
+        .OrderBy(k => k)
+        .ToList();
+
+    string KategoriSinif(string? kategori)
+    {
+        var index = galeriKategoriler.FindIndex(
+            k => string.Equals(k, kategori, StringComparison.OrdinalIgnoreCase));
+
+        return index >= 0 ? $"galeri-cat-{index}" : "galeri-cat-genel";
+    }
+
+    // Duyuru / Haber / Etkinlik / Video / Banner icerikleri icin href uretimi:
+    // - Link dolu ise dogrudan o link kullanilir.
+    // - Link bos ise bagli oldugu sayfa tipine (PageType) yonlendirilir: /{dil}/{slug}/{seoUrl}
+    string BuildContentHref(string? link, string? seoUrl, string? pageTypeSlug)
+    {
+        if (!string.IsNullOrWhiteSpace(link))
+        {
+            var trimmedLink = link.Trim();
+
+            return trimmedLink.StartsWith("http", StringComparison.OrdinalIgnoreCase)
+                ? trimmedLink
+                : "/" + trimmedLink.Trim('/');
+        }
+
+        if (!string.IsNullOrWhiteSpace(seoUrl) && !string.IsNullOrWhiteSpace(pageTypeSlug))
+        {
+            return $"/{Model.LanguageCode}/{pageTypeSlug}/{seoUrl.Trim('/')}";
+        }
+
+        if (!string.IsNullOrWhiteSpace(pageTypeSlug))
+        {
+            return $"/{Model.LanguageCode}/{pageTypeSlug}";
+        }
+
+        return "#";
+    }
+
+    // Tema JS'i (magnific-popup) popup linklerinde yalnizca watch?v= / youtu.be
+    // formatlarini tanir; embed formatli linkler popup'ta acilmiyor.
+    // YouTube ID'yi her formattan cikarip temanin destekledigi watch?v={id} adresine ceviriyoruz.
+    // ID bulunamazsa (mp4 vb.) adres oldugu gibi birakilir.
+    string NormalizeVideoUrl(string? url)
+    {
+        if (string.IsNullOrWhiteSpace(url))
+        {
+            return url ?? string.Empty;
+        }
+
+        if (url.Contains("watch?v", StringComparison.OrdinalIgnoreCase)
+            || url.Contains("youtu.be/", StringComparison.OrdinalIgnoreCase))
+        {
+            return url;
+        }
+
+        var id = ExtractYouTubeId(url);
+        return id is not null ? $"https://www.youtube.com/watch?v={id}" : url;
+    }
+
+    string? ExtractYouTubeId(string? url)
+    {
+        if (string.IsNullOrWhiteSpace(url))
+        {
+            return null;
+        }
+
+        var match = System.Text.RegularExpressions.Regex.Match(
+            url,
+            @"(?:youtube\.com/(?:watch\?v=|embed/|shorts/|v/)|youtu\.be/)([A-Za-z0-9_-]{11})");
+
+        if (match.Success)
+        {
+            return match.Groups[1].Value;
+        }
+
+        var trimmed = url.Trim();
+        return System.Text.RegularExpressions.Regex.IsMatch(trimmed, @"^[A-Za-z0-9_-]{11}$")
+            ? trimmed
+            : null;
+    }
+}
+
+<style>
+    /* Modal içeriğini ortalamak için */
+    .mfp-content {
+        max-width: 600px;
+    }
+
+    .popup-content {
+        text-align: center;
+    }
+
+        .popup-content img {
+            max-width: 100%;
+            cursor: pointer;
+        }
+
+    .banner_section .carousel-item {
+        cursor: pointer;
+    }
+</style>
+
+@if (Model.Popup != null && !string.IsNullOrWhiteSpace(Model.Popup.ResimUrl))
+{
+    <div class="modal fade lr_popup" id="Login" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered " role="document">
+            <div class="modal-content border-0">
+                <div class="modal-body p-0">
+                    <button type="button" id="popupKapatmaButonu" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+
+                    <a href="@(string.IsNullOrWhiteSpace(Model.Popup.Link) ? "javascript:void(0);" : Model.Popup.Link)" class="" target="_blank">
+                        <img id="popupImage" src="@Model.Popup.ResimUrl" alt="@Model.Popup.Baslik" class="img-fluid">
+                    </a>
+
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+
+<div class="news_ticker " style="background-color:#ddd;">
+    <div class="container">
+        <marquee behavior="scroll" direction="left" onmouseover="this.stop();" onmouseout="this.start();">
+
+            @foreach (var duyuru in Model.Duyurular)
+            {
+                <a href="@BuildContentHref(duyuru.Link, duyuru.SeoUrl, duyuru.PageType?.Slug)" target="_blank">@duyuru.Baslik</a> <span>||</span>
+            }
+
+        </marquee>
+    </div>
+</div>
+
+<!-- START SECTION BANNER -->
+<section class="banner_section p-0 full_screen">
+    <div id="carouselExampleControls" class="banner_content_wrap carousel slide" data-ride="carousel">
+        <div class="carousel-inner">
+            @for (int i = 0; i < Model.Banners.Count; i++)
+            {
+                var banner = Model.Banners[i];
+
+                <div class="carousel-item @(i == 0 ? "active" : "")">
+                    <a target="_self" href="@BuildContentHref(banner.Link, banner.SeoUrl, banner.PageType?.Slug)">
+                        <img src="@banner.ResimUrl" class="d-block w-100 img-fluid banner-img" alt="@banner.Baslik">
+                    </a>
+                    <div class="banner_slide_content">
+                        <div class="container">
+                            <div class="row justify-content-center">
+                                <div class="col-lg-12 col-sm-12 text-center">
+                                    <div class="banner_content animation text_white"
+                                         data-animation="fadeInUp"
+                                         data-animation-delay="0.2s">
+                                        <div class="font-weight-bold animation text-uppercase"
+                                             data-animation="fadeInUp"
+                                             data-animation-delay="0.2s">
+                                            @Html.Raw(banner.Baslik)
+                                        </div>
+                                        <div class="animation"
+                                             data-animation="fadeInUp"
+                                             data-animation-delay="1.5s">
+                                            @Html.Raw(banner.KisaAciklama)
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+
+        @if (Model.Banners.Count > 1)
+        {
+            <div class="carousel-nav">
+                <a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev">
+                    <i class="ion-chevron-left"></i>
+                </a>
+                <a class="carousel-control-next" href="#carouselExampleControls" role="button" data-slide="next">
+                    <i class="ion-chevron-right"></i>
+                </a>
+            </div>
+        }
+    </div>
+</section>
+<!-- END SECTION BANNER -->
+
+<!-- START SECTION HIZLI ERİŞİM -->
+@if (Model.ShortcutButtons.Any())
+{
+    <section class="small_pb">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <div class=" course_categories carousel_slider owl-carousel owl-theme nav_style1" data-margin="15" data-nav="true" data-dots="false" data-loop="true" data-autoplay="true" data-responsive='{"0":{"items": "1"}, "380":{"items": "2"}, "576":{"items": "3"}, "1000":{"items": "4"}, "1199":{"items": "5"}}'>
+
+                        @foreach (var item in Model.ShortcutButtons)
+                        {
+                            <div class="item">
+                                <div class="single_categories" style="background-color:aqua;">
+                                    <a href="@(string.IsNullOrWhiteSpace(item.Link) ? "#" : item.Link)">
+                                        @if (item.IsIconImage == true)
+                                        {
+                                            <img class=" mx-auto" style="width:40px;" src="@item.ImageUrl" alt="icon image">
+                                        }
+                                        else
+                                        {
+                                            <i class="@item.IconUrl"></i>
+                                        }
+
+                                        @item.Ad
+                                    </a>
+                                </div>
+                            </div>
+                        }
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+}
+<!-- END SECTION HIZLI ERİŞİM -->
+
+<!-- START SECTION COURSES -->
+<section>
+    <div class="container">
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="row justify-content-center">
+                    <div class="col-xl-6 col-lg-8">
+                        <div class="text-center animation" data-animation="fadeInUp" data-animation-delay="0.01s">
+                            <div class="heading_s1 text-center">
+                                <h2>@T("Duyurular", "Anouncements")</h2>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="course_list">
+                    <div class="row">
+                        @foreach (var item in Model.Duyurular)
+                        {
+                            <div class="col-md-12">
+                                <div class="content_box box_shadow1 animation" data-animation="fadeInUp" data-animation-delay="0.02s">
+                                    <div class="content_duyuru_img">
+                                        <div class="event_duyuru_date bg_default">
+                                            <h5 class="text-white"><span>@item.YayimTarihi.Day</span> @item.YayimTarihi.ToString("MMMM")</h5>
+                                        </div>
+                                    </div>
+                                    <div class="content_desc">
+
+                                        @if ((DateTime.Now - item.YayimTarihi).TotalDays <= 3)
+                                        {
+                                            <div class="courses_info mb-1 " style="font-size:10px;">
+                                                <div class="price">
+                                                    <span class="alert alert-warning">Yeni</span>
+                                                </div>
+                                            </div>
+                                        }
+
+                                        <h4 class="content_title mt-3">
+                                            <a href="@BuildContentHref(item.Link, item.SeoUrl, item.PageType?.Slug)">@item.Baslik</a>
+                                        </h4>
+                                    </div>
+
+                                </div>
+                            </div>
+                        }
+
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                        <div class="text-center animation" data-animation="fadeInUp" data-animation-delay="0.2s">
+                            <div class="medium_divider"></div>
+                            <a href="@Model.DuyuruListUrl" class="btn btn-default rounded-0">@T("Tüm Duyuruları Görün", "See All Announcement") <i class="ion-ios-arrow-thin-right ml-1"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="course_list">
+                    <div class="row justify-content-center">
+                        <div class="col-xl-6 col-lg-8">
+                            <div class="text-center animation" data-animation="fadeInUp" data-animation-delay="0.01s">
+                                <div class="heading_s1 text-center">
+                                    <h2>@T("Etkinlikler", "Events")</h2>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        @foreach (var item in Model.Etkinlikler)
+                        {
+                            <div class="col-md-12">
+                                <div class="content_box box_shadow1 animation" data-animation="fadeInUp" data-animation-delay="0.02s">
+                                    @if (!string.IsNullOrWhiteSpace(item.ResimUrl))
+                                    {
+                                        <div class="content_img">
+                                            <a href="@BuildContentHref(item.Link, item.SeoUrl, item.PageType?.Slug)"><img src="@item.ResimUrl" alt="@item.Baslik" /></a>
+                                        </div>
+                                    }
+                                    <div class="content_desc">
+                                        <div class="courses_info mb-1 " style="font-size:10px;">
+                                            <div class="rating_stars price">
+                                                <span class="alert alert-info">@item.YayimTarihi.ToString("dd MMMM")</span>
+                                            </div>
+                                        </div>
+                                        <h4 class="content_title mt-3">
+                                            <a href="@BuildContentHref(item.Link, item.SeoUrl, item.PageType?.Slug)">@item.Baslik</a>
+                                        </h4>
+                                    </div>
+
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</section>
+<!-- END SECTION COURSES -->
+
+<!-- START SECTION ABOUT -->
+<section>
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-5">
+                <div class="animation  " data-animation="fadeInLeft" data-animation-delay="0.01s">
+                    <img src="@ozellikler?.SiteBaslangicVideoResimAdress" alt="about_img2">
+                </div>
+            </div>
+            <div class="col-md-7">
+                <div class="padding_eight_all animation fancy_box  " data-animation="fadeInRight" data-animation-delay="0.01s">
+                    <div class="heading_s1">
+                        <h2>@T("Hakkımızda", "About Us")</h2>
+                    </div>
+
+                    @Html.Raw(isEnglish ? ozellikler?.SiteBaslangicHakkimizdaEng : ozellikler?.SiteBaslangicHakkimizda)
+                    <ul class="list_none list_item">
+                        <li>
+                            <div class="counter_content">
+                                <h3 class="h1 text_danger"><span class="counter">@(Model.IdariPersonelSayisi + Model.AkademikPersonelSayisi)</span></h3>
+                                <h6>@T("Personel", "Staff")</h6>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="counter_content">
+                                <h3 class="h1 text_light_green"><span class="counter">@Model.OgrenciSayisi</span></h3>
+                                <h6>@T("Öğrenci", "Student")</h6>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- END SECTION ABOUT -->
+
+<!-- START SECTION NEWS -->
+@if (Model.Haberler.Any())
+{
+    <section class="bg_gray">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-xl-6 col-lg-8 mb-5">
+                    <div class="text-center ">
+                        <div class=" text-center">
+                            <h2>@T("Haberler ", "News and Activities")</h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row news_list">
+
+                <div class=" course_categories carousel_slider owl-carousel owl-theme nav_style1" data-margin="15" data-nav="true" data-dots="true" data-loop="false" data-autoplay="false" data-responsive='{"0":{"items": "1"}, "380":{"items": "1"}, "576":{"items": "3"}, "1000":{"items": "3"}, "1199":{"items": "3"}}'>
+
+                    @foreach (var haberitem in Model.Haberler)
+                    {
+                        var href = BuildContentHref(haberitem.Link, haberitem.SeoUrl, haberitem.PageType?.Slug);
+
+                        <div class="item">
+                            <div class="content_box event_box box_shadow1 animation mb-4 " data-animation="fadeInUp" data-animation-delay="0.02s">
+                                <div class="content_img">
+                                    <a href="@href"><img src="@haberitem.ResimUrl" alt="@haberitem.Baslik" /></a>
+                                </div>
+                                <div class="row mx-1">
+                                    <div class="event_date">
+                                        <h5><span class="event_time bg_default"><span>@haberitem.YayimTarihi.Day.ToString()</span> @haberitem.YayimTarihi.ToString("MMMM")</span></h5>
+                                    </div>
+                                    <h4 class="content_title"><a href="@href">@haberitem.Baslik</a></h4>
+                                </div>
+                                <hr />
+                                <div class="content_desc bg-white">
+                                    <p>@haberitem.KisaAciklama</p>
+                                </div>
+                            </div>
+                        </div>
+                    }
+
+                </div>
+
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <div class="text-center animation" data-animation="fadeInUp" data-animation-delay="0.2s">
+                        <div class="medium_divider"></div>
+                        <a href="@Model.HaberListUrl" class="btn btn-default rounded-0">@T("Tüm Haberleri Görün", "See All News") <i class="ion-ios-arrow-thin-right ml-1"></i></a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+}
+<!-- END SECTION NEWS -->
+
+<!-- START SECTION Tanıtım Videoları -->
+@if (Model.Videolar.Any())
+{
+    <section class="small_pt">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-xl-6 col-lg-8">
+                    <div class="text-center ">
+                        <div class="heading_s1 text-center">
+                            <h2>@T("Videolarımız", "Our Videos")</h2>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                @foreach (var item in Model.Videolar)
+                {
+                    <div class="col-lg-4 col-sm-6">
+                        <div class="content_box radius_all_10 box_shadow1 ">
+                            <div class="content_img radius_ltrt_10">
+                                <div class="">
+                                    <div class="overlay_bg_30 about_img ">
+                                        <img class="w-100" src="@item.ResimUrl" alt="@item.Baslik" />
+                                    </div>
+                                    @if (!string.IsNullOrWhiteSpace(item.VideoUrl))
+                                    {
+                                        <a href="@NormalizeVideoUrl(item.VideoUrl)" class="video_popup video_play">
+                                            <span class="ripple"><i class="ion-play ml-1"></i></span>
+                                        </a>
+                                    }
+                                </div>
+                            </div>
+                            <div class="content_desc">
+                                <h4 class="content_title">
+                                    <a href="@BuildContentHref(item.Link, item.SeoUrl, item.PageType?.Slug)">@item.Baslik</a>
+                                </h4>
+                                <p>@item.KisaAciklama</p>
+                            </div>
+                            <div class="content_footer">
+                                <div class="price">
+                                    <div class="">
+                                        @if (!string.IsNullOrWhiteSpace(item.VideoUrl))
+                                        {
+                                            <a href="@NormalizeVideoUrl(item.VideoUrl)" class="video_popup ">
+                                                <span class="alert alert-success">@T("Şimdi İzle", "Watch Now") <i class="fa fa-arrow-circle-right"></i></span>
+                                            </a>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <div class="text-center ">
+                        <div class="medium_divider"></div>
+                        <a href="@Model.VideoListUrl" class="btn btn-default">@T("Tüm Videoları Görüntüle", "See All Videos") <i class="ion-ios-arrow-thin-right ml-1"></i></a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+}
+<!-- END SECTION Tanıtım Videoları -->
+
+
+
+<!-- START SECTION GALLERY -->
+@if (Model.GaleriResimler.Any())
+{
+    <section>
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-xl-6 col-lg-8">
+                    <div class="text-center ">
+                        <div class="heading_s1 text-center">
+                            <h2>@T("Galeri", "Our Gallery")</h2>
+                        </div>
+                        <div class="small_divider"></div>
+                    </div>
+                </div>
+            </div>
+
+            @if (galeriKategoriler.Count > 0)
+            {
+                <div class="row">
+                    <div class="col-md-12 text-center">
+                        <ul class="list_none grid_filter ">
+                            <li><a href="#" class="current" data-filter="*">@T("tümü", "all")</a></li>
+                            @foreach (var kategori in galeriKategoriler)
+                            {
+                                <li><a href="#" data-filter=".@KategoriSinif(kategori)">@kategori</a></li>
+                            }
+                        </ul>
+                    </div>
+                </div>
+            }
+
+            <div class="row">
+                <div class="col-md-12">
+                    <ul class="grid_container gutter_medium grid_col3 ">
+                        <li class="grid-sizer"></li>
+
+                        @foreach (var item in Model.GaleriResimler)
+                        {
+                            <li class="grid_item @KategoriSinif(item.Kategori)">
+                                <div class="gallery_item radius_all_10">
+                                    <a href="#" class="image_link">
+                                        <img src="@item.ResimUrl" alt="@item.Baslik">
+                                    </a>
+
+                                    <div class="gallery_content">
+                                        <div class="link_container">
+                                            <a href="@item.ResimUrl" class="image_popup">
+                                                <span class="ripple"><i class="ion-image"></i></span>
+                                            </a>
+                                            <a href="@(string.IsNullOrEmpty(item.Link) ? "javascript:void(0);" : item.Link)" class="ml-3">
+                                                <span class="ripple"><i class="ion-link"></i></span>
+                                            </a>
+                                        </div>
+                                        <div class="text_holder text_white">
+                                            <h5>@item.Baslik</h5>
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+}
+<!-- END SECTION GALLERY -->
+
+<a href="#" class="scrollup" style="display: none;"><i class="ion-ios-arrow-up"></i></a>

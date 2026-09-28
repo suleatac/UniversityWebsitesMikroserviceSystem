@@ -1,0 +1,109 @@
+@model Microservice.Admin.ViewModels.PageBuilder.PageSectionDetailVm
+
+<div class="mb-4">
+    <div class="row g-3">
+        <!-- Başlık -->
+        <div class="col-md-8">
+            <div class="mb-3">
+                <label asp-for="Baslik" class="form-label">Bölüm Başlığı <span class="text-danger">*</span></label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="mdi mdi-format-title"></i></span>
+                    <input asp-for="Baslik" class="form-control" placeholder="Örn: Hızlı Erişim, Akademik Bilgiler..." />
+                </div>
+                <span asp-validation-for="Baslik" class="text-danger small"></span>
+            </div>
+        </div>
+
+        <!-- Sıra -->
+        <div class="col-md-4">
+            <div class="mb-3">
+                <label asp-for="Sira" class="form-label">Sıra</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="mdi mdi-sort-numeric-asc"></i></span>
+                    <input asp-for="Sira" class="form-control" type="number" min="1" />
+                </div>
+                <small class="form-text text-muted">Boş veya 0 bırakılırsa otomatik sıraya eklenir.</small>
+                <span asp-validation-for="Sira" class="text-danger small"></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-3">
+        <!-- Arka plan rengi -->
+        <div class="col-md-4">
+            <div class="mb-3">
+                <label asp-for="BackgroundColor" class="form-label">Arka Plan Rengi</label>
+                <div class="input-group">
+                    <input type="color" id="bgColorPicker" class="form-control form-control-color"
+                           value="@(string.IsNullOrWhiteSpace(Model.BackgroundColor) ? "#ffffff" : Model.BackgroundColor)" />
+                    <input asp-for="BackgroundColor" id="BackgroundColor" class="form-control" placeholder="#0a3d62" />
+                </div>
+                <span asp-validation-for="BackgroundColor" class="text-danger small"></span>
+            </div>
+        </div>
+
+        <!-- Arka plan görseli -->
+        <div class="col-md-8">
+            <div class="mb-3">
+                <label asp-for="BackgroundImageUrl" class="form-label">Arka Plan Görseli (Parallax)</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="mdi mdi-image"></i></span>
+                    <input asp-for="BackgroundImageUrl" id="BackgroundImageUrlInput" class="form-control file-picker-input" placeholder="Görsel adresi..." />
+                    <button type="button" class="btn btn-outline-primary open-file-manager" data-type="image" title="Dosya Yöneticisi">
+                        <i class="mdi mdi-folder-open-outline"></i>
+                    </button>
+                </div>
+                <small class="form-text text-muted">Görsel girilirse bölüm overlay'li parallax arka plan olarak render edilir.</small>
+                <span asp-validation-for="BackgroundImageUrl" class="text-danger small"></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Önizleme -->
+    <div class="mb-3">
+        <label class="form-label">Önizleme</label>
+        <div id="sectionPreview" class="rounded p-4 text-center"
+             style="min-height:120px; background-color:@(string.IsNullOrWhiteSpace(Model.BackgroundColor) ? "#f8f9fa" : Model.BackgroundColor); background-size:cover; background-position:center;">
+            <h2 id="previewTitle" class="mb-0">@(string.IsNullOrWhiteSpace(Model.Baslik) ? "Bölüm Başlığı" : Model.Baslik)</h2>
+        </div>
+    </div>
+
+    <!-- Yayında -->
+    <div class="row">
+        <div class="col-md-4">
+            <div class="mb-3">
+                <div class="form-check form-switch form-switch-lg mt-4">
+                    <input asp-for="Yayinda" class="form-check-input" type="checkbox" />
+                    <label class="form-check-label" asp-for="Yayinda">Yayında (ana sayfada görünsün)</label>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    (function () {
+        var picker = document.getElementById('bgColorPicker');
+        var colorInput = document.getElementById('BackgroundColor');
+        var imageInput = document.getElementById('BackgroundImageUrlInput');
+        var preview = document.getElementById('sectionPreview');
+        var title = document.getElementById('previewTitle');
+        var baslik = document.getElementById('Baslik');
+
+        function refresh() {
+            if (!preview) return;
+            var c = colorInput && colorInput.value ? colorInput.value : '#f8f9fa';
+            preview.style.backgroundColor = c;
+            var hasImage = imageInput && imageInput.value.trim() !== '';
+            preview.style.backgroundImage = hasImage ? 'url("' + imageInput.value.trim() + '")' : '';
+            if (title) title.textContent = baslik && baslik.value.trim() !== '' ? baslik.value : 'Bölüm Başlığı';
+            if (title) title.className = hasImage ? 'text-white mb-0' : 'mb-0';
+        }
+
+        if (picker) picker.addEventListener('input', function () { colorInput.value = picker.value; refresh(); });
+        if (colorInput) colorInput.addEventListener('input', function () { try { picker.value = colorInput.value; } catch (e) { } refresh(); });
+        if (imageInput) imageInput.addEventListener('input', refresh);
+        if (baslik) baslik.addEventListener('input', refresh);
+        refresh();
+    })();
+</script>

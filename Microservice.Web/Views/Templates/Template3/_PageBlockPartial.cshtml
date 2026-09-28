@@ -1,0 +1,133 @@
+@model Microservice.Web.ViewModels.PageSection.GetPageBlockVm
+@*
+    Dinamik sayfa container (block) parsiyal gorunumu. Recursive: Model.Children
+    yine bu parsiyali cagirdigi icin sinirsiz seviyede alt satir destegini korur.
+    Eski _AlumniBlockPartial.cshtml yapisi birebir korunmustur (col-lg-{ColumnSize} +
+    carousel/video/text/image render tipleri).
+*@
+@{
+    var column = Model.ColumnSize is >= 1 and <= 12 ? Model.ColumnSize : 12;
+    var animation = string.IsNullOrWhiteSpace(Model.Animation) ? "fadeInUp" : Model.Animation;
+}
+
+@functions {
+    // Tema JS'i (magnific-popup 1.1.0) popup linklerini watch?v= / youtu.be
+    // formatlarinda taniyor; embed formatti linkler popup'ta calismiyor.
+    // Bu yuzden YouTube ID'yi her formattan (ID, watch?v=, youtu.be/, embed/, shorts/)
+    // cikarip temanin sorunsuz isledigi canonical watch?v={id} adresine ceviriyoruz.
+    static string NormalizeVideoUrl(string? url, string? videoType)
+    {
+        if (string.IsNullOrWhiteSpace(url))
+        {
+            return url ?? string.Empty;
+        }
+
+        // Local (mp4) linklere dokunma.
+        if (string.Equals(videoType, "Local", StringComparison.OrdinalIgnoreCase))
+        {
+            return url;
+        }
+
+        // Zaten watch?v= ya da youtu.be formatinda ise oldugu gibi birak
+        // (tema popup'i bu formatlari sorunsuz aciyor).
+        if (url.Contains("watch?v", StringComparison.OrdinalIgnoreCase)
+            || url.Contains("youtu.be/", StringComparison.OrdinalIgnoreCase))
+        {
+            return url;
+        }
+
+        // Embed, shorts veya bare ID girilmis ise ID'yi cikarip
+        // temanin destekledigi watch?v= adresine cevir.
+        var id = ExtractYouTubeId(url);
+        return id is not null ? $"https://www.youtube.com/watch?v={id}" : url;
+    }
+
+    static string? ExtractYouTubeId(string url)
+    {
+        var match = System.Text.RegularExpressions.Regex.Match(
+            url,
+            @"(?:youtube\.com/(?:watch\?v=|embed/|shorts/|v/)|youtu\.be/)([A-Za-z0-9_-]{11})");
+
+        if (match.Success)
+        {
+            return match.Groups[1].Value;
+        }
+
+        // Bare video ID (orn: _0LwxUBOUjY)
+        var trimmed = url.Trim();
+        return System.Text.RegularExpressions.Regex.IsMatch(trimmed, @"^[A-Za-z0-9_-]{11}$")
+            ? trimmed
+            : null;
+    }
+}
+
+<div class="col-lg-@column col-md-@column col-sm-6 " style="padding-left:5px;padding-right:5px;min-height:150px; ">
+
+    @if (string.Equals(Model.ContentType, "carousel", StringComparison.OrdinalIgnoreCase))
+    {
+        <div class="animation adayOgrenciCarousel" style="padding:5px;" data-animation="@animation" data-animation-delay="0.01s">
+
+            <div class="carousel_slider owl-carousel owl-theme dots_white"
+                 data-autoplay="true" data-loop="true" data-autoplay-timeout="3000" data-items="1">
+                @foreach (var media in Model.Medias.OrderBy(m => m.Sira))
+                {
+                    <div class="content_img">
+                        <img src="@media.ResimUrl" alt="carousel_img" loading="lazy" />
+                        @if (!string.IsNullOrWhiteSpace(media.VideoUrl))
+                        {
+                            <a href="@NormalizeVideoUrl(media.VideoUrl, null)" class="video_popup video_play">
+                                <span class="ripple"><i class="ion-play ml-1"></i></span>
+                            </a>
+                        }
+                    </div>
+                }
+            </div>
+
+        </div>
+    }
+    else if (string.Equals(Model.ContentType, "video", StringComparison.OrdinalIgnoreCase))
+    {
+        <div class="icon_box text-start background_bg animation" data-animation="@animation" data-animation-delay="0.01s">
+            <div class="intro_desc" style="background-image: url('@Model.BackgroundImageUrl'); background-color: @Model.BackgroundColor; background-size: cover; background-position: center;">
+                @if (!string.IsNullOrWhiteSpace(Model.VideoUrl))
+                {
+                    <a href="@NormalizeVideoUrl(Model.VideoUrl, Model.VideoType)" class="video_popup video_play ">
+                        <span class="ripple "><i class="ion-play ml-1 text_danger"></i></span>
+                    </a>
+                }
+            </div>
+        </div>
+    }
+    else if (string.Equals(Model.ContentType, "text", StringComparison.OrdinalIgnoreCase))
+    {
+        <div class="icon_box text-start background_bg animation"
+             data-animation="@animation" data-animation-delay="0.01s">
+            <div class="intro_desc" style="background-image: url('@Model.BackgroundImageUrl'); background-color: @Model.BackgroundColor; background-size: cover; background-position: center;">
+
+                @Html.Raw(Model.Content)
+            </div>
+        </div>
+    }
+    else if (string.Equals(Model.ContentType, "image", StringComparison.OrdinalIgnoreCase))
+    {
+        <div class="icon_box text-start background_bg animation"
+             data-animation="@animation" data-animation-delay="0.01s">
+            <div class="intro_desc" style="background-image: url('@Model.BackgroundImageUrl'); background-color: @Model.BackgroundColor; background-size: cover; background-position: center;">
+
+                @Html.Raw(Model.Content)
+            </div>
+        </div>
+    }
+
+    @* Nested alt satirlar: ust block'un altinda ikinci bir row olusturur. *@
+    @if (Model.Children.Any())
+    {
+        <div class="row">
+            @foreach (var child in Model.Children.OrderBy(c => c.RowNumber))
+            {
+                <partial name="~/Views/Templates/Template3/_PageBlockPartial.cshtml" model="child" />
+            }
+        </div>
+    }
+
+</div>

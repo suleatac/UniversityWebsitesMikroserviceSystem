@@ -1,21 +1,115 @@
+@model Microservice.Web.ViewModels.Template.TemplatePageViewModel
 @{
-    ViewBag.Title = "Index";
-    Layout = $"~/Views/Shared/{ViewBag.TemplateName}/_WebMainLayout.cshtml";
+    ViewData["Title"] = Model.Site.SiteAdi;
+
+    var isEnglish = string.Equals(Model.LanguageCode, "en", StringComparison.OrdinalIgnoreCase);
+    string T(string tr, string en) => isEnglish ? en : tr;
+
+    // Site icerik ozellikleri (Hakkimizda, tanitim videosu).
+    var ozellikler = Model.Site?.SiteOzellikleri;
+
+    // Dinamik bolumler: ilk bolum eski yapidaki gibi "Hızlı Erişim" anchor'i ile
+    // About'on ustunde; kalan bolumlar About/Tanitim videolari arasinda siralanir.
+    var ilkBolum = Model.Sections.FirstOrDefault();
+    var digerBolumler = Model.Sections.Skip(ilkBolum is null ? 0 : 1).ToList();
+
+    // Galeri kategori filtrelari icin benzersiz kategoriler ve guvenli css sinifi.
+    var galeriKategoriler = Model.GaleriResimler
+        .Where(g => !string.IsNullOrWhiteSpace(g.Kategori))
+        .Select(g => g.Kategori!)
+        .Distinct(StringComparer.OrdinalIgnoreCase)
+        .OrderBy(k => k)
+        .ToList();
+
+    string KategoriSinif(string? kategori)
+    {
+        var index = galeriKategoriler.FindIndex(
+            k => string.Equals(k, kategori, StringComparison.OrdinalIgnoreCase));
+
+        return index >= 0 ? $"galeri-cat-{index}" : "galeri-cat-genel";
+    }
+
+    // Duyuru / Bilgi icerikleri icin href uretimi:
+    // - Link dolu ise dogrudan o link kullanilir.
+    // - Link bos ise bagli oldugu sayfa tipine (PageType) yonlendirilir: /{dil}/{slug}/{seoUrl}
+    string BuildContentHref(string? link, string? seoUrl, string? pageTypeSlug)
+    {
+        if (!string.IsNullOrWhiteSpace(link))
+        {
+            var trimmedLink = link.Trim();
+
+            return trimmedLink.StartsWith("http", StringComparison.OrdinalIgnoreCase)
+                ? trimmedLink
+                : "/" + trimmedLink.Trim('/');
+        }
+
+        if (!string.IsNullOrWhiteSpace(seoUrl) && !string.IsNullOrWhiteSpace(pageTypeSlug))
+        {
+            return $"/{Model.LanguageCode}/{pageTypeSlug}/{seoUrl.Trim('/')}";
+        }
+
+        if (!string.IsNullOrWhiteSpace(pageTypeSlug))
+        {
+            return $"/{Model.LanguageCode}/{pageTypeSlug}";
+        }
+
+        return "#";
+    }
+
+    // Tema JS'i (magnific-popup) popup linklerinde yalnizca watch?v= / youtu.be
+    // formatlarini tanir; embed formatli linkler popup'ta acilmiyor.
+    // Bu yuzden YouTube ID'yi her formattan (ID, embed/, shorts/, youtu.be/)
+    // cikarip temanin sorunsuz acabildigi canonical watch?v={id} adresine ceviriyoruz.
+    // ID bulunamazsa (mp4 vb.) adres oldugu gibi birakilir.
+    string NormalizeVideoUrl(string? url)
+    {
+        if (string.IsNullOrWhiteSpace(url))
+        {
+            return url ?? string.Empty;
+        }
+
+        // Zaten watch?v= ya da youtu.be formatinda ise dokunma.
+        if (url.Contains("watch?v", StringComparison.OrdinalIgnoreCase)
+            || url.Contains("youtu.be/", StringComparison.OrdinalIgnoreCase))
+        {
+            return url;
+        }
+
+        var id = ExtractYouTubeId(url);
+        return id is not null ? $"https://www.youtube.com/watch?v={id}" : url;
+    }
+
+    string? ExtractYouTubeId(string? url)
+    {
+        if (string.IsNullOrWhiteSpace(url))
+        {
+            return null;
+        }
+
+        var match = System.Text.RegularExpressions.Regex.Match(
+            url,
+            @"(?:youtube\.com/(?:watch\?v=|embed/|shorts/|v/)|youtu\.be/)([A-Za-z0-9_-]{11})");
+
+        if (match.Success)
+        {
+            return match.Groups[1].Value;
+        }
+
+        // Bare video ID (orn: _0LwxUBOUjY)
+        var trimmed = url.Trim();
+        return System.Text.RegularExpressions.Regex.IsMatch(trimmed, @"^[A-Za-z0-9_-]{11}$")
+            ? trimmed
+            : null;
+    }
+
+    // Hero banner: SiteOzellikleri'ndeki alan tam URL veya ID olabilir; her ikisinden ID cikar.
+    var heroVideoId = ExtractYouTubeId(ozellikler?.SiteBaslangicVideoLink);
+    var heroVideoIsYouTube = string.Equals(ozellikler?.SiteVideoType, "YouTube", StringComparison.OrdinalIgnoreCase)
+                             || heroVideoId is not null;
+    var heroSrc = heroVideoIsYouTube && heroVideoId is not null
+        ? $"https://www.youtube.com/embed/{heroVideoId}?enablejsapi=1&disablekb=1&controls=0&rel=0&iv_load_policy=3&cc_load_policy=0&playsinline=1&showinfo=0&modestbranding=1&fs=0&mute=1&autoplay=1&loop=1&playlist={heroVideoId}"
+        : null;
 }
-
-
-
-@using AnaWebsite.Utility
-
-
-@{
-    var bolumListesi = ViewBag.BlockBolumleri
-       as List<DAL.AdayOgrenciBlockBolumleri>; // ViewBag'dan Liste'yi çek ve cast et
-    var etkinlikListesi = ViewBag.etkinlikListesi
-as List<DAL.Etkinlik>; // ViewBag'dan Liste'yi çek ve cast et
-    Popup popupitem = ViewBag.popupItem as DAL.Popup;
-}
-
 
 <style>
     /* Modal içeriğini ortalamak için */
@@ -36,9 +130,9 @@ as List<DAL.Etkinlik>; // ViewBag'dan Liste'yi çek ve cast et
         cursor: pointer;
     }
 </style>
-@if (popupitem != null)
-{
 
+@if (Model.Popup != null && !string.IsNullOrWhiteSpace(Model.Popup.ResimUrl))
+{
     <div class="modal fade lr_popup" id="Login" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered " role="document">
             <div class="modal-content border-0">
@@ -47,28 +141,24 @@ as List<DAL.Etkinlik>; // ViewBag'dan Liste'yi çek ve cast et
                         <span aria-hidden="true">×</span>
                     </button>
 
-                    <a href="@popupitem.link" class="logo" target="_blank">
-                        <img id="popupImage" src="@popupitem.resim_url" alt="" class="img-fluid">
+                    <a href="@(string.IsNullOrWhiteSpace(Model.Popup.Link) ? "javascript:void(0);" : Model.Popup.Link)" class="logo" target="_blank">
+                        <img id="popupImage" src="@Model.Popup.ResimUrl" alt="@Model.Popup.Baslik" class="img-fluid">
                     </a>
 
                 </div>
             </div>
         </div>
     </div>
-
-
-
 }
-
 
 <!-- START SECTION VIDEO -->
 <section class="banner_section p-0 full_screen_aday_ogrenci position-relative">
 
     <div class="video-wrapper">
-        @if (ViewBag.siteObj.video_type == "YouTube")
+        @if (heroSrc is not null)
         {
             <iframe id="videoIframe"
-                    src="@($"https://www.youtube.com/embed/{ViewBag.siteObj.baslangic_video_link}?enablejsapi=1&disablekb=1&controls=0&rel=0&iv_load_policy=3&cc_load_policy=0&playsinline=1&showinfo=0&modestbranding=1&fs=0&mute=1&autoplay=1&loop=1&playlist={ViewBag.siteObj.baslangic_video_link}")"
+                    src="@heroSrc"
                     frameborder="0"
                     allow="autoplay;"
                     allowfullscreen
@@ -78,7 +168,7 @@ as List<DAL.Etkinlik>; // ViewBag'dan Liste'yi çek ve cast et
         else
         {
             <video id="localVideo" class="video-iframe" autoplay="true" loop="true" muted="true">
-                <source src="@ViewBag.siteObj.baslangic_video_link" type="video/mp4">
+                <source src="@ozellikler?.SiteBaslangicVideoLink" type="video/mp4">
                 Tarayıcınız video etiketini desteklemiyor.
             </video>
         }
@@ -86,7 +176,7 @@ as List<DAL.Etkinlik>; // ViewBag'dan Liste'yi çek ve cast et
 
     <!-- Butonlar -->
     <div class="video-buttons">
-        @if (ViewBag.siteObj.video_type == "YouTube")
+        @if (heroSrc is not null)
         {
             <button id="watchOnYoutube" class="video-btn">🎥 YouTube'da İzle</button>
         }
@@ -98,338 +188,266 @@ as List<DAL.Etkinlik>; // ViewBag'dan Liste'yi çek ve cast et
     </a>
 </section>
 <!-- END SECTION VIDEO -->
-<!-- START SECTION Hızlı erişim -->
-@if (bolumListesi != null && bolumListesi.Any())
+
+<!-- START SECTION Dinamik Bölümler (İlk bölüm: Hızlı Erişim) -->
+@if (ilkBolum != null && ilkBolum.Blocks.Count > 0)
 {
-    AdayOgrenciBlockBolumleri firstBolum = bolumListesi.First();
-    if (firstBolum.AdayOgrenciBlock.Any())
-    {
-        var hasBackgroundImage = !string.IsNullOrEmpty(firstBolum.background_image);
-        var sectionClass = hasBackgroundImage ? "parallax_bg overlay_bg_blue_70" : "";
-        var dataParallaxAttr = hasBackgroundImage ? $"data-parallax-bg-image=\"{firstBolum.background_image}\"" : "";
+    var hasBgImage = !string.IsNullOrEmpty(ilkBolum.BackgroundImageUrl);
+    var sectionClass = hasBgImage ? "parallax_bg overlay_bg_blue_70" : "";
+    var parallaxAttr = hasBgImage ? $"data-parallax-bg-image=\"{ilkBolum.BackgroundImageUrl}\"" : "";
 
-        <section class="@sectionClass" style="background-color:@firstBolum.backgroud_color" @Html.Raw(dataParallaxAttr) id="hizli_erisim">
+    <section class="@sectionClass" style="background-color:@(ilkBolum.BackgroundColor ?? "transparent")" @Html.Raw(parallaxAttr) id="hizli_erisim">
 
-            <div class="container">
-                <div class="row justify-content-center">
-                    <div class="col-xl-12 col-lg-12">
-                        <div class=" animation" data-animation="fadeInUp" data-animation-delay="0.2s">
-                            <div class="heading_s1 ">
-                                <h2>@firstBolum.baslik</h2>
-                            </div>
-                            <hr />
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-xl-12 col-lg-12">
+                    <div class=" animation" data-animation="fadeInUp" data-animation-delay="0.2s">
+                        <div class="heading_s1 ">
+                            <h2>@ilkBolum.Baslik</h2>
                         </div>
+                        <hr />
                     </div>
                 </div>
-                <div class="row">
-                    @foreach (var block in firstBolum.AdayOgrenciBlock.Where(s => s.parent_id == null).OrderBy(x => x.row_number).ToList()) // Ana satırları çek
-                    {
-                        @Html.Partial("_AlumniBlockPartial", block)
-                    }
-                </div>
-
             </div>
-        </section>
-    }
+            <div class="row">
+                @foreach (var block in ilkBolum.Blocks.Where(b => b.ParentId == null).OrderBy(b => b.RowNumber))
+                {
+                    <partial name="~/Views/Templates/Template3/_PageBlockPartial.cshtml" model="block" />
+                }
+            </div>
+
+        </div>
+    </section>
 }
-<!-- END SECTION Hızlı erişim -->
+<!-- END SECTION Dinamik Bölümler (İlk bölüm) -->
+
 <!-- START SECTION ABOUT -->
 <section>
     <div class="container">
         <div class="row align-items-center">
             <div class="col-md-5">
                 <div class="animation  " data-animation="fadeInLeft" data-animation-delay="0.01s">
-                    <img src="@ViewBag.siteObj.hakkinda_resim" alt="about_img2">
+                    <img src="@ozellikler?.SiteHakkindaResim" alt="about_img2">
                 </div>
             </div>
             <div class="col-md-7">
                 <div class="padding_eight_all animation fancy_box  " data-animation="fadeInRight" data-animation-delay="0.01s">
                     <div class="heading_s1">
-                        <h2>@(ViewBag.dilObj.id == (int)DilTuru.Ingilizce ? "About Us" : "Hakkımızda")</h2>
+                        <h2>@T("Hakkımızda", "About Us")</h2>
                     </div>
 
-                    @Html.Raw(ViewBag.siteObj.baslangic_hakkimizda)
-                    <a href="@ViewBag.siteObj.hakkinda_link" class="btn btn-outline-black rounded-0 my-2">@(ViewBag.dilObj.id == (int)DilTuru.Ingilizce ? "More" : "Daha Fazla")</a>
+                    @Html.Raw(isEnglish ? ozellikler?.SiteBaslangicHakkimizdaEng : ozellikler?.SiteBaslangicHakkimizda)
+                    <a href="@ozellikler?.SiteHakkindaLink" class="btn btn-outline-black rounded-0 my-2">@T("Daha Fazla", "More")</a>
                 </div>
             </div>
         </div>
     </div>
 </section>
 <!-- END SECTION ABOUT -->
-<!-- START SECTION Akademik Bilgiler -->
-@if (bolumListesi != null && bolumListesi.Count() > 1)
+
+<!-- START SECTION Tanıtım Videoları -->
+@if (Model.Videolar.Any())
 {
+    <section class="small_pt">
+        <div class="container">
 
-
-
-    var secondBolum = bolumListesi.ElementAt(1); // İkinci elemanı güvenle al
-                                                 <!-- START SECTION Akademik Bilgiler -->
-    if (secondBolum.AdayOgrenciBlock != null && secondBolum.AdayOgrenciBlock.Any())
-    {
-        var hasBackgroundImage = !string.IsNullOrEmpty(secondBolum.background_image);
-        var sectionClass = hasBackgroundImage ? "parallax_bg overlay_bg_blue_70" : "";
-        var dataParallaxAttr = hasBackgroundImage ? $"data-parallax-bg-image=\"{secondBolum.background_image}\"" : "";
-
-        <section class="@sectionClass" style="background-color:@secondBolum.backgroud_color" @Html.Raw(dataParallaxAttr)>
-            <div class="container">
-                <div class="row justify-content-center">
-                    <div class="col-xl-12 col-lg-12">
-                        <div class=" animation" data-animation="fadeInUp" data-animation-delay="0.2s">
-                            <div class="heading_s1 ">
-                                <h2 class="text-white"> @secondBolum.baslik</h2>
-                            </div>
-                            <hr style="height: 2px;  background-color: white; " />
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    @foreach (AdayOgrenciBlock block in secondBolum.AdayOgrenciBlock.Where(s => s.parent_id == null).OrderBy(x => x.row_number).ToList()) // Ana satırları çek
-                    {
-                        @Html.Partial("_AlumniBlockPartial", block)
-                    }
-                </div>
-
-            </div>
-
-        </section>
-    }
-}
-<!-- END SECTION Akademik Bilgiler -->
-<!-- START SECTION TANITIM VİDEOLARI -->
-<section class="small_pt">
-    <div class="container">
-
-        <div class="row">
-            @foreach (Video item in ViewBag.videoList)
-            {
-                <div class="col-lg-4 col-sm-6">
-                    <div class="content_box radius_all_10 box_shadow1 ">
-                        <div class="content_img radius_ltrt_10">
-                            <div class="">
-                                <div class="overlay_bg_30 about_img ">
-                                    <img class="w-100" src="@item.image_url" alt="about_img" />
-                                </div>
-                                @if (item.video_link != null)
-                                {
-                                    <a href="#" class="video_popup video_play">
-                                        <span class="ripple"><i class="ion-play ml-1"></i></span>
-                                    </a>
-                                }
-
-                            </div>
-                        </div>
-                        <div class="content_desc">
-                            <h4 class="content_title"><a href="#">@item.baslik</a></h4>
-                            <hr />
-                            <p>@item.video_aciklama</p>
-                        </div>
-                        <div class="content_footer">
-                            <div class="price">
-                                <div class="">
-                                    <a href="@item.video_link" class="">
-                                        <span class="alert alert-success">@(ViewBag.dilObj.id == (int)DilTuru.Ingilizce ? "Detail" : "Detaylı Gör ")<i class="fa fa-arrow-circle-right"></i></span>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            }
-        </div>
-    </div>
-</section>
-<!-- END SECTION TANITIM VİDEOLARI -->
-<!-- START SECTION Dinamik Bölümler -->
-@if (bolumListesi != null && bolumListesi.Count() > 2)
-{
-    foreach (var bolum in bolumListesi.Skip(2)) // İlk iki elemanı atla
-    {
-        if (bolum.AdayOgrenciBlock != null && bolum.AdayOgrenciBlock.Any())
-        {
-            var hasBackgroundImage = !string.IsNullOrEmpty(bolum.background_image);
-            var sectionClass = hasBackgroundImage ? "parallax_bg overlay_bg_blue_70" : "";
-            var dataParallaxAttr = hasBackgroundImage ? $"data-parallax-bg-image=\"{bolum.background_image}\"" : "";
-
-            <section class="@sectionClass" style="background-color:@bolum.backgroud_color" @Html.Raw(dataParallaxAttr)>
-                <div class="container">
-                    <div class="row justify-content-center">
-                        <div class="col-xl-12 col-lg-12">
-                            <div class="animation" data-animation="fadeInUp" data-animation-delay="0.2s">
-                                <div class="heading_s1">
-                                    <h2 class="@(hasBackgroundImage ? "text-white" : "")">@bolum.baslik</h2>
-                                </div>
-                                <hr style="@(hasBackgroundImage ? "height: 2px; background-color: white;" : "")" />
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        @foreach (var block in bolum.AdayOgrenciBlock
-                            .Where(s => s.parent_id == null)
-                            .OrderBy(x => x.row_number))
-                        {
-                            @Html.Partial("_AlumniBlockPartial", block)
-                        }
-                    </div>
-                </div>
-            </section>
-        }
-    }
-}
-<!-- END SECTION Dinamik Bölümler -->
-<!-- END SECTION Mezunlar ve Öğrencilerimiz -->
-<!-- START SECTION Bölümler -->
-<section class="bg_gray parallax_bg overlay_bg_blue_70" data-parallax-bg-image="assets/@ViewBag.TemplateName/images/counter_bg.jpg">
-    <div class="container">
-
-        <div class="row news_list">
-
-            <div class=" course_categories carousel_slider owl-carousel owl-theme nav_style1" data-margin="15" data-nav="true" data-dots="true" data-loop="false" data-autoplay="false" data-responsive='{"0":{"items": "1"}, "380":{"items": "1"}, "576":{"items": "3"}, "1000":{"items": "3"}, "1199":{"items": "3"}}'>
-
-                @foreach (BilgiBolum item in ViewBag.Bolumler)
+            <div class="row">
+                @foreach (var item in Model.Videolar)
                 {
-                    <div class="item">
-                        <div class="content_box radius_all_10 box_shadow1">
+                    <div class="col-lg-4 col-sm-6">
+                        <div class="content_box radius_all_10 box_shadow1 ">
                             <div class="content_img radius_ltrt_10">
-                                <div class="overlay_bg_30 about_img">
-                                    <img class="w-100" src="@item.image_url" alt="about_img" />
+                                <div class="">
+                                    <div class="overlay_bg_30 about_img ">
+                                        <img class="w-100" src="@item.ResimUrl" alt="@item.Baslik" />
+                                    </div>
+                                    @if (!string.IsNullOrWhiteSpace(item.VideoUrl))
+                                    {
+                                        <a href="@NormalizeVideoUrl(item.VideoUrl)" class="video_popup video_play">
+                                            <span class="ripple"><i class="ion-play ml-1"></i></span>
+                                        </a>
+                                    }
+
                                 </div>
-
-                                @if (!string.IsNullOrEmpty(item.video_url))
-                                {
-                                    <a href="@item.video_url" class="video_popup video_play">
-                                        <span class="ripple"><i class="ion-play ml-1"></i></span>
-                                    </a>
-                                }
                             </div>
-
                             <div class="content_desc">
-                                <a href="@Url.Action("bolum", "AdayOgrenci", new { id = item.id, dil = ViewBag.dilObj?.dil_kisa_adi })"> <h4 class="content_title">@item.baslik</h4></a>
+                                <h4 class="content_title">
+                                    <a href="@BuildContentHref(item.Link, item.SeoUrl, item.PageType?.Slug)">@item.Baslik</a>
+                                </h4>
                                 <hr />
-                                <p>@item.kisa_aciklama</p>
+                                <p>@item.KisaAciklama</p>
                             </div>
-
                             <div class="content_footer">
                                 <div class="price">
-                                    <a href="@Url.Action("bolum", "AdayOgrenci", new { id = item.id, dil = ViewBag.dilObj?.dil_kisa_adi })" class="">
-                                        <span class="alert alert-success">
-                                            @(ViewBag.dilObj?.id == (int)DilTuru.Ingilizce ? "Detail" : "Detaylı Gör")
-                                            <i class="fa fa-arrow-circle-right"></i>
-                                        </span>
-                                    </a>
+                                    <div class="">
+                                        <a href="@BuildContentHref(item.Link, item.SeoUrl, item.PageType?.Slug)" class="">
+                                            <span class="alert alert-success">@T("Detaylı Gör", "Detail") <i class="fa fa-arrow-circle-right"></i></span>
+                                        </a>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 }
-
-
-
-
             </div>
-
         </div>
+    </section>
+}
+<!-- END SECTION Tanıtım Videoları -->
 
+<!-- START SECTION Dinamik Bölümler (Kalan bölümler) -->
+@foreach (var bolum in digerBolumler)
+{
+    if (bolum.Blocks.Count == 0)
+    {
+        continue;
+    }
 
-    </div>
-</section>
-<!-- END SECTION Bölümler-->
-<!-- START SECTION GALLERY -->
-<section>
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-xl-6 col-lg-8">
-                <div class="text-center ">
-                    <div class="heading_s1 text-center">
-                        <h2>@(ViewBag.dilObj.id == (int)DilTuru.Ingilizce ? "Our Gallery" : "Galeri")</h2>
+    var hasBgImage = !string.IsNullOrEmpty(bolum.BackgroundImageUrl);
+    var sectionClass = hasBgImage ? "parallax_bg overlay_bg_blue_70" : "";
+    var parallaxAttr = hasBgImage ? $"data-parallax-bg-image=\"{bolum.BackgroundImageUrl}\"" : "";
+
+    <section class="@sectionClass" style="background-color:@(bolum.BackgroundColor ?? "transparent")" @Html.Raw(parallaxAttr)>
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-xl-12 col-lg-12">
+                    <div class="animation" data-animation="fadeInUp" data-animation-delay="0.2s">
+                        <div class="heading_s1">
+                            <h2 class="@(hasBgImage ? "text-white" : "")">@bolum.Baslik</h2>
+                        </div>
+                        <hr style="@(hasBgImage ? "height: 2px; background-color: white;" : "")" />
                     </div>
-                    @if (ViewBag.galeriAciklama != null)
-                    {
-                        <p>@ViewBag.galeriAciklama</p>
-                    }
-                    <div class="small_divider"></div>
                 </div>
+            </div>
+            <div class="row">
+                @foreach (var block in bolum.Blocks.Where(b => b.ParentId == null).OrderBy(b => b.RowNumber))
+                {
+                    <partial name="~/Views/Templates/Template3/_PageBlockPartial.cshtml" model="block" />
+                }
             </div>
         </div>
 
-        @if (ViewBag.galeriKategoriler != null)
-        {
-            <div class="row">
-                <div class="col-md-12 text-center">
-                    <ul class="list_none grid_filter ">
-                        <li><a href="#" class="current" data-filter="*">@(ViewBag.dilObj.id == (int)DilTuru.Ingilizce ? "all" : "tümü")</a></li>
-                        @foreach (var kategori in ViewBag.galeriKategoriler)
-                        {
-                            <li><a href="#" data-filter=".@kategori.css_sinif">@kategori.ad</a></li>
-                        }
-                    </ul>
+    </section>
+}
+<!-- END SECTION Dinamik Bölümler (Kalan bölümler) -->
+
+<!-- START SECTION Bölümler -->
+@if (Model.Bilgiler.Any())
+{
+    <section class="bg_gray parallax_bg overlay_bg_blue_70" data-parallax-bg-image="/template2/images/counter_bg.jpg">
+        <div class="container">
+
+            <div class="row news_list">
+
+                <div class=" course_categories carousel_slider owl-carousel owl-theme nav_style1" data-margin="15" data-nav="true" data-dots="true" data-loop="false" data-autoplay="false" data-responsive='{"0":{"items": "1"}, "380":{"items": "1"}, "576":{"items": "3"}, "1000":{"items": "3"}, "1199":{"items": "3"}}'>
+
+                    @foreach (var item in Model.Bilgiler)
+                    {
+                        var href = BuildContentHref(item.Link, item.SeoUrl, item.PageType?.Slug);
+
+                        <div class="item">
+                            <div class="content_box radius_all_10 box_shadow1">
+                                <div class="content_img radius_ltrt_10">
+                                    <div class="overlay_bg_30 about_img">
+                                        <img class="w-100" src="@item.ResimUrl" alt="@item.Baslik" />
+                                    </div>
+
+                                    @if (!string.IsNullOrEmpty(item.VideoUrl))
+                                    {
+                                        <a href="@NormalizeVideoUrl(item.VideoUrl)" class="video_popup video_play">
+                                            <span class="ripple"><i class="ion-play ml-1"></i></span>
+                                        </a>
+                                    }
+                                </div>
+
+                                <div class="content_desc">
+                                    <a href="@href">
+                                        <h4 class="content_title">@item.Baslik</h4>
+                                    </a>
+                                    <hr />
+                                    <p>@item.KisaAciklama</p>
+                                </div>
+
+                                <div class="content_footer">
+                                    <div class="price">
+                                        <div class="">
+                                            <a href="@href" class="">
+                                                <span class="alert alert-success">
+                                                    @T("Detaylı Gör", "Detail")
+                                                    <i class="fa fa-arrow-circle-right"></i>
+                                                </span>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+
+                </div>
+
+            </div>
+
+        </div>
+    </section>
+}
+<!-- END SECTION Bölümler-->
+
+<!-- START SECTION GALLERY -->
+@if (Model.GaleriResimler.Any())
+{
+    <section>
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-xl-6 col-lg-8">
+                    <div class="text-center ">
+                        <div class="heading_s1 text-center">
+                            <h2>@T("Galeri", "Our Gallery")</h2>
+                        </div>
+                        <div class="small_divider"></div>
+                    </div>
                 </div>
             </div>
-        }
 
-        @if (ViewBag.galeriItems != null)
-        {
+            @if (galeriKategoriler.Count > 0)
+            {
+                <div class="row">
+                    <div class="col-md-12 text-center">
+                        <ul class="list_none grid_filter ">
+                            <li><a href="#" class="current" data-filter="*">@T("tümü", "all")</a></li>
+                            @foreach (var kategori in galeriKategoriler)
+                            {
+                                <li><a href="#" data-filter=".galeri-cat-@galeriKategoriler.IndexOf(kategori)">@kategori</a></li>
+                            }
+                        </ul>
+                    </div>
+                </div>
+            }
+
             <div class="row">
                 <div class="col-md-12">
                     <ul class="grid_container gutter_medium grid_col3 ">
                         <li class="grid-sizer"></li>
 
-                        @foreach (SiteGaleri item in ViewBag.galeriItems)
+                        @foreach (var item in Model.GaleriResimler)
                         {
-                            <li class="grid_item @item.SiteGaleriKategori.css_sinif">
+                            <li class="grid_item @KategoriSinif(item.Kategori)">
                                 <div class="gallery_item radius_all_10">
-                                    @if (item.tip == "carousel")
-                                    {
-                                        <div class="carousel_slider owl-carousel owl-theme dots_white" data-autoplay="true" data-loop="true" data-autoplay-timeout="3000" data-items="1">
-                                            @foreach (SiteGaleriResimleri resim in item.SiteGaleriResimleri)
-                                            {
-                                                <a href="#" class="image_link">
-                                                    <img src="@resim.kucuk_resim_url" alt="@resim.alt_text">
-                                                </a>
-                                            }
-                                        </div>
-                                    }
-                                    else
-                                    {
-                                        <a href="#" class="image_link">
-                                            <img src="@item.galeri_kucuk_resim_url" alt="@item.alt_text">
-                                        </a>
-                                    }
+                                    <a href="#" class="image_link">
+                                        <img src="@item.ResimUrl" alt="@item.Baslik">
+                                    </a>
 
                                     <div class="gallery_content">
                                         <div class="link_container">
-
-
-                                            @if (item.tip == "carousel")
-                                            {
-                                                if (item.SiteGaleriResimleri.Any())
-                                                {
-                                                    var ilkResim = item.SiteGaleriResimleri.First();
-                                                    <a href="@ilkResim.buyuk_resim_url" class="image_popup">
-                                                        <span class="ripple"><i class="ion-image"></i></span>
-                                                    </a>
-                                                    <a href="@(string.IsNullOrEmpty(item.link) ? "javascript:void(0);" : item.link)" class="ml-3">
-                                                        <span class="ripple"><i class="ion-link"></i></span>
-                                                    </a>
-                                                    foreach (SiteGaleriResimleri resim in item.SiteGaleriResimleri.Skip(1))
-                                                    {
-                                                        <a href="@resim.buyuk_resim_url" class="image_popup d-none"></a>
-                                                    }
-                                                }
-                                            }
-                                            else
-                                            {
-
-                                                <a href="@item.galeri_buyuk_resim_url" class="image_popup">
-                                                    <span class="ripple"><i class="ion-image"></i></span>
-                                                </a>
-                                                <a href="@(string.IsNullOrEmpty(item.link) ? "javascript:void(0);" : item.link)" class="ml-3">
-                                                    <span class="ripple"><i class="ion-link"></i></span>
-                                                </a>
-                                            }
-
+                                            <a href="@item.ResimUrl" class="image_popup">
+                                                <span class="ripple"><i class="ion-image"></i></span>
+                                            </a>
+                                            <a href="@(string.IsNullOrEmpty(item.Link) ? "javascript:void(0);" : item.Link)" class="ml-3">
+                                                <span class="ripple"><i class="ion-link"></i></span>
+                                            </a>
                                         </div>
                                         <div class="text_holder text_white">
-                                            <h5>@item.baslik</h5>
+                                            <h5>@item.Baslik</h5>
                                         </div>
                                     </div>
                                 </div>
@@ -438,26 +456,24 @@ as List<DAL.Etkinlik>; // ViewBag'dan Liste'yi çek ve cast et
                     </ul>
                 </div>
             </div>
-        }
-    </div>
-</section>
+        </div>
+    </section>
+}
 <!-- END SECTION GALLERY -->
 <a href="#" class="scrollup" style="display: none;"><i class="ion-ios-arrow-up"></i></a>
-
-
 
 
 @section scripts {
     <script>
         var player;
-        var isYouTube = "@(ViewBag.siteObj.video_type == "YouTube" ? "true" : "false")" === "true";
+        var isYouTube = @(heroVideoIsYouTube && heroVideoId is not null ? "true" : "false");
         var localVideo = document.getElementById("localVideo");
 
         function onYouTubeIframeAPIReady() {
             if (isYouTube) {
                 player = new YT.Player('videoIframe', {
                     events: {
-                        'onReady': function(event) {
+                        'onReady': function (event) {
                             event.target.playVideo();
                         }
                     }
@@ -465,41 +481,43 @@ as List<DAL.Etkinlik>; // ViewBag'dan Liste'yi çek ve cast et
             }
         }
 
-        document.addEventListener("DOMContentLoaded", function() {
+        document.addEventListener("DOMContentLoaded", function () {
             var toggleSoundButton = document.getElementById("toggleSoundButton");
             var watchOnYoutubeButton = document.getElementById("watchOnYoutube");
 
-            var videoUrl = "@(ViewBag.siteObj.video_type == "YouTube" ? ViewBag.siteObj.baslangic_video_link : "")";
+            var videoUrl = "@(heroVideoId ?? "")";
 
             // YouTube'da İzle Butonu
             if (videoUrl && isYouTube && watchOnYoutubeButton) {
-                watchOnYoutubeButton.addEventListener("click", function() {
+                watchOnYoutubeButton.addEventListener("click", function () {
                     window.open("https://www.youtube.com/watch?v=" + videoUrl, "_blank");
                 });
             }
 
             // SES AÇ/KAPAT Butonu
-            toggleSoundButton.addEventListener("click", function() {
-                if (isYouTube) {
-                    // YouTube Videosu İçin Ses Kontrolü
-                    if (player.isMuted()) {
-                        player.unMute();
-                        toggleSoundButton.textContent = "🔇 Sesi Kapat";
-                    } else {
-                        player.mute();
-                        toggleSoundButton.textContent = "🔊 Sesi Aç";
+            if (toggleSoundButton) {
+                toggleSoundButton.addEventListener("click", function () {
+                    if (isYouTube && player) {
+                        // YouTube Videosu İçin Ses Kontrolü
+                        if (player.isMuted()) {
+                            player.unMute();
+                            toggleSoundButton.textContent = "🔇 Sesi Kapat";
+                        } else {
+                            player.mute();
+                            toggleSoundButton.textContent = "🔊 Sesi Aç";
+                        }
+                    } else if (localVideo) {
+                        // Lokal Video İçin Ses Kontrolü
+                        if (localVideo.muted) {
+                            localVideo.muted = false;
+                            toggleSoundButton.textContent = "🔇 Sesi Kapat";
+                        } else {
+                            localVideo.muted = true;
+                            toggleSoundButton.textContent = "🔊 Sesi Aç";
+                        }
                     }
-                } else if (localVideo) {
-                    // Lokal Video İçin Ses Kontrolü
-                    if (localVideo.muted) {
-                        localVideo.muted = false;
-                        toggleSoundButton.textContent = "🔇 Sesi Kapat";
-                    } else {
-                        localVideo.muted = true;
-                        toggleSoundButton.textContent = "🔊 Sesi Aç";
-                    }
-                }
-            });
+                });
+            }
 
             // YouTube API'yi sayfaya ekleyelim (YouTube videosu varsa)
             if (isYouTube) {
@@ -511,6 +529,3 @@ as List<DAL.Etkinlik>; // ViewBag'dan Liste'yi çek ve cast et
         });
     </script>
 }
-
-
-

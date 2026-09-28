@@ -1,0 +1,310 @@
+@model Microservice.Admin.ViewModels.PageBuilder.PageBlockFormVm
+
+@{
+    var bolum = (Microservice.Admin.ViewModels.PageBuilder.GetPageSectionVm?)ViewBag.Section;
+    var parentOptions = (List<Microservice.Admin.ViewModels.PageBuilder.PageBlockSelectItemVm>?)ViewBag.ParentOptions ?? new();
+    var selectedParentId = (int?)ViewBag.SelectedParentId;
+    var isEdit = Model.Id > 0;
+
+    ViewBag.pTitle = "Sayfa Bölüm Yönetimi";
+    ViewBag.Title = isEdit ? "Container Düzenle" : "Yeni Container";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row justify-content-center">
+    <div class="col-xxl-9">
+        <div class="card shadow-lg border-0">
+            <div class="card-header bg-primary bg-opacity-10 border-bottom">
+                <div class="d-flex align-items-center">
+                    <div class="avatar-sm me-3">
+                        <div class="avatar-title bg-primary rounded-circle">
+                            <i class="mdi mdi-cursor-default-click fs-5"></i>
+                        </div>
+                    </div>
+                    <div>
+                        <h5 class="card-title mb-1">@(isEdit ? "Container Düzenle" : "Yeni Container")</h5>
+                        <p class="card-text text-muted mb-0">
+                            Bölüm: <strong>@(bolum?.Baslik ?? "-")</strong>
+                            | Kolon sistemine göre sayfa içeriğini şekillendirin.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-body p-4">
+                <form asp-action="@(isEdit ? "UpdateBlock" : "CreateBlock")" method="post" id="blockForm">
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+                    <input type="hidden" asp-for="Id" />
+                    <input type="hidden" asp-for="PageSectionId" />
+
+                    <div class="row g-3 mb-4">
+                        <!-- Icerik tipi -->
+                        <div class="col-md-4">
+                            <label asp-for="ContentType" class="form-label">İçerik Tipi <span class="text-danger">*</span></label>
+                            <select asp-for="ContentType" id="ContentType" class="form-select">
+                                <option value="text">Metin (HTML)</option>
+                                <option value="video">Video</option>
+                                <option value="image">Görsel</option>
+                                <option value="carousel">Carousel (Slayt)</option>
+                            </select>
+                            <span asp-validation-for="ContentType" class="text-danger small"></span>
+                        </div>
+
+                        <!-- Kolon genisligi -->
+                        <div class="col-md-2">
+                            <label asp-for="ColumnSize" class="form-label">Kolon (1-12)</label>
+                            <input asp-for="ColumnSize" class="form-control" type="number" min="1" max="12" />
+                            <span asp-validation-for="ColumnSize" class="text-danger small"></span>
+                        </div>
+
+                        <!-- Satir no -->
+                        <div class="col-md-2">
+                            <label asp-for="RowNumber" class="form-label">Satır No</label>
+                            <input asp-for="RowNumber" class="form-control" type="number" min="0" />
+                            <span asp-validation-for="RowNumber" class="text-danger small"></span>
+                        </div>
+
+                        <!-- Animasyon -->
+                        <div class="col-md-4">
+                            <label asp-for="Animation" class="form-label">Animasyon</label>
+                            <select asp-for="Animation" class="form-select">
+                                <option value="">(yok)</option>
+                                <option value="fadeInUp">fadeInUp</option>
+                                <option value="fadeInDown">fadeInDown</option>
+                                <option value="fadeInLeft">fadeInLeft</option>
+                                <option value="fadeInRight">fadeInRight</option>
+                                <option value="zoomIn">zoomIn</option>
+                            </select>
+                        </div>
+
+                        <!-- Ust container -->
+                        <div class="col-md-12">
+                            <label asp-for="ParentId" class="form-label">@Html.Raw("Üst Container (Alt satır olarak eklensin)")</label>
+                            <select asp-for="ParentId" class="form-select">
+                                <option value="">— Yok (bölümün ana satırı) —</option>
+                                @foreach (var opt in parentOptions)
+                                {
+                                    if (selectedParentId.HasValue && selectedParentId.Value == opt.Id)
+                                    {
+                                        <option value="@opt.Id" selected>@opt.Label</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@opt.Id">@opt.Label</option>
+                                    }
+                                }
+                            </select>
+                            <small class="form-text text-muted">Seçilirse bu container, seçilen container'ın altında ikinci bir satır olarak render edilir.</small>
+                        </div>
+                    </div>
+
+                    <!-- ================================================= -->
+                    <!-- METIN (text) -->
+                    <!-- ================================================= -->
+                    <div class="type-field" data-type="text">
+                        <h6 class="text-primary border-bottom pb-2"><i class="mdi mdi-text-box-outline me-1"></i>Metin İçeriği (HTML)</h6>
+                        <textarea asp-for="Content" id="ContentEditor" class="form-control" rows="10"></textarea>
+                        <span asp-validation-for="Content" class="text-danger small"></span>
+                    </div>
+
+                    <!-- ================================================= -->
+                    <!-- VIDEO -->
+                    <!-- ================================================= -->
+                    <div class="type-field d-none mb-4" data-type="video">
+                        <h6 class="text-primary border-bottom pb-2 mb-3"><i class="mdi mdi-youtube me-1"></i>Video Ayarları</h6>
+                        <div class="row g-3">
+                            <div class="col-md-8">
+                                <label asp-for="VideoUrl" class="form-label">Video URL / ID <span class="text-danger">*</span></label>
+                                <input asp-for="VideoUrl" class="form-control" placeholder="Örn: _0LwxUBOUjY | watch?v=... | youtu.be/... | /embed/... veya mp4 adresi" />
+                                <small class="form-text text-muted">YouTube ID, watch, youtu.be veya embed linki girebilirsiniz; sistem otomatik tanıyıp normalize eder.</small>
+                                <span asp-validation-for="VideoUrl" class="text-danger small"></span>
+                            </div>
+                            <div class="col-md-4">
+                                <label asp-for="VideoType" class="form-label">Video Tipi</label>
+                                <select asp-for="VideoType" class="form-select">
+                                    <option value="YouTube">YouTube</option>
+                                    <option value="Local">Local (mp4)</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ================================================= -->
+                    <!-- GORSEL/ARKA PLAN (tum tiplerde ortak; ayni isimli
+                         alan iki kez tekrarlanirsa model binding bozulur,
+                         bu yuzden tek instance here zaman gorunur) -->
+                    <!-- ================================================= -->
+                    <div class="mb-4">
+                        <h6 class="text-primary border-bottom pb-2 mb-3"><i class="mdi mdi-image-outline me-1"></i>Görsel / Arka Plan</h6>
+                        <div class="row g-3">
+                            <div class="col-md-8">
+                                <label asp-for="BackgroundImageUrl" class="form-label">Görsel Adresi (Video için poster, Image tipi için zorunlu)</label>
+                                <div class="input-group">
+                                    <input asp-for="BackgroundImageUrl" class="form-control file-picker-input" placeholder="Görsel adresi..." />
+                                    <button type="button" class="btn btn-outline-primary open-file-manager" data-type="image" title="Dosya Yöneticisi">
+                                        <i class="mdi mdi-folder-open-outline"></i>
+                                    </button>
+                                </div>
+                                <span asp-validation-for="BackgroundImageUrl" class="text-danger small"></span>
+                            </div>
+                            <div class="col-md-4">
+                                <label asp-for="BackgroundColor" class="form-label">Arka Plan Rengi</label>
+                                <input asp-for="BackgroundColor" class="form-control" placeholder="#000000" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ================================================= -->
+                    <!-- CAROUSEL -->
+                    <!-- ================================================= -->
+                    <div class="type-field d-none" data-type="carousel">
+                        <h6 class="text-primary border-bottom pb-2 mb-3"><i class="mdi mdi-view-carousel-outline me-1"></i>Carousel Slaytları</h6>
+                        <div id="mediaRows"></div>
+                        <button type="button" class="btn btn-outline-primary btn-sm mt-2" id="addMediaRow">
+                            <i class="mdi mdi-plus me-1"></i> Slayt Ekle
+                        </button>
+                        <span asp-validation-for="Medias" class="text-danger small d-block mt-2"></span>
+                    </div>
+
+                    <hr class="my-4" />
+
+                    <div class="d-flex justify-content-end gap-2">
+                        <a asp-action="Blocks" asp-route-sectionId="@Model.PageSectionId" class="btn btn-secondary">
+                            <i class="mdi mdi-arrow-left me-1"></i> Geri
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="mdi mdi-check me-1"></i> @(isEdit ? "Güncelle" : "Kaydet")
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<partial name="_FileManagerModalPartial" />
+
+@section scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script src="~/assets/js/app.js"></script>
+    <script src="~/assets/libs/tinymce/tinymce.min.js"></script>
+
+    <script>
+        // ============================================================
+        // Mevcut model verisi (edit durumunda form alanlarini doldurur)
+        // ============================================================
+        var EXISTING_MEDIAS = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.Medias));
+        var BLOCK_ID = @Model.Id;
+
+        // ============================================================
+        // TinyMCE (Metin icerigi)
+        // ============================================================
+        tinymce.init({
+            selector: '#ContentEditor',
+            height: 350,
+            menubar: true,
+            language: 'tr_TR',
+            plugins: ['advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview', 'anchor',
+                'searchreplace', 'visualblocks', 'code', 'fullscreen', 'insertdatetime', 'media', 'table',
+                'help', 'wordcount', 'codesample'],
+            toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | ' +
+                'forecolor backcolor | alignleft aligncenter alignright alignjustify | ' +
+                'bullist numlist outdent indent | link image table media | codesample | removeformat | help',
+            branding: false,
+            placeholder: 'Container metin içeriğini yazınız...',
+            content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px; padding:10px; }',
+            setup: function (editor) {
+                editor.on('change keyup', function () { editor.save(); });
+            }
+        });
+
+        // ============================================================
+        // Icerik tipine gore alanlari goster/gizle
+        // ============================================================
+        function toggleTypeFields() {
+            var type = document.getElementById('ContentType').value;
+            document.querySelectorAll('.type-field').forEach(function (el) {
+                el.classList.toggle('d-none', el.dataset.type !== type);
+            });
+        }
+
+        document.getElementById('ContentType').addEventListener('change', toggleTypeFields);
+
+        // ============================================================
+        // Carousel slayt satirlari
+        // ============================================================
+        var mediaIndex = 0;
+
+        function addMediaRow(media) {
+            media = media || { resimUrl: '', videoUrl: '', sira: mediaIndex };
+            var container = document.getElementById('mediaRows');
+            var row = document.createElement('div');
+            row.className = 'row g-2 align-items-end mb-2 media-row';
+            row.innerHTML =
+                '<div class="col-md-5">' +
+                '  <label class="form-label small mb-1">Resim URL</label>' +
+                '  <div class="input-group input-group-sm">' +
+                '    <input type="text" class="form-control media-resim file-picker-input" ' +
+                '           name="Medias[' + mediaIndex + '].ResimUrl" value="' + (media.resimUrl || media.ResimUrl || '') + '" placeholder="https://...">' +
+                '    <button type="button" class="btn btn-outline-primary open-file-manager" data-type="image"><i class="mdi mdi-folder-open-outline"></i></button>' +
+                '  </div>' +
+                '</div>' +
+                '<div class="col-md-5">' +
+                '  <label class="form-label small mb-1">Video URL (ops.)</label>' +
+                '  <input type="text" class="form-control form-control-sm media-video" ' +
+                '         name="Medias[' + mediaIndex + '].VideoUrl" value="' + (media.videoUrl || media.VideoUrl || '') + '" placeholder="Video linki...">' +
+                '</div>' +
+                '<div class="col-md-1">' +
+                '  <label class="form-label small mb-1">Sıra</label>' +
+                '  <input type="number" class="form-control form-control-sm" ' +
+                '         name="Medias[' + mediaIndex + '].Sira" value="' + (media.sira ?? media.Sira ?? mediaIndex) + '">' +
+                '</div>' +
+                '<div class="col-md-1">' +
+                '  <button type="button" class="btn btn-sm btn-outline-danger remove-media"><i class="mdi mdi-close"></i></button>' +
+                '</div>';
+
+            container.appendChild(row);
+            mediaIndex++;
+        }
+
+        // Mevcut slaytlari yukle (edit)
+        (EXISTING_MEDIAS || []).forEach(addMediaRow);
+
+        document.getElementById('addMediaRow').addEventListener('click', function () { addMediaRow(); });
+
+        document.getElementById('mediaRows').addEventListener('click', function (e) {
+            var btn = e.target.closest('.remove-media');
+            if (btn) btn.closest('.media-row').remove();
+        });
+
+        // ============================================================
+        // Form submit
+        // ============================================================
+        document.getElementById('blockForm').addEventListener('submit', function () {
+            var editor = tinymce.get('ContentEditor');
+            if (editor) editor.save();
+        });
+
+        // ============================================================
+        // Dosya yoneticisi modal (shared)
+        // ============================================================
+        var currentInput = null;
+        $(document).on('click', '.open-file-manager', function () {
+            currentInput = $(this).closest('.input-group').find('.file-picker-input');
+            var type = $(this).data('type');
+            $('#fileManagerFrame').attr('src', '/File?mode=picker&type=' + type);
+            $('#fileManagerModal').modal('show');
+        });
+
+        window.addEventListener('message', function (event) {
+            if (event.data && event.data.type === 'file-selected') {
+                if (currentInput) currentInput.val(event.data.url);
+                $('#fileManagerModal').modal('hide');
+            }
+        });
+
+        // Sayfa acilisinda mevcut tipe gore gorunumu ayarla
+        toggleTypeFields();
+    </script>
+}
