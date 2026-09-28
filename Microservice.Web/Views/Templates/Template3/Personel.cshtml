@@ -1,0 +1,201 @@
+﻿@model Microservice.Web.ViewModels.SitePersonel.PersonelDetayPageViewModel
+@{
+    var personel = Model.Personel;
+    var adSoyad = $"{personel.Adi} {personel.Soyadi}".Trim();
+
+    ViewData["Title"] = personel.SeoTitle ?? adSoyad ?? "Personel";
+
+    if (!string.IsNullOrWhiteSpace(personel.SeoDescription))
+    {
+        ViewData["MetaDescription"] = personel.SeoDescription;
+    }
+
+    // Detay linki: /{dil}/{personeller-slug}/{seoUrl}
+    string BuildPersonelHref(Microservice.Web.ViewModels.SitePersonel.GetPersonelVm p)
+    {
+        if (!string.IsNullOrWhiteSpace(p.SeoUrl))
+        {
+            return $"{Model.PersonelListUrl}/{p.SeoUrl.Trim('/')}";
+        }
+
+        return "#";
+    }
+
+    var site = Model.Site;
+    var ozellikler = site?.SiteOzellikleri;
+
+    // Profil sosyal medya adresleri (yalnizca dolu olanlar gosterilir)
+    var socialLinks = new List<(string Url, string CssClass, string Icon, string Title)>();
+
+    if (!string.IsNullOrWhiteSpace(personel.FacebookAdress))
+    {
+        socialLinks.Add((personel.FacebookAdress, "sc_facebook", "ion-social-facebook", "Facebook"));
+    }
+    if (!string.IsNullOrWhiteSpace(personel.TwitterAdress))
+    {
+        socialLinks.Add((personel.TwitterAdress, "sc_twitter", "ion-social-twitter", "Twitter"));
+    }
+    if (!string.IsNullOrWhiteSpace(personel.GoogleplusAdress))
+    {
+        socialLinks.Add((personel.GoogleplusAdress, "sc_gplus", "ion-social-googleplus", "Google+"));
+    }
+    if (!string.IsNullOrWhiteSpace(personel.InstagramAdress))
+    {
+        socialLinks.Add((personel.InstagramAdress, "sc_instagram", "ion-social-instagram-outline", "Instagram"));
+    }
+    if (!string.IsNullOrWhiteSpace(personel.BlogAdress))
+    {
+        socialLinks.Add((personel.BlogAdress, "sc_instagram", "ion-android-post", "Blog"));
+    }
+
+    // Ilgi alanlari: virgul/noktali virgul ile ayrilmis metin -> etiket listesi
+    var ilgiAlanlari = string.IsNullOrWhiteSpace(personel.IlgiAlanlari)
+        ? Array.Empty<string>()
+        : personel.IlgiAlanlari
+            .Split(new[] { ',', ';', '\n' }, StringSplitOptions.RemoveEmptyEntries)
+            .Select(x => x.Trim())
+            .Where(x => !string.IsNullOrWhiteSpace(x))
+            .ToArray();
+
+    // Personel e-postasi: Username varsa kullanici@siteMailHost, yoksa sitenin genel e-postasi
+    var personelEposta = !string.IsNullOrWhiteSpace(personel.Username) && !string.IsNullOrWhiteSpace(site?.SiteEPostaHost)
+        ? $"{personel.Username}@{site.SiteEPostaHost}"
+        : site?.SiteEPosta;
+}
+
+<!-- START SECTION BREADCRUMB -->
+<section class="page-title-light breadcrumb_section parallax_bg overlay_bg_50" data-parallax-bg-image="/template2/images/bg_altsayfa.jpg">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-sm-6">
+                <div class="page-title">
+                    <h1>@adSoyad</h1>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb justify-content-sm-end">
+                        <li class="breadcrumb-item"><a href="/">Ana Sayfa</a></li>
+                        <li class="breadcrumb-item"><a href="@Model.PersonelListUrl">Kadro</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">@adSoyad</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- END SECTION BREADCRUMB -->
+<!-- START SECTION TEACHER -->
+<section class="small_pt">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-4 col-md-6">
+                <div class="team_single radius_all_10 box_shadow1">
+                    <div class="team_img">
+                        <img class="radius_ltrt_10" person-src="@personel.ResimUrl" person-name="@adSoyad" alt="@adSoyad" />
+                    </div>
+                    <div class="team_single_info">
+                        <div class="team_name">
+                            <h5>@adSoyad</h5>
+                            <span>@personel.PageType?.PageTypeKind</span>
+                        </div>
+                        <h6 class="mb-3">İletişim Bilgileri:</h6>
+                        <ul class="contact_info list_none">
+                            @if (!string.IsNullOrWhiteSpace(ozellikler?.SiteAdress))
+                            {
+                                <li>
+                                    <span>Address:</span>
+                                    <address>@ozellikler.SiteAdress</address>
+                                </li>
+                            }
+                            @if (!string.IsNullOrWhiteSpace(personelEposta))
+                            {
+                                <li>
+                                    <span>Email:</span>
+                                    <a href="mailto:@personelEposta">@personelEposta</a>
+                                </li>
+                            }
+                            @if (!string.IsNullOrWhiteSpace(ozellikler?.SiteTelNo))
+                            {
+                                <li>
+                                    <span>Phone:</span>
+                                    <p>@ozellikler.SiteTelNo</p>
+                                </li>
+                            }
+                            @if (socialLinks.Count > 0)
+                            {
+                                <li>
+                                    <span>Social:</span>
+                                    <ul class="list_none social_icons radius_social">
+                                        @foreach (var social in socialLinks)
+                                        {
+                                            <li>
+                                                <a href="@social.Url" target="_blank" rel="noopener" class="@social.CssClass" title="@social.Title">
+                                                    <i class="@social.Icon"></i>
+                                                </a>
+                                            </li>
+                                        }
+                                    </ul>
+                                </li>
+                            }
+                        </ul>
+                        <div class="mt-3">
+                            <a class="btn btn-default" href="@Model.PersonelListUrl">
+                                <i class="fa fa-angle-left"></i> TÜM KADRO
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-8 col-md-6">
+                <div class="teacher_desc mt-4 mt-md-0">
+                    <h5 class="mb-3">Hakkında</h5>
+                    @if (!string.IsNullOrWhiteSpace(personel.Hakkinda))
+                    {
+                        <p>@personel.Hakkinda</p>
+                    }
+                    else
+                    {
+                        <p class="text-muted">Bu personel için açıklama girilmemiştir.</p>
+                    }
+                </div>
+
+                @if (!string.IsNullOrWhiteSpace(personel.DeneyimVeCalismalari) || ilgiAlanlari.Length > 0)
+                {
+                    <div id="accordion-1" class="accordion mt-4">
+                        @if (!string.IsNullOrWhiteSpace(personel.DeneyimVeCalismalari))
+                        {
+                            <div class="card">
+                                <div class="card-header" id="heading-1-One">
+                                    <h6 class="mb-0"> <a data-toggle="collapse" href="#collapse-1-One" aria-expanded="true" aria-controls="collapse-1-One">Deneyim ve Çalışmaları</a> </h6>
+                                </div>
+                                <div id="collapse-1-One" class="collapse show" aria-labelledby="heading-1-One">
+                                    <div class="card-body">
+                                        @Html.Raw(personel.DeneyimVeCalismalari)
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                        @if (ilgiAlanlari.Length > 0)
+                        {
+                            <div class="card">
+                                <div class="card-header" id="heading-1-Two">
+                                    <h6 class="mb-0"> <a data-toggle="collapse" href="#collapse-1-Two" aria-expanded="true" aria-controls="collapse-1-Two">İlgi Alanları</a> </h6>
+                                </div>
+                                <div id="collapse-1-Two" class="collapse show" aria-labelledby="heading-1-Two">
+                                    <div class="card-body">
+                                        @foreach (var alan in ilgiAlanlari)
+                                        {
+                                            <p>@alan</p>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</section>
+<!-- END SECTION TEACHER -->

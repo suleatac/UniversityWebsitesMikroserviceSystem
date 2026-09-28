@@ -1,0 +1,279 @@
+﻿@model Microservice.Web.ViewModels.Template.ContentListPageViewModel<Microservice.Web.ViewModels.Haber.GetHaberVm>
+@{
+    ViewData["Title"] = "Haberler";
+
+    // Sayfanin kendi adresi: /{dil}/{haberler-slug}
+    var listPath = Context.Request.Path.ToString().TrimEnd('/');
+    if (string.IsNullOrWhiteSpace(listPath))
+    {
+        listPath = $"/{Model.LanguageCode}/haberler";
+    }
+
+    // Sayfalama/arama icin query uretir.
+    string BuildQuery(int pageNumber)
+    {
+        var parts = new List<string>();
+
+        if (Model.HasQuery)
+        {
+            parts.Add($"q={Uri.EscapeDataString(Model.Query!)}");
+        }
+
+        if (pageNumber > 1)
+        {
+            parts.Add($"page={pageNumber}");
+        }
+
+        return parts.Count == 0 ? "" : "?" + string.Join("&", parts);
+    }
+
+    // Detay linki: Link dolu ise dogrudan, bos ise /{dil}/{pageTypeSlug}/{seoUrl}
+    string BuildContentHref(Microservice.Web.ViewModels.Haber.GetHaberVm haber)
+    {
+        if (!string.IsNullOrWhiteSpace(haber.Link))
+        {
+            var link = haber.Link.Trim();
+
+            return link.StartsWith("http", StringComparison.OrdinalIgnoreCase)
+                ? link
+                : "/" + link.Trim('/');
+        }
+
+        if (!string.IsNullOrWhiteSpace(haber.SeoUrl) && haber.PageType is not null)
+        {
+            return $"/{Model.LanguageCode}/{haber.PageType.Slug}/{haber.SeoUrl.Trim('/')}";
+        }
+
+        return "#";
+    }
+
+    var latestPosts = Model.Results.Data.Take(3).ToList();
+    var trCulture = new System.Globalization.CultureInfo("tr-TR");
+}
+
+<!-- START SECTION BREADCRUMB -->
+<section class="page-title-light breadcrumb_section parallax_bg overlay_bg_50" data-parallax-bg-image="/template2/images/bg_altsayfa.jpg">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-sm-6">
+                <div class="page-title">
+                    <h1>Haberler</h1>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb justify-content-sm-end">
+                        <li class="breadcrumb-item"><a href="/">Ana Sayfa</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Haberler</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- END SECTION BREADCRUMB -->
+
+<!-- START SECTION EVENT -->
+<section class="small_pt">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-9">
+
+                <!-- SONUC OZETI -->
+                @if (Model.HasQuery)
+                {
+                    <div class="mb-4">
+                        <p class="text-default mb-0">
+                            <strong>"@Model.Query"</strong> için @Model.Results.TotalCount haber bulundu.
+                            <a href="@listPath" class="text_default" style="margin-left:10px;text-decoration:underline;">Tümünü göster</a>
+                        </p>
+                    </div>
+                }
+
+                @if (Model.Results.Data.Any())
+                {
+                    <div class="row justify-content-center">
+                        @foreach (var haber in Model.Results.Data)
+                        {
+                            <div class="col-lg-6 col-sm-6 mb-4">
+                                <div class="content_box event_box radius_all_10 box_shadow1">
+                                    <div class="content_img radius_ltrt_10">
+                                        <a href="@BuildContentHref(haber)">
+                                            @if (!string.IsNullOrWhiteSpace(haber.ResimUrl))
+                                            {
+                                                <img src="@haber.ResimUrl" alt="@haber.Baslik" loading="lazy" />
+                                            }
+                                            else
+                                            {
+                                                <img src="/template2/images/event_img1.jpg" alt="@haber.Baslik" loading="lazy" />
+                                            }
+                                        </a>
+                                        <div class="event_date radius_all_5">
+                                            <h5><span>@haber.YayimTarihi.Day</span> @haber.YayimTarihi.ToString("MMM", trCulture)</h5>
+                                            <span class="event_time radius_lbrb_5 bg_default">@haber.YayimTarihi.Year</span>
+                                        </div>
+                                    </div>
+                                    <div class="content_desc">
+                                        <h4 class="content_title"><a href="@BuildContentHref(haber)">@haber.Baslik</a></h4>
+                                        <ul class="list_none content_meta">
+                                            <li><i class="ti-calendar"></i> <span class="text_default">@haber.YayimTarihi.ToString("dd.MM.yyyy", trCulture)</span></li>
+                                            @if (haber.PageType is not null)
+                                            {
+                                                <li><i class="ti-tag"></i><span class="text_default">@haber.PageType.PageTypeKind</span></li>
+                                            }
+                                        </ul>
+                                        @if (!string.IsNullOrWhiteSpace(haber.KisaAciklama))
+                                        {
+                                            <p>@haber.KisaAciklama</p>
+                                        }
+                                        <a href="@BuildContentHref(haber)" class="btn btn-default mt-2">
+                                            DETAYLAR <i class="fa fa-angle-right"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+
+                    <!-- SAYFALAMA -->
+                    @if (Model.Results.TotalPages > 1)
+                    {
+                        // Cok sayfali sonuclarda dar aralik goster (mevcut sayfa etrafi)
+                        var startPage = Math.Max(1, Model.Results.Page - 2);
+                        var endPage = Math.Min(Model.Results.TotalPages, Model.Results.Page + 2);
+
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="medium_divider"></div>
+                                <ul class="pagination justify-content-center">
+                                    @if (Model.Results.HasPrevious)
+                                    {
+                                        <li class="page-item">
+                                            <a class="page-link" href="@listPath@BuildQuery(Model.Results.Page - 1)" rel="prev">
+                                                <i class="ion-ios-arrow-thin-left"></i>
+                                            </a>
+                                        </li>
+                                    }
+                                    else
+                                    {
+                                        <li class="page-item disabled"><span class="page-link"><i class="ion-ios-arrow-thin-left"></i></span></li>
+                                    }
+
+                                    @if (startPage > 1)
+                                    {
+                                        <li class="page-item"><a class="page-link" href="@listPath@BuildQuery(1)">1</a></li>
+
+                                        if (startPage > 2)
+                                        {
+                                            <li class="page-item disabled"><span class="page-link">...</span></li>
+                                        }
+                                    }
+
+                                    @for (var i = startPage; i <= endPage; i++)
+                                    {
+                                        if (i == Model.Results.Page)
+                                        {
+                                            <li class="page-item active"><span class="page-link">@i</span></li>
+                                        }
+                                        else
+                                        {
+                                            <li class="page-item"><a class="page-link" href="@listPath@BuildQuery(i)">@i</a></li>
+                                        }
+                                    }
+
+                                    @if (endPage < Model.Results.TotalPages)
+                                    {
+                                        if (endPage < Model.Results.TotalPages - 1)
+                                        {
+                                            <li class="page-item disabled"><span class="page-link">...</span></li>
+                                        }
+
+                                        <li class="page-item">
+                                            <a class="page-link" href="@listPath@BuildQuery(Model.Results.TotalPages)">
+                                                @Model.Results.TotalPages
+                                            </a>
+                                        </li>
+                                    }
+
+                                    @if (Model.Results.HasNext)
+                                    {
+                                        <li class="page-item">
+                                            <a class="page-link" href="@listPath@BuildQuery(Model.Results.Page + 1)" rel="next">
+                                                <i class="ion-ios-arrow-thin-right"></i>
+                                            </a>
+                                        </li>
+                                    }
+                                    else
+                                    {
+                                        <li class="page-item disabled"><span class="page-link"><i class="ion-ios-arrow-thin-right"></i></span></li>
+                                    }
+                                </ul>
+                            </div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div class="content_box radius_all_10 box_shadow1 p-4 text-center">
+                        <p class="mb-0">
+                            @if (Model.HasQuery)
+                            {
+                                <text>Aramanızla eşleşen haber bulunamadı.</text>
+                            }
+                            else
+                            {
+                                <text>Henüz haber bulunmamaktadır.</text>
+                            }
+                        </p>
+                    </div>
+                }
+            </div>
+
+            <div class="col-lg-3 mt-lg-0 mt-4 pt-3 pt-lg-0">
+                <div class="sidebar">
+                    <div class="widget widget_search">
+                        <form class="search_form" role="search" method="get" action="@listPath">
+                            <input class="form-control" placeholder="Haberlerde ara..." name="q" value="@Model.Query" type="text">
+                            <button type="submit" title="Ara" name="submit" value="Submit">
+                                <span class="ti-search"></span>
+                            </button>
+                        </form>
+                    </div>
+
+                    @if (latestPosts.Any())
+                    {
+                        <div class="widget widget_recent_post">
+                            <h5 class="widget_title">En Son Haberler</h5>
+                            <ul class="recent_post border_bottom_dash list_none">
+                                @foreach (var haber in latestPosts)
+                                {
+                                    <li>
+                                        <div class="post_footer">
+                                            <div class="post_img">
+                                                <a href="@BuildContentHref(haber)">
+                                                    @if (!string.IsNullOrWhiteSpace(haber.ResimUrl))
+                                                    {
+                                                        <img src="@haber.ResimUrl" alt="@haber.Baslik" loading="lazy">
+                                                    }
+                                                    else
+                                                    {
+                                                        <img src="/template2/images/letest_post1.jpg" alt="@haber.Baslik" loading="lazy">
+                                                    }
+                                                </a>
+                                            </div>
+                                            <div class="post_content">
+                                                <h6><a href="@BuildContentHref(haber)">@haber.Baslik</a></h6>
+                                                <span class="post_date">@haber.YayimTarihi.ToString("dd MMMM yyyy", trCulture)</span>
+                                            </div>
+                                        </div>
+                                    </li>
+                                }
+                            </ul>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- END SECTION EVENT -->

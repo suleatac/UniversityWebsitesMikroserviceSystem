@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
@@ -26,10 +26,7 @@
     <PackageReference Include="Serilog.Sinks.Elasticsearch" Version="10.0.0" />
     <PackageReference Include="StackExchange.Redis" Version="3.1.31" />
   </ItemGroup>
-<ItemGroup>
-  <!-- SSS sayfasi bu cozume tasinildi ve dinamik hale getirildi;
-       eski AnaWebsite bagimliliklari kaldirildigi icin artik derlemeye dahildir. -->
-</ItemGroup>
+
 
 
 </Project>
