@@ -36,7 +36,41 @@
         StaticPage = 14,
         Search=15,
         GaleriResimListesi = 16,
-        GaleriResimDetay = 17
+        GaleriResimDetay = 17,
+        SSS=18,
+        EtkinlikListesi = 19
+    }
+
+    /// <summary>
+    /// PageBlock icerik tipi. Template3 _PageBlockPartial.cshtml bu degerlere
+    /// gore render eder. Admin'de secilen tip ile dogru alanlarin doldurulmasi
+    /// beklenir (Video => VideoUrl, Text => Content, Carousel => Medias).
+    /// </summary>
+    public static class BlockContentType
+    {
+        public const string Text = "text";
+        public const string Video = "video";
+        public const string Image = "image";
+        public const string Carousel = "carousel";
+
+        public static readonly string[] All = [Text, Video, Image, Carousel];
+
+        public static bool IsValid(string? contentType) =>
+            All.Contains(contentType, StringComparer.OrdinalIgnoreCase);
+    }
+
+    /// <summary>
+    /// Video barindiran blocklarin video kaynagi tipi.
+    /// </summary>
+    public static class VideoTuru
+    {
+        public const string YouTube = "YouTube";
+        public const string Local = "Local";
+
+        public static readonly string[] All = [YouTube, Local];
+
+        public static bool IsValid(string? videoType) =>
+            All.Contains(videoType, StringComparer.OrdinalIgnoreCase);
     }
 
 }

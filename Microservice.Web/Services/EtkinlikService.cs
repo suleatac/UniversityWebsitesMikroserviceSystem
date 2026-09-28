@@ -2,6 +2,7 @@ using Microservice.Web.Clients.EtkinlikClients;
 using Microservice.Web.Services.Interfaces;
 using Microservice.Web.Services.ServiceResults;
 using Microservice.Web.ViewModels.Etkinlik;
+using Microservice.Web.ViewModels.Paged;
 using System.Text.Json;
 
 namespace Microservice.Web.Services
@@ -72,6 +73,38 @@ namespace Microservice.Web.Services
             }
 
             return ServiceResult<EtkinlikDetailVm>.Success(response.Content!);
+        }
+
+        // PAGINATED + SEARCH (EtkinlikListesi sayfasi icin)
+        public async Task<ServiceResult<PagedResultVm<GetEtkinlikVm>>> GetPaginatedAsync(
+            int siteId,
+            int dilId,
+            string? search,
+            int page,
+            int pageSize)
+        {
+            _logger.LogInformation(
+                "Sayfali etkinlik listesi cekiliyor. SiteId: {SiteId}, DilId: {DilId}, Search: {Search}, Page: {Page}",
+                siteId, dilId, search, page);
+
+            // En yeni etkinlikler ustte olsun: varsayilan siralama yayim tarihi azalan.
+            var response = await _etkinlikClient.GetPaginatedAsync(
+                siteId, dilId, page, pageSize, search, orderBy: "YayimTarihi", orderDir: "desc");
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var problemDetails = response.Error != null
+                    ? JsonSerializer.Deserialize<Microsoft.AspNetCore.Mvc.ProblemDetails>(response.Error.Content!) : null;
+
+                _logger.LogError(
+                    "API Error -> StatusCode: {StatusCode}, Title: {Title}, Detail: {Detail}",
+                    response.StatusCode, problemDetails?.Title, problemDetails?.Detail);
+
+                return ServiceResult<PagedResultVm<GetEtkinlikVm>>.Error(
+                    problemDetails?.Detail ?? problemDetails?.Title ?? "Etkinlikler alınamadı");
+            }
+
+            return ServiceResult<PagedResultVm<GetEtkinlikVm>>.Success(response.Content!);
         }
     }
 }

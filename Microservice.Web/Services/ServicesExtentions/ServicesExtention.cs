@@ -30,6 +30,7 @@ namespace Microservice.Web.Services.ServicesExtentions
             services.AddScoped<IGaleriResimService, GaleriResimService>();
             services.AddScoped<IIletisimService, IletisimService>();
             services.AddScoped<IPopupService, PopupService>();
+            services.AddScoped<IPageSectionService, PageSectionService>();
             services.AddScoped<IOgrenciService, OgrenciService>();
             services.AddScoped<ISikcaSorulanSoruService, SikcaSorulanSoruService>();
 
@@ -47,6 +48,7 @@ namespace Microservice.Web.Services.ServicesExtentions
             services.AddScoped<IPageResolver, DuyuruListesiPageResolver>();
             services.AddScoped<IPageResolver, VideoListesiPageResolver>();
             services.AddScoped<IPageResolver, PersonelListesiPageResolver>();
+            services.AddScoped<IPageResolver, SSSPageResolver>();
 
             return services;
         }

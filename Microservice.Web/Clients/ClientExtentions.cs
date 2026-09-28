@@ -11,6 +11,7 @@ using Microservice.Web.Clients.IletisimClients;
 using Microservice.Web.Clients.MenuClients;
 using Microservice.Web.Clients.OgrenciClients;
 using Microservice.Web.Clients.PageTypeClients;
+using Microservice.Web.Clients.PageSectionClients;
 using Microservice.Web.Clients.PopupClients;
 using Microservice.Web.Clients.ShortcutButtonClients;
 using Microservice.Web.Clients.SikcaSorulanSoruClients;
@@ -127,6 +128,11 @@ namespace Microservice.Web.Clients
 
             //Popup Clients (Site API)
             services.AddRefitClient<IPopupClientServices>()
+                .ConfigureHttpClient(c => c.BaseAddress = GetSiteBaseAddress(configuration))
+                .AddHttpMessageHandler<ClientAuthenticatedHttpClientHandler>();
+
+            //PageSection Clients (Site API; Template3 dinamik ana sayfa bolumleri icin)
+            services.AddRefitClient<IPageSectionClientServices>()
                 .ConfigureHttpClient(c => c.BaseAddress = GetSiteBaseAddress(configuration))
                 .AddHttpMessageHandler<ClientAuthenticatedHttpClientHandler>();
 

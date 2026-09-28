@@ -43,6 +43,7 @@ namespace Microservice.Web.Controllers
         private readonly IVideoService _videoService;
         private readonly IBandLogoService _bandLogoService;
         private readonly IPopupService _popupService;
+        private readonly IPageSectionService _pageSectionService;
         private readonly IOgrenciService _ogrenciService;
         private readonly ISikcaSorulanSoruService _sikcaSorulanSoruService;
         private readonly ILogger<TemplateController> _logger;
@@ -65,6 +66,7 @@ namespace Microservice.Web.Controllers
             IVideoService videoService,
             IBandLogoService bandLogoService,
             IPopupService popupService,
+            IPageSectionService pageSectionService,
             IOgrenciService ogrenciService,
             ISikcaSorulanSoruService sikcaSorulanSoruService,
             ILogger<TemplateController> logger,
@@ -87,6 +89,7 @@ namespace Microservice.Web.Controllers
             _videoService = videoService;
             _bandLogoService = bandLogoService;
             _popupService = popupService;
+            _pageSectionService = pageSectionService;
             _ogrenciService = ogrenciService;
             _sikcaSorulanSoruService = sikcaSorulanSoruService;
             _logger = logger;
@@ -189,6 +192,9 @@ namespace Microservice.Web.Controllers
                 PageTypeKindEnum.Etkinlik when route.EtkinlikDetay is not null =>
                      await RenderEtkinlikDetayAsync(route),
 
+                PageTypeKindEnum.EtkinlikListesi when route.DetailSlug is null =>
+                     await RenderEtkinlikListesiAsync(route),
+
                 PageTypeKindEnum.Bilgi when route.BilgiDetay is not null =>
                      await RenderBilgiDetayAsync(route),
 
@@ -220,7 +226,8 @@ namespace Microservice.Web.Controllers
                      await RenderGaleriResimListesiAsync(route),
                 PageTypeKindEnum.GaleriResimDetay when route.GaleriResimDetay is not null =>
                      await RenderGaleriResimDetayAsync(route),
-
+                PageTypeKindEnum.SSS when route.SikcaSorulanSoruListesi is not null =>
+                     await RenderSikcaSorulanSoruListesiAsync(route),
                 PageTypeKindEnum.StaticPage => await RenderStaticPageAsync(route),
                 _ => RenderNotFound("Bu sayfa türü için tanımlı bir görünüm yok.")
             };
@@ -252,6 +259,8 @@ namespace Microservice.Web.Controllers
             var galeriTask = _galeriResimService.GetGaleriResimlerAsync(siteId, languageId);
             var bandLogolarTask = _bandLogoService.GetBandLogosAsync(siteId, languageId);
             var personelTask = _sitePersonelService.GetPersonelListAsync(siteId);
+            // Template3 ana sayfasi dinamik bolumleri (yayindaki section + block agaci).
+            var pageSectionsTask = _pageSectionService.GetPublishedSectionsAsync(siteId, languageId);
             var ogrenciSayilariTask = _ogrenciService.GetOgrenciSayilariAsync();
             // Liste sayfa adresleri (Tümünü Gör linkleri).
             var duyurularPageTypeTask = _pageTypeService.GetPageTypeByKindAsync(
@@ -284,6 +293,7 @@ namespace Microservice.Web.Controllers
                 galeriTask,
                 bandLogolarTask,
                 personelTask,
+                pageSectionsTask,
                 ogrenciSayilariTask,
                 duyurularPageTypeTask,
                 haberlerPageTypeTask,
@@ -311,6 +321,7 @@ namespace Microservice.Web.Controllers
             var galeriResult = await galeriTask;
             var bandLogolarResult = await bandLogolarTask;
             var personelResult = await personelTask;
+            var pageSectionsResult = await pageSectionsTask;
             var (aktifOgrenci, mezunOgrenci) = await ogrenciSayilariTask;
             var duyurularPageTypeResult = await duyurularPageTypeTask;
             var haberlerPageTypeResult = await haberlerPageTypeTask;
@@ -366,6 +377,7 @@ namespace Microservice.Web.Controllers
                     .Take(HomeLatestContentCount)
                     .ToList(),
                 BandLogolar = bandLogolarResult.Data ?? [],
+                Sections = pageSectionsResult.Data ?? [],
                 OgrenciSayisi = aktifOgrenci,
                 MezunOgrenciSayisi = mezunOgrenci,
                 IdariPersonelSayisi = idariPersonelSayisi,
@@ -459,6 +471,22 @@ namespace Microservice.Web.Controllers
             ViewData["Site"] = route.Site;
 
             var viewPath = GetTemplateViewPath(route.Page.TemplateId, etkinlik.PageType.ViewName);
+
+            return View(viewPath, model);
+        }
+
+        /// <summary>
+        /// /etkinlikler?q=kelime&page=1&pageSize=5
+        /// Sayfali ve sayfa ici arama destekli etkinlik listesi (Template1 EtkinlikListesi).
+        /// </summary>
+        private async Task<IActionResult> RenderEtkinlikListesiAsync(RouteResolveResult route)
+        {
+            var model = await BuildContentListAsync<GetEtkinlikVm>(
+                (q, page, pageSize) => _etkinlikService.GetPaginatedAsync(
+                    route.Site.Id, route.LanguageId, q, page, pageSize),
+                route);
+
+            var viewPath = GetTemplateViewPath(route.Page.TemplateId, "EtkinlikListesi");
 
             return View(viewPath, model);
         }
@@ -1095,9 +1123,24 @@ namespace Microservice.Web.Controllers
         }
 
         // ============================================================
-        // AKADEMİK KADRO
+        // SIKÇA SORULAN SORULAR
         // ============================================================
+        private async Task<IActionResult> RenderSikcaSorulanSoruListesiAsync(RouteResolveResult route)
+        {
 
+
+            ViewData["Site"] = route.Site;
+
+            var model = new SssPageViewModel {
+                Site = route.Site,
+                LanguageCode = route.LanguageCode,
+                SoruAgaci = route.SikcaSorulanSoruListesi ?? [],
+            };
+
+            var viewPath = GetTemplateViewPath(route.Page.TemplateId, "SSS");
+
+            return View(viewPath, model);
+        }
         /// <summary>
         /// /akademik-kadro
         /// </summary>
@@ -1154,30 +1197,7 @@ namespace Microservice.Web.Controllers
                 return View(viewPath, model);
             }
 
-            // SSS sayfasi admin'deki agac yapisiyla (kategori -> sorular) render edilir.
-            if (string.Equals(viewName, "SSS", StringComparison.OrdinalIgnoreCase))
-            {
-                var sssResult = await _sikcaSorulanSoruService
-                    .GetSikcaSorulanSorularAsync(route.Site.Id, route.LanguageId);
-
-                if (sssResult.IsFail)
-                {
-                    _logger.LogWarning(
-                        "SSS verileri alinamadi. SiteId: {SiteId}, DilId: {DilId}",
-                        route.Site.Id,
-                        route.LanguageId);
-                }
-
-                ViewData["Site"] = route.Site;
-
-                var model = new SssPageViewModel {
-                    Site = route.Site,
-                    LanguageCode = route.LanguageCode,
-                    SoruAgaci = sssResult.Data ?? [],
-                };
-
-                return View(viewPath, model);
-            }
+            
 
             return View(viewPath);
         }

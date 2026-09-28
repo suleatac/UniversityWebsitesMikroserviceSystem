@@ -1,0 +1,187 @@
+@model List<Microservice.Admin.ViewModels.PageBuilder.GetPageSectionVm>
+
+@{
+    ViewBag.pTitle = "Sayfa Bölüm Yönetimi";
+    ViewBag.Title = "Ana Sayfa Dinamik Bölümler";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section styles {
+    <style>
+        .page-header-card {
+            background: linear-gradient(135deg, #6f42c1 0%, #9b7de0 100%);
+            border-radius: 12px; padding: 1.5rem; color: white; margin-bottom: 1.5rem;
+            box-shadow: 0 4px 12px rgba(111, 66, 193, 0.2);
+        }
+        .section-sortable-container {
+            border: none; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+        }
+        .section-sortable-list { list-style: none; padding: 0; margin: 0; min-height: 120px; }
+        .section-sortable-item {
+            display: flex; align-items: center; gap: 1rem;
+            padding: 0.9rem 1.25rem; border-bottom: 1px solid #f1f1f1;
+            background: #fff; cursor: grab;
+        }
+        .section-sortable-item:last-child { border-bottom: none; }
+        .section-sortable-item:hover { background: #fafafa; }
+        .section-sortable-item.sortable-ghost { background: #f3edff; }
+        .section-sortable-item .drag-handle { color: #adb5bd; font-size: 1.2rem; }
+        .section-sortable-item .section-info { flex: 1; min-width: 0; }
+        .section-sortable-item .section-title { font-weight: 600; color: #333; }
+        .section-sortable-item .section-meta { color: #6c757d; font-size: 0.8rem; margin-top: 2px; }
+        .section-sortable-item .section-actions { display: flex; gap: 0.4rem; flex-shrink: 0; }
+        .color-chip { display: inline-block; width: 14px; height: 14px; border-radius: 3px; border: 1px solid #dee2e6; vertical-align: middle; margin-right: 4px; }
+        .sortable-loading {
+            display: none; position: absolute; inset: 0; background: rgba(255,255,255,0.7);
+            z-index: 10; align-items: center; justify-content: center;
+        }
+        .sortable-loading.show { display: flex; }
+    </style>
+}
+
+<div class="page-header-card">
+    <div class="d-flex justify-content-between align-items-center">
+        <div>
+            <h4><i class="mdi mdi-page-layout-body me-2"></i>Sayfa Bölüm Yönetimi</h4>
+            <p class="mb-0 opacity-75">Ana sayfadaki dinamik bölümleri ve içerik containerlarını buradan yönetebilirsiniz. Sıralama için sürükleyip bırakın.</p>
+        </div>
+        <div class="d-flex gap-2">
+            <a asp-action="Create" class="btn btn-light"><i class="mdi mdi-plus me-1"></i> Yeni Bölüm</a>
+        </div>
+    </div>
+</div>
+
+<form id="antiforgeryForm" class="d-none">@Html.AntiForgeryToken()</form>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card section-sortable-container position-relative">
+            <div class="sortable-loading" id="sortableLoading">
+                <div class="spinner-border text-primary" role="status"><span class="visually-hidden">Kaydediliyor...</span></div>
+            </div>
+
+            <div class="card-body p-0">
+                @if (Model == null || Model.Count == 0)
+                {
+                    <div class="text-center py-5">
+                        <i class="mdi mdi-file-outline display-4 text-muted"></i>
+                        <p class="text-muted mt-3 mb-1">Henüz bölüm tanımlanmamış.</p>
+                        <a asp-action="Create" class="btn btn-primary mt-2"><i class="mdi mdi-plus me-1"></i> İlk Bölümü Oluştur</a>
+                    </div>
+                }
+                else
+                {
+                    <ul class="section-sortable-list" id="sectionSortableList">
+                        @foreach (var bolum in Model.OrderBy(s => s.Sira))
+                        {
+                            <li class="section-sortable-item" data-id="@bolum.Id">
+                                <div class="drag-handle"><i class="mdi mdi-drag-horizontal-variant"></i></div>
+                                <div class="section-info">
+                                    <div class="section-title">
+                                        <span class="section-number me-1">#@bolum.Sira</span>
+                                        @bolum.Baslik
+                                    </div>
+                                    <div class="section-meta">
+                                        <span class="color-chip" style="background:@(string.IsNullOrWhiteSpace(bolum.BackgroundColor) ? "#ffffff" : bolum.BackgroundColor)"></span>
+                                        Arka plan: @(string.IsNullOrWhiteSpace(bolum.BackgroundColor) ? "yok" : bolum.BackgroundColor)
+                                        @if (!string.IsNullOrWhiteSpace(bolum.BackgroundImageUrl))
+                                        {
+                                            <span class="ms-2"><i class="mdi mdi-image-outline"></i> Görsel var</span>
+                                        }
+                                        <span class="ms-2"><i class="mdi mdi-shape-plus"></i> @bolum.Blocks.Count container</span>
+                                    </div>
+                                </div>
+                                <div class="section-actions">
+                                    @if (bolum.Yayinda)
+                                    {
+                                        <span class="badge bg-success align-self-center me-2">Yayında</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary align-self-center me-2">Taslak</span>
+                                    }
+                                    <a asp-action="Blocks" asp-route-sectionId="@bolum.Id" class="btn btn-sm btn-outline-primary" title="Container Yönetimi">
+                                        <i class="mdi mdi-cursor-default-click-outline"></i> İçerikler
+                                    </a>
+                                    <a asp-action="Edit" asp-route-id="@bolum.Id" class="btn btn-sm btn-outline-warning" title="Düzenle">
+                                        <i class="mdi mdi-pencil-outline"></i>
+                                    </a>
+                                    <a asp-action="Delete" asp-route-id="@bolum.Id" class="btn btn-sm btn-outline-danger" title="Sil">
+                                        <i class="mdi mdi-trash-can-outline"></i>
+                                    </a>
+                                </div>
+                            </li>
+                        }
+                    </ul>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <script src="~/assets/js/app.js"></script>
+    <script src="~/assets/libs/sortablejs/Sortable.min.js"></script>
+    <script src="~/assets/libs/toastr/toastr.js"></script>
+
+    <script>
+        $(function () {
+            var sortableList = document.getElementById('sectionSortableList');
+            if (!sortableList) return;
+
+            new Sortable(sortableList, {
+                animation: 200,
+                handle: '.drag-handle',
+                ghostClass: 'sortable-ghost',
+                onEnd: function () {
+                    saveOrder();
+                }
+            });
+
+            function saveOrder() {
+                var items = [];
+                $('#sectionSortableList .section-sortable-item').each(function (index) {
+                    items.push({
+                        id: parseInt($(this).data('id')),
+                        sira: index + 1
+                    });
+                });
+
+                // Anlık sıra badge güncellemesi
+                $('#sectionSortableList .section-sortable-item').each(function (index) {
+                    $(this).find('.section-number').text('#' + (index + 1));
+                });
+
+                $('#sortableLoading').addClass('show');
+
+                $.ajax({
+                    url: '/PageBuilder/ReorderSections',
+                    type: 'POST',
+                    contentType: 'application/json; charset=utf-8',
+                    data: JSON.stringify(items),
+                    headers: {
+                        'RequestVerificationToken': getAntiForgeryToken()
+                    },
+                    success: function (response) {
+                        $('#sortableLoading').removeClass('show');
+                        if (response.success) {
+                            toastr.success(response.message, 'Başarılı');
+                        } else {
+                            toastr.error(response.message || 'Sıralama güncellenemedi.', 'Hata');
+                        }
+                    },
+                    error: function () {
+                        $('#sortableLoading').removeClass('show');
+                        toastr.error('Sunucu bağlantısında hata oluştu.', 'Hata');
+                    }
+                });
+            }
+
+            // Anti-Forgery Token Alıcı (Banner örnegiyle ayni)
+            function getAntiForgeryToken() {
+                return $('input[name="__RequestVerificationToken"]').val() ||
+                    $('#antiforgeryForm input').val();
+            }
+        });
+    </script>
+}

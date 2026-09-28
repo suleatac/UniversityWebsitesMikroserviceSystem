@@ -39,6 +39,7 @@ namespace Microservice.Admin.Services.ServicesExtentions
             services.AddScoped<IYoneticiSiteService, YoneticiSiteService>();
             services.AddScoped<IKeycloakRoleService, KeycloakRoleService>();
             services.AddScoped<IPopupService, PopupService>();
+            services.AddScoped<IPageSectionService, PageSectionService>();
             services.AddScoped<IShortcutButtonService, ShortcutButtonService>();
             services.AddScoped<ISiteOzellikleriService, SiteOzellikleriService>();
             services.AddScoped<ITumPersonelService, TumPersonelService>();

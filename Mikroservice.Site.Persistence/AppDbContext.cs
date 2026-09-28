@@ -33,6 +33,9 @@ namespace Microservice.Site.Persistence
         public DbSet<PersonelTip> PersonelTipleri { get; set; }
         public DbSet<Popup> Popuplar { get; set; }
         public DbSet<PageType> PageTypes { get; set; }
+        public DbSet<PageSection> PageSectionlar { get; set; }
+        public DbSet<PageBlock> PageBloklar { get; set; }
+        public DbSet<PageBlockMedia> PageBlockMedia { get; set; }
         public DbSet<SikcaSorulanSoru> SikcaSorulanSorular { get; set; }
         public DbSet<Mikroservice.Site.Domain.Entities.Site> Siteler { get; set; }
         public DbSet<SiteOzellikleri> SiteOzellikleri { get; set; }

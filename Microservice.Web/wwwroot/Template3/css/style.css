@@ -4158,7 +4158,7 @@ footer .widget_title {
         padding: 5px;
     }
 .event_date {
-/*    position: absolute;*/
+    position: absolute;
     top: 10px;
     left: 10px;
     max-width: 75px;

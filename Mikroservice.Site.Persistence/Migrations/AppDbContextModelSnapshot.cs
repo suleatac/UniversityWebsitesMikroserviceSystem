@@ -498,6 +498,154 @@ namespace Mikroservice.Site.Persistence.Migrations
                     b.ToTable("MediaFile");
                 });
 
+            modelBuilder.Entity("Mikroservice.Site.Domain.Entities.PageBlock", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Animation")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<string>("BackgroundColor")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<string>("BackgroundImageUrl")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<int>("ColumnSize")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValue(12);
+
+                    b.Property<string>("Content")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ContentType")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<int>("PageSectionId")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("ParentId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("RowNumber")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValue(0);
+
+                    b.Property<string>("VideoType")
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
+                    b.Property<string>("VideoUrl")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ParentId");
+
+                    b.HasIndex("PageSectionId", "ParentId", "RowNumber");
+
+                    b.ToTable("PageBloklar");
+                });
+
+            modelBuilder.Entity("Mikroservice.Site.Domain.Entities.PageBlockMedia", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("PageBlockId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("ResimUrl")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<int>("Sira")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValue(0);
+
+                    b.Property<string>("VideoUrl")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PageBlockId", "Sira");
+
+                    b.ToTable("PageBlockMedia");
+                });
+
+            modelBuilder.Entity("Mikroservice.Site.Domain.Entities.PageSection", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("BackgroundColor")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<string>("BackgroundImageUrl")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<string>("Baslik")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<int>("DilId")
+                        .HasColumnType("integer");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime>("OlusturulmaTarihi")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp without time zone")
+                        .HasDefaultValueSql("NOW()");
+
+                    b.Property<int>("Sira")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("SiteId")
+                        .HasColumnType("integer");
+
+                    b.Property<bool>("Yayinda")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(true);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DilId");
+
+                    b.HasIndex("SiteId", "DilId", "Sira");
+
+                    b.ToTable("PageSectionlar");
+                });
+
             modelBuilder.Entity("Mikroservice.Site.Domain.Entities.PageType", b =>
                 {
                     b.Property<int>("Id")
@@ -1309,6 +1457,54 @@ namespace Mikroservice.Site.Persistence.Migrations
                     b.Navigation("Site");
                 });
 
+            modelBuilder.Entity("Mikroservice.Site.Domain.Entities.PageBlock", b =>
+                {
+                    b.HasOne("Mikroservice.Site.Domain.Entities.PageSection", "PageSection")
+                        .WithMany("Blocks")
+                        .HasForeignKey("PageSectionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Mikroservice.Site.Domain.Entities.PageBlock", "Parent")
+                        .WithMany("Children")
+                        .HasForeignKey("ParentId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("PageSection");
+
+                    b.Navigation("Parent");
+                });
+
+            modelBuilder.Entity("Mikroservice.Site.Domain.Entities.PageBlockMedia", b =>
+                {
+                    b.HasOne("Mikroservice.Site.Domain.Entities.PageBlock", "PageBlock")
+                        .WithMany("Medias")
+                        .HasForeignKey("PageBlockId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("PageBlock");
+                });
+
+            modelBuilder.Entity("Mikroservice.Site.Domain.Entities.PageSection", b =>
+                {
+                    b.HasOne("Mikroservice.Site.Domain.Entities.Dil", "Dil")
+                        .WithMany()
+                        .HasForeignKey("DilId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Mikroservice.Site.Domain.Entities.Site", "Site")
+                        .WithMany()
+                        .HasForeignKey("SiteId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Dil");
+
+                    b.Navigation("Site");
+                });
+
             modelBuilder.Entity("Mikroservice.Site.Domain.Entities.PageType", b =>
                 {
                     b.HasOne("Mikroservice.Site.Domain.Entities.Dil", "Dil")
@@ -1625,6 +1821,18 @@ namespace Mikroservice.Site.Persistence.Migrations
                     b.Navigation("Dosyalar");
 
                     b.Navigation("Resimler");
+                });
+
+            modelBuilder.Entity("Mikroservice.Site.Domain.Entities.PageBlock", b =>
+                {
+                    b.Navigation("Children");
+
+                    b.Navigation("Medias");
+                });
+
+            modelBuilder.Entity("Mikroservice.Site.Domain.Entities.PageSection", b =>
+                {
+                    b.Navigation("Blocks");
                 });
 
             modelBuilder.Entity("Mikroservice.Site.Domain.Entities.PageType", b =>

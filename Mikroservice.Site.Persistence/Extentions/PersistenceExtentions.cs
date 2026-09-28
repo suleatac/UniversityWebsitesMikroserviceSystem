@@ -60,6 +60,8 @@ namespace Microservice.Site.Persistence.Extentions
             services.AddScoped<IYonetimDuyuruRepository, YonetimDuyuruRepository>();
             services.AddScoped<IYonetimDuyuruOkunduRepository, YonetimDuyuruOkunduRepository>();
             services.AddScoped<IShortcutButtonRepository, ShortcutButtonRepository>();
+            services.AddScoped<IPageSectionRepository, PageSectionRepository>();
+            services.AddScoped<IPageBlockRepository, PageBlockRepository>();
             services.AddScoped<ISeedService, UnvanSeedService>();
             services.AddScoped<ISeedService, PersonelTipSeedService>();
             services.AddScoped<ISeedService, HedefSeedService>();

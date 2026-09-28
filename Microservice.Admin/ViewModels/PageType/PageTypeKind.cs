@@ -20,6 +20,8 @@ namespace Microservice.Admin.ViewModels.PageType
         StaticPage = 14,
         Search = 15,
         GaleriResimListesi = 16,
-        GaleriResimDetay = 17
+        GaleriResimDetay = 17,
+        SSS = 18,
+        EtkinlikListesi = 19
     }
 }

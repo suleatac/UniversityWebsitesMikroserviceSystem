@@ -1,0 +1,21 @@
+@*
+    Dosya Yoneticisi modal kabugu. PageBuilder Create/Edit/CreateBlock gorunumlerinde
+    gorsel/video secimi icin kullanilir. popup/Edit.cshtml icerisindeki inline
+    karsiliginin ortak parsiyal haline getirilmisidir.
+*@
+<div class="modal fade" id="fileManagerModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="mdi mdi-folder-open-outline me-1"></i>
+                    Dosya Yöneticisi
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-0" style="height:600px;">
+                <iframe id="fileManagerFrame" src="" style="width:100%; height:100%; border:none;"></iframe>
+            </div>
+        </div>
+    </div>
+</div>
