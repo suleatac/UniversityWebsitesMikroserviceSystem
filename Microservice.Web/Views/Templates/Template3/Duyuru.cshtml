@@ -1,0 +1,318 @@
+﻿@model Microservice.Web.ViewModels.Duyuru.DuyuruDetayPageViewModel
+@{
+    var duyuru = Model.Duyuru;
+
+    ViewData["Title"] = duyuru.SeoTitle ?? duyuru.Baslik ?? "Duyuru";
+
+    if (!string.IsNullOrWhiteSpace(duyuru.SeoDescription))
+    {
+        ViewData["MetaDescription"] = duyuru.SeoDescription;
+    }
+
+    // Paylasim linkleri icin mevcut sayfa adresi
+    var currentPageUrl = $"{Context.Request.Scheme}://{Context.Request.Host}{Context.Request.Path}";
+    var encodedUrl = Uri.EscapeDataString(currentPageUrl);
+    var encodedTitle = Uri.EscapeDataString(duyuru.Baslik ?? "");
+
+    // Detay linki: Link dolu ise dogrudan, bos ise /{dil}/{duyurular-slug}/{seoUrl}
+    string BuildDuyuruHref(Microservice.Web.ViewModels.Duyuru.GetDuyuruVm d)
+    {
+        if (!string.IsNullOrWhiteSpace(d.Link))
+        {
+            var link = d.Link.Trim();
+
+            return link.StartsWith("http", StringComparison.OrdinalIgnoreCase)
+                ? link
+                : "/" + link.Trim('/');
+        }
+
+        if (!string.IsNullOrWhiteSpace(d.SeoUrl) && d.PageType is not null)
+        {
+            return $"/{Model.LanguageCode}/{d.PageType.Slug}/{d.SeoUrl.Trim('/')}";
+        }
+
+        return "#";
+    }
+
+    var siteOzellikleri = Model.Site?.SiteOzellikleri;
+
+    // Dosya turune gore FontAwesome ikon
+    string DosyaIkon(string? tur) => tur?.ToLowerInvariant() switch {
+        "pdf" => "fa-file-pdf-o",
+        "doc" or "docx" => "fa-file-word-o",
+        "xls" or "xlsx" or "csv" => "fa-file-excel-o",
+        "ppt" or "pptx" => "fa-file-powerpoint-o",
+        "zip" or "rar" or "7z" or "tar" or "gz" => "fa-file-archive-o",
+        "jpg" or "jpeg" or "png" or "gif" or "webp" or "bmp" or "svg" => "fa-file-image-o",
+        "mp4" or "avi" or "mkv" or "mov" or "wmv" => "fa-file-video-o",
+        "mp3" or "wav" => "fa-file-audio-o",
+        "txt" => "fa-file-text-o",
+        _ => "fa-file-o"
+    };
+
+    string DosyaBoyutMetni(long bayt)
+    {
+        if (bayt <= 0) return "";
+        if (bayt < 1024) return $"{bayt} B";
+        if (bayt < 1024 * 1024) return $"{bayt / 1024.0:0.#} KB";
+        return $"{bayt / (1024.0 * 1024.0):0.#} MB";
+    }
+}
+
+@{
+    var trCulture = new System.Globalization.CultureInfo("tr-TR");
+    var yayinGun = duyuru.YayimTarihi.Day;
+    var yayinAy = duyuru.YayimTarihi.ToString("MMMM", trCulture);
+    var yayinYil = duyuru.YayimTarihi.Year;
+}
+<!-- START SECTION BREADCRUMB -->
+<section class="page-title-light breadcrumb_section parallax_bg overlay_bg_50" data-parallax-bg-image="/template2/images/bg_altsayfa.jpg">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-sm-6">
+                <div class="page-title">
+                    <h1>@duyuru.Baslik</h1>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb justify-content-sm-end">
+                        <li class="breadcrumb-item"><a href="/">Ana Sayfa</a></li>
+                        <li class="breadcrumb-item"><a href="@Model.DuyuruListUrl">Duyurular</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">@duyuru.Baslik</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- END SECTION BANNER -->
+<!-- START SECTION NEW DETAIL -->
+<section>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-9">
+                <div class="single_event">
+                    @if (!string.IsNullOrWhiteSpace(duyuru.ResimUrl))
+                    {
+                        <div class="content_img">
+
+                            <a href="@duyuru.ResimUrl" target="_blank" rel="noopener">
+                                <img src="@duyuru.ResimUrl" alt="@duyuru.Baslik">
+                            </a>
+
+
+                            <div class="event_date radius_all_5">
+                                <h5><span>@yayinGun</span> @yayinAy</h5>
+                                <span class="event_time radius_lbrb_5 bg_default">@yayinYil</span>
+                            </div>
+                        </div>
+                    }
+                    <div class="event_title">
+                        <div class="row align-items-end">
+                            <div class="col-md-8">
+                                <h2>@duyuru.Baslik</h2>
+                                <ul class="list_none content_meta mt-2">
+                                    <li><i class="ti-calendar"></i> <span class="text_default">@duyuru.YayimTarihi.ToString("dd MMMM yyyy", trCulture)</span></li>
+                                    @if (duyuru.PageType is not null)
+                                    {
+                                        <li><i class="ti-tag"></i><span class="text_default">@duyuru.PageType.PageTypeKind</span></li>
+                                    }
+                                    <li><i class="ti-eye"></i><span class="text_default">@duyuru.GosterimSayisi görüntülenme</span></li>
+                                </ul>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="text-md-right">
+                                    <ul class="list_none social_icons">
+                                        <li>
+                                            <a target="_blank" rel="noopener"
+                                               href="https://www.facebook.com/sharer/sharer.php?u=@encodedUrl"
+                                               title="Facebook'ta paylaş"><i class="ion-social-facebook"></i></a>
+                                        </li>
+                                        <li>
+                                            <a target="_blank" rel="noopener"
+                                               href="https://twitter.com/intent/tweet?url=@encodedUrl&text=@encodedTitle"
+                                               title="Twitter'da paylaş"><i class="ion-social-twitter"></i></a>
+                                        </li>
+                                        <li>
+                                            <a target="_blank" rel="noopener"
+                                               href="https://www.linkedin.com/sharing/share-offsite/?url=@encodedUrl"
+                                               title="LinkedIn'de paylaş"><i class="ion-social-linkedin"></i></a>
+                                        </li>
+                                        <li>
+                                            <a href="mailto:?subject=@encodedTitle&body=@encodedUrl"
+                                               title="E-posta ile gönder"><i class="ion-email"></i></a>
+                                        </li>
+                                        <li>
+                                            <a href="javascript:void(0)"
+                                               id="copy-link-btn"
+                                               data-url="@currentPageUrl"
+                                               title="Bağlantıyı kopyala"><i class="ion-link"></i></a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="entry_content">
+                        @if (!string.IsNullOrWhiteSpace(duyuru.IcerikMetni))
+                        {
+                            @Html.Raw(duyuru.IcerikMetni)
+                        }
+                        else
+                        {
+                            <p>Bu duyuru için içerik girilmemiş.</p>
+                        }
+                    </div>
+
+                    @* Galeri Resimleri Slider (Admin > Duyuru > Galeri Resimleri) *@
+                    @if (duyuru.Resimler is { Count: > 0 })
+                    {
+                        <div class="content-pad icerik-resim-slider mt-4">
+                            <div class="owl-carousel owl-theme icerik-resim-carousel">
+                                @foreach (var resim in duyuru.Resimler.OrderBy(r => r.Sira))
+                                {
+                                    <div class="item">
+                                        <a href="@resim.ResimUrl" target="_blank" rel="noopener" title="Büyütmek için tıklayın">
+                                            <img src="@resim.ResimUrl" alt="@(string.IsNullOrWhiteSpace(resim.Baslik) ? duyuru.Baslik : resim.Baslik)" loading="lazy" style="width:100%; height:auto;" />
+                                        </a>
+                                        @if (!string.IsNullOrWhiteSpace(resim.Baslik))
+                                        {
+                                            <p class="slider-caption">@resim.Baslik</p>
+                                        }
+                                    </div>
+                                }
+                            </div>
+                        </div><!-- /icerik-resim-slider -->
+                    }
+
+                    <div class="mt-4">
+                        <a class="btn btn-default" href="@Model.DuyuruListUrl">
+                            <i class="fa fa-angle-left"></i> TÜM DUYURULAR
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 mt-lg-0 mt-4 pt-3 pt-lg-0">
+                <div class="sidebar">
+                    <div class="widget widget_search">
+                        <form class="search_form" role="search" method="get" action="@Model.DuyuruListUrl">
+                            <input required="" class="form-control" placeholder="Duyurularda ara..." name="q" type="text">
+                            <button type="submit" title="Ara" name="submit" value="Submit">
+                                <span class="ti-search"></span>
+                            </button>
+                        </form>
+                    </div>
+
+                    @if (Model.LatestDuyurular.Any())
+                    {
+                        <div class="widget widget_recent_post">
+                            <h5 class="widget_title">Son Eklenenler</h5>
+                            <ul class="recent_post border_bottom_dash list_none">
+                                @foreach (var item in Model.LatestDuyurular)
+                                {
+                                    <li>
+                                        <div class="post_footer">
+                                            <div class="post_img">
+                                                <a href="@BuildDuyuruHref(item)">
+                                                    @if (!string.IsNullOrWhiteSpace(item.ResimUrl))
+                                                    {
+                                                        <img src="@item.ResimUrl" alt="@item.Baslik" loading="lazy">
+                                                    }
+                                                    else
+                                                    {
+                                                        <img src="/template2/images/letest_post1.jpg" alt="@item.Baslik" loading="lazy">
+                                                    }
+                                                </a>
+                                            </div>
+                                            <div class="post_content">
+                                                <h6><a href="@BuildDuyuruHref(item)">@item.Baslik</a></h6>
+                                                <span class="post_date">@item.YayimTarihi.ToString("dd MMMM yyyy", trCulture)</span>
+                                            </div>
+                                        </div>
+                                    </li>
+                                }
+                            </ul>
+                        </div>
+                    }
+
+                    @if (duyuru.Dosyalar is { Count: > 0 })
+                    {
+                        <div class="widget widget_tags">
+                            <h5 class="widget_title">Dosyalar</h5>
+                            <div class="tags">
+                                @foreach (var dosya in duyuru.Dosyalar.OrderBy(d => d.Sira))
+                                {
+                                    var dosyaTitle = dosya.DosyaBoyut > 0
+                                        ? $"{dosya.DosyaAdi} · {DosyaBoyutMetni(dosya.DosyaBoyut)}"
+                                        : dosya.DosyaAdi;
+                                    <a href="@dosya.DosyaUrl" target="_blank" rel="noopener" download="@dosya.DosyaAdi"
+                                       title="@dosyaTitle">
+                                        <i class="fa @DosyaIkon(dosya.DosyaTuru)"></i>
+                                        @(string.IsNullOrWhiteSpace(dosya.Baslik) ? dosya.DosyaAdi : dosya.Baslik)
+                                    </a>
+                                }
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- END SECTION NEW DETAIL -->
+@section Scripts {
+    <script type="text/javascript">
+        // Galeri resimleri slider (owlCarousel)
+        (function() {
+            var $car = $('.icerik-resim-carousel');
+            if (!$car.length || !$.fn.owlCarousel) return;
+
+            $car.owlCarousel({
+                loop: $car.children('.item').length > 1,
+                nav: true,
+                dots: true,
+                margin: 10,
+                items: 1,
+                autoplay: true,
+                autoplayTimeout: 5000,
+                autoplayHoverPause: true,
+                navText: ['', '']
+            });
+        })();
+
+        // Baglanti kopyalama butonu
+        (function() {
+            var btn = document.getElementById('copy-link-btn');
+            if (!btn) return;
+
+            btn.addEventListener('click', function() {
+                var url = btn.getAttribute('data-url');
+                var icon = btn.querySelector('i');
+                var originalClass = icon ? icon.className : '';
+
+                function done() {
+                    if (icon) icon.className = 'ion-checkmark-round';
+                    btn.title = 'Kopyalandı!';
+                    setTimeout(function() {
+                        if (icon) icon.className = originalClass;
+                        btn.title = 'Bağlantıyı kopyala';
+                    }, 2000);
+                }
+
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    navigator.clipboard.writeText(url).then(done);
+                } else {
+                    // Eski tarayiciler icin fallback
+                    var input = document.createElement('input');
+                    input.value = url;
+                    document.body.appendChild(input);
+                    input.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(input);
+                    done();
+                }
+            });
+        })();
+    </script>
+}
