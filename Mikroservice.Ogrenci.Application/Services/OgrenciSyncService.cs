@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
+using MassTransit;
 using Microservice.Ogrenci.Application.Contracts.IRepositories;
 using Microservice.Ogrenci.Domain.SeedData;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Microservice.Shared.Services.RabbitMqMasstransitServiceItems.Events.SyncEvents;
 using Mikroservice.Ogrenci.Application.Contracts.DTOs;
 using Mikroservice.Ogrenci.Application.Contracts.Services;
 using Mikroservice.Ogrenci.Domain.Exceptions;
@@ -18,18 +20,21 @@ namespace Mikroservice.Ogrenci.Application.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly ILogger<OgrenciSyncService> _logger;
         private readonly IMapper _mapper;
+        private readonly IPublishEndpoint _publisher;
         public OgrenciSyncService(
             IOgrenciExternalApiService externalApiService,
             IOgrenciRepository ogrenciRepository,
             IUnitOfWork unitOfWork,
             ILogger<OgrenciSyncService> logger,
-            IMapper mapper)
+            IMapper mapper,
+            IPublishEndpoint publisher)
         {
             _externalApiService = externalApiService;
             _ogrenciRepository = ogrenciRepository;
             _unitOfWork = unitOfWork;
             _logger = logger;
             _mapper = mapper;
+            _publisher = publisher;
         }
 
         public async Task<OgrenciSyncResponse> SyncOgrencisAsync(
@@ -76,6 +81,19 @@ namespace Mikroservice.Ogrenci.Application.Services
                     await _unitOfWork.CommitAsync(cancellationToken);
 
                     _logger.LogInformation("Senkronizasyon tamamlandı. İşlenen: {Count}", ogrenciler.Count);
+
+                    // Commit sonrasında sinyal yayınla: Web tarafı Redis cache'ini düşürüp
+                    // SignalR ile açık sayfaları bilgilendirsin. Yayın hatası senkronizasyonu bozmamalı.
+                    try
+                    {
+                        await _publisher.Publish(new OgrenciSyncCompletedEvent(
+                            ogrenciler.Count, DateTime.UtcNow, "Mikroservice.Ogrenci.Api"));
+                    }
+                    catch (Exception publishEx)
+                    {
+                        _logger.LogError(publishEx,
+                            "OgrenciSyncCompletedEvent yayınlanamadı. Senkronizasyon verisi etkilenmedi.");
+                    }
 
                     return new OgrenciSyncResponse(ogrenciler, ogrenciler.Count);
                 }

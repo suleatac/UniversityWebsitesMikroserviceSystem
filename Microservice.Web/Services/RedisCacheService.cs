@@ -5,10 +5,12 @@ using System.Text.Json;
 public class RedisCacheService : IRedisCacheService
 {
     private readonly IDatabase _db;
+    private readonly IConnectionMultiplexer _multiplexer;
 
     public RedisCacheService(IConnectionMultiplexer redis)
     {
         _db = redis.GetDatabase();
+        _multiplexer = redis;
     }
 
     // 🔹 Tek veri ekle
@@ -60,6 +62,33 @@ public class RedisCacheService : IRedisCacheService
     {
         cancellationToken.ThrowIfCancellationRequested();
         await _db.KeyDeleteAsync(key);
+    }
+
+    // 🔹 Desen bazli sil (orn. "personel:*"). SCAN kullanimi: KEYS production'da bloklar.
+    public async Task<long> RemoveByPatternAsync(string pattern, CancellationToken cancellationToken = default)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+
+        long deleted = 0;
+        var database = _db.Database;
+
+        foreach (var endpoint in _multiplexer.GetEndPoints())
+        {
+            var server = _multiplexer.GetServer(endpoint);
+            if (server.IsConnected && !server.IsReplica)
+            {
+                // Key silme primary uzerinden yapilir; replica'larda taramaya gerek yok.
+                var keys = server.Keys(database: database, pattern: pattern, pageSize: 500);
+
+                foreach (var batch in keys.Chunk(100))
+                {
+                    cancellationToken.ThrowIfCancellationRequested();
+                    deleted += await _db.KeyDeleteAsync(batch);
+                }
+            }
+        }
+
+        return deleted;
     }
 
     // 🔹 Var mı kontrolü

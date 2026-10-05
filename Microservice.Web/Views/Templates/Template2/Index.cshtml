@@ -583,7 +583,7 @@
                                 <h2>@T("Hakkımızda", "About us")</h2>
                             </div>
                             @Html.Raw(isEnglish ? ozellikler!.SiteBaslangicHakkimizdaEng : ozellikler!.SiteBaslangicHakkimizda)
-                            <ul class="list_none list_item">
+                            <ul class="list_none list_item" data-refresh-region="ana-sayfa-sayaclar-1" data-refresh-scope="personel ogrenci">
                                 <li>
                                     <div class="counter_content">
                                         <h3 class="h1 text_danger"><span class="counter">@(Model.IdariPersonelSayisi + Model.AkademikPersonelSayisi)</span></h3>
@@ -874,10 +874,12 @@
     </section>
     <!-- END SECTION CLIENT LOGO -->
 }
-<!-- END SECTION LOGOLAR -->
+
 <a href="#" class="scrollup" style="display: none;"><i class="ion-ios-arrow-up"></i></a>
 
 @section Scripts {
+    @await Html.PartialAsync("_DataRefreshScripts")
+
     @if (Model.Popup != null && !string.IsNullOrWhiteSpace(Model.Popup.ResimUrl))
     {
         <script>

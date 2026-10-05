@@ -37,6 +37,10 @@ builder.Services.AddPersistenceExtentions(builder.Configuration);
 builder.Services.AddCommonServiceExt(typeof(OgrenciApplicationAssembly));
 
 builder.Services.AddRedisCacheExt(builder.Configuration);
+
+//Rabbitmq message sistemi için eklenen extention (publish-only: Hangfire job tamamlandığında event yayınlar)
+builder.Services.AddMassTransitPublishExt(builder.Configuration);
+
 //Hangfire ayarları
 builder.Services.AddHangfire(config =>
     config.UsePostgreSqlStorage(c => {

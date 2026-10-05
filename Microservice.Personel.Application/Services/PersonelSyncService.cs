@@ -1,10 +1,11 @@
 ﻿using AutoMapper;
+using MassTransit;
 using Microservice.Personel.Application.Contracts.DTOs;
 using Microservice.Personel.Application.Contracts.IRepositories;
 using Microservice.Personel.Application.Contracts.Services;
-using Microservice.Personel.Domain.SeedData;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Microservice.Shared.Services.RabbitMqMasstransitServiceItems.Events.SyncEvents;
 using Mikroservice.Personel.Application.Contracts.Services;
 using Mikroservice.Personel.Domain.Exceptions;
 using System.Data;
@@ -20,12 +21,14 @@ namespace Mikroservice.Personel.Application.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly ILogger<PersonelSyncService> _logger;
         private readonly IMapper _mapper;
+        private readonly IPublishEndpoint _publisher;
         public PersonelSyncService(
             IPersonelRepository PersonelRepository,
             IPersonelExternalApiService externalApiService,
             IUnitOfWork unitOfWork,
             ILogger<PersonelSyncService> logger,
-            IMapper mapper)
+            IMapper mapper,
+            IPublishEndpoint publisher)
         {
         
             _PersonelRepository = PersonelRepository;
@@ -33,6 +36,7 @@ namespace Mikroservice.Personel.Application.Services
             _logger = logger;
             _mapper = mapper;
             _externalApiService = externalApiService;
+            _publisher = publisher;
         }
 
         public async Task<PersonelSyncResponse> SyncPersonelsAsync(
@@ -78,6 +82,19 @@ namespace Mikroservice.Personel.Application.Services
 
                     await _unitOfWork.CommitAsync(cancellationToken);
                     _logger.LogInformation("Senkronizasyon tamamlandı. İşlenen: {Count}", Personeller.Count);
+
+                    // Commit sonrasinda sinyal yayinla: Web tarafi Redis cache'ini dusurup
+                    // SignalR ile acik sayfaları bilgilendirsin. Yayin hatasi senkronizasyonu bozmamali.
+                    try
+                    {
+                        await _publisher.Publish(new PersonelSyncCompletedEvent(
+                            Personeller.Count, DateTime.UtcNow, "Mikroservice.Personel.Api"));
+                    }
+                    catch (Exception publishEx)
+                    {
+                        _logger.LogError(publishEx,
+                            "PersonelSyncCompletedEvent yayinlanamadi. Senkronizasyon verisi etkilenmedi.");
+                    }
 
                     return new PersonelSyncResponse(Personeller, Personeller.Count);
                 }

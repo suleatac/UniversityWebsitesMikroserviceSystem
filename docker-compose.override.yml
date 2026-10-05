@@ -7,6 +7,10 @@ services:
       - IdentityOption:Adress=http://keycloak:8080/realms/UniversityRealm
       - IdentityOption:Issuer=http://keycloak:8080/realms/UniversityRealm
       - ElasticSearch:BaseUrl=http://elasticsearch.db.log:9200
+      - RabbitMqMassTransitBusOption:Address=rabbitmq
+      - RabbitMqMassTransitBusOption:Port=5672
+      - RabbitMqMassTransitBusOption:UserName=root
+      - RabbitMqMassTransitBusOption:Password=Password12
       - ConnectionStrings:Redis=redis.db.api:6379,password=Password12
       - ConnectionStrings:PostgreSqlServer=Host=postgres.db.ogrenci;Port=5432;Database=ogrenci_db;Username=ogrenci_db_user;Password=ogrenci_db_user_password
       - ConnectionStrings:HangfirePostgreSqlServer=Host=postgres.db.ogrenci;Port=5432;Database=ogrenci_db;Username=ogrenci_db_user;Password=ogrenci_db_user_password
@@ -25,6 +29,10 @@ services:
       - IdentityOption:Adress=http://keycloak:8080/realms/UniversityRealm
       - IdentityOption:Issuer=http://keycloak:8080/realms/UniversityRealm
       - ElasticSearch:BaseUrl=http://elasticsearch.db.log:9200
+      - RabbitMqMassTransitBusOption:Address=rabbitmq
+      - RabbitMqMassTransitBusOption:Port=5672
+      - RabbitMqMassTransitBusOption:UserName=root
+      - RabbitMqMassTransitBusOption:Password=Password12
       - ConnectionStrings:Redis=redis.db.api:6379,password=Password12
       - ConnectionStrings:PostgreSqlServer=Host=postgres.db.personel;Port=5432;Database=personel_db;Username=personel_db_user;Password=personel_db_user_password
       - ConnectionStrings:HangfirePostgreSqlServer=Host=postgres.db.personel;Port=5432;Database=personel_db;Username=personel_db_user;Password=personel_db_user_password
@@ -96,6 +104,10 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_HTTP_PORTS=8080
       - ConnectionStrings:Redis=redis.db.api:6379,password=Password12
+      - RabbitMqMassTransitBusOption:Address=rabbitmq
+      - RabbitMqMassTransitBusOption:Port=5672
+      - RabbitMqMassTransitBusOption:UserName=root
+      - RabbitMqMassTransitBusOption:Password=Password12
       - Identity:Address=http://keycloak:8080/realms/UniversityRealm
       - Identity:BaseAddress=http://keycloak:8080
       - ElasticSearch:BaseUrl=http://elasticsearch.db.log:9200
