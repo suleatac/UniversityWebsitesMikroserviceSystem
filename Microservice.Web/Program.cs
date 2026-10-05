@@ -1,6 +1,7 @@
 using Microservice.Web.Clients;
 using Microservice.Web.Configurations;
 using Microservice.Web.HttpHandlers;
+using Microservice.Web.Messaging;
 using Microservice.Web.SeriLog;
 using Microservice.Web.Services.ServicesExtentions;
 using Microsoft.AspNetCore.Localization;
@@ -11,6 +12,9 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+// SignalR: Hangfire senkronizasyonlari tamamlanınca sayfaları bilgilendirmek için
+builder.Services.AddSignalR();
 
 
 //Configuration Ayarları
@@ -29,6 +33,9 @@ builder.Services.AddServicesExtentions(builder.Configuration);
 
 //Client Extentions Ayarları
 builder.Services.AddClientExtentions(builder.Configuration);
+
+//Rabbitmq consumer (Personel/Ogrenci sync event'leri -> Redis cache invalidation + SignalR broadcast)
+builder.Services.AddRabbitmqConsumerExtensions(builder.Configuration);
 
 //Logging Extentions Ayarları
 builder.Services.AddLoggingExt(builder.Configuration);
@@ -62,6 +69,9 @@ if (!app.Environment.IsDevelopment())
 app.UseRouting();
 
 app.MapStaticAssets();
+
+// SignalR hub endpoint'i (data-refresh.js bu adrese bağlanır)
+app.MapHub<Microservice.Web.Hubs.DataRefreshHub>("/hubs/data-refresh");
 
 // Attribute routed controller'lar (IletisimController gibi) catch-all'dan once eslesmeli
 app.MapControllers();

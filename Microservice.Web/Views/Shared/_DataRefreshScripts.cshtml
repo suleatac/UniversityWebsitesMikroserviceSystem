@@ -1,0 +1,8 @@
+@*
+    SignalR veri-tazeleme scriptleri.
+    Hangfire senkronizasyonları tamamlandığında SignalR "DataChanged" sinyali yayınlansın,
+    data-refresh.js de [data-refresh-region] bölgelerini tazesin.
+    Kullanım: Scripts section'ında @await Html.PartialAsync("_DataRefreshScripts")
+*@
+<script src="~/lib/signalr/signalr.min.js" asp-append-version="true"></script>
+<script src="~/js/data-refresh.js" asp-append-version="true"></script>

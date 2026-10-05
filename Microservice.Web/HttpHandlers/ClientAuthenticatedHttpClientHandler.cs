@@ -8,7 +8,7 @@ namespace Microservice.Web.HttpHandlers
         protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
 
-            //eğer null ise demekki bi request gelmemiş demektir..
+            //eğer null ise demekki bi request gelmemiş demektir ..
             if (httpContextAccessor.HttpContext == null)
                 return await base.SendAsync(request, cancellationToken);
            
