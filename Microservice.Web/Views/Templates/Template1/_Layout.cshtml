@@ -9,46 +9,20 @@
     <meta name="author" content="Sivas Bilim ve Teknoloji Üniversitesi">
     <title>@ViewData["Title"]</title>
 
+    <!-- Smidge css bundle: tüm template1 css dosyalari Program.cs icinde tanimli -->
+    <environment names="Development">
+        <link href="template1-css-bundle" rel="stylesheet" debug="true" />
+    </environment>
+    <environment names="Production">
+        <link href="template1-css-bundle" rel="stylesheet" />
+    </environment>
 
 
-    <!-- Bootstrap  -->
-    <link href="~/template1/css/bootstrap.css" rel="stylesheet" />
-
-    <!-- Icon Fonts -->
-    <link href="~/template1/css/font-awesome.css" rel="stylesheet" />
-    <link href="~/template1/css/icomoon.css" rel="stylesheet" />
-
-    <!-- Sliders and Carousels -->
-    <link href="~/template1/css/flexslider.css" rel="stylesheet" />
-    <link href="~/template1/css/owl.carousel.css" rel="stylesheet" />
-    <link href="~/template1/css/revolution-slider.css" rel="stylesheet" />
-
-    <!-- Fancybox -->
-    <link href="~/template1/css/jquery.fancybox.css" rel="stylesheet" />
-
-    <!-- Shortcodes -->
-    <link href="~/template1/css/shortcodes.css" rel="stylesheet" />
-
-    <!-- Theme Style -->
-    <link href="~/template1/css/style.css" rel="stylesheet" />
-
-    <!-- Responsive -->
-    <link href="~/template1/css/responsive.css" rel="stylesheet" />
-
-    <!-- Colors -->
+    <!-- Colors: switcher.js bu linkin href'ini dinamik olarak degistirdigi icin bundle DISINDA tutuldu -->
     <link id="colors" href="~/template1/css/colors/color1.css" rel="stylesheet" />
 
-    <!-- Animation Style -->
-    <link href="~/template1/css/animate.css" rel="stylesheet" />
- 
     <!-- Favicon and touch icons  -->
-        <link href="~/template1/images/sbtu.ico" rel="shortcut icon">
-
-    <!--[if lt IE 9]>
-    <script src="~/template1/js/html5shiv.js"></script>
-    <script src="~/template1/js/respond.min.js"></script>
-    <![endif]-->
-
+    <link href="~/template1/images/sbtu.ico" rel="shortcut icon">
 </head>
 <body>
     <div class="boxed">
@@ -75,78 +49,30 @@
         })
 
 
-
-
-
-        <!-- Javascript -->
-        <script src="~/template1/js/jquery.min.js"></script>
-        <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script> -->
-        <script type="text/javascript" src="~/template1/js/bootstrap.min.js"></script>
-        <script type="text/javascript" src="~/template1/js/jquery.easing.js"></script>
-        <script type="text/javascript" src="~/template1/js/jQuery.verticalCarousel.js"></script>
-        <script type="text/javascript" src="~/template1/js/owl.carousel.js"></script>
-        <script type="text/javascript" src="~/template1/js/parallax.js"></script>
-        <script type="text/javascript" src="~/template1/js/jquery-waypoints.js"></script>
-        <script type="text/javascript" src="~/template1/js/jquery.tweet.min.js"></script>
-        <script type="text/javascript" src="~/template1/js/jquery.matchHeight-min.js"></script>
-        <script type="text/javascript" src="~/template1/js/jquery-validate.js"></script>
-
-        <!-- Revolution Slider -->
-        <script type="text/javascript" src="~/template1/js/jquery.themepunch.tools.min.js"></script>
-        <script type="text/javascript" src="~/template1/js/jquery.themepunch.revolution.min.js"></script>
-        <script type="text/javascript" src="~/template1/js/slider.js"></script>
-
-        <!-- Other Sliders and Carousels -->
-        <script type="text/javascript" src="~/template1/js/jquery.flexslider.js"></script>
-        <script type="text/javascript" src="~/template1/js/jquery.bxslider.js"></script>
-
-        <!-- Layout and Grid -->
-        <script type="text/javascript" src="~/template1/js/imagesloaded.min.js"></script>
-        <script type="text/javascript" src="~/template1/js/masonry.pkgd.js"></script>
-        <script type="text/javascript" src="~/template1/js/jquery.isotope.min.js"></script>
-
-        <!-- Widgets and Effects -->
-        <script type="text/javascript" src="~/template1/js/jquery.fancybox.js"></script>
-        <script type="text/javascript" src="~/template1/js/jquery.easypiechart.min.js"></script>
-        <script type="text/javascript" src="~/template1/js/jquery-countTo.js"></script>
-        <script type="text/javascript" src="~/template1/js/jquery.fitvids.js"></script>
-        <script type="text/javascript" src="~/template1/js/jquery.sticky.js"></script>
-        <script type="text/javascript" src="~/template1/js/smoothscroll.js"></script>
-
-        <!-- Maps -->
-        <script type="text/javascript" src="~/template1/js/gmap3.min.js"></script>
-
-        @*     //bunda sorun var *@
-        @*        <script type="text/javascript" src="~/template1/js/jquery.gomap-1.3.2.min.js"></script> *@
-
-        <script type="text/javascript" src="~/template1/js/jquery.cookie.js"></script>
-
-        <script type="text/javascript" src="~/template1/js/switcher.js"></script> @* //bu renkleri switch ediyor. *@
-        <script type="text/javascript" src="~/template1/js/main.js"></script>
-
+        <!-- Javascript: Smidge js bundle (tum template1 js dosyalari Program.cs icinde tanimli) -->
+        <environment names="Development">
+            <script src="template1-js-bundle" debug="true"></script>
+        </environment>
+        <environment names="Production">
+            <script src="template1-js-bundle"></script>
+        </environment>
 
 
 
         <!-- Language translate -->
 
         <script>
-                             function googleTranslateElementInit() {
-                        new google.translate.TranslateElement({
-                            pageLanguage: 'tr',
-                            includedLanguages: 'en,tr,fr,es,de,ru,el,zh-CN',
-                            layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
-                            autoDisplay: false
-                        }, 'google_translate_element');
-                    }
+            function googleTranslateElementInit() {
+                new google.translate.TranslateElement({
+                    pageLanguage: 'tr',
+                    includedLanguages: 'en,tr,fr,es,de,ru,el,zh-CN',
+                    layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
+                    autoDisplay: false
+                }, 'google_translate_element');
+            }
         </script>
 
         <script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
-
-
-
-
-
-
 
         @await RenderSectionAsync("Scripts", required: false)
     </div>
