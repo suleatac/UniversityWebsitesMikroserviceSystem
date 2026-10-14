@@ -25,6 +25,7 @@
     <PackageReference Include="Serilog.Exceptions" Version="8.4.0" />
     <PackageReference Include="Serilog.Formatting.Elasticsearch" Version="10.0.0" />
     <PackageReference Include="Serilog.Sinks.Elasticsearch" Version="10.0.0" />
+    <PackageReference Include="Smidge" Version="5.0.1" />
     <PackageReference Include="StackExchange.Redis" Version="3.1.31" />
   </ItemGroup>
 
